@@ -1,0 +1,91 @@
+START HERE
+==========
+
+This folder holds the small amount of custom setup that makes this RetroBat
+drive work the way it does. Everything else on the drive is stock RetroBat.
+
+You do not need to understand any of it to play games. Just plug the drive in
+and run RetroBat.exe.
+
+
+WHAT IS AT THE TOP OF THE DRIVE
+-------------------------------
+
+At the top level of this drive, outside the RetroBat folder:
+
+    SETUP RETROBAT.bat   press this ONCE on a computer you have never played
+                         on. It asks two short questions, puts the drive's
+                         settings in place, rebuilds the two icons below, and
+                         opens the wizard
+    Play RetroBat        checks the drive is healthy, then starts the games
+    Setup Wizard         opens the window: health, machine, saves, switches
+
+THE TWO ICONS ARE SHORTCUTS, and a shortcut remembers a drive letter, so on a
+computer where this drive comes back as a different letter they stop working.
+SETUP RETROBAT is a plain .bat file with no letter in it anywhere, so it works
+on any computer on the first try - and rebuilding those two icons is one of
+the things it does.
+
+Nothing else writes icons any more. Pressing Play never puts anything on your
+computer; that is what SETUP RETROBAT is for.
+
+
+THE ONE THING TO KNOW
+---------------------
+
+After you update RetroBat, or after an emulator updates itself, double-click:
+
+    RUN THIS AFTER AN UPDATE.bat
+
+Close RetroBat and every emulator first. It takes under a minute and puts back
+everything an update quietly threw away. That is the whole maintenance routine.
+
+
+THE FOLDERS
+-----------
+
+  RUN THIS AFTER AN UPDATE.bat   the button above. The only one you need
+  features.ini                   the on/off switches for the things this
+                                 drive does that plain RetroBat does not.
+                                 Plain text. Run Maintenance Steps\Show My
+                                 Features.bat to see what is on right now
+  Maintenance Steps\             the same steps one at a time, if you ever want
+                                 to run just one of them, plus a few extra
+                                 buttons: Set Up This Computer, Apply Cemu
+                                 Graphic Packs, Rename The Wizard Button.
+                                 Show Help.bat in there explains the whole
+                                 drive in one page
+  drive-root\                    the master copy of SETUP RETROBAT.bat, which
+                                 belongs at the TOP of the drive. If it ever
+                                 goes missing from up there, opening the
+                                 wizard once puts it back
+  machine\                       one file per computer this drive has been
+                                 used on, plus game-settings.ini for the
+                                 settings that belong to a game rather than
+                                 to a computer
+  SaveBackups\                   your game saves, and the buttons for backing
+                                 them up and putting old ones back
+  docs\                          CUSTOMIZATION-RECORD.md - the full explanation
+                                 of every change, why it was made, and how to
+                                 undo it. Read this if you are taking over
+  scripts\                       what the buttons actually run. Leave alone
+                                 unless you know PowerShell
+  update-restore\                master copies of files a RetroBat update
+                                 deletes. Leave alone
+  update-restore-off\            RetroBat's own version of those same files,
+                                 put back when a switch is turned off
+  theme-assets\                  master copies of the collection artwork
+  tools\                         ffmpeg, used to even out video volume
+  archive\                       automatic backups. Safe to thin out when old
+  _SAFE TO DELETE\               junk. Delete it whenever
+
+
+IF SOMETHING BREAKS
+-------------------
+
+Almost everything is recoverable. Every script backs a file up before touching
+it, into archive\, in a folder named for what it was doing and when. Nothing on
+this drive deletes anything - it moves things instead.
+
+Start with Maintenance Steps\Show Help.bat, which is one page and takes a
+minute. Then docs\CUSTOMIZATION-RECORD.md, which is written to be read cold.

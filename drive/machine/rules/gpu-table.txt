@@ -1,0 +1,182 @@
+# ===========================================================================
+#  GPU LOOKUP TABLE - graphics card name pattern -> tier
+# ===========================================================================
+#  Used by the machine profile system to pick Low / Medium / High for a
+#  computer it has never seen. One rule per line:
+#
+#      pattern|tier
+#
+#  The pattern is matched against the card name Windows reports (for example
+#  "NVIDIA GeForce GTX 1070" or "Intel(R) UHD Graphics 630"). * matches
+#  anything, matching ignores upper/lower case, and THE FIRST MATCHING LINE
+#  WINS - so specific rules must sit above general ones.
+#
+#  Tiers are judged for THESE emulators (GameCube/Wii/3DS/DS/Wii U/N64 on a
+#  1080p TV), not for modern PC games:
+#      low    = run at native resolution, favour speed
+#      medium = 720p-class picture (the Quadro P2200 machine is the yardstick)
+#      high   = full 1080p picture with anti-aliasing and filtering
+#
+#  A card matching no line falls through to the generation guesser built into
+#  the scripts, which reads the model number and lands newer cards sensibly.
+#  If the guess is ever wrong, add one line here - or just change the tier
+#  line in that machine's file under profiles\machines\.
+# ===========================================================================
+
+# --- NVIDIA workstation cards (Quadro / RTX A / RTX Ada) -------------------
+# (first match wins, so the small cards must sit above the *quadro p* line)
+*quadro p620*|low
+*quadro p600*|low
+*quadro p500*|low
+*quadro p400*|low
+*quadro p1000*|medium
+*quadro p2000*|medium
+*quadro p2200*|medium
+*quadro p3000*|medium
+*quadro p3200*|medium
+*quadro p*|high
+*quadro rtx*|high
+*quadro gp100*|high
+*quadro gv100*|high
+*quadro m6*|high
+*quadro m5*|high
+*quadro m4*|medium
+*quadro m2*|medium
+*quadro m*|low
+*quadro k*|low
+*quadro*|medium
+*rtx a4*|high
+*rtx a5*|high
+*rtx a6*|high
+*rtx a2000*|high
+*rtx a1000*|medium
+*rtx a500*|medium
+*rtx a400*|low
+*rtx 2000 ada*|high
+*rtx 4000 ada*|high
+*rtx 4500 ada*|high
+*rtx 5000 ada*|high
+*rtx 6000 ada*|high
+*rtx 500 ada*|medium
+*rtx 1000 ada*|medium
+
+# --- NVIDIA GeForce RTX (any generation is High for these emulators) -------
+*rtx 50*|high
+*rtx 40*|high
+*rtx 30*|high
+*rtx 20*|high
+
+# --- NVIDIA GeForce GTX 16 and 10 series -----------------------------------
+*gtx 1660*|high
+*gtx 1650*|high
+*gtx 1630*|medium
+*gtx 1080*|high
+*gtx 1070*|high
+*gtx 1060*|high
+*gtx 1050 ti*|medium
+*gtx 1050*|medium
+*gt 1030*|low
+
+# --- NVIDIA GeForce GTX 900 and older, and small GT cards ------------------
+*gtx 980*|high
+*gtx 970*|high
+*gtx 960*|medium
+*gtx 950*|medium
+*gtx 9*|medium
+*gtx 780*|medium
+*gtx 770*|medium
+*gtx 760*|medium
+*gtx 750 ti*|medium
+*gtx 750*|medium
+*gtx 7*|low
+*gtx 680*|medium
+*gtx 670*|medium
+*gtx 660*|medium
+*gtx 6*|low
+*gtx 5*|low
+*gtx 4*|low
+*geforce gt *|low
+*geforce mx55*|medium
+*geforce mx45*|medium
+*geforce mx*|low
+
+# --- AMD Radeon RX 9000 / 7000 / 6000 --------------------------------------
+*rx 90*|high
+*rx 76*|high
+*rx 77*|high
+*rx 78*|high
+*rx 79*|high
+*rx 69*|high
+*rx 68*|high
+*rx 67*|high
+*rx 66*|high
+*rx 6500*|medium
+*rx 6400*|medium
+
+# --- AMD Radeon RX 5000 / 500 / 400, Vega ----------------------------------
+*rx 5700*|high
+*rx 5600*|high
+*rx 5500*|medium
+*rx 5300*|medium
+*rx 590*|high
+*rx 580*|high
+*rx 570*|high
+*rx 560*|medium
+*rx 550*|low
+*rx 540*|low
+*rx 480*|high
+*rx 470*|high
+*rx 460*|medium
+*radeon vii*|high
+*vega 64*|high
+*vega 56*|high
+
+# --- AMD chips built into processors (APUs) --------------------------------
+# The 600M/700M/800M series inside modern Ryzen laptops and handhelds are
+# genuinely capable; the older Vega ones are not.
+*radeon 890m*|medium
+*radeon 880m*|medium
+*radeon 780m*|medium
+*radeon 760m*|medium
+*radeon 680m*|medium
+*radeon 660m*|low
+*vega 11*|low
+*vega 10*|low
+*vega 9*|low
+*vega 8*|low
+*vega 7*|low
+*vega 6*|low
+*vega 3*|low
+*vega*|low
+*radeon(tm) graphics*|low
+*radeon graphics*|low
+
+# --- Older AMD -------------------------------------------------------------
+*r9 fury*|high
+*r9 39*|medium
+*r9 29*|medium
+*r9 *|medium
+*r7 *|low
+*r5 *|low
+*radeon hd *|low
+
+# --- Intel -----------------------------------------------------------------
+*arc*b58*|high
+*arc*b57*|high
+*arc*a77*|high
+*arc*a75*|high
+*arc*a58*|medium
+*arc*a38*|medium
+*arc*a31*|low
+*arc*|medium
+*iris xe max*|medium
+*iris xe*|low
+*iris plus*|low
+*iris pro*|low
+*iris*|low
+*uhd graphics*|low
+*hd graphics*|low
+*intel*|low
+
+# --- Anything Microsoft's fallback driver is running -----------------------
+*microsoft basic display*|low

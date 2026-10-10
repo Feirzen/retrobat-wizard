@@ -1,0 +1,60 @@
+; ===========================================================================
+;  WHAT AN UPDATE OWNS - the ship list                         (2026-10-10)
+; ===========================================================================
+;  Every file the public repo (github.com/Feirzen/retrobat-wizard) carries,
+;  and so every file an update is allowed to write. Paths are relative to
+;  _ClaudeWorkspace, with / between folders.
+;
+;    code   the update owns it, and replaces it whenever it differs
+;    seed   the PERSON owns it. Written only when it is missing, never after.
+;           "seed X <- Y" ships the file at Y in X's place, for a file whose
+;           copy on this drive is personal (wizard.ini holds Steven's name).
+;    skip   never shipped, even if a line above matches it
+;
+;  *  matches inside one folder, ** matches any depth.
+;
+;  ANYTHING NOT MATCHED HERE IS NOT THE UPDATE'S BUSINESS: saves, roms,
+;  SaveBackups\ (except its buttons), archive\, _SAFE TO DELETE\, the machine
+;  files for each computer, the profile, social\, logs, and the personal pack
+;  (the Zelda and Pokemon collections, player-counts.ini).
+;
+;  Read by the publishing step, never by the drive at run time. The manifest
+;  the drive reads is built from this list.
+; ---------------------------------------------------------------------------
+
+code  version.txt
+code  ship-list.txt
+code  START HERE.txt
+code  RUN THIS AFTER AN UPDATE.bat
+
+code  scripts/*.ps1
+code  scripts/*.vbs
+
+code  wizard/*.ps1
+code  wizard/*.vbs
+code  wizard/*.ico
+code  wizard/*.png
+skip  wizard/wordmark.png
+skip  wizard/wordmark-anim.png
+seed  wizard/wizard.ini  <-  defaults/wizard.ini
+
+code  Maintenance Steps/*.bat
+code  SaveBackups/*.bat
+
+code  update-restore/**
+skip  update-restore/Steven the Setup Wizard.bat
+code  update-restore-off/**
+code  drive-root/**
+
+code  machine/README.txt
+code  machine/tiers/*
+code  machine/rules/*
+seed  machine/game-settings.ini
+seed  machine/maximize-windows.txt
+
+code  docs/PER-GAME-SETTINGS.md
+code  docs/art/**
+code  theme-assets/steam.mp4
+
+seed  features.ini
+seed  controllers.ini
