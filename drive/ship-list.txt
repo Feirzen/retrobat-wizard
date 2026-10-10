@@ -37,6 +37,7 @@ code  wizard/*.png
 skip  wizard/wordmark.png
 skip  wizard/wordmark-anim.png
 seed  wizard/wizard.ini  <-  defaults/wizard.ini
+code  defaults/Setup Wizard.bat
 
 code  Maintenance Steps/*.bat
 code  SaveBackups/*.bat

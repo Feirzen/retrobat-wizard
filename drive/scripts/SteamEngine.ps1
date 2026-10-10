@@ -1123,7 +1123,7 @@ function Write-SteamShortcutFile {
             '[InternetShortcut]'
             ('URL=steam://rungameid/' + $AppId)
             'IconIndex=0'
-            'Comment=Written by Steven''s RetroBat Wizard. Safe to delete.'
+            'Comment=Written by the RetroBat Wizard. Safe to delete.'
         )
         [System.IO.File]::WriteAllLines($Path, $lines, (New-Object System.Text.ASCIIEncoding))
         return $true

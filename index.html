@@ -50,6 +50,7 @@ p, li { line-height: 1.6; color: var(--dim); }
 .btn:active { transform: scale(.97); }
 .hero { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
 .hero img { width: 96px; height: 96px; image-rendering: pixelated; border-radius: 20px; }
+.hero img.padart { width: 150px; height: auto; border-radius: 0; }
 .video { aspect-ratio: 16/9; background: var(--surface2); border: 1.5px dashed var(--border2); border-radius: 14px;
   display: flex; align-items: center; justify-content: center; color: var(--muted); margin-top: 18px; }
 ol.steps { padding-left: 22px; }
@@ -103,7 +104,7 @@ body.in #site { display: block; }
 
 <div id="site"><div class="wrap">
   <div class="hero">
-    <img src="site/icon-192.png" alt="">
+    <img class="padart" src="site/pad-anim.svg" alt="">
     <div>
       <div class="eyebrow">Retro gaming for game nights</div>
       <h1>RetroBat Wizard</h1>

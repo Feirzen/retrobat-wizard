@@ -39,10 +39,18 @@ The installer always installs whatever `latest.ini` points at.
 ## The game library
 
 `library/library.json` lists free games; the wizard's Games tab and the site
-read it. To add games: Steven queues them from the Games tab on his drive
-(they land in `_ClaudeWorkspace\library-to-publish\`), then Claude copies that
-folder off the drive and runs
-`python3 tools/publish_library.py <copy of library-to-publish> .`
-Check every game may be shared first: homebrew, freeware, fan-made, his own.
-Files over 45 MB are listed in `library/big-files.txt` and go up as assets on a
-Release tagged `library`.
+read it. Admins add games themselves from the wizard's **Admin tab > Publish a
+game**: it uploads the file as an asset on the Release tagged `library` (up to
+2 GB a file) and adds the entry to `library.json`, using a "library key" kept
+only on that admin's drive (`_ClaudeWorkspace\social\library-key.txt`, a
+fine-grained token with Contents: Read and write on this repo).
+`tools/publish_library.py` is the older by-hand route and still works.
+Only games that may be shared: homebrew, freeware, fan-made, the admin's own.
+
+## Admins
+
+`admin/admins.txt` in the private social repo lists the player ids that see
+the Admin tab; `admin/notify.txt` names the ntfy.sh channel for phone alerts;
+`names/<id>.txt` holds an admin's answer to a name request. The Admin tab
+writes all three. `tools/tests/test-admin.ps1` runs Publish a game against
+`tools/tests/fake_github.py`.

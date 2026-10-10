@@ -21,11 +21,16 @@ $script:SocialApiOverride = {
             $entries += @{ name = ($k -replace '^players/', ''); object = @{ oid = $f.sha; text = [Text.Encoding]::UTF8.GetString($f.bytes); byteSize = $f.bytes.Length } }
         }
         $obj = if ($entries.Count -gt 0) { @{ entries = $entries } } else { $null }
-        return @{ Status = 200; Body = (@{ data = @{ repository = @{ object = $obj } } } | ConvertTo-Json -Depth 10) }
+        $nm = @()
+        foreach ($k in $script:files.Keys) { if ($k -like 'names/*') { $nm += @{ name = ($k -replace '^names/', ''); object = @{ text = [Text.Encoding]::UTF8.GetString($script:files[$k].bytes); byteSize = $script:files[$k].bytes.Length } } } }
+        $names = if ($nm.Count -gt 0) { @{ entries = $nm } } else { $null }
+        $adm = if ($script:files.ContainsKey('admin/admins.txt')) { @{ text = [Text.Encoding]::UTF8.GetString($script:files['admin/admins.txt'].bytes) } } else { $null }
+        return @{ Status = 200; Body = (@{ data = @{ repository = @{ object = $obj; names = $names; admins = $adm } } } | ConvertTo-Json -Depth 10) }
     }
     $path = ($Url -split '/contents/')[1]
     if ($Method -eq 'GET') {
         if (-not $script:files.ContainsKey($path)) { return @{ Status = 404; Body = '' } }
+        if ($Accept -eq 'application/vnd.github.raw') { return @{ Status = 200; Body = [Text.Encoding]::UTF8.GetString($script:files[$path].bytes) } }
         return @{ Status = 200; Body = (@{ sha = $script:files[$path].sha } | ConvertTo-Json) }
     }
     if ($Method -eq 'PUT') {
@@ -182,6 +187,78 @@ Assert (-not (Test-SocialNameTaken $null 'x' 'abc')) 'empty list as null: no cra
 Assert (-not (Test-SocialNameTaken $(@()) 'x' 'abc')) 'empty list through $(): no crash'
 Assert (@(Find-SocialPlayers (Read-SocialProfile $wsA) $null 'a').Count -eq 0) 'search over nobody'
 $v0 = Get-SocialView (Read-SocialProfile $wsA) $null (Get-SocialNowUtc); Assert (@($v0.Friends).Count -eq 0) 'view over nobody'
+# --- 2026-10-10 b: passwords, logins, admins, name requests -------------------
+$script:offline = $false
+. (Join-Path $Scripts 'AdminEngine.ps1')
+$pa = Read-SocialProfile $wsA
+$h1 = Get-SocialPasswordHash $pa.Id 'hunter22'
+Assert ($h1 -match '^[a-f0-9]{64}$') 'password hash is hex'
+Assert ($h1 -ne (Get-SocialPasswordHash 'zzzzzzzzzz' 'hunter22')) 'hash depends on the id'
+$pa.Pw = $h1; $pa.PwSet = '2026-10-10T10:00:00Z'; $pa.NameReq = 'Newname'
+Write-SocialProfile $wsA $pa
+$pb = Read-SocialProfile $wsA
+Assert ($pb.Pw -eq $h1 -and $pb.NameReq -eq 'Newname' -and $pb.PwSet -eq '2026-10-10T10:00:00Z') 'pw and namereq survive profile.ini'
+$on = [pscustomobject]@{ State = 'on'; InGame = $false; Game = ''; Console = ''; Since = '' }
+Assert ((Publish-SocialRecord $wsA $pb $on '2.3.0').Ok) 'publish with password'
+$all = Get-SocialPlayers $wsA
+$recA = @($all.Players | Where-Object Id -eq $pb.Id)[0]
+Assert ($recA.Pw -eq $h1 -and $recA.NameReq -eq 'Newname') 'record carries pw and namereq'
+Assert (Test-SocialPassword $recA 'hunter22') 'right password'
+Assert (-not (Test-SocialPassword $recA 'hunter23')) 'wrong password'
+Assert (Test-SocialPassword ([pscustomobject]@{ Id = 'x'; Pw = '' }) 'anything') 'no password set: open'
+$np = New-SocialProfileFromRecord $recA
+Assert ($np.Id -eq $pb.Id -and $np.Pw -eq $h1 -and @($np.Friends).Count -eq @($recA.Friends).Count) 'profile from record'
+# admins and name answers
+Assert (@($all.Admins).Count -eq 0) 'no admins file: nobody'
+Assert (Set-AdminList $wsA @($pb.Id)) 'write admins'
+Assert (-not (Set-AdminList $wsA @())) 'never an empty admins list'
+$reqs = @(Get-AdminNameRequests $all.Players @{ Names = @{}; Admins = @() })
+Assert ($reqs.Count -eq 1 -and $reqs[0].NameReq -eq 'Newname') 'name request listed'
+Assert (Set-AdminNameAnswer $wsA $pb.Id 'Newname' $true) 'approve name'
+$all2 = Get-SocialPlayers $wsA
+Assert (@($all2.Admins) -contains $pb.Id) 'admins read back'
+Assert (Test-SocialIsAdmin $pb @{ Admins = $all2.Admins }) 'is admin'
+Assert ($all2.Names[$pb.Id].Answer -eq 'approved') 'name answer read back'
+Assert (@(Get-AdminNameRequests $all2.Players @{ Names = $all2.Names; Admins = @() }).Count -eq 0) 'answered request leaves the list'
+$ex = Get-SocialCachedExtras $wsA
+Assert (@($ex.Admins) -contains $pb.Id -and $ex.Names.ContainsKey($pb.Id)) 'extras from the cache'
+$note = Update-SocialFromOnline $wsA $all2.Players $ex
+$pc = Read-SocialProfile $wsA
+Assert ($pc.Username -eq 'Newname' -and $pc.NameReq -eq '' -and $note -like '*approved*') 'approved name taken in'
+Assert ((Update-SocialFromOnline $wsA $all2.Players $ex) -eq '') 'nothing twice'
+# a newer password from another drive wins, an older one does not
+$h2 = Get-SocialPasswordHash $pc.Id 'other'
+$fake = [pscustomobject]@{ Id = $pc.Id; Pw = $h2; PwSet = '2026-10-11T10:00:00Z' }
+[void](Update-SocialFromOnline $wsA @($fake) @{ Names = @{}; Admins = @() })
+Assert ((Read-SocialProfile $wsA).Pw -eq $h2) 'newer password adopted'
+$fake.Pw = $h1; $fake.PwSet = '2026-10-01T10:00:00Z'
+[void](Update-SocialFromOnline $wsA @($fake) @{ Names = @{}; Admins = @() })
+Assert ((Read-SocialProfile $wsA).Pw -eq $h2) 'older password ignored'
+# logins
+$pd = Read-SocialProfile $wsA
+Add-SocialLogin $wsA $pd
+Add-SocialLogin $wsA $pd
+Assert (@(Get-SocialLogins $wsA).Count -eq 1) 'one login per profile'
+Add-SocialLogin $wsA ([pscustomobject]@{ Id = 'bbbbbbbbbb'; Username = 'Bee'; Avatar = 'custom:abc' })
+$lg = @(Get-SocialLogins $wsA)
+Assert ($lg.Count -eq 2 -and $lg[0].Id -eq 'bbbbbbbbbb' -and $lg[0].Avatar -eq 'icon:gameboy') 'newest first, custom picture not kept'
+Remove-SocialLogin $wsA 'bbbbbbbbbb'
+Assert (@(Get-SocialLogins $wsA).Count -eq 1) 'forget a login'
+# notify channel
+Assert ((Get-SocialNotifyTopic $wsA) -eq '') 'no channel yet'
+$tp = New-AdminNotifyTopic
+Assert ($tp -match '^rbw-[a-z0-9]{16}$') 'channel name'
+Assert (Set-AdminNotifyTopic $wsA $tp) 'save channel'
+Assert ((Get-SocialNotifyTopic $wsA) -eq $tp) 'read channel'
+# library.json writer: one game with one file stays a list
+$j = ConvertTo-AdminLibraryJson 'a note \ with "quotes"' @([pscustomobject]@{ id = 'x'; title = 'X'; system = 'snes'; players = '1'; description = 'd'; added = '2026-10-10'; files = @([pscustomobject]@{ name = 'x.sfc'; url = 'https://github.com/a'; size = 5; sha256 = ('a' * 64) }) })
+$jo = $j | ConvertFrom-Json
+Assert ($jo.note -eq 'a note \ with "quotes"') 'note escaped'
+Assert (@($jo.games).Count -eq 1 -and @($jo.games[0].files).Count -eq 1 -and $jo.games[0].files[0].size -eq 5) 'library json round trip'
+Assert ($j -match '"files": \[') 'files written as a list'
+Assert ((ConvertTo-AdminLibraryJson 'n' @() | ConvertFrom-Json).games.Count -eq 0) 'empty library'
+Assert ((Get-AdminLibId 'Star Fox: The Sequel!!') -eq 'star-fox-the-sequel') 'library id'
+
 Remove-Item -Recurse -Force $base
 Write-Host ("social tests: {0} passed, {1} failed" -f $script:pass, $script:fail)
 if ($script:fail -gt 0) { exit 1 }

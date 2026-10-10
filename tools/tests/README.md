@@ -9,7 +9,8 @@ es_systems.cfg, Dolphin.ini).
 | file | covers | assertions |
 |---|---|---|
 | test-update.ps1 | UpdateEngine + Migrations | 105 |
-| test-social.ps1 | SocialEngine against a fake GitHub | 51 |
+| test-social.ps1 | SocialEngine (+ AdminEngine lists) against a fake GitHub | 90 |
+| test-admin.ps1 | Publish a game, against fake_github.py | 14 |
 | test-helper.ps1 | Social-Helper functions | 10 |
 | test-bug.ps1 | BugReport | 14 |
 | test-netplay.ps1 | NetplayEngine on real settings files | 20 |
