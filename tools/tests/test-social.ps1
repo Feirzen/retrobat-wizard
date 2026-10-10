@@ -178,6 +178,10 @@ $p = Publish-SocialRecord $wsA (Read-SocialProfile $wsA) $off '2.2.0'
 Assert (-not $p.Ok) 'offline publish fails softly'
 Assert (@(Get-SocialCachedPlayers $wsA).Count -ge 2) 'cache still there offline'
 
+Assert (-not (Test-SocialNameTaken $null 'x' 'abc')) 'empty list as null: no crash'
+Assert (-not (Test-SocialNameTaken $(@()) 'x' 'abc')) 'empty list through $(): no crash'
+Assert (@(Find-SocialPlayers (Read-SocialProfile $wsA) $null 'a').Count -eq 0) 'search over nobody'
+$v0 = Get-SocialView (Read-SocialProfile $wsA) $null (Get-SocialNowUtc); Assert (@($v0.Friends).Count -eq 0) 'view over nobody'
 Remove-Item -Recurse -Force $base
 Write-Host ("social tests: {0} passed, {1} failed" -f $script:pass, $script:fail)
 if ($script:fail -gt 0) { exit 1 }
