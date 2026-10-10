@@ -19,3 +19,30 @@ of one version and half of another. Tags are not used.
 `tools/test-update.ps1` is the engine's test suite (PowerShell 7): a fake drive
 and a fake GitHub, 105 assertions covering check, download, checksum refusal,
 install, rollback, go back, skip, removed files and the profiles to machine rename.
+
+## The website
+
+`index.html` at the repo root, with `site\` for its icons and banner (drawn by
+`tools/make_icons.py`). GitHub Pages serves the repo root at
+https://feirzen.github.io/retrobat-wizard/. The front password is a polite
+door, not a lock: two passwords work (Steven knows them), checked as SHA-256
+of "rbw:" + the lower-cased password. To change one, replace its hash in KEYS.
+
+## The installer
+
+`installer/RetroBat-Wizard-Installer.zip` is what the website's button gives
+out: `INSTALL THE WIZARD.bat`, `Install-Wizard.ps1`, and `token.txt` (the
+social token scrambled as `rb1:` + base64 of it backwards, so GitHub's secret
+scanner does not revoke it). Rebuild the zip whenever either script changes.
+The installer always installs whatever `latest.ini` points at.
+
+## The game library
+
+`library/library.json` lists free games; the wizard's Games tab and the site
+read it. To add games: Steven queues them from the Games tab on his drive
+(they land in `_ClaudeWorkspace\library-to-publish\`), then Claude copies that
+folder off the drive and runs
+`python3 tools/publish_library.py <copy of library-to-publish> .`
+Check every game may be shared first: homebrew, freeware, fan-made, his own.
+Files over 45 MB are listed in `library/big-files.txt` and go up as assets on a
+Release tagged `library`.

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RetroBat Wizard</title>
+<meta name="description" content="Party and co-op retro gaming on a portable drive, set up and kept up for you.">
+<meta name="theme-color" content="#0f0f13" id="themeColorMeta">
+<meta property="og:title" content="RetroBat Wizard">
+<meta property="og:description" content="Party and co-op retro gaming on a portable drive, set up and kept up for you.">
+<meta property="og:image" content="https://feirzen.github.io/retrobat-wizard/site/og-banner.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="site/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="site/favicon-32.png">
+<link rel="apple-touch-icon" href="site/apple-touch-icon.png">
+<link rel="manifest" href="site/manifest.webmanifest">
+<style>
+/* Same four themes as Study Decks: every colour is a variable, a theme is one
+   attribute on <html>, chameleon writes its own variables at runtime. */
+:root, html[data-theme="midnight"] {
+  --bg:#0f0f13; --surface:#1a1a24; --surface2:#16161e; --border:#2a2a38; --border2:#3a3a4c;
+  --text:#f0f0f5; --dim:#bbbbc6; --muted:#6d6d7d; --accent:#0EA5E9; --ok:#22d3a0; --bad:#f87171;
+  --star:#F59E0B; --shadow:rgba(0,0,0,.45); --accBg:rgba(14,165,233,.14);
+}
+html[data-theme="paper"] {
+  --bg:#f6f3ec; --surface:#ffffff; --surface2:#efebe1; --border:#ddd6c7; --border2:#c6bda9;
+  --text:#16161c; --dim:#4a4a55; --muted:#8b8474; --accent:#0369a1; --ok:#0f9d6f; --bad:#dc2626;
+  --star:#b45309; --shadow:rgba(60,50,30,.14); --accBg:rgba(3,105,161,.10);
+}
+html[data-theme="sepia"] {
+  --bg:#1b1510; --surface:#2a211a; --surface2:#241d16; --border:#3f332a; --border2:#574636;
+  --text:#f2e7d6; --dim:#c9b8a0; --muted:#8b7a66; --accent:#e0a458; --ok:#86c98b; --bad:#e08a7a;
+  --star:#f0b429; --shadow:rgba(0,0,0,.5); --accBg:rgba(224,164,88,.13);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: Georgia, 'Times New Roman', serif;
+  min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background-color .35s ease, color .35s ease; }
+a { color: var(--accent); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+.eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+h1 { font-size: 34px; line-height: 1.15; margin: 6px 0 0; }
+h2 { font-size: 22px; margin: 40px 0 10px; }
+p, li { line-height: 1.6; color: var(--dim); }
+.card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 18px 20px; margin: 12px 0; }
+.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--bg); border: none;
+  border-radius: 10px; padding: 11px 18px; font: inherit; font-weight: bold; cursor: pointer; text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.btn:active { transform: scale(.97); }
+.hero { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.hero img { width: 96px; height: 96px; image-rendering: pixelated; border-radius: 20px; }
+.video { aspect-ratio: 16/9; background: var(--surface2); border: 1.5px dashed var(--border2); border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; color: var(--muted); margin-top: 18px; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 10px 0; }
+ol.steps b { color: var(--text); }
+code { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-size: 14px; color: var(--text); }
+.note { font-size: 14px; color: var(--muted); }
+.game { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; }
+.game .meta { font-size: 13px; color: var(--muted); }
+.tag { display: inline-block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent);
+  background: var(--accBg); border-radius: 6px; padding: 2px 7px; margin-right: 6px; }
+/* the gate */
+#gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+#gate .card { width: 100%; max-width: 380px; text-align: center; }
+#gate input { width: 100%; font: inherit; font-size: 17px; padding: 11px 13px; border-radius: 10px; margin: 14px 0 10px;
+  background: var(--surface2); color: var(--text); border: 1.5px solid var(--border2); }
+#gate .err { color: var(--bad); min-height: 22px; font-size: 14px; }
+#site { display: none; }
+body.in #gate { display: none; }
+body.in #site { display: block; }
+/* theme menu, top right */
+.themebtn { position: fixed; top: 10px; right: 12px; z-index: 60; width: 36px; height: 36px; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--border); color: var(--dim); cursor: pointer; font-size: 16px; }
+.thememenu { position: fixed; top: 52px; right: 12px; z-index: 61; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 6px; min-width: 172px; box-shadow: 0 12px 34px var(--shadow); display: none; }
+.thememenu.open { display: block; }
+.thememenu button { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; color: var(--text);
+  cursor: pointer; padding: 10px 12px; border-radius: 8px; font: inherit; font-size: 14px; text-align: left; }
+.thememenu button:hover { background: var(--surface2); }
+.thememenu button.sel { color: var(--accent); font-weight: bold; }
+.swatch { width: 16px; height: 16px; border-radius: 5px; border: 1px solid var(--border2); flex: 0 0 16px; }
+@media (max-width: 520px) { h1 { font-size: 28px; } .game { flex-direction: column; } }
+</style>
+</head>
+<body>
+<button class="themebtn" id="themeBtn" aria-label="Theme" title="Theme">&#9680;</button>
+<div class="thememenu" id="themeMenu"></div>
+
+<div id="gate">
+  <div class="card">
+    <img src="site/icon-192.png" alt="" width="72" height="72" style="image-rendering:pixelated;border-radius:16px">
+    <h1 style="font-size:26px">RetroBat Wizard</h1>
+    <p>Friends and family only. Ask whoever sent you the link for the password.</p>
+    <form id="gateForm" autocomplete="off">
+      <input id="pw" type="password" placeholder="Password" aria-label="Password">
+      <div class="err" id="err"></div>
+      <button class="btn" type="submit" style="width:100%;justify-content:center">Come in</button>
+    </form>
+  </div>
+</div>
+
+<div id="site"><div class="wrap">
+  <div class="hero">
+    <img src="site/icon-192.png" alt="">
+    <div>
+      <div class="eyebrow">Retro gaming for game nights</div>
+      <h1>RetroBat Wizard</h1>
+    </div>
+  </div>
+  <p>A portable retro game setup built for party and co-op nights, mostly Nintendo, plus some silly classics. RetroBat runs the games. The wizard sets everything up for you, keeps it up to date with one button, finds your friends online, and gets netplay going without the headache.</p>
+  <div class="video">Video walkthrough coming soon</div>
+
+  <h2>Get started</h2>
+  <div class="card">
+    <ol class="steps">
+      <li><b>Get RetroBat (free).</b> Go to <a href="https://www.retrobat.org" target="_blank" rel="noopener">retrobat.org</a> and download it. If you see a standalone or 7z download, take that one. Put it on a drive with lots of room, ideally an external drive, so your games go wherever you go. Use a short folder like <code>D:\RetroBat</code>: not right at the top of the drive, no spaces, not in Program Files.</li>
+      <li><b>Open RetroBat once</b> by double-clicking <code>RetroBat.exe</code>, let it finish starting up, set up your controller if it asks, then close it.</li>
+      <li><b>Download the wizard installer</b> with the button below and unzip it <b>into your RetroBat folder</b>, right next to <code>RetroBat.exe</code>.</li>
+      <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It downloads the wizard, then asks a few quick questions (pick Quick setup if you are not sure). Everything can be changed later inside the wizard.</li>
+      <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
+    </ol>
+    <a class="btn" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the wizard installer</a>
+    <p class="note">Windows may warn about a downloaded script. Choose More info, then Run anyway. You never need a GitHub account.</p>
+  </div>
+
+  <h2>Free game library</h2>
+  <p>Homebrew, fan-made and free games picked out for game nights. The easy way is the wizard's <b>Games</b> tab, which puts them in the right place for you. Or download them here.</p>
+  <div id="lib"><p class="note">Loading the library...</p></div>
+
+  <h2>Good to know</h2>
+  <div class="card">
+    <p><b>Online with friends.</b> The wizard's Netplay tab walks you through it, one console at a time. NES, SNES and N64 have the least lag. GameCube and Wii go through Dolphin with a code you share. Everything else works through Parsec.</p>
+    <p><b>Profiles.</b> Make one to add friends, see who is online and what they are playing, or play as a guest and nothing is sent at all.</p>
+    <p><b>Something broke, or want a game added?</b> Use Report a bug or Suggest something on the wizard's Help tab.</p>
+    <p class="note">This is a side project with no real online protection. Shared with other people who use the wizard: your profile name, picture, status, friends list and what you are playing. Nothing else leaves your drive. Only add games you own.</p>
+  </div>
+</div></div>
+
+<script>
+// ---- the gate: a polite front door, not a lock. Two passwords work. ----
+const KEYS = ["d548752e6f50b81eb78881032332c731273778926bd41d0641c202cdbee7d9c6",
+              "845785e09be3ed7cbee52fc3150b042d132cfe27e8c5d6aca8b65ecc1d1af37f"];
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+async function sha(t) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+  return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+}
+function letIn() { document.body.classList.add("in"); loadLibrary(); }
+document.getElementById("gateForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const v = document.getElementById("pw").value.trim().toLowerCase();
+  if (KEYS.includes(await sha("rbw:" + v))) { store("rbw-in", "1"); letIn(); }
+  else { document.getElementById("err").textContent = "That is not it. Try again."; }
+});
+if (store("rbw-in") === "1") letIn();
+
+// ---- the library, straight from library/library.json ----
+const CONSOLES = { nes: "NES", snes: "SNES", n64: "Nintendo 64", gb: "Game Boy", gbc: "Game Boy Color", gba: "Game Boy Advance",
+  nds: "Nintendo DS", "3ds": "3DS", gamecube: "GameCube", wii: "Wii", wiiu: "Wii U", flash: "Flash", scummvm: "ScummVM" };
+function esc(s) { return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+async function loadLibrary() {
+  const box = document.getElementById("lib");
+  try {
+    const r = await fetch("library/library.json", { cache: "no-store" });
+    const d = await r.json();
+    const games = d.games || [];
+    if (!games.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
+    box.innerHTML = games.map(g => {
+      const mb = ((g.files || []).reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
+      const links = (g.files || []).map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${g.files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
+      return `<div class="card game"><div><span class="tag">${esc(CONSOLES[g.system] || g.system)}</span><b>${esc(g.title)}</b>
+        <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
+        ${g.description ? `<p>${esc(g.description)}</p>` : ""}
+        <p class="note">Goes in <code>roms\\${esc(g.system)}</code> inside your RetroBat folder.</p></div><div>${links}</div></div>`;
+    }).join("");
+  } catch (e) { box.innerHTML = '<div class="card"><p>The library could not load right now.</p></div>'; }
+}
+
+// ---- themes: midnight, paper, sepia, chameleon (same as Study Decks) ----
+const THEMES = {
+  midnight:  { label: "Midnight",  swatch: "#0f0f13" },
+  paper:     { label: "Paper",     swatch: "#f6f3ec" },
+  sepia:     { label: "Sepia",     swatch: "#2a211a" },
+  chameleon: { label: "Chameleon", swatch: "conic-gradient(#f87171,#fbbf24,#34d399,#38bdf8,#a78bfa,#f87171)" },
+};
+const CHAM_VARS = ["bg","surface","surface2","border","border2","text","dim","muted","accent","ok","bad","star","shadow","accBg"];
+function chameleon() {
+  const h = Math.floor(Math.random() * 360), acc = (h + 120 + Math.floor(Math.random() * 110)) % 360;
+  const H = (x, s, l, a) => `hsl(${x} ${s}% ${l}%${a ? " / " + a + "%" : ""})`;
+  const light = Math.random() < 0.28;
+  const v = light
+    ? { bg: H(h,32,95), surface: H(h,42,99), surface2: H(h,26,91), border: H(h,22,83), border2: H(h,20,66), text: H(h,38,11),
+        dim: H(h,18,33), muted: H(h,14,50), accent: H(acc,66,37), ok: "hsl(158 72% 29%)", bad: "hsl(0 72% 44%)",
+        star: "hsl(32 88% 34%)", shadow: "rgba(40,35,20,.16)", accBg: H(acc,66,45,11) }
+    : { bg: H(h,26,7), surface: H(h,22,12), surface2: H(h,26,9), border: H(h,18,21), border2: H(h,18,33), text: H(h,26,95),
+        dim: H(h,14,74), muted: H(h,12,50), accent: H(acc,74,63), ok: "hsl(158 66% 56%)", bad: "hsl(0 82% 73%)",
+        star: "hsl(38 92% 55%)", shadow: "rgba(0,0,0,.5)", accBg: H(acc,74,63,14) };
+  CHAM_VARS.forEach(k => document.documentElement.style.setProperty("--" + k, v[k]));
+}
+function applyTheme(t) {
+  if (!THEMES[t]) t = "midnight";
+  document.documentElement.setAttribute("data-theme", t);
+  if (t === "chameleon") chameleon(); else CHAM_VARS.forEach(k => document.documentElement.style.removeProperty("--" + k));
+  document.getElementById("themeColorMeta").setAttribute("content", getComputedStyle(document.body).backgroundColor);
+  store("rbw-theme", t);
+  drawMenu(t);
+}
+function drawMenu(cur) {
+  const m = document.getElementById("themeMenu");
+  m.innerHTML = Object.entries(THEMES).map(([k, t]) =>
+    `<button data-t="${k}" class="${k === cur ? "sel" : ""}"><span class="swatch" style="background:${t.swatch}"></span>${t.label}${k === "chameleon" && cur === "chameleon" ? " (tap again)" : ""}</button>`).join("");
+  m.querySelectorAll("button").forEach(b => b.addEventListener("click", () => applyTheme(b.dataset.t)));
+}
+document.getElementById("themeBtn").addEventListener("click", () => document.getElementById("themeMenu").classList.toggle("open"));
+document.addEventListener("click", e => { if (!e.target.closest(".thememenu,.themebtn")) document.getElementById("themeMenu").classList.remove("open"); });
+applyTheme(store("rbw-theme") || "midnight");
+</script>
+</body>
+</html>

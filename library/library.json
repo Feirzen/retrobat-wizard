@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
+  "games": []
+}
