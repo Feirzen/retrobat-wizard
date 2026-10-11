@@ -17,10 +17,17 @@ class H(BaseHTTPRequestHandler):
     def body(self):
         n = int(self.headers.get('Content-Length') or 0)
         return self.rfile.read(n)
+    # Two keys since 2026-10-11: the library key (github_pat_TEST) may only
+    # touch the PUBLIC repo's list, the friends key (github_pat_SOCIAL) only
+    # the PRIVATE repo's release, where the files now live.
     def auth(self):
-        if self.headers.get('Authorization') != 'Bearer github_pat_TEST':
-            self.send(401, {'message': 'Bad credentials'}); return False
-        return True
+        a = self.headers.get('Authorization')
+        if self.path == '/state': return True
+        pub = '/repos/Feirzen/retrobat-wizard/' in self.path
+        priv = '/repos/Feirzen/retrobat-wizard-social/' in self.path
+        if (pub and a == 'Bearer github_pat_TEST') or (priv and a == 'Bearer github_pat_SOCIAL'):
+            return True
+        self.send(401, {'message': 'Bad credentials'}); return False
     def rel(self):
         r = dict(state['release']); r['assets'] = list(state['assets'].values()); return r
     def do_GET(self):
@@ -42,7 +49,7 @@ class H(BaseHTTPRequestHandler):
             name = self.path.split('name=')[1]
             state['next'] += 1
             state['assets'][name] = {'id': state['next'], 'name': name, 'size': len(b)}
-            return self.send(201, {'browser_download_url': 'https://github.com/Feirzen/retrobat-wizard/releases/download/library/' + name, 'size': len(b)})
+            return self.send(201, {'name': name, 'url': 'https://api.github.com/repos/Feirzen/retrobat-wizard-social/releases/assets/%d' % state['next'], 'size': len(b)})
         self.send(404, {})
     def do_DELETE(self):
         if not self.auth(): return

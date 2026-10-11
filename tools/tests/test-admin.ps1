@@ -18,10 +18,14 @@ try {
 
     $r = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '1-2' 'A test.' $sync
     Assert (-not $r.Ok -and $r.Message -like '*no library key*') 'no key: stops'
+    New-Item -ItemType Directory -Path (Join-Path $ws 'social') -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $ws 'social/social-token.txt'), 'github_pat_SOCIAL')
     Assert (-not (Set-AdminLibKey $ws 'nonsense')) 'bad key refused'
     Assert (Set-AdminLibKey $ws 'github_pat_WRONG') 'key saved'
     $r = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '1-2' 'A test.' $sync
     Assert (-not $r.Ok -and $r.Message -like '*refused the library key*') 'wrong key: plain message'
+    $st0 = Invoke-RestMethod "http://127.0.0.1:$port/state"
+    Assert (@($st0.assets).Count -eq 0) 'wrong key: stops before uploading anything'
     [void](Set-AdminLibKey $ws 'github_pat_TEST')
     $r = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '1-2' 'A test.' $sync
     Assert $r.Ok ('publish works: ' + $r.Message)
@@ -32,7 +36,7 @@ try {
     Assert ($null -ne $g -and $g.system -eq 'snes' -and $g.players -eq '1-2') 'entry added'
     Assert ($g.files[0].name -eq 'My Game (v1).sfc' -and $g.files[0].size -eq $bytes.Length) 'file name and size kept'
     Assert ($g.files[0].sha256 -eq (Get-FileHash $game -Algorithm SHA256).Hash.ToLower()) 'checksum right'
-    Assert ($g.files[0].url -like 'https://github.com/*/releases/download/library/my-game__*') 'download url'
+    Assert ($g.files[0].url -eq 'private:my-game__My.Game..v1..sfc') 'file kept private, listed by name'
     Assert (@($st.library.games).Count -eq 2 -and $st.library.note -eq 'n \ x') 'old game and note kept'
     # again: replaces, never duplicates
     $r2 = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '2' 'Again.' $sync

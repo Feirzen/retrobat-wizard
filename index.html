@@ -170,7 +170,11 @@ async function loadLibrary() {
     if (!games.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
     box.innerHTML = games.map(g => {
       const mb = ((g.files || []).reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
-      const links = (g.files || []).map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${g.files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
+      // A file kept private (2026-10-11) is listed by name only: it can be
+      // downloaded from the wizard's Games tab, never from here.
+      const priv = (g.files || []).some(f => String(f.url || "").startsWith("private:"));
+      const links = priv ? `<span class="note">Get it in the wizard: Games tab &gt; Online library</span>`
+        : (g.files || []).map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${g.files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
       return `<div class="card game"><div><span class="tag">${esc(CONSOLES[g.system] || g.system)}</span><b>${esc(g.title)}</b>
         <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
         ${g.description ? `<p>${esc(g.description)}</p>` : ""}
