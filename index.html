@@ -15,9 +15,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="site/favicon-32.png">
 <link rel="apple-touch-icon" href="site/apple-touch-icon.png">
 <link rel="manifest" href="site/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 /* Same four themes as Study Decks: every colour is a variable, a theme is one
-   attribute on <html>, chameleon writes its own variables at runtime. */
+   attribute on <html>, chameleon writes its own variables at runtime.
+   Look (Steven, 2026-10-11): light retro. Square corners, hard pixel shadows,
+   a pixel font on headings and labels only, so reading stays easy. */
 :root, html[data-theme="midnight"] {
   --bg:#0f0f13; --surface:#1a1a24; --surface2:#16161e; --border:#2a2a38; --border2:#3a3a4c;
   --text:#f0f0f5; --dim:#bbbbc6; --muted:#6d6d7d; --accent:#0EA5E9; --ok:#22d3a0; --bad:#f87171;
@@ -38,51 +43,114 @@ html, body { margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: Georgia, 'Times New Roman', serif;
   min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background-color .35s ease, color .35s ease; }
 a { color: var(--accent); }
-.wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
-.eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
-h1 { font-size: 34px; line-height: 1.15; margin: 6px 0 0; }
-h2 { font-size: 22px; margin: 40px 0 10px; }
-p, li { line-height: 1.6; color: var(--dim); }
-.card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 18px 20px; margin: 12px 0; }
-.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--bg); border: none;
-  border-radius: 10px; padding: 11px 18px; font: inherit; font-weight: bold; cursor: pointer; text-decoration: none; }
-.btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
-.btn:active { transform: scale(.97); }
-.hero { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-.hero img { width: 96px; height: 96px; image-rendering: pixelated; border-radius: 20px; }
-.hero img.padart { width: 150px; height: auto; border-radius: 0; }
-.video { aspect-ratio: 16/9; background: var(--surface2); border: 1.5px dashed var(--border2); border-radius: 14px;
-  display: flex; align-items: center; justify-content: center; color: var(--muted); margin-top: 18px; }
-ol.steps { padding-left: 22px; }
-ol.steps li { margin: 10px 0; }
+img.px { image-rendering: pixelated; }
+.pixel { font-family: 'Press Start 2P', ui-monospace, monospace; font-weight: normal; letter-spacing: .5px; }
+h1, h2, h3 { font-family: 'Press Start 2P', ui-monospace, monospace; font-weight: normal; line-height: 1.5; }
+h1 { font-size: 24px; margin: 8px 0 0; }
+h2 { font-size: 15px; margin: 34px 0 12px; }
+h3 { font-size: 12px; margin: 0; }
+p, li { line-height: 1.65; color: var(--dim); }
+.eyebrow { font-family: 'Press Start 2P', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+/* a dotted pixel line, like the banner's */
+.rule { height: 4px; margin: 26px 0; background: repeating-linear-gradient(90deg, var(--border2) 0 8px, transparent 8px 14px); }
+.card { background: var(--surface); border: 2px solid var(--border2); border-radius: 2px; padding: 18px 20px; margin: 14px 0;
+  box-shadow: 4px 4px 0 var(--border); }
+.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--bg); border: 2px solid var(--accent);
+  border-radius: 2px; padding: 11px 16px; font-family: 'Press Start 2P', monospace; font-size: 11px; line-height: 1.4;
+  cursor: pointer; text-decoration: none; box-shadow: 3px 3px 0 var(--border2); transition: transform .06s, box-shadow .06s; }
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--border2); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--border2); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.hero { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+.hero img { width: 160px; height: auto; }
+.video { aspect-ratio: 16/5; background: var(--surface2); border: 2px dashed var(--border2); border-radius: 2px;
+  display: flex; align-items: center; justify-content: center; color: var(--muted); margin-top: 18px; font-family: 'Press Start 2P', monospace; font-size: 10px; }
+ol.steps { padding-left: 0; list-style: none; counter-reset: s; }
+ol.steps li { margin: 14px 0; padding-left: 44px; position: relative; counter-increment: s; }
+ol.steps li::before { content: counter(s); position: absolute; left: 0; top: 2px; width: 28px; height: 28px; display: flex;
+  align-items: center; justify-content: center; font-family: 'Press Start 2P', monospace; font-size: 11px;
+  background: var(--accBg); color: var(--accent); border: 2px solid var(--accent); }
 ol.steps b { color: var(--text); }
-code { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-size: 14px; color: var(--text); }
+code { background: var(--surface2); border: 1px solid var(--border2); border-radius: 0; padding: 1px 6px; font-size: 14px; color: var(--text); }
 .note { font-size: 14px; color: var(--muted); }
-.game { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; }
+
+/* ---- layout: an icon rail on the left, one panel at a time ---- */
+.rail { position: fixed; left: 0; top: 0; bottom: 0; width: 92px; background: var(--surface2); border-right: 2px solid var(--border2);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 0; z-index: 50; }
+.rail a { width: 76px; padding: 10px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 7px;
+  text-decoration: none; color: var(--muted); border: 2px solid transparent; font-family: 'Press Start 2P', monospace; font-size: 8px; }
+.rail a img { width: 48px; height: 44px; object-fit: contain; image-rendering: pixelated; filter: grayscale(.6) brightness(.85); transition: filter .15s, transform .15s; }
+.rail a:hover img { filter: none; transform: translateY(-2px); }
+.rail a.on { color: var(--text); border-color: var(--accent); background: var(--accBg); }
+.rail a.on img { filter: none; }
+.rail a.on span::before { content: "\25B6"; margin-right: 3px; animation: blink 1s steps(1, end) infinite; color: var(--accent); }
+@keyframes blink { 50% { opacity: 0; } }
+main { margin-left: 92px; }
+.wrap { max-width: 800px; margin: 0 auto; padding: 34px 20px 70px; }
+.panel { display: none; }
+.panel.on { display: block; animation: slidein .22s ease-out; }
+@keyframes slidein { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+
+/* ---- the library: one fold-up section per console ---- */
+details.sys { margin: 16px 0; background: var(--surface); border: 2px solid var(--border2); box-shadow: 4px 4px 0 var(--border); }
+details.sys > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+  background: var(--surface2); border-bottom: 2px solid transparent; user-select: none; }
+details.sys[open] > summary { border-bottom-color: var(--border2); }
+details.sys > summary::-webkit-details-marker { display: none; }
+details.sys > summary img { width: 56px; height: 40px; object-fit: contain; image-rendering: pixelated; }
+details.sys > summary .count { margin-left: auto; font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--muted); }
+details.sys > summary .arrow { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--accent); transition: transform .15s; }
+details.sys[open] > summary .arrow { transform: rotate(90deg); }
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; padding: 16px; }
+.game { background: var(--surface2); border: 2px solid var(--border2); display: flex; flex-direction: column; }
+.game .art { height: 170px; padding: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; border-bottom: 2px solid var(--border2); }
+.game .art img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.game .art img.fallback { width: 45%; height: auto; image-rendering: pixelated; opacity: .55; }
+.game .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.game b { color: var(--text); line-height: 1.35; }
 .game .meta { font-size: 13px; color: var(--muted); }
-.tag { display: inline-block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent);
-  background: var(--accBg); border-radius: 6px; padding: 2px 7px; margin-right: 6px; }
-/* the gate */
-#gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
-#gate .card { width: 100%; max-width: 380px; text-align: center; }
-#gate input { width: 100%; font: inherit; font-size: 17px; padding: 11px 13px; border-radius: 10px; margin: 14px 0 10px;
-  background: var(--surface2); color: var(--text); border: 1.5px solid var(--border2); }
-#gate .err { color: var(--bad); min-height: 22px; font-size: 14px; }
+.game p { margin: 0; font-size: 14px; line-height: 1.5; }
+.game .get { margin-top: auto; padding-top: 8px; }
+.game .get .btn { font-size: 9px; padding: 8px 10px; }
+
+/* ---- the gate: just the password box ---- */
+#gate { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 16px; }
+#gate img { width: 88px; height: 88px; image-rendering: pixelated; }
+#gateForm { display: flex; width: 100%; max-width: 330px; }
+#gate input { flex: 1; min-width: 0; font: inherit; font-size: 17px; padding: 12px 14px; border-radius: 0;
+  background: var(--surface); color: var(--text); border: 2px solid var(--border2); border-right: none; outline: none; }
+#gate input:focus { border-color: var(--accent); }
+#gate button { border-radius: 0; box-shadow: none; padding: 0 16px; font-size: 14px; }
+#gate .err { color: var(--bad); min-height: 18px; font-family: 'Press Start 2P', monospace; font-size: 9px; }
+#gate.shake #gateForm { animation: no .3s steps(2, end); }
+@keyframes no { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 #site { display: none; }
 body.in #gate { display: none; }
 body.in #site { display: block; }
-/* theme menu, top right */
-.themebtn { position: fixed; top: 10px; right: 12px; z-index: 60; width: 36px; height: 36px; border-radius: 10px;
-  background: var(--surface); border: 1px solid var(--border); color: var(--dim); cursor: pointer; font-size: 16px; }
-.thememenu { position: fixed; top: 52px; right: 12px; z-index: 61; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 6px; min-width: 172px; box-shadow: 0 12px 34px var(--shadow); display: none; }
+
+/* ---- theme menu, top right ---- */
+.themebtn { position: fixed; top: 10px; right: 12px; z-index: 60; width: 38px; height: 38px; border-radius: 0;
+  background: var(--surface); border: 2px solid var(--border2); color: var(--dim); cursor: pointer; font-size: 16px; box-shadow: 3px 3px 0 var(--border); }
+.thememenu { position: fixed; top: 56px; right: 12px; z-index: 61; background: var(--surface); border: 2px solid var(--border2);
+  border-radius: 0; padding: 6px; min-width: 180px; box-shadow: 5px 5px 0 var(--shadow); display: none; }
 .thememenu.open { display: block; }
 .thememenu button { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; color: var(--text);
-  cursor: pointer; padding: 10px 12px; border-radius: 8px; font: inherit; font-size: 14px; text-align: left; }
+  cursor: pointer; padding: 10px 12px; border-radius: 0; font: inherit; font-size: 14px; text-align: left; }
 .thememenu button:hover { background: var(--surface2); }
 .thememenu button.sel { color: var(--accent); font-weight: bold; }
-.swatch { width: 16px; height: 16px; border-radius: 5px; border: 1px solid var(--border2); flex: 0 0 16px; }
-@media (max-width: 520px) { h1 { font-size: 28px; } .game { flex-direction: column; } }
+.swatch { width: 16px; height: 16px; border-radius: 0; border: 1px solid var(--border2); flex: 0 0 16px; }
+
+/* phones: the rail moves to the bottom */
+@media (max-width: 720px) {
+  .rail { top: auto; right: 0; width: auto; height: 74px; flex-direction: row; justify-content: center; gap: 10px;
+    border-right: none; border-top: 2px solid var(--border2); padding: 0 8px; }
+  .rail a { width: 96px; padding: 6px 0; }
+  .rail a img { width: 38px; height: 30px; }
+  main { margin-left: 0; padding-bottom: 80px; }
+  h1 { font-size: 19px; }
+  .hero img { width: 120px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
@@ -90,54 +158,68 @@ body.in #site { display: block; }
 <div class="thememenu" id="themeMenu"></div>
 
 <div id="gate">
-  <div class="card">
-    <img src="site/icon-192.png" alt="" width="72" height="72" style="image-rendering:pixelated;border-radius:16px">
-    <h1 style="font-size:26px">RetroBat Wizard</h1>
-    <p>Friends and family only. Ask whoever sent you the link for the password.</p>
-    <form id="gateForm" autocomplete="off">
-      <input id="pw" type="password" placeholder="Password" aria-label="Password">
-      <div class="err" id="err"></div>
-      <button class="btn" type="submit" style="width:100%;justify-content:center">Come in</button>
-    </form>
-  </div>
+  <img src="site/icon-192.png" alt="RetroBat Wizard">
+  <form id="gateForm" autocomplete="off">
+    <input id="pw" type="password" placeholder="Password" aria-label="Password" autofocus>
+    <button class="btn" type="submit" aria-label="Come in">&#9654;</button>
+  </form>
+  <div class="err" id="err"></div>
 </div>
 
-<div id="site"><div class="wrap">
-  <div class="hero">
-    <img class="padart" src="site/pad-anim.svg" alt="">
-    <div>
-      <div class="eyebrow">Retro gaming for game nights</div>
-      <h1>RetroBat Wizard</h1>
+<div id="site">
+  <nav class="rail" aria-label="Sections">
+    <a href="#home" data-p="home"><img src="site/pad-anim.svg" alt=""><span>Home</span></a>
+    <a href="#start" data-p="start"><img src="drive/wizard/page-help.png" alt=""><span>Start</span></a>
+    <a href="#library" data-p="library"><img src="drive/wizard/page-saves.png" alt=""><span>Games</span></a>
+  </nav>
+  <main><div class="wrap">
+
+  <section class="panel" id="p-home">
+    <div class="hero">
+      <img src="site/pad-anim.svg" alt="">
+      <div>
+        <div class="eyebrow">Retro gaming for game nights</div>
+        <h1>RetroBat Wizard</h1>
+      </div>
     </div>
-  </div>
-  <p>A portable retro game setup built for party and co-op nights, mostly Nintendo, plus some silly classics. RetroBat runs the games. The wizard sets everything up for you, keeps it up to date with one button, finds your friends online, and gets netplay going without the headache.</p>
-  <div class="video">Video walkthrough coming soon</div>
+    <p>A portable retro game setup built for party and co-op nights, mostly Nintendo, plus some silly classics. RetroBat runs the games. The wizard sets everything up for you, keeps it up to date with one button, finds your friends online, and gets netplay going without the headache.</p>
+    <div class="video">Video coming soon</div>
+    <p style="margin-top:22px"><a class="btn" href="#start">Get started &#9654;</a> &nbsp; <a class="btn ghost" href="#library">Game library</a></p>
+    <div class="rule"></div>
+    <h2>Good to know</h2>
+    <div class="card">
+      <p><b>Online with friends.</b> The wizard's Netplay tab walks you through it, one console at a time. NES, SNES and N64 have the least lag. GameCube and Wii go through Dolphin with a code you share. Everything else works through Parsec.</p>
+      <p><b>Profiles.</b> Make one to add friends, see who is online and what they are playing, or play as a guest and nothing is sent at all.</p>
+      <p><b>Something broke, or want a game added?</b> Use Report a bug or Suggest something on the wizard's Help tab.</p>
+      <p class="note">This is a side project with no real online protection. Shared with other people who use the wizard: your profile name, picture, status, friends list and what you are playing. Nothing else leaves your drive. Only add games you own.</p>
+    </div>
+  </section>
 
-  <h2>Get started</h2>
-  <div class="card">
-    <ol class="steps">
-      <li><b>Get RetroBat (free).</b> Go to <a href="https://www.retrobat.org" target="_blank" rel="noopener">retrobat.org</a> and download it. If you see a standalone or 7z download, take that one. Put it on a drive with lots of room, ideally an external drive, so your games go wherever you go. Use a short folder like <code>D:\RetroBat</code>: not right at the top of the drive, no spaces, not in Program Files.</li>
-      <li><b>Open RetroBat once</b> by double-clicking <code>RetroBat.exe</code>, let it finish starting up, set up your controller if it asks, then close it.</li>
-      <li><b>Download the wizard installer</b> with the button below and unzip it <b>into your RetroBat folder</b>, right next to <code>RetroBat.exe</code>.</li>
-      <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It downloads the wizard, then asks a few quick questions (pick Quick setup if you are not sure). Everything can be changed later inside the wizard.</li>
-      <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
-    </ol>
-    <a class="btn" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the wizard installer</a>
-    <p class="note">Windows may warn about a downloaded script. Choose More info, then Run anyway. You never need a GitHub account.</p>
-  </div>
+  <section class="panel" id="p-start">
+    <div class="eyebrow">Five steps</div>
+    <h1>Get started</h1>
+    <div class="card">
+      <ol class="steps">
+        <li><b>Get RetroBat (free).</b> Go to <a href="https://www.retrobat.org" target="_blank" rel="noopener">retrobat.org</a> and download it. If you see a standalone or 7z download, take that one. Put it on a drive with lots of room, ideally an external drive, so your games go wherever you go. Use a short folder like <code>D:\RetroBat</code>: not right at the top of the drive, no spaces, not in Program Files.</li>
+        <li><b>Open RetroBat once</b> by double-clicking <code>RetroBat.exe</code>, let it finish starting up, set up your controller if it asks, then close it.</li>
+        <li><b>Download the wizard installer</b> with the button below and unzip it <b>into your RetroBat folder</b>, right next to <code>RetroBat.exe</code>.</li>
+        <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It downloads the wizard, then asks a few quick questions (pick Quick setup if you are not sure). Everything can be changed later inside the wizard.</li>
+        <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
+      </ol>
+      <a class="btn" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the installer</a>
+      <p class="note">Windows may warn about a downloaded script. Choose More info, then Run anyway. You never need a GitHub account.</p>
+    </div>
+  </section>
 
-  <h2>Free game library</h2>
-  <p>Homebrew, fan-made and free games picked out for game nights. The easy way is the wizard's <b>Games</b> tab, which puts them in the right place for you. Or download them here.</p>
-  <div id="lib"><p class="note">Loading the library...</p></div>
+  <section class="panel" id="p-library">
+    <div class="eyebrow">Picked for game nights</div>
+    <h1>Game library</h1>
+    <p>The easy way to get these is the wizard's <b>Games</b> tab, which puts them in the right place for you. Tap a console to fold it up.</p>
+    <div id="lib"><p class="note">Loading the library...</p></div>
+  </section>
 
-  <h2>Good to know</h2>
-  <div class="card">
-    <p><b>Online with friends.</b> The wizard's Netplay tab walks you through it, one console at a time. NES, SNES and N64 have the least lag. GameCube and Wii go through Dolphin with a code you share. Everything else works through Parsec.</p>
-    <p><b>Profiles.</b> Make one to add friends, see who is online and what they are playing, or play as a guest and nothing is sent at all.</p>
-    <p><b>Something broke, or want a game added?</b> Use Report a bug or Suggest something on the wizard's Help tab.</p>
-    <p class="note">This is a side project with no real online protection. Shared with other people who use the wizard: your profile name, picture, status, friends list and what you are playing. Nothing else leaves your drive. Only add games you own.</p>
-  </div>
-</div></div>
+  </div></main>
+</div>
 
 <script>
 // ---- the gate: a polite front door, not a lock. Two passwords work. ----
@@ -148,33 +230,72 @@ async function sha(t) {
   const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
   return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
 }
-function letIn() { document.body.classList.add("in"); loadLibrary(); }
+let libLoaded = false;
+function letIn() { document.body.classList.add("in"); show(); if (!libLoaded) { libLoaded = true; loadLibrary(); } }
 document.getElementById("gateForm").addEventListener("submit", async e => {
   e.preventDefault();
   const v = document.getElementById("pw").value.trim().toLowerCase();
   if (KEYS.includes(await sha("rbw:" + v))) { store("rbw-in", "1"); letIn(); }
-  else { document.getElementById("err").textContent = "That is not it. Try again."; }
+  else {
+    const g = document.getElementById("gate");
+    document.getElementById("err").textContent = "Try again";
+    g.classList.remove("shake"); void g.offsetWidth; g.classList.add("shake");
+  }
 });
+
+// ---- tabs: the address bar remembers which one (#home, #start, #library) ----
+function show() {
+  let p = (location.hash || "#home").slice(1);
+  if (!document.getElementById("p-" + p)) p = "home";
+  document.querySelectorAll(".panel").forEach(s => s.classList.toggle("on", s.id === "p-" + p));
+  document.querySelectorAll(".rail a").forEach(a => a.classList.toggle("on", a.dataset.p === p));
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", show);
 if (store("rbw-in") === "1") letIn();
 
-// ---- the library, straight from library/library.json ----
-const CONSOLES = { nes: "NES", snes: "SNES", n64: "Nintendo 64", gb: "Game Boy", gbc: "Game Boy Color", gba: "Game Boy Advance",
-  nds: "Nintendo DS", "3ds": "3DS", gamecube: "GameCube", wii: "Wii", wiiu: "Wii U", flash: "Flash", scummvm: "ScummVM" };
+// ---- the library, straight from library/library.json, one section per console ----
+// Order and pictures. The pictures are the wizard's own console icons.
+const W = "drive/wizard/";
+const CONSOLES = [
+  ["nes", "NES", "profile-nes"], ["snes", "SNES", "profile-snes"], ["n64", "Nintendo 64", "profile-n64"],
+  ["gamecube", "GameCube", "profile-gamecube"], ["wii", "Wii", "profile-wiimote"], ["wiiu", "Wii U", "profile-wiimote"],
+  ["switch", "Switch", "profile-switch"], ["gb", "Game Boy", "profile-gameboy"], ["gbc", "Game Boy Color", "profile-gameboy"],
+  ["gba", "Game Boy Advance", "profile-gba"], ["nds", "Nintendo DS", "profile-ds"], ["3ds", "3DS", "profile-ds"],
+  ["flash", "Flash", "profile-pc"], ["scummvm", "ScummVM", "profile-pc"], ["windows", "PC", "profile-pc"]
+];
+const pic = sys => W + ((CONSOLES.find(c => c[0] === sys) || [0, 0, "profile-pc"])[2]) + ".png";
 function esc(s) { return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function card(g) {
+  const files = g.files || [];
+  const mb = (files.reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
+  // A private file (2026-10-11) is listed by name only: it downloads from the
+  // wizard's Games tab, never from here.
+  const priv = files.some(f => String(f.url || "").startsWith("private:"));
+  const get = priv ? `<span class="note">Get it in the wizard: Games tab</span>`
+    : files.map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
+  // Box art comes from the uploader (library/art/<id>.png). No art: the console icon.
+  const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
+    : `<img class="fallback" src="${pic(g.system)}" alt="">`;
+  return `<div class="game"><div class="art">${art}</div><div class="body"><b>${esc(g.title)}</b>
+    <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
+    ${g.description ? `<p>${esc(g.description)}</p>` : ""}<div class="get">${get}</div></div></div>`;
+}
 async function loadLibrary() {
   const box = document.getElementById("lib");
   try {
     const r = await fetch("library/library.json", { cache: "no-store" });
-    const d = await r.json();
-    const games = d.games || [];
+    const games = (await r.json()).games || [];
     if (!games.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
-    box.innerHTML = games.map(g => {
-      const mb = ((g.files || []).reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
-      const links = (g.files || []).map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${g.files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
-      return `<div class="card game"><div><span class="tag">${esc(CONSOLES[g.system] || g.system)}</span><b>${esc(g.title)}</b>
-        <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
-        ${g.description ? `<p>${esc(g.description)}</p>` : ""}
-        <p class="note">Goes in <code>roms\\${esc(g.system)}</code> inside your RetroBat folder.</p></div><div>${links}</div></div>`;
+    const order = CONSOLES.map(c => c[0]);
+    const systems = [...new Set(games.map(g => g.system))].sort((a, b) =>
+      (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
+    box.innerHTML = systems.map(sys => {
+      const list = games.filter(g => g.system === sys).sort((a, b) => String(a.title).localeCompare(String(b.title)));
+      const name = (CONSOLES.find(c => c[0] === sys) || [0, sys])[1];
+      return `<details class="sys" open><summary><img src="${pic(sys)}" alt=""><h3>${esc(name)}</h3>
+        <span class="count">${list.length} game${list.length === 1 ? "" : "s"}</span><span class="arrow">&#9654;</span></summary>
+        <div class="games">${list.map(card).join("")}</div></details>`;
     }).join("");
   } catch (e) { box.innerHTML = '<div class="card"><p>The library could not load right now.</p></div>'; }
 }
