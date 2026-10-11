@@ -7,7 +7,7 @@ state = {'release': None, 'assets': {}, 'next': 100,
          'library': json.dumps({'version': 1, 'note': 'n \\ x', 'games': [
              {'id': 'old', 'title': 'Old Game', 'system': 'nes', 'players': '1', 'description': '',
               'added': '2026-01-01', 'files': [{'name': 'old.nes', 'url': 'https://github.com/x', 'size': 3, 'sha256': 'a' * 64}]}]}),
-         'libsha': 's1'}
+         'libsha': 's1', 'art': {}}
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
     def send(self, code, obj=None):
@@ -34,10 +34,14 @@ class H(BaseHTTPRequestHandler):
         if not self.auth(): return
         if self.path.endswith('/releases/tags/library'):
             return self.send(404, {}) if state['release'] is None else self.send(200, self.rel())
+        if '/contents/library/art/' in self.path:
+            a = state['art'].get(self.path.split('/contents/')[1])
+            return self.send(404, {}) if a is None else self.send(200, {'sha': a['sha']})
         if self.path.endswith('/contents/library/library.json'):
             return self.send(200, {'sha': state['libsha'], 'content': base64.b64encode(state['library'].encode()).decode()})
         if self.path == '/state':
-            return self.send(200, {'assets': list(state['assets']), 'library': json.loads(state['library'])})
+            return self.send(200, {'assets': list(state['assets']), 'library': json.loads(state['library']),
+                                   'art': {k: v['size'] for k, v in state['art'].items()}})
         self.send(404, {})
     def do_POST(self):
         if not self.auth(): return
@@ -60,6 +64,13 @@ class H(BaseHTTPRequestHandler):
     def do_PUT(self):
         if not self.auth(): return
         b = json.loads(self.body())
+        if '/contents/library/art/' in self.path:
+            path = self.path.split('/contents/')[1]
+            old = state['art'].get(path)
+            if old is not None and b.get('sha') != old['sha']: return self.send(422, {})
+            n = len(base64.b64decode(b['content']))
+            state['art'][path] = {'sha': 'a%d' % (len(state['art']) + 1 + (old is not None) * 50), 'size': n}
+            return self.send(201 if old is None else 200, {'content': {'sha': state['art'][path]['sha']}})
         if b.get('sha') != state['libsha']: return self.send(409, {})
         state['library'] = base64.b64decode(b['content']).decode(); state['libsha'] = 's%d' % (int(state['libsha'][1:]) + 1)
         self.send(200, {'content': {'sha': state['libsha']}})

@@ -34,9 +34,10 @@ def pad_pixels():
         else:
             c = M
         px[(x, y)] = (c, 'body')
-    for x in range(6, 13):
+    # a 6 x 6 cross (Steven, 2026-10-11: the old 7 x 8 one was too big)
+    for x in range(7, 13):
         px[(x, 16)] = (K, 'dpad'); px[(x, 17)] = (K, 'dpad')
-    for y in range(13, 21):
+    for y in range(14, 20):
         px[(9, y)] = (K, 'dpad'); px[(10, y)] = (K, 'dpad')
     px[(9, 16)] = (KL, 'dpad')
     def btn(x, y, part):
@@ -68,41 +69,72 @@ def base32():
 def hexc(c):
     return '#%02x%02x%02x' % c[:3]
 
+# The homepage loop (Steven, 2026-10-11): a burst of button presses, then a
+# rest, then again. Each press throws a few one-pixel sparks off the button
+# that was pressed. CYCLE is the whole loop in seconds; PRESSES are
+# (button, when as a percent of the loop). Nothing happens after REST_FROM.
+CYCLE = 7.0
+REST_FROM = 64
+PRESSES = [('a', 3), ('b', 9), ('a', 14), ('dpad', 19), ('a', 24), ('a', 28),
+           ('b', 33), ('dpad', 38), ('menu', 43), ('a', 48), ('b', 53), ('a', 58)]
+# where sparks leave each button, and the directions they fly (pixels)
+SPARK_FROM = {
+    'a':    [((24, 12), (1, -4)), ((26, 14), (4, -2)), ((23, 12), (-1, -5))],
+    'b':    [((21, 15), (0, -4)), ((22, 16), (3, -3)), ((20, 16), (-2, -4))],
+    'dpad': [((9, 13), (-1, -4)), ((10, 13), (1, -5)), ((7, 15), (-4, -2))],
+    'menu': [((15, 13), (-1, -3)), ((18, 13), (1, -3))],
+}
+
 def anim_svg():
-    """The homepage picture: the pad being played hard. Buttons press, the
-    pad shakes, sparks fly off. Pure SVG + CSS, so it plays in an <img>, and
-    it holds still for people who ask their system for less motion."""
+    """The homepage picture: a pad being played in bursts. Buttons press, the
+    pad shakes, a few one-pixel sparks pop off each pressed button, then it
+    rests. Pure SVG + CSS, so it plays in an <img>, and it holds still for
+    people who ask their system for less motion."""
     groups = {}
     for (x, y), (c, part) in sorted(pad_pixels().items()):
         groups.setdefault(part, []).append('<rect x="%d" y="%d" width="1.02" height="1.02" fill="%s"/>' % (x, y, hexc(c)))
+    css = ['*{animation-duration:%.1fs;animation-iteration-count:infinite}' % CYCLE]
+    # shake only while the buttons are going
+    sh = ['0%{transform:translate(0,0) rotate(0)}']
+    offs = ['translate(-.5px,.5px) rotate(-2deg)', 'translate(.5px,0) rotate(1.5deg)',
+            'translate(0,-.5px) rotate(-1deg)', 'translate(0,0) rotate(0)']
+    t, i = 2.0, 0
+    while t < REST_FROM:
+        sh.append('%.1f%%{transform:%s}' % (t, offs[i % 4])); t += 3.2; i += 1
+    sh.append('%d%%{transform:translate(0,0) rotate(0)}100%%{transform:translate(0,0) rotate(0)}' % REST_FROM)
+    css.append('.pad{transform-origin:16px 17px;animation-name:shake;animation-timing-function:steps(1,end)}')
+    css.append('@keyframes shake{' + ''.join(sh) + '}')
+    # each button dims for a moment at each of its presses
+    for part in ('a', 'b', 'dpad', 'menu'):
+        kf = ['0%{filter:none}']
+        for p, at in PRESSES:
+            if p == part:
+                kf.append('%d%%{filter:brightness(.5)}%.1f%%{filter:none}' % (at, at + 2.5))
+        kf.append('100%{filter:none}')
+        css.append('.%s{animation-name:p%s;animation-timing-function:steps(1,end)}' % (part, part))
+        css.append('@keyframes p%s{%s}' % (part, ''.join(kf)))
+    # sparks: one-pixel dots, each with its own short window in the loop
     sparks = []
-    spots = [(12, 12, -6, -7), (16, 11, 1, -9), (22, 11, 6, -7), (25, 15, 8, -3), (20, 15, 4, -8), (8, 14, -8, -4), (14, 13, -3, -8)]
-    for i, (x, y, dx, dy) in enumerate(spots):
-        sparks.append(('<g class="spark s%d">' % i) + '<rect x="%d" y="%d" width="1" height="1" fill="#fff"/>'
-                      '<rect x="%d" y="%d" width="1" height="1" fill="%s"/><rect x="%d" y="%d" width="1" height="1" fill="%s"/>'
-                      '<rect x="%d" y="%d" width="1" height="1" fill="%s"/><rect x="%d" y="%d" width="1" height="1" fill="%s"/></g>'
-                      % (x, y, x - 1, y, hexc(SPARK), x + 1, y, hexc(SPARK), x, y - 1, hexc(SPARK), x, y + 1, hexc(SPARK)))
-    kf = []
-    for i, (x, y, dx, dy) in enumerate(spots):
-        kf.append('.s%d{--dx:%dpx;--dy:%dpx;animation-delay:%.2fs}' % (i, dx, dy, i * 0.23))
-    style = (
-        '.pad{transform-origin:16px 17px;animation:shake .9s steps(2,end) infinite}'
-        '@keyframes shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-.5px,.5px) rotate(-2deg)}'
-        '50%{transform:translate(.5px,0) rotate(1.5deg)}75%{transform:translate(0,-.5px) rotate(-1deg)}100%{transform:translate(0,0) rotate(0)}}'
-        '.a,.b,.dpad,.menu{animation:press .5s steps(1,end) infinite}'
-        '.a{animation-duration:.42s}.b{animation-duration:.58s;animation-delay:.2s}'
-        '.dpad{animation-duration:.7s;animation-delay:.1s}.menu{animation-duration:2.3s}'
-        '@keyframes press{0%{filter:none}50%{filter:brightness(.55)}}'
-        '.spark{opacity:0;animation:fly 1.6s ease-out infinite}'
-        '@keyframes fly{0%{opacity:0;transform:translate(0,0) scale(.6)}10%{opacity:1}'
-        '70%{opacity:.9}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}}'
-        + ''.join(kf) +
-        '@media (prefers-reduced-motion:reduce){*{animation:none!important}.spark{opacity:0}}'
-    )
+    n = 0
+    for k, (part, at) in enumerate(PRESSES):
+        spots = SPARK_FROM[part]
+        pick = [spots[(k + j) % len(spots)] for j in range(2)]
+        for j, ((x, y), (dx, dy)) in enumerate(pick):
+            fill = '#ffffff' if (k + j) % 2 == 0 else hexc(SPARK)
+            sparks.append('<rect class="sp sp%d" x="%d" y="%d" width="1" height="1" fill="%s"/>' % (n, x, y, fill))
+            go = at + 0.5 * j
+            css.append('.sp%d{animation-name:f%d}' % (n, n))
+            css.append('@keyframes f%d{0%%{opacity:0;transform:translate(0,0)}%.1f%%{opacity:0;transform:translate(0,0)}'
+                       '%.1f%%{opacity:1;transform:translate(0,0)}%.1f%%{opacity:0;transform:translate(%dpx,%dpx)}'
+                       '100%%{opacity:0;transform:translate(%dpx,%dpx)}}'
+                       % (n, go - 0.1, go, go + 7, dx, dy, dx, dy))
+            n += 1
+    css.append('.sp{opacity:0;animation-timing-function:ease-out}')
+    css.append('@media (prefers-reduced-motion:reduce){*{animation:none!important}.sp{opacity:0}}')
     body = ''.join('<g class="%s">%s</g>' % (part, ''.join(rs)) for part, rs in groups.items() if part != 'body')
     return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 0 36 30" shape-rendering="crispEdges">'
-            '<style>' + style + '</style>' + ''.join(sparks) +
-            '<g class="pad"><g>' + ''.join(groups['body']) + '</g>' + body + '</g></svg>\n')
+            '<style>' + ''.join(css) + '</style>' +
+            '<g class="pad"><g>' + ''.join(groups['body']) + '</g>' + body + '</g>' + ''.join(sparks) + '</svg>\n')
 
 def scaled(n):
     return base32().resize((n, n), Image.NEAREST)

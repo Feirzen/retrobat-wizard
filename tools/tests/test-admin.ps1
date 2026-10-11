@@ -43,7 +43,36 @@ try {
     $st = Invoke-RestMethod "http://127.0.0.1:$port/state" -Headers @{ Authorization = 'Bearer github_pat_TEST' }
     Assert ($r2.Ok -and @($st.assets).Count -eq 1 -and @($st.library.games).Count -eq 2) 'publishing again replaces'
     Assert ((@($st.library.games | Where-Object id -eq 'my-game')[0]).players -eq '2') 'entry updated'
-    # the wizard can read what was written
+
+    # box art (2026-10-11): goes to the public repo, listed as "art"
+    $png = Join-Path $ws 'cover.png'; [IO.File]::WriteAllBytes($png, [byte[]](137,80,78,71,13,10,26,10,1,2,3,4))
+    $r3 = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '2' 'Again.' $sync $png
+    $st = Invoke-RestMethod "http://127.0.0.1:$port/state" -Headers @{ Authorization = 'Bearer github_pat_TEST' }
+    $g = @($st.library.games | Where-Object id -eq 'my-game')[0]
+    Assert ($r3.Ok -and $g.art -eq 'library/art/my-game.png') ('art listed: ' + $g.art)
+    Assert ($st.art.'library/art/my-game.png' -eq 12) 'art uploaded whole'
+    $r4 = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '2' 'Again.' $sync $png
+    Assert $r4.Ok 'art replaced on a second publish'
+    $r5 = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '2' 'Again.' $sync
+    $st = Invoke-RestMethod "http://127.0.0.1:$port/state" -Headers @{ Authorization = 'Bearer github_pat_TEST' }
+    Assert ((@($st.library.games | Where-Object id -eq 'my-game')[0]).art -eq 'library/art/my-game.png') 'no new art: old art kept'
+    Assert ($null -eq (@($st.library.games | Where-Object id -eq 'old')[0]).art) 'games without art stay without'
+    $txt = Join-Path $ws 'notes.txt'; [IO.File]::WriteAllText($txt, 'x')
+    Assert ((Send-AdminLibArt 'github_pat_TEST' "http://127.0.0.1:$port/repos/Feirzen/retrobat-wizard" 'zz' $txt) -eq '') 'not a picture: skipped'
+
+    # several games at once: one bad file never stops the others
+    $game2 = Join-Path $ws 'Second.nes'; [IO.File]::WriteAllBytes($game2, [byte[]](1,2,3))
+    $items = @(@{ File = $game2; System = 'nes'; Title = 'Second Game'; Players = '1-2'; Description = ''; Art = '' },
+               @{ File = (Join-Path $ws 'gone.nes'); System = 'nes'; Title = 'Gone: Game'; Players = ''; Description = ''; Art = '' })
+    $sync.Prefix = ''
+    $m = Publish-AdminLibraryGames $ws $items $sync
+    $st = Invoke-RestMethod "http://127.0.0.1:$port/state" -Headers @{ Authorization = 'Bearer github_pat_TEST' }
+    Assert (-not $m.Ok -and @($m.Done).Count -eq 1 -and @($m.Failed).Count -eq 1) 'multi: one done, one failed'
+    Assert ($m.Message -like '*Second Game*' -and $m.Message -like '*Gone: Game: The file is gone.*') ('multi: says both ' + $m.Message)
+    Assert (@($st.library.games).Count -eq 3) 'multi: list has the new game'
+    Assert ($sync.Prefix -eq '') 'multi: prefix cleared'
+    $one = Publish-AdminLibraryGames $ws @(@{ File = $game2; System = 'nes'; Title = 'Second Game'; Players = '1-2'; Description = ''; Art = '' }) $sync
+    Assert ($one.Ok -and $one.Message -like 'Second Game is in the online library*') 'multi with one game: plain message'
     Remove-Item -Recurse -Force $ws
 } finally { Stop-Process -Id $srv.Id -Force }
 Write-Host ("admin tests: {0} passed, {1} failed" -f $script:pass, $script:fail)
