@@ -87,5 +87,18 @@ $ini = Get-Content "$($r.Folder)/game.ini"
 A (($ini -match '^description = Co-op puzzles$').Count -eq 1) 'description one line'
 $r2 = New-LibPublishEntry "$Root/_ClaudeWorkspace" "$Root/in/Game.gba" 'gba' "Fireboy & Watergirl: Forest Temple!" '' ''
 A (-not $r2.Ok) 'no double queue'
+# what RetroBat knows (gamelist.xml): name, players, words, box art; sub-folders too (2026-10-11)
+$wiiS = @($sys | Where-Object Name -eq 'wii')[0]
+New-Item -ItemType Directory -Force (Join-Path $wiiS.Folder 'Party Game'), (Join-Path $wiiS.Folder 'images') | Out-Null
+$pf = Join-Path $wiiS.Folder 'Party Game/game.rvz'; [IO.File]::WriteAllBytes($pf, [byte[]](1,2))
+[IO.File]::WriteAllBytes((Join-Path $wiiS.Folder 'images/party-image.png'), [byte[]](1,2))
+[IO.File]::WriteAllText((Join-Path $wiiS.Folder 'gamelist.xml'), '<?xml version="1.0"?><gameList><game><path>./Party Game/game.rvz</path><name>Party Game</name><players>1-4</players><desc>Fun.</desc><image>./images/party-image.png</image><thumbnail>./images/missing.png</thumbnail></game><game><path>./plain.wbfs</path><name>Plain</name><image>./images/none.png</image></game></gameList>')
+$i = Get-LibGamelistInfo $wiiS $pf
+A ($i.Title -eq 'Party Game' -and $i.Players -eq '1-4' -and $i.Description -eq 'Fun.') "gamelist details in a sub-folder ($($i.Title))"
+A ($i.Art -eq (Join-Path $wiiS.Folder 'images/party-image.png')) "box art found ($($i.Art))"
+$i = Get-LibGamelistInfo $wiiS (Join-Path $wiiS.Folder 'plain.wbfs')
+A ($i.Title -eq 'Plain' -and $i.Art -eq '') 'missing picture: no art'
+$i = Get-LibGamelistInfo $wiiS (Join-Path $wiiS.Folder 'unknown.wbfs')
+A ($i.Title -eq 'unknown' -and $i.Art -eq '') 'not in the list: file name, no art'
 Remove-Item -Recurse -Force $Root
 "games tests: $pass passed, $fail failed"
