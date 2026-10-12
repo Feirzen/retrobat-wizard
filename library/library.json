@@ -327,6 +327,18 @@
       ]
     },
     {
+      "id": "donkey-kong-64",
+      "title": "Donkey Kong 64",
+      "system": "n64",
+      "players": "1-4",
+      "description": "K. Rool has kidnapped the Kongs! Can Donkey Kong rescue his friends, reclaim the Golden Bananas and save his homeland from certain doom? Take out some Kremlings with Chunky's Pineapple Launcher or Lanky's Trombone. Float through the air using Tiny's Ponytail Twirl. Even rocket...",
+      "added": "2026-10-12",
+      "art": "library/art/donkey-kong-64.png",
+      "files": [
+        { "name": "Donkey Kong 64 (USA).zip", "url": "private:donkey-kong-64__Donkey.Kong.64.USA.zip", "size": 27514317, "sha256": "b7bfc79f173f3bef4d7fe8f873a900533164f5298350dbdebfadebfcee5ddb00" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
