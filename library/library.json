@@ -541,6 +541,18 @@
       "files": [
         { "name": "Yoshi's Story (USA) (En,Ja).zip", "url": "private:yoshi-s-story__Yoshi.s.Story.USA.En.Ja.zip", "size": 9339645, "sha256": "460c029922e658378a6e5ed759f0015bda5ce818dfa34c5bf62062e66e78a70d" }
       ]
+    },
+    {
+      "id": "galaga-demons-of-death",
+      "title": "Galaga : Demons of Death",
+      "system": "nes",
+      "players": "1-2",
+      "description": "Galaga is a vertical arcade shooter from Namco. You control a space fighter at the bottom of the screen, scrolling left and right in order to avoid oncoming bombs and kamikaze attacks from alien invaders--and to fire your own missiles to fight back! There are an infinite number...",
+      "added": "2026-10-12",
+      "art": "library/art/galaga-demons-of-death.png",
+      "files": [
+        { "name": "Galaga - Demons of Death (USA).nes", "url": "private:galaga-demons-of-death__Galaga.-.Demons.of.Death.USA.nes", "size": 40976, "sha256": "116ff51eabad94da0c3bf32de9d50cc84becf73814fa2bf5574676b058a0a09a" }
+      ]
     }
   ]
 }
