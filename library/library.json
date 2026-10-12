@@ -1,5 +1,18 @@
 {
   "version": 1,
   "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
-  "games": []
+  "games": [
+    {
+      "id": "paper-mario-the-thousand-year-door",
+      "title": "Paper Mario : The Thousand-Year Door",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Get ready for a new role-playing adventure as Mario returns to paper form to stop a dangerous threat. In Paper Mario 2, Mario can dodge, inflict damage, and impress the crowd to strengthen his attacks. Also, Mario and his friends have more paper abilities. They can now turn...",
+      "added": "2026-10-11",
+      "art": "library/art/paper-mario-the-thousand-year-door.png",
+      "files": [
+        { "name": "Paper Mario - The Thousand-Year Door (USA).iso", "url": "private:paper-mario-the-thousand-year-door__Paper.Mario.-.The.Thousand-Year.Door.USA.iso", "size": 1459978240, "sha256": "991ec0779b2cfd861bbeca6b3e4cb13b22c6106f26b3429b6c1714170ba1027f" }
+      ]
+    }
+  ]
 }
