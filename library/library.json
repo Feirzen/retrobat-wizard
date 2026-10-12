@@ -303,6 +303,18 @@
       ]
     },
     {
+      "id": "jungle-strike",
+      "title": "Jungle Strike",
+      "system": "gb",
+      "players": "1",
+      "description": "Some time after Operation Desert Strike, Ibn Kilbaba, son of Kilbaba S.R, threatens to annihilate America. After his father was killed, the people who were under his control, sent his son running off, along with his father's money and nuclear weapons program. Kilbaba, more...",
+      "added": "2026-10-12",
+      "art": "library/art/jungle-strike.png",
+      "files": [
+        { "name": "Jungle Strike (USA).zip", "url": "private:jungle-strike__Jungle.Strike.USA.zip", "size": 147598, "sha256": "c7d10e597d0a8f79a6ffa72486f2817ccd06f1a48aebbddd008715ad86e16722" }
+      ]
+    },
+    {
       "id": "2-games-in-1-finding-nemo-the-continuing",
       "title": "2 Games In 1 - Finding Nemo - The Continuing Adventures + The Incredibles",
       "system": "gba",
