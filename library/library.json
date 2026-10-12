@@ -13,6 +13,18 @@
       "files": [
         { "name": "Paper Mario - The Thousand-Year Door (USA).iso", "url": "private:paper-mario-the-thousand-year-door__Paper.Mario.-.The.Thousand-Year.Door.USA.iso", "size": 1459978240, "sha256": "991ec0779b2cfd861bbeca6b3e4cb13b22c6106f26b3429b6c1714170ba1027f" }
       ]
+    },
+    {
+      "id": "star-fox-64",
+      "title": "Star Fox 64",
+      "system": "n64",
+      "players": "1-4",
+      "description": "The Lylat system has been invaded! Join Fox McCloud and his Star Fox team as they fight to save the galaxy from the clutches of the evil Andross. Travel to many different 3-D worlds. Battle the enemy in the air and on the ground and listen in as Fox McCloud interacts with a cast...",
+      "added": "2026-10-11",
+      "art": "library/art/star-fox-64.png",
+      "files": [
+        { "name": "Star Fox 64 (USA) (Rev 1).zip", "url": "private:star-fox-64__Star.Fox.64.USA.Rev.1.zip", "size": 10510321, "sha256": "90b63a8470d999a72d37345d63ab35db7bb8d714009b7970a60d6e2deb3f805c" }
+      ]
     }
   ]
 }
