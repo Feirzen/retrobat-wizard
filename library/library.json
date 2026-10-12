@@ -471,6 +471,18 @@
       ]
     },
     {
+      "id": "pok-mon-gold-version",
+      "title": "Pokmon Gold Version",
+      "system": "gbc",
+      "players": "1-2",
+      "description": "Enter a whole new world, with new Pokmon to capture, train and battle! Meet Professor Elm and get the all-new Pok Gear, including map, radio, cell phone and clock. Set the clock then watch as day turns to night and events take place in real time - and be sure to keep an eye...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-gold-version.png",
+      "files": [
+        { "name": "Pokemon - Gold Version (USA, Europe) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-gold-version__Pokemon.-.Gold.Version.USA.Europe.SGB.Enhanced.GB.Compatible.zip", "size": 726756, "sha256": "70d2801dfe900a25c84b6601c8bd7221b99348f609e94bb16d5483a0403ce0db" }
+      ]
+    },
+    {
       "id": "pok-mon-crystal-version",
       "title": "Pokmon Crystal Version",
       "system": "gbc",
