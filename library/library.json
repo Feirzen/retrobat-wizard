@@ -363,18 +363,6 @@
       ]
     },
     {
-      "id": "pok-mon-ruby-version",
-      "title": "Pokmon Ruby Version",
-      "system": "gba",
-      "players": "1",
-      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-ruby-version.png",
-      "files": [
-        { "name": "Pokemon_ Ruby Version.zip", "url": "private:pok-mon-ruby-version__Pokemon_.Ruby.Version.zip", "size": 4806990, "sha256": "c41356ad1136af3902116aa716c76f7bbfc9d71219a88df8278a22e3d76b08a0" }
-      ]
-    },
-    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
@@ -411,6 +399,18 @@
       ]
     },
     {
+      "id": "pok-mon-ruby-version",
+      "title": "Pokmon Ruby Version",
+      "system": "gba",
+      "players": "1",
+      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-ruby-version.png",
+      "files": [
+        { "name": "Pokemon_ Ruby Version.zip", "url": "private:pok-mon-ruby-version__Pokemon_.Ruby.Version.zip", "size": 4806990, "sha256": "c41356ad1136af3902116aa716c76f7bbfc9d71219a88df8278a22e3d76b08a0" }
+      ]
+    },
+    {
       "id": "pok-mon-sapphire-version",
       "title": "Pokmon Sapphire Version",
       "system": "gba",
@@ -444,6 +444,18 @@
       "art": "library/art/the-legend-of-zelda-the-minish-cap.png",
       "files": [
         { "name": "Legend of Zelda, The - The Minish Cap (U).zip", "url": "private:the-legend-of-zelda-the-minish-cap__Legend.of.Zelda.The.-.The.Minish.Cap.U.zip", "size": 7586161, "sha256": "eaf9e805364fb596c40cfeb04d4cbd80eb378429b6999de64250d70dd0c10638" }
+      ]
+    },
+    {
+      "id": "dragon-warrior-iii",
+      "title": "Dragon Warrior III",
+      "system": "gbc",
+      "players": "1",
+      "description": "Your father, the brave Ortega, is dead. He set off to destroy the Demon Lord Baramos but fell in glorious battle. Unless stopped, Baramos will unleash a torrent of evil that will destroy the world. You must stop Baramos and discover the legend of Dragon Warrior! Your journey...",
+      "added": "2026-10-12",
+      "art": "library/art/dragon-warrior-iii.png",
+      "files": [
+        { "name": "Dragon Warrior III (USA).zip", "url": "private:dragon-warrior-iii__Dragon.Warrior.III.USA.zip", "size": 1950542, "sha256": "21c4fa8bc77f12a11b7d00fee08a343c39e1c509adf11625d29ef1ea86e91a28" }
       ]
     },
     {
