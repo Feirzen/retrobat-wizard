@@ -637,6 +637,18 @@
       "files": [
         { "name": "Donkey Kong Country (USA) (Rev 2).sfc", "url": "private:donkey-kong-country__Donkey.Kong.Country.USA.Rev.2.sfc", "size": 4194304, "sha256": "628147468c3539283197f58f03b94df49758a332831857481ea9cc31645f0527" }
       ]
+    },
+    {
+      "id": "donkey-kong-country-2-diddy-s-kong-quest",
+      "title": "Donkey Kong Country 2 : Diddy's Kong Quest",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Donkey Kong has been kong-napped by the nasty K.Rool and the Kremlings, and it is up to Diddy Kong and his girl-friend Dixie Kong to save him. All the familiar enemies and helpful friends return, along with some new characters, including the wise Wrinkly Kong who will teach you...",
+      "added": "2026-10-12",
+      "art": "library/art/donkey-kong-country-2-diddy-s-kong-quest.png",
+      "files": [
+        { "name": "Donkey Kong Country 2 - Diddy's Kong Quest (USA) (En,Fr) (Rev 1).sfc", "url": "private:donkey-kong-country-2-diddy-s-kong-quest__Donkey.Kong.Country.2.-.Diddy.s.Kong.Quest.USA.En.Fr.Rev.1.sfc", "size": 4194304, "sha256": "b79c2bb86f6fc76e1fc61c62fc16d51c664c381e58bc2933be643bbc4d8b610c" }
+      ]
     }
   ]
 }
