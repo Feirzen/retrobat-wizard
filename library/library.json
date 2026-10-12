@@ -1047,6 +1047,18 @@
       ]
     },
     {
+      "id": "pok-mon-black-version-2",
+      "title": "Pokmon Black Version 2",
+      "system": "nds",
+      "players": "1",
+      "description": "TWO POWERS COMBINE...A NEW LEGEND ARISES! Set off on a new Pokmon adventure to save the Unova region! You and your Pokmon can accomplish anything together! Unova, Two Years Later... Film Movies at Pokstar Studios A New Story! This is Pokmon Black Version 2. The types and...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-black-version-2.png",
+      "files": [
+        { "name": "Pokemon - Black Version 2 (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-black-version-2__Pokemon.-.Black.Version.2.USA.Europe.NDSi.Enhanced.zip", "size": 154063144, "sha256": "4a21aee8f169facf25068d67e24f3275603c7b3a96c18bcd950ce53cd6d8bba8" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
