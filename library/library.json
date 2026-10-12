@@ -399,6 +399,18 @@
       ]
     },
     {
+      "id": "paper-mario",
+      "title": "Paper Mario",
+      "system": "n64",
+      "players": "1",
+      "description": "Paper Mario is the follow-up to Super Mario RPG: Legend Of The Seven Stars. Basically, this is an RPG set in the Mario universe. Mario has the ability to gain experience and grow levels by defeating enemies and bosses. Mario also has the ability to recruit teammates to help him...",
+      "added": "2026-10-12",
+      "art": "library/art/paper-mario.png",
+      "files": [
+        { "name": "Paper Mario.zip", "url": "private:paper-mario__Paper.Mario.zip", "size": 21966618, "sha256": "0d4dfa8275e032f91714197a3716e8c9d4853149b18fae533bd76040adeeb576" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
