@@ -3,6 +3,18 @@
   "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
   "games": [
     {
+      "id": "metroid-prime-2-echoes",
+      "title": "Metroid Prime 2 : Echoes",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "In this highly anticipated sequel to Metroid Prime, become the bounty hunter behind the visor once more and travel to a planet torn into light and darkness. Hunted by a mysterious entity and a warring race called the Ing, Samus Aran must explore the light and dark worlds of this...",
+      "added": "2026-10-11",
+      "art": "library/art/metroid-prime-2-echoes.png",
+      "files": [
+        { "name": "Metroid Prime 2 - Echoes (USA).ciso", "url": "private:metroid-prime-2-echoes__Metroid.Prime.2.-.Echoes.USA.ciso", "size": 1459651136, "sha256": "046e663ff39268a8351221a37cead1aaf1cca95ef0efefa007ea2d17abb90405" }
+      ]
+    },
+    {
       "id": "paper-mario-the-thousand-year-door",
       "title": "Paper Mario : The Thousand-Year Door",
       "system": "gamecube",
