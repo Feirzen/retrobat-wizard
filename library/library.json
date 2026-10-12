@@ -1047,18 +1047,6 @@
       ]
     },
     {
-      "id": "pok-mon-white-version-2",
-      "title": "Pokmon White Version 2",
-      "system": "nds",
-      "players": "1",
-      "description": "This is Pokmon White Version 2. The types and likelihood of Pokmon that will appear differ from Pokmon Black Version 2. This game can communicate, battle, and trade only with the various language versions of Pokmon Black Version 2, Pokmon White Version 2, Pokmon Black...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-white-version-2.png",
-      "files": [
-        { "name": "Pokemon_ White Version 2.zip", "url": "private:pok-mon-white-version-2__Pokemon_.White.Version.2.zip", "size": 153748826, "sha256": "5f234e8f5d5169ebca3e6cb8c87e629c75e4c5fa62169c6f9f72ebfee4ebc008" }
-      ]
-    },
-    {
       "id": "pok-mon-black-version-2",
       "title": "Pokmon Black Version 2",
       "system": "nds",
@@ -1200,6 +1188,30 @@
       "art": "library/art/pok-mon-white-version.png",
       "files": [
         { "name": "Pokemon - White Version (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-white-version__Pokemon.-.White.Version.USA.Europe.NDSi.Enhanced.zip", "size": 110699618, "sha256": "bb8b634b22a911a48b1b5f41d6e42134f2aa61483bfcc7d67e3bbf967ca87b05" }
+      ]
+    },
+    {
+      "id": "pok-mon-white-version-2",
+      "title": "Pokmon White Version 2",
+      "system": "nds",
+      "players": "1",
+      "description": "This is Pokmon White Version 2. The types and likelihood of Pokmon that will appear differ from Pokmon Black Version 2. This game can communicate, battle, and trade only with the various language versions of Pokmon Black Version 2, Pokmon White Version 2, Pokmon Black...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-white-version-2.png",
+      "files": [
+        { "name": "Pokemon_ White Version 2.zip", "url": "private:pok-mon-white-version-2__Pokemon_.White.Version.2.zip", "size": 153748826, "sha256": "5f234e8f5d5169ebca3e6cb8c87e629c75e4c5fa62169c6f9f72ebfee4ebc008" }
+      ]
+    },
+    {
+      "id": "polar-bowler",
+      "title": "Polar Bowler",
+      "system": "nds",
+      "players": "4+",
+      "description": "Polar Bowler is a bowling game. But no ordinary, the game uses an Arctic theme (more or less). Furthermore, there is not even a ball in the game. First off, the game offers two different game modes, Straight Bowling and Power Bowling. Furthermore there are 7 different lanes...",
+      "added": "2026-10-12",
+      "art": "library/art/polar-bowler.jpg",
+      "files": [
+        { "name": "Polar Bowler (USA).zip", "url": "private:polar-bowler__Polar.Bowler.USA.zip", "size": 6347026, "sha256": "47362d437668aa761c6cc4d79b3613ab3c9a43755febc3743604fddfd2a2bc76" }
       ]
     },
     {
