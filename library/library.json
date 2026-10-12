@@ -363,15 +363,15 @@
       ]
     },
     {
-      "id": "pok-mon-firered-version",
-      "title": "Pokmon FireRed Version",
+      "id": "pok-mon-ruby-version",
+      "title": "Pokmon Ruby Version",
       "system": "gba",
       "players": "1",
-      "description": "In this adventure, you travel through the Kanto region, form a close bond with your Pokmon, and catch various species to complete the Pokdex. Challenge other trainers, stand up to Team Rocket, and battle the Gym Leaders to earn all eight badges. With these in your possession,...",
+      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-firered-version.png",
+      "art": "library/art/pok-mon-ruby-version.png",
       "files": [
-        { "name": "Pokemon_ FireRed Version.zip", "url": "private:pok-mon-firered-version__Pokemon_.FireRed.Version.zip", "size": 5192434, "sha256": "ba11c9248d4e4483be8e937b7577ebbe29ac840db9de276f4e14b3f2d6821298" }
+        { "name": "Pokemon_ Ruby Version.zip", "url": "private:pok-mon-ruby-version__Pokemon_.Ruby.Version.zip", "size": 4806990, "sha256": "c41356ad1136af3902116aa716c76f7bbfc9d71219a88df8278a22e3d76b08a0" }
       ]
     },
     {
@@ -384,6 +384,18 @@
       "art": "library/art/pok-mon-emerald-version.png",
       "files": [
         { "name": "Pokemon - Emerald Version (USA, Europe).zip", "url": "private:pok-mon-emerald-version__Pokemon.-.Emerald.Version.USA.Europe.zip", "size": 6791080, "sha256": "4761d0fe9c543e652c2f0ac387397d6766886fc6a4a4e2a0ded4c5235a19337d" }
+      ]
+    },
+    {
+      "id": "pok-mon-firered-version",
+      "title": "Pokmon FireRed Version",
+      "system": "gba",
+      "players": "1",
+      "description": "In this adventure, you travel through the Kanto region, form a close bond with your Pokmon, and catch various species to complete the Pokdex. Challenge other trainers, stand up to Team Rocket, and battle the Gym Leaders to earn all eight badges. With these in your possession,...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-firered-version.png",
+      "files": [
+        { "name": "Pokemon_ FireRed Version.zip", "url": "private:pok-mon-firered-version__Pokemon_.FireRed.Version.zip", "size": 5192434, "sha256": "ba11c9248d4e4483be8e937b7577ebbe29ac840db9de276f4e14b3f2d6821298" }
       ]
     },
     {
