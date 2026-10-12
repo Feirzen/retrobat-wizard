@@ -183,6 +183,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-the-wind-waker",
+      "title": "The Legend of Zelda : The Wind Waker",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Nintendo's thematic action-adventure sequel to Ocarina of Time takes the series back to its more cartoonish roots. Utilizing a completely new look with cel-shaded graphics, the game casts players in the role of a familiar young boy, who sets out to save his kidnapped sister....",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-the-wind-waker.jpg",
+      "files": [
+        { "name": "Legend of Zelda, The - The Wind Waker (USA).rvz", "url": "private:the-legend-of-zelda-the-wind-waker__Legend.of.Zelda.The.-.The.Wind.Waker.USA.rvz", "size": 863379372, "sha256": "f1ab29b540397d8cffd7f039a333d54302b609cad1c0ef7991b127843d7e5a37" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-twilight-princess",
       "title": "The Legend of Zelda : Twilight Princess",
       "system": "gamecube",
