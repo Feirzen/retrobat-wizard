@@ -363,15 +363,15 @@
       ]
     },
     {
-      "id": "pok-mon-sapphire-version",
-      "title": "Pokmon Sapphire Version",
+      "id": "pok-mon-firered-version",
+      "title": "Pokmon FireRed Version",
       "system": "gba",
-      "players": "1-4",
-      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
+      "players": "1",
+      "description": "In this adventure, you travel through the Kanto region, form a close bond with your Pokmon, and catch various species to complete the Pokdex. Challenge other trainers, stand up to Team Rocket, and battle the Gym Leaders to earn all eight badges. With these in your possession,...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-sapphire-version.png",
+      "art": "library/art/pok-mon-firered-version.png",
       "files": [
-        { "name": "Pokemon - Sapphire Version (USA, Europe) (Rev 2).zip", "url": "private:pok-mon-sapphire-version__Pokemon.-.Sapphire.Version.USA.Europe.Rev.2.zip", "size": 4807532, "sha256": "c2c48e8057404a242c5d9f5f5c6ae0b01002ff830f79c829e1cf42fd1c6d700f" }
+        { "name": "Pokemon_ FireRed Version.zip", "url": "private:pok-mon-firered-version__Pokemon_.FireRed.Version.zip", "size": 5192434, "sha256": "ba11c9248d4e4483be8e937b7577ebbe29ac840db9de276f4e14b3f2d6821298" }
       ]
     },
     {
@@ -396,6 +396,18 @@
       "art": "library/art/pok-mon-leafgreen-version.png",
       "files": [
         { "name": "Pokemon - LeafGreen Version (USA, Europe) (Rev 1).zip", "url": "private:pok-mon-leafgreen-version__Pokemon.-.LeafGreen.Version.USA.Europe.Rev.1.zip", "size": 5192998, "sha256": "9567c2a1cfc0864c8ce9a6a064fb139f97bd706f6098e346d243237bb6d260b5" }
+      ]
+    },
+    {
+      "id": "pok-mon-sapphire-version",
+      "title": "Pokmon Sapphire Version",
+      "system": "gba",
+      "players": "1-4",
+      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-sapphire-version.png",
+      "files": [
+        { "name": "Pokemon - Sapphire Version (USA, Europe) (Rev 2).zip", "url": "private:pok-mon-sapphire-version__Pokemon.-.Sapphire.Version.USA.Europe.Rev.2.zip", "size": 4807532, "sha256": "c2c48e8057404a242c5d9f5f5c6ae0b01002ff830f79c829e1cf42fd1c6d700f" }
       ]
     },
     {
