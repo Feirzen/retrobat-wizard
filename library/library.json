@@ -939,6 +939,18 @@
       ]
     },
     {
+      "id": "chrono-trigger",
+      "title": "Chrono Trigger",
+      "system": "nds",
+      "players": "1-2",
+      "description": "What begins as a carefree day at the Millennial Fair for a young man named Crono turns into a huge adventure. He will be thrusted into the ultimate trip through time and space, encountering new friends, defeating the forces of evil, and encountering the one who would destroy the...",
+      "added": "2026-10-12",
+      "art": "library/art/chrono-trigger.png",
+      "files": [
+        { "name": "Chrono Trigger (USA) (En,Fr).zip", "url": "private:chrono-trigger__Chrono.Trigger.USA.En.Fr.zip", "size": 62603055, "sha256": "b54865890276153943220fc293c164e48fcb15ef3c63da9d6f2ed53bbd689263" }
+      ]
+    },
+    {
       "id": "galaga-demons-of-death",
       "title": "Galaga : Demons of Death",
       "system": "nes",
