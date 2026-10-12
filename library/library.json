@@ -315,6 +315,18 @@
       ]
     },
     {
+      "id": "kirby-s-dream-land",
+      "title": "Kirby's Dream Land",
+      "system": "gb",
+      "players": "1",
+      "description": "Dedede, King of Dream Land, is a penguin-like creature who is too gluttonous for his own good. Gathering food for his midnight feast, he got carried away and ended up taking all the food from the inhabitants of his country. One of them, a pink little guy named Kirby, decides to...",
+      "added": "2026-10-12",
+      "art": "library/art/kirby-s-dream-land.png",
+      "files": [
+        { "name": "Kirby's Dream Land (USA, Europe).zip", "url": "private:kirby-s-dream-land__Kirby.s.Dream.Land.USA.Europe.zip", "size": 132690, "sha256": "beae954057235ea36183198d304ddbc3475975ea5bc5ccc1eb7dbb2ef515c91f" }
+      ]
+    },
+    {
       "id": "2-games-in-1-finding-nemo-the-continuing",
       "title": "2 Games In 1 - Finding Nemo - The Continuing Adventures + The Incredibles",
       "system": "gba",
