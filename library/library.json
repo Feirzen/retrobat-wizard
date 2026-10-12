@@ -649,6 +649,18 @@
       "files": [
         { "name": "Donkey Kong Country 2 - Diddy's Kong Quest (USA) (En,Fr) (Rev 1).sfc", "url": "private:donkey-kong-country-2-diddy-s-kong-quest__Donkey.Kong.Country.2.-.Diddy.s.Kong.Quest.USA.En.Fr.Rev.1.sfc", "size": 4194304, "sha256": "b79c2bb86f6fc76e1fc61c62fc16d51c664c381e58bc2933be643bbc4d8b610c" }
       ]
+    },
+    {
+      "id": "final-fantasy-iii",
+      "title": "Final Fantasy III",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Ages ago, evil beings created powerful creatures called Espers, and unleashed them against each other. The resulting battles left their world a smoldering rubble. Legend has it, the Espers destroyed themselves and most of humanity. Magic disappeared forever. Centuries have...",
+      "added": "2026-10-12",
+      "art": "library/art/final-fantasy-iii.png",
+      "files": [
+        { "name": "Final Fantasy III (USA) (Rev 1).sfc", "url": "private:final-fantasy-iii__Final.Fantasy.III.USA.Rev.1.sfc", "size": 3145728, "sha256": "10eccc5d2fab81346dd759f6be478dcb682eef981e8d3d662da176e1f9a996bc" }
+      ]
     }
   ]
 }
