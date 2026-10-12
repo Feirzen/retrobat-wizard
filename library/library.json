@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-mystery-dungeon-blue-rescue-team",
-      "title": "Pokmon Mystery Dungeon : Blue Rescue Team",
+      "id": "pok-mon-mystery-dungeon-explorers-of-dar",
+      "title": "Pokmon Mystery Dungeon : Explorers of Darkness",
       "system": "nds",
       "players": "1",
-      "description": "And if that's not enough of a dilemma, you've woken up one day to discover that you've mysteriously transformed into a Pokmon yourself!",
+      "description": "In this action-packed adventure, players journey as actual Pokemon through a fantastic land untouched by humans. Before the game starts, players take a test to help them figure out which of 16 Pokemon best represents their personalities. Players then experience their adventure...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-mystery-dungeon-blue-rescue-team.png",
+      "art": "library/art/pok-mon-mystery-dungeon-explorers-of-dar.png",
       "files": [
-        { "name": "Pokemon Mystery Dungeon - Blue Rescue Team (USA, Australia).zip", "url": "private:pok-mon-mystery-dungeon-blue-rescue-team__Pokemon.Mystery.Dungeon.-.Blue.Rescue.Team.USA.Australia.zip", "size": 11771489, "sha256": "dd0fb4dead4a1557b064c14f8e50327e74a71a6fb6ec2f532d1765c8567edb46" }
+        { "name": "Pokemon Mystery Dungeon - Explorers of Darkness (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-dar__Pokemon.Mystery.Dungeon.-.Explorers.of.Darkness.USA.zip", "size": 31813218, "sha256": "59a771156d360595b4ec458ca4e2bbbb294e6bba95e8f7fcb963e2ec1bf17b72" }
       ]
     },
     {
@@ -1083,15 +1083,15 @@
       ]
     },
     {
-      "id": "pok-mon-mystery-dungeon-explorers-of-dar",
-      "title": "Pokmon Mystery Dungeon : Explorers of Darkness",
+      "id": "pok-mon-mystery-dungeon-blue-rescue-team",
+      "title": "Pokmon Mystery Dungeon : Blue Rescue Team",
       "system": "nds",
       "players": "1",
-      "description": "In this action-packed adventure, players journey as actual Pokemon through a fantastic land untouched by humans. Before the game starts, players take a test to help them figure out which of 16 Pokemon best represents their personalities. Players then experience their adventure...",
+      "description": "And if that's not enough of a dilemma, you've woken up one day to discover that you've mysteriously transformed into a Pokmon yourself!",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-mystery-dungeon-explorers-of-dar.png",
+      "art": "library/art/pok-mon-mystery-dungeon-blue-rescue-team.png",
       "files": [
-        { "name": "Pokemon Mystery Dungeon - Explorers of Darkness (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-dar__Pokemon.Mystery.Dungeon.-.Explorers.of.Darkness.USA.zip", "size": 31813218, "sha256": "59a771156d360595b4ec458ca4e2bbbb294e6bba95e8f7fcb963e2ec1bf17b72" }
+        { "name": "Pokemon Mystery Dungeon - Blue Rescue Team (USA, Australia).zip", "url": "private:pok-mon-mystery-dungeon-blue-rescue-team__Pokemon.Mystery.Dungeon.-.Blue.Rescue.Team.USA.Australia.zip", "size": 11771489, "sha256": "dd0fb4dead4a1557b064c14f8e50327e74a71a6fb6ec2f532d1765c8567edb46" }
       ]
     },
     {
