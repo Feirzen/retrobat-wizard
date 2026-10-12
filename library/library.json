@@ -363,6 +363,18 @@
       ]
     },
     {
+      "id": "pok-mon-emerald-version",
+      "title": "Pokmon Emerald Version",
+      "system": "gba",
+      "players": "1",
+      "description": "Pokmon Emerald is a role-playing game set in the Hoenn region. The player takes on the role of a young Pokmon Trainer who travels across the region, capturing and training Pokmon, battling Gym Leaders, and aiming to become the Champion. The game features turn-based battles,...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-emerald-version.png",
+      "files": [
+        { "name": "Pokemon - Emerald Version (USA, Europe).zip", "url": "private:pok-mon-emerald-version__Pokemon.-.Emerald.Version.USA.Europe.zip", "size": 6791080, "sha256": "4761d0fe9c543e652c2f0ac387397d6766886fc6a4a4e2a0ded4c5235a19337d" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past-f",
       "title": "The Legend of Zelda : A Link to the Past & Four Swords",
       "system": "gba",
