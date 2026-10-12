@@ -63,6 +63,18 @@
       ]
     },
     {
+      "id": "tak-and-the-power-of-juju",
+      "title": "Tak and the Power of JuJu",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Tak and the Power of Juju tells a tale of good versus evil, set in an ancient world where magic really works. You'll take on the role of Tak, a shaman's apprentice, as he sets off on an action-filled journey to save his village from an evil Juju Man. Tak's inventory of tools...",
+      "added": "2026-10-11",
+      "art": "library/art/tak-and-the-power-of-juju.png",
+      "files": [
+        { "name": "Tak and the Power of Juju (USA).ciso", "url": "private:tak-and-the-power-of-juju__Tak.and.the.Power.of.Juju.USA.ciso", "size": 1455456832, "sha256": "263123405078c4859e722e6f6e3d801c84b89c1a5a0efc9adaa1181d63d05704" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-four-swords-adventur",
       "title": "The Legend of Zelda : Four Swords Adventures",
       "system": "gamecube",
