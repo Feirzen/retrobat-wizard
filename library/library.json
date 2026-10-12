@@ -927,6 +927,18 @@
       ]
     },
     {
+      "id": "advance-wars-dual-strike",
+      "title": "Advance Wars - Dual Strike",
+      "system": "nds",
+      "players": "1-8",
+      "description": "The first entry of the long running Wars series for the Nintendo DS. This turn-based strategy game has you commanding an Allied Nations army against the vile Black Hole.Choose from a handful of COs (commanding officers), each with his own unique CO power",
+      "added": "2026-10-12",
+      "art": "library/art/advance-wars-dual-strike.png",
+      "files": [
+        { "name": "Advance Wars - Dual Strike (USA, Australia).zip", "url": "private:advance-wars-dual-strike__Advance.Wars.-.Dual.Strike.USA.Australia.zip", "size": 20388321, "sha256": "1b2719323fa1b2658893836f7f38bdd898435a26fa1a575f75b8877fbd55ab56" }
+      ]
+    },
+    {
       "id": "galaga-demons-of-death",
       "title": "Galaga : Demons of Death",
       "system": "nes",
