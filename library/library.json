@@ -711,6 +711,18 @@
       ]
     },
     {
+      "id": "super-mario-world-2-yoshi-s-island",
+      "title": "Super Mario World 2 : Yoshi's Island",
+      "system": "snes",
+      "players": "1",
+      "description": "The events of Yoshi's Island take place in the past. Mario was one of two twin brothers whom the evil Magikoopa Kamek tried to kidnap. Kamek kidnapped one of the brothers, but the second, Mario, fell down on Yoshi's island, where Yoshis live. The Yoshis decided to carry baby...",
+      "added": "2026-10-12",
+      "art": "library/art/super-mario-world-2-yoshi-s-island.png",
+      "files": [
+        { "name": "Super Mario World 2 - Yoshi's Island (USA) (Rev 1).sfc", "url": "private:super-mario-world-2-yoshi-s-island__Super.Mario.World.2.-.Yoshi.s.Island.USA.Rev.1.sfc", "size": 2097152, "sha256": "bd763c1a56365c244be92e6cffefd318780a2a19eda7d5baf1c6d5bd6c1b3e06" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
