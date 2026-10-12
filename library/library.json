@@ -975,6 +975,18 @@
       ]
     },
     {
+      "id": "mario-vs-donkey-kong-mini-land-mayhem",
+      "title": "Mario vs. Donkey Kong: Mini-Land Mayhem!",
+      "system": "nds",
+      "players": "1",
+      "description": "At the grand opening of Mario's third theme park, the first 100 guests receive a new Mini Pauline toy. Donkey Kong arrives as the 101st guest and finds himself out of luck. He grabs Pauline and heads into the park with Mario and his Mini Marios in hot pursuit. The fourth game in...",
+      "added": "2026-10-12",
+      "art": "library/art/mario-vs-donkey-kong-mini-land-mayhem.png",
+      "files": [
+        { "name": "Mario vs. Donkey Kong - Mini-Land Mayhem! (USA) (En,Fr,Es) (Rev 2) (NDSi Enhanced).zip", "url": "private:mario-vs-donkey-kong-mini-land-mayhem__Mario.vs.Donkey.Kong.-.Mini-Land.Mayhem.USA.En.Fr.Es.Rev.2.NDSi.Enhanced.zip", "size": 16112641, "sha256": "20f71ba65058d7c50d2b6196e03f5b7e8a080856bc4622cffd10e2ad54858599" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
