@@ -411,6 +411,18 @@
       ]
     },
     {
+      "id": "penny-racers",
+      "title": "Penny Racers",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Penny Racers is a racing game with cartoonish, made-of-paper-like cars. There are thirteen cars which you can choose from and nine tracks in total  all available right from the start. It features two playable modes, Race Series and Time Trial, and a mode that allows you to...",
+      "added": "2026-10-12",
+      "art": "library/art/penny-racers.png",
+      "files": [
+        { "name": "Penny Racers (USA).zip", "url": "private:penny-racers__Penny.Racers.USA.zip", "size": 2428002, "sha256": "4335fdc47c9e2657ca55855cb2e310e9c956905837820805f0ed67239fe5ee17" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
