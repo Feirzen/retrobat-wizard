@@ -15,6 +15,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-four-swords-adventur",
+      "title": "The Legend of Zelda : Four Swords Adventures",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "This four-player Zelda connectivity adventure combines gameplay on both the GameCube and Game Boy Advance for a mix of competitive and cooperative multiplayer fun. By hooking up GBAs to the GameCube, the action will move from the television screen (when players are on the...",
+      "added": "2026-10-11",
+      "art": "library/art/the-legend-of-zelda-four-swords-adventur.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Four Swords Adventures (USA).iso", "url": "private:the-legend-of-zelda-four-swords-adventur__Legend.of.Zelda.The.-.Four.Swords.Adventures.USA.iso", "size": 1459978240, "sha256": "76207f62477485a0a79eaca7a2ea5a66ebc1b90b495c0a6a34c41a4213ecddce" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
