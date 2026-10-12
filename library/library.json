@@ -661,6 +661,18 @@
       "files": [
         { "name": "Final Fantasy III (USA) (Rev 1).sfc", "url": "private:final-fantasy-iii__Final.Fantasy.III.USA.Rev.1.sfc", "size": 3145728, "sha256": "10eccc5d2fab81346dd759f6be478dcb682eef981e8d3d662da176e1f9a996bc" }
       ]
+    },
+    {
+      "id": "the-legend-of-zelda-a-link-to-the-past",
+      "title": "The Legend of Zelda : A Link to the Past",
+      "system": "snes",
+      "players": "1",
+      "description": "Venture back to Hyrule and an age of magic and heroes. The predecessors of Link and Zelda face monsters on the march when a menacing magician takes over the kingdom. Only you can prevent his evil plot from shattering the land of Hyrule. In your quest, you'll venture into...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-a-link-to-the-past.png",
+      "files": [
+        { "name": "Legend of Zelda, The - A Link to the Past (USA).sfc", "url": "private:the-legend-of-zelda-a-link-to-the-past__Legend.of.Zelda.The.-.A.Link.to.the.Past.USA.sfc", "size": 1048576, "sha256": "66871d66be19ad2c34c927d6b14cd8eb6fc3181965b6e517cb361f7316009cfb" }
+      ]
     }
   ]
 }
