@@ -687,6 +687,18 @@
       ]
     },
     {
+      "id": "street-fighter-ii-turbo",
+      "title": "Street Fighter II Turbo",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Choose from twelve street fighters from around the world, skilled in a variety of martial arts -- for instance, a character named E.Honda is a sumo wrestler from Japan, while Ken is a master of Tae Kwon Do from the United States. Journey to different countries to defeat other...",
+      "added": "2026-10-12",
+      "art": "library/art/street-fighter-ii-turbo.png",
+      "files": [
+        { "name": "Street Fighter II Turbo (USA) (Rev 1).sfc", "url": "private:street-fighter-ii-turbo__Street.Fighter.II.Turbo.USA.Rev.1.sfc", "size": 2621440, "sha256": "09083869afdc353da7addea88b191b859f11f79ff655f221cbc581d21d2dd8c3" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
