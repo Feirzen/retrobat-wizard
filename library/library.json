@@ -411,6 +411,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-majora-s-mask",
+      "title": "The Legend of Zelda : Majora's Mask",
+      "system": "n64",
+      "players": "1",
+      "description": "After having fulfilled Princess Zelda's request and saved the land of Hyrule from grave danger, Link departs on his horse Epona. In the Lost Woods, he is ambushed by Skull Kid, an imp who dons a mysterious mask, accompanied by the fairies Tael and Tatl. Skull Kid turns Link into...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-majora-s-mask.png",
+      "files": [
+        { "name": "Legend of Zelda, The_ Majora's Mask.zip", "url": "private:the-legend-of-zelda-majora-s-mask__Legend.of.Zelda.The_.Majora.s.Mask.zip", "size": 27148385, "sha256": "555b9a4eabf7fdc3d0cde19750e183fa6edcf5ea08e1b9827e003b5bbfe672c5" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-ocarina-of-time",
       "title": "The Legend of Zelda : Ocarina of Time",
       "system": "n64",
