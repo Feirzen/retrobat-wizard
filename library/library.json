@@ -363,6 +363,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-a-link-to-the-past-f",
+      "title": "The Legend of Zelda : A Link to the Past & Four Swords",
+      "system": "gba",
+      "players": "1",
+      "description": "The Legend of Zelda: A Link to the Past & Four Swords for Game Boy Advance is a remake of A Link to the Past coupled with an entirely new game, Four Swords. This two-in-one game was released shortly before The Wind Waker. While A Link to the Past is largely a faithful port of...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-a-link-to-the-past-f.png",
+      "files": [
+        { "name": "Legend of Zelda, The - A Link to the Past & Four Swords (USA).zip", "url": "private:the-legend-of-zelda-a-link-to-the-past-f__Legend.of.Zelda.The.-.A.Link.to.the.Past.Four.Swords.USA.zip", "size": 3335211, "sha256": "44d5851baeec155395861d0637d2d2fbdcfe81c4616853b4eab5c2141e3b6304" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
