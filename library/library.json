@@ -39,6 +39,18 @@
       ]
     },
     {
+      "id": "luigi-s-mansion",
+      "title": "Luigi's Mansion",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Luigi steps out from the shadow of his brother Mario and into the gloomy shadows of a very haunted house in this, his first-ever starring role. Armed with a flashlight and a customized vacuum cleaner, Luigi must rid the mansion of Boos and ghouls -- and find his missing brother...",
+      "added": "2026-10-12",
+      "art": "library/art/luigi-s-mansion.png",
+      "files": [
+        { "name": "Luigi's Mansion (USA, Canada).ciso", "url": "private:luigi-s-mansion__Luigi.s.Mansion.USA.Canada.ciso", "size": 199262784, "sha256": "a868fd4bcf4d304aae74fb32ddb067e605d64db35e035c248a630d05a7d8ac4f" }
+      ]
+    },
+    {
       "id": "mario-kart-double-dash",
       "title": "Mario Kart : Double Dash!!",
       "system": "gamecube",
