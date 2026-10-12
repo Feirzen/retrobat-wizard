@@ -1227,6 +1227,18 @@
       ]
     },
     {
+      "id": "sonic-classic-collection",
+      "title": "Sonic Classic Collection",
+      "system": "nds",
+      "players": "1",
+      "description": "Sonic Classic Collection is a set of four games from the Sonic series on one cart. The games included on the cart are: 1. Sonic the Hedgehog 2. Sonic the Hedgehog 2 3. Sonic the Hedgehog 3 4. Sonic and Knuckles The compilation also includes Knuckles in Sonic the Hedgehog 2 and...",
+      "added": "2026-10-12",
+      "art": "library/art/sonic-classic-collection.png",
+      "files": [
+        { "name": "Sonic Classic Collection.zip", "url": "private:sonic-classic-collection__Sonic.Classic.Collection.zip", "size": 32128597, "sha256": "f7e34a161d3f1d3e6c2916a4b4e5d49617cd0e05530d481e0b54eb798aff6142" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
