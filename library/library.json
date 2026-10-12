@@ -75,6 +75,18 @@
       ]
     },
     {
+      "id": "shrek-2",
+      "title": "Shrek 2",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Shrek 2 takes players on a twisted fairy tale adventure with Shrek and his buddies. Revisit key locations from the movie sequel while discovering all-new locations and characters. Shrek 2 combines squad-based action with traditional action adventure elements. You control a team...",
+      "added": "2026-10-12",
+      "art": "library/art/shrek-2.png",
+      "files": [
+        { "name": "Shrek 2 (USA).ciso", "url": "private:shrek-2__Shrek.2.USA.ciso", "size": 1249935936, "sha256": "24c9fe3d71d0c5632711788f710e8ff0308b1b87b94dff67c7109d13c49ca31d" }
+      ]
+    },
+    {
       "id": "sonic-adventure-2-battle",
       "title": "Sonic Adventure 2 Battle",
       "system": "gamecube",
