@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """A tiny fake of the GitHub endpoints the Admin tab's Publish a game uses.
 usage: fake_github.py <port>   (test-admin.ps1 starts and stops it)"""
-import base64, json, sys
+import base64, hashlib, json, re, sys, urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 state = {'release': None, 'assets': {}, 'next': 100,
          'library': json.dumps({'version': 1, 'note': 'n \\ x', 'games': [
              {'id': 'old', 'title': 'Old Game', 'system': 'nes', 'players': '1', 'description': '',
               'added': '2026-01-01', 'files': [{'name': 'old.nes', 'url': 'https://github.com/x', 'size': 3, 'sha256': 'a' * 64}]}]}),
-         'libsha': 's1', 'art': {}}
+         'libsha': 's1', 'art': {}, 'uploads': 0, 'quirk': False}
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
     def send(self, code, obj=None):
@@ -22,7 +22,7 @@ class H(BaseHTTPRequestHandler):
     # the PRIVATE repo's release, where the files now live.
     def auth(self):
         a = self.headers.get('Authorization')
-        if self.path == '/state': return True
+        if self.path in ('/state', '/quirk'): return True
         pub = '/repos/Feirzen/retrobat-wizard/' in self.path
         priv = '/repos/Feirzen/retrobat-wizard-social/' in self.path
         if (pub and a == 'Bearer github_pat_TEST') or (priv and a == 'Bearer github_pat_SOCIAL'):
@@ -41,7 +41,9 @@ class H(BaseHTTPRequestHandler):
             return self.send(200, {'sha': state['libsha'], 'content': base64.b64encode(state['library'].encode()).decode()})
         if self.path == '/state':
             return self.send(200, {'assets': list(state['assets']), 'library': json.loads(state['library']),
-                                   'art': {k: v['size'] for k, v in state['art'].items()}})
+                                   'art': {k: v['size'] for k, v in state['art'].items()}, 'uploads': state['uploads']})
+        if self.path == '/quirk':
+            state['quirk'] = True; return self.send(200, {})
         self.send(404, {})
     def do_POST(self):
         if not self.auth(): return
@@ -50,13 +52,26 @@ class H(BaseHTTPRequestHandler):
             state['release'] = {'id': 7, 'tag_name': json.loads(b)['tag_name']}
             return self.send(201, self.rel())
         if '/releases/7/assets?name=' in self.path:
-            name = self.path.split('name=')[1]
-            state['next'] += 1
-            state['assets'][name] = {'id': state['next'], 'name': name, 'size': len(b)}
-            return self.send(201, {'name': name, 'url': 'https://api.github.com/repos/Feirzen/retrobat-wizard-social/releases/assets/%d' % state['next'], 'size': len(b)})
+            # Like real GitHub (Steven's first real upload, 2026-10-11): it
+            # tidies the name - odd characters become a dot, a run of dots
+            # becomes one, none at the ends - and answers with ITS name.
+            name = urllib.parse.unquote(self.path.split('name=')[1])
+            name = re.sub(r'\.{2,}', '.', re.sub(r'[^A-Za-z0-9_\-.]+', '.', name)).strip('.')
+            if state['quirk']: name = name.replace('__', '__x.')
+            if name in state['assets']: return self.send(422, {'errors': [{'code': 'already_exists'}]})
+            state['next'] += 1; state['uploads'] += 1
+            state['assets'][name] = {'id': state['next'], 'name': name, 'size': len(b), 'state': 'uploaded',
+                                     'digest': 'sha256:' + hashlib.sha256(b).hexdigest()}
+            return self.send(201, dict(state['assets'][name], url='https://api.github.com/repos/Feirzen/retrobat-wizard-social/releases/assets/%d' % state['next']))
         self.send(404, {})
     def do_DELETE(self):
         if not self.auth(): return
+        if '/contents/library/art/' in self.path:
+            path = self.path.split('/contents/')[1]
+            old = state['art'].get(path)
+            if old is None: return self.send(404, {})
+            if json.loads(self.body()).get('sha') != old['sha']: return self.send(409, {})
+            del state['art'][path]; return self.send(200, {})
         aid = int(self.path.rsplit('/', 1)[1])
         for k, v in list(state['assets'].items()):
             if v['id'] == aid: del state['assets'][k]

@@ -31,18 +31,23 @@ try {
     Assert $r.Ok ('publish works: ' + $r.Message)
     Assert ($sync.Percent -eq 100) 'progress reaches 100'
     $st = Invoke-RestMethod "http://127.0.0.1:$port/state" -Headers @{ Authorization = 'Bearer github_pat_TEST' }
-    Assert (@($st.assets) -contains 'my-game__My.Game..v1..sfc') 'asset uploaded under a safe name'
+    Assert (@($st.assets) -contains 'my-game__My.Game.v1.sfc') ('asset uploaded under the name GitHub keeps: ' + (@($st.assets) -join ','))
     $g = @($st.library.games | Where-Object id -eq 'my-game')[0]
     Assert ($null -ne $g -and $g.system -eq 'snes' -and $g.players -eq '1-2') 'entry added'
     Assert ($g.files[0].name -eq 'My Game (v1).sfc' -and $g.files[0].size -eq $bytes.Length) 'file name and size kept'
     Assert ($g.files[0].sha256 -eq (Get-FileHash $game -Algorithm SHA256).Hash.ToLower()) 'checksum right'
-    Assert ($g.files[0].url -eq 'private:my-game__My.Game..v1..sfc') 'file kept private, listed by name'
+    Assert ($g.files[0].url -eq 'private:my-game__My.Game.v1.sfc') 'file kept private, listed by name'
     Assert (@($st.library.games).Count -eq 2 -and $st.library.note -eq 'n \ x') 'old game and note kept'
     # again: replaces, never duplicates
     $r2 = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '2' 'Again.' $sync
     $st = Invoke-RestMethod "http://127.0.0.1:$port/state" -Headers @{ Authorization = 'Bearer github_pat_TEST' }
     Assert ($r2.Ok -and @($st.assets).Count -eq 1 -and @($st.library.games).Count -eq 2) 'publishing again replaces'
     Assert ((@($st.library.games | Where-Object id -eq 'my-game')[0]).players -eq '2') 'entry updated'
+    Assert ($st.uploads -eq 1) ('same file again: not sent twice (uploads ' + $st.uploads + ')')
+
+    # names the way GitHub tidies them (Steven's first real upload, 2026-10-11)
+    Assert ((Get-AdminLibAssetName 'paper' 'Paper Mario - Door (USA).nkit.iso') -eq 'paper__Paper.Mario.-.Door.USA.nkit.iso') 'name: runs of odd characters become one dot'
+    Assert ((Get-AdminLibAssetName 'g' '..(x).') -eq 'g__x' -and (Get-AdminLibAssetName 'g' '()') -eq 'g__file') 'name: no dots at the ends, never empty'
 
     # box art (2026-10-11): goes to the public repo, listed as "art"
     $png = Join-Path $ws 'cover.png'; [IO.File]::WriteAllBytes($png, [byte[]](137,80,78,71,13,10,26,10,1,2,3,4))
@@ -73,6 +78,39 @@ try {
     Assert ($sync.Prefix -eq '') 'multi: prefix cleared'
     $one = Publish-AdminLibraryGames $ws @(@{ File = $game2; System = 'nes'; Title = 'Second Game'; Players = '1-2'; Description = ''; Art = '' }) $sync
     Assert ($one.Ok -and $one.Message -like 'Second Game is in the online library*') 'multi with one game: plain message'
+
+    # a changed file: uploaded again, the old copy cleared once the list is saved
+    $bytes[0] = [byte](($bytes[0] + 1) % 256); [IO.File]::WriteAllBytes($game, $bytes)
+    $r6 = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '2' 'Again.' $sync
+    $st = Invoke-RestMethod "http://127.0.0.1:$port/state"
+    Assert ($r6.Ok -and @($st.assets | Where-Object { $_ -like 'my-game__*' }).Count -eq 1) 'changed file: one copy left'
+
+    # GitHub answers with a name of its own: that name is what gets listed
+    [void](Invoke-RestMethod "http://127.0.0.1:$port/quirk")
+    $game3 = Join-Path $ws 'Third.gb'; [IO.File]::WriteAllBytes($game3, [byte[]](9,8,7,6))
+    $r7 = Publish-AdminLibraryGame $ws $game3 'gb' 'Third' '1' '' $sync
+    $st = Invoke-RestMethod "http://127.0.0.1:$port/state"
+    Assert ($r7.Ok -and (@($st.library.games | Where-Object id -eq 'third')[0]).files[0].url -eq 'private:third__x.Third.gb') ('GitHub''s own name listed: ' + $r7.Message)
+
+    # an upload that never made the list (what Steven's first test left)
+    $orph = Join-Path $ws 'Orphan.gba'; [IO.File]::WriteAllBytes($orph, [byte[]](5,5,5))
+    $up = Invoke-WebRequest -Method Post -Uri "http://127.0.0.1:$port/repos/Feirzen/retrobat-wizard-social/releases/7/assets?name=lost__Orphan.gba" -Headers @{ Authorization = 'Bearer github_pat_SOCIAL' } -InFile $orph -ContentType 'application/octet-stream'
+    $c = Get-AdminLibraryContents $ws
+    Assert ($c.Ok -and @($c.Games).Count -eq 4) ('contents: games read (' + @($c.Games).Count + ')')
+    Assert (@($c.Leftovers).Count -eq 1 -and $c.Leftovers[0].name -like 'lost__*') ('contents: the leftover found: ' + (@($c.Leftovers | ForEach-Object name) -join ','))
+
+    # removing: list entry, box art, private file, and the leftover
+    $rm = Remove-AdminLibraryGames $ws @('my-game') $c.Leftovers
+    $st = Invoke-RestMethod "http://127.0.0.1:$port/state"
+    Assert ($rm.Ok -and @($rm.Removed).Count -eq 1 -and $rm.Cleared -eq 1) ('remove: ' + $rm.Message)
+    Assert (@($st.library.games | Where-Object id -eq 'my-game').Count -eq 0 -and @($st.library.games).Count -eq 3) 'remove: off the list, others kept'
+    Assert ($null -eq $st.art.'library/art/my-game.png') 'remove: box art gone'
+    Assert (@($st.assets | Where-Object { $_ -like 'my-game__*' -or $_ -like '*lost__*' }).Count -eq 0 -and @($st.assets).Count -eq 2) ('remove: files gone, others kept: ' + (@($st.assets) -join ','))
+    Assert ($st.library.note -eq 'n \ x') 'remove: note kept'
+    $rm2 = Remove-AdminLibraryGames $ws @('nope') @()
+    Assert ($rm2.Ok -and $rm2.Message -eq 'Nothing to remove.') 'remove: unknown id does nothing'
+    $c2 = Get-AdminLibraryContents $ws
+    Assert (@($c2.Leftovers).Count -eq 0) 'nothing left over after'
     Remove-Item -Recurse -Force $ws
 } finally { Stop-Process -Id $srv.Id -Force }
 Write-Host ("admin tests: {0} passed, {1} failed" -f $script:pass, $script:fail)
