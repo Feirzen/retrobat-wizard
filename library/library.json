@@ -63,6 +63,18 @@
       ]
     },
     {
+      "id": "super-smash-bros-melee",
+      "title": "Super Smash Bros. Melee",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Nintendo's all-star cast of combatants is back in Super Smash Bros. Melee, along with a new batch of brawlers ready to tear it up. The sequel to Super Smash Bros. keeps the same basic premise: Characters duke it out in interactive environments, using special attacks and various...",
+      "added": "2026-10-12",
+      "art": "library/art/super-smash-bros-melee.png",
+      "files": [
+        { "name": "Super Smash Bros. Melee (USA) (En,Ja) (Rev 2).ciso", "url": "private:super-smash-bros-melee__Super.Smash.Bros.Melee.USA.En.Ja.Rev.2.ciso", "size": 1449165376, "sha256": "b7de482eb955c8a96b6746dfa043b69ae7bf6c7c2a09ac382b9da126faa7055c" }
+      ]
+    },
+    {
       "id": "tak-and-the-power-of-juju",
       "title": "Tak and the Power of JuJu",
       "system": "gamecube",
