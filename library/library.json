@@ -363,6 +363,18 @@
       ]
     },
     {
+      "id": "kirby-64-the-crystal-shards",
+      "title": "Kirby 64 : The Crystal Shards",
+      "system": "n64",
+      "players": "1-4",
+      "description": "The story begins with Dark Matter assaulting a faraway land for their special crystal. A young fairy called Ribbon takes the crystal and escapes to save it. She lands in Dream Land, but pieces of the crystal have shattered and landed all across the world. Kirby volunteers to...",
+      "added": "2026-10-12",
+      "art": "library/art/kirby-64-the-crystal-shards.png",
+      "files": [
+        { "name": "Kirby 64_ The Crystal Shards.zip", "url": "private:kirby-64-the-crystal-shards__Kirby.64_.The.Crystal.Shards.zip", "size": 11544324, "sha256": "4e75adcfcfe07816e39c4e4a877ca06084570cf789e22424d68cb04b8227c35e" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
