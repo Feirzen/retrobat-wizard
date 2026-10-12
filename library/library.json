@@ -327,6 +327,18 @@
       ]
     },
     {
+      "id": "classic-nes-series-zelda-ii-the-adventur",
+      "title": "Classic NES Series : Zelda II : The Adventure of Link",
+      "system": "gba",
+      "players": "1",
+      "description": "The Adventure of Link bears little resemblance to the first game in the series. The Adventure of Link features side-scrolling areas within a larger world map rather than the bird's eye view of the previous title. The game incorporates a strategic combat system and more RPG...",
+      "added": "2026-10-12",
+      "art": "library/art/classic-nes-series-zelda-ii-the-adventur.png",
+      "files": [
+        { "name": "Classic NES Series_ Zelda II - The Adventure of Link.zip", "url": "private:classic-nes-series-zelda-ii-the-adventur__Classic.NES.Series_.Zelda.II.-.The.Adventure.of.Link.zip", "size": 2175673, "sha256": "6f31f745221bba7f6ce7f19f3a3d442284f019b2c05073801744a1b1987c8962" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
