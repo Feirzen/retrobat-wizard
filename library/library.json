@@ -303,6 +303,18 @@
       ]
     },
     {
+      "id": "2-games-in-1-finding-nemo-the-continuing",
+      "title": "2 Games In 1 - Finding Nemo - The Continuing Adventures + The Incredibles",
+      "system": "gba",
+      "players": "1",
+      "description": "The Incredibles - These are your powers. Bombs. Bullets. Robots. Lasers. Your enemy controls them all. The only way to survive being the Incredibles is to truly be incredible. Finding Nemo - The Tank Gang have managed to escape from the dentist's office! Help Nemo, Dory, Marlin,...",
+      "added": "2026-10-12",
+      "art": "library/art/2-games-in-1-finding-nemo-the-continuing.png",
+      "files": [
+        { "name": "2 Games in 1_ Finding Nemo - The Continuing Adventures + The Incredibles.zip", "url": "private:2-games-in-1-finding-nemo-the-continuing__2.Games.in.1_.Finding.Nemo.-.The.Continuing.Adventures.The.Incredibles.zip", "size": 9169139, "sha256": "cafd5313e1ebe2fb0d5e0cd862871854425e63f46bf736b7461270f41f554b61" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
