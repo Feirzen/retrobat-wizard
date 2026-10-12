@@ -471,6 +471,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-oracle-of-seasons",
+      "title": "The Legend of Zelda : Oracle of Seasons",
+      "system": "gbc",
+      "players": "1",
+      "description": "The land of Holodrum is slowly withering. Onox, the General of Darkness, has imprisoned the Oracle of Seasons and is draining the very life out of the land. With the seasons in tumult and the forces of evil running rampant, the world looks for a hero... and finds Link. His quest...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-oracle-of-seasons.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Oracle of Seasons (USA, Australia).zip", "url": "private:the-legend-of-zelda-oracle-of-seasons__Legend.of.Zelda.The.-.Oracle.of.Seasons.USA.Australia.zip", "size": 657460, "sha256": "6e826e4cad0c187f71c5ccbbd55154ea41999d351ff127c719fb0882048d4f96" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
