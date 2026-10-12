@@ -963,6 +963,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-phantom-hourglass",
+      "title": "The Legend of Zelda : Phantom Hourglass",
+      "system": "nds",
+      "players": "1",
+      "description": "Continue the Wind Waker adventure in Link's first DS game. The epic story of The Legend of Zelda: The Wind Waker continues as Link finds himself lost and alone in unknown seas in a new adventure. Featuring intuitive touch-screen controls and innovative puzzles, The Legend of...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-phantom-hourglass.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Phantom Hourglass (USA) (En,Fr,Es).zip", "url": "private:the-legend-of-zelda-phantom-hourglass__Legend.of.Zelda.The.-.Phantom.Hourglass.USA.En.Fr.Es.zip", "size": 46976062, "sha256": "b953285d2778530344e5139ebf726ee81133aae93d310f3ff7f5803d38590b9f" }
+      ]
+    },
+    {
       "id": "galaga-demons-of-death",
       "title": "Galaga : Demons of Death",
       "system": "nes",
