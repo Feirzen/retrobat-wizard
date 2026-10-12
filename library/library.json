@@ -459,6 +459,18 @@
       ]
     },
     {
+      "id": "mario-tennis",
+      "title": "Mario Tennis",
+      "system": "gbc",
+      "players": "1-2",
+      "description": "Mario Tennis for the Game Boy Color is a much different experience than its N64 effort. In addition to the core gameplay found in the N64 version, the GBC version features an RPG-style world that allows you to work your way up through the ranks at the Royal Tennis Academy. The...",
+      "added": "2026-10-12",
+      "art": "library/art/mario-tennis.png",
+      "files": [
+        { "name": "Mario Tennis (USA).zip", "url": "private:mario-tennis__Mario.Tennis.USA.zip", "size": 764126, "sha256": "3c628dfb8804939d0e95b3467e2f0431de1be499d9ed60d51a4fa43ee4dadf4c" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-oracle-of-ages",
       "title": "The Legend of Zelda : Oracle of Ages",
       "system": "gbc",
