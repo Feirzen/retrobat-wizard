@@ -327,6 +327,18 @@
       ]
     },
     {
+      "id": "kirby-s-dream-land-2",
+      "title": "Kirby's Dream Land 2",
+      "system": "gb",
+      "players": "1",
+      "description": "The lovable Kirby returns to the Game Boy! This time the bridges connecting the rainbow bridges have disappeared and King Dedede is to blame as always...or is he? The evil Dark Matter has him under his control and plans to turn Dream Land into a dark world. Kirby's goal is get...",
+      "added": "2026-10-12",
+      "art": "library/art/kirby-s-dream-land-2.png",
+      "files": [
+        { "name": "Kirby's Dream Land 2 (USA, Europe) (SGB Enhanced).zip", "url": "private:kirby-s-dream-land-2__Kirby.s.Dream.Land.2.USA.Europe.SGB.Enhanced.zip", "size": 325755, "sha256": "d6914d1b71272774b7cdce145242ab020dcfe4cb82d1cca4451ce61f26bfbaa1" }
+      ]
+    },
+    {
       "id": "2-games-in-1-finding-nemo-the-continuing",
       "title": "2 Games In 1 - Finding Nemo - The Continuing Adventures + The Incredibles",
       "system": "gba",
