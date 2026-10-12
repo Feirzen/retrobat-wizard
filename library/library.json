@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-platinum-version",
-      "title": "Pokmon Platinum Version",
+      "id": "pok-mon-soulsilver-version",
+      "title": "Pokmon SoulSilver Version",
       "system": "nds",
       "players": "1",
-      "description": "ANOTHER WORLD HAS EMERGED IN THE SINNOH REGION... ...A world where time and space are altered! Catch, train and battle your favorite Pokmon, and discover ancient, mythical Pokmon in this exciting new adventure! NEW DISCOVERIES, NEW CHALLENGES! EXPANDED ONLINE OPTIONS! New...",
+      "description": "PREPARE FOR THRILLING NEW ADVENTURES AS LEGENDARY POKMON AWAKEN! Explore the Johto region as you catch, train, and battle with your favorite Pokmon by your side. Turn the tides--call forth the Legendary Pokmon! Enjoy minigames with your trained Pokmon! Travel with your...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-platinum-version.png",
+      "art": "library/art/pok-mon-soulsilver-version.png",
       "files": [
-        { "name": "Pokemon - Platinum Version (USA) (Rev 1) 2.zip", "url": "private:pok-mon-platinum-version__Pokemon.-.Platinum.Version.USA.Rev.1.2.zip", "size": 50777907, "sha256": "95ca960b6ed650227ed166b7da7fff3ff9d5f7ee036ac68eb4c2c9e0db212801" }
+        { "name": "Pokemon - SoulSilver Version (USA).zip", "url": "private:pok-mon-soulsilver-version__Pokemon.-.SoulSilver.Version.USA.zip", "size": 60760051, "sha256": "c8b7174a6c03912226c41e59a80a222246583c18301d304a768a53d2cd4fe27e" }
       ]
     },
     {
@@ -1080,6 +1080,18 @@
       "art": "library/art/pok-mon-pearl-version.png",
       "files": [
         { "name": "Pokemon - Pearl Version (USA) (Rev 5).zip", "url": "private:pok-mon-pearl-version__Pokemon.-.Pearl.Version.USA.Rev.5.zip", "size": 27924476, "sha256": "b602407104e09b4daded46ff169099aea6d6407c8936d54af8c3e7b35ea58061" }
+      ]
+    },
+    {
+      "id": "pok-mon-platinum-version",
+      "title": "Pokmon Platinum Version",
+      "system": "nds",
+      "players": "1",
+      "description": "ANOTHER WORLD HAS EMERGED IN THE SINNOH REGION... ...A world where time and space are altered! Catch, train and battle your favorite Pokmon, and discover ancient, mythical Pokmon in this exciting new adventure! NEW DISCOVERIES, NEW CHALLENGES! EXPANDED ONLINE OPTIONS! New...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-platinum-version.png",
+      "files": [
+        { "name": "Pokemon - Platinum Version (USA) (Rev 1) 2.zip", "url": "private:pok-mon-platinum-version__Pokemon.-.Platinum.Version.USA.Rev.1.2.zip", "size": 50777907, "sha256": "95ca960b6ed650227ed166b7da7fff3ff9d5f7ee036ac68eb4c2c9e0db212801" }
       ]
     },
     {
