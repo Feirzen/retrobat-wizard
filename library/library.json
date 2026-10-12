@@ -339,6 +339,18 @@
       ]
     },
     {
+      "id": "pok-mon-blue-version",
+      "title": "Pokmon : Blue Version",
+      "system": "gb",
+      "players": "1-2",
+      "description": "After venturing alone into tall grass, a voice warns the player to stop, which is revealed to be Professor Oak, a famous Pokmon researcher. Professor Oak explains to the player that wild Pokmon may be living there, and encountering them alone can be very dangerous. He takes...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-blue-version.png",
+      "files": [
+        { "name": "Pokemon - Blue Version (USA, Europe) (SGB Enhanced).zip", "url": "private:pok-mon-blue-version__Pokemon.-.Blue.Version.USA.Europe.SGB.Enhanced.zip", "size": 368303, "sha256": "57a74d9ea1e35a6f3fe70cd8165b7bd7002c50829e83a91986804d81e9506153" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-link-s-awakening",
       "title": "The Legend of Zelda : Link's Awakening",
       "system": "gb",
