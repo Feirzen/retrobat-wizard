@@ -1011,6 +1011,18 @@
       ]
     },
     {
+      "id": "phoenix-wright-ace-attorney",
+      "title": "Phoenix Wright : Ace Attorney",
+      "system": "nds",
+      "players": "1",
+      "description": "Not everyone is innocent until proven guilty! Players star as a defense attorney, who must prove his seemingly guilty client's innocence no matter how dire the circumstances may seem. The game presents twisting storylines and intriguing gameplay in a comical anime style. Players...",
+      "added": "2026-10-12",
+      "art": "library/art/phoenix-wright-ace-attorney.png",
+      "files": [
+        { "name": "Phoenix Wright - Ace Attorney (USA).zip", "url": "private:phoenix-wright-ace-attorney__Phoenix.Wright.-.Ace.Attorney.USA.zip", "size": 38675386, "sha256": "5e35c5cdd49561bdf667b0ae4920e2613c99a13b396f98f75713cde2a6f50ce7" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
