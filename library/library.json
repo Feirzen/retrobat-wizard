@@ -315,6 +315,18 @@
       ]
     },
     {
+      "id": "classic-nes-series-the-legend-of-zelda",
+      "title": "Classic NES Series : The Legend of Zelda",
+      "system": "gba",
+      "players": "1",
+      "description": "The Legend of Zelda invented a genre and captivated a gaming generation. Now you can play the timeless NES adventure on your Game Boy Advance! The evil warlock Ganon has imprisoned Princess Zelda and plunged the peaceful land of Hyrule into darkness and despair. Only a young boy...",
+      "added": "2026-10-12",
+      "art": "library/art/classic-nes-series-the-legend-of-zelda.png",
+      "files": [
+        { "name": "Classic NES Series_ The Legend of Zelda.zip", "url": "private:classic-nes-series-the-legend-of-zelda__Classic.NES.Series_.The.Legend.of.Zelda.zip", "size": 4146504, "sha256": "faa0b431af76521d11ed38fc813ab87e8254c778de3edf49d448a02563b5d9f0" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
