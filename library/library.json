@@ -459,6 +459,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-oracle-of-ages",
+      "title": "The Legend of Zelda : Oracle of Ages",
+      "system": "gbc",
+      "players": "1",
+      "description": "Using the legendary power of the Triforce, Link travels to a distant land known as Labrynna where Veran, the Sorceress of Shadows, has developed a scheme to alter Labrynna's past. Through trickery and deceit, Veran harnesses the power of Nayru, the Oracle of Ages, and travels...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-oracle-of-ages.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Oracle of Ages (USA, Australia).zip", "url": "private:the-legend-of-zelda-oracle-of-ages__Legend.of.Zelda.The.-.Oracle.of.Ages.USA.Australia.zip", "size": 679263, "sha256": "a2cc523ff962730b550c079ad07a738dce01ce2c6bdd936d8009d2ace2ea609f" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
