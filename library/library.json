@@ -399,6 +399,18 @@
       ]
     },
     {
+      "id": "tetris",
+      "title": "Tetris",
+      "system": "gb",
+      "players": "1-2",
+      "description": "This version of Tetris is one of many conversions of the famous block-stacking game, and was included with the Game Boy upon its release in several territories. The goal is to place pieces made up of four tiles in a ten-by-twenty well, organizing them into complete rows, which...",
+      "added": "2026-10-12",
+      "art": "library/art/tetris.png",
+      "files": [
+        { "name": "Tetris (World) (Rev 1).zip", "url": "private:tetris__Tetris.World.Rev.1.zip", "size": 19284, "sha256": "7b910d5979ba10ef2acffbccf6a2d5ad7a11600936906a1f20062184b98eda27" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-link-s-awakening",
       "title": "The Legend of Zelda : Link's Awakening",
       "system": "gb",
