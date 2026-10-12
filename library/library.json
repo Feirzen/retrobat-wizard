@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-white-version",
-      "title": "Pokmon White Version",
+      "id": "pok-mon-conquest",
+      "title": "Pokmon Conquest",
       "system": "nds",
       "players": "1",
-      "description": "A NEW WORLD FILLED WITH NEVER-BEFORE-SEEN POKMON! What are the true motives of Team Plasma and the mysterious N? What is the secret of the Legendary Pokmon? Adventure across the Unova region and discover all-new Pokmon! The game changes with the seasons! New battle strategies...",
+      "description": "In Pokemon Conquest, players take on the role of a young Warlord who is linked with a Pokemon. Together, they must set out to recruit Warrior allies to strengthen their growing kingdom. Along their journey, players will encounter a variety of Pokemon, as well as Warriors and...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-white-version.png",
+      "art": "library/art/pok-mon-conquest.png",
       "files": [
-        { "name": "Pokemon - White Version (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-white-version__Pokemon.-.White.Version.USA.Europe.NDSi.Enhanced.zip", "size": 110699618, "sha256": "bb8b634b22a911a48b1b5f41d6e42134f2aa61483bfcc7d67e3bbf967ca87b05" }
+        { "name": "Pokemon Conquest.zip", "url": "private:pok-mon-conquest__Pokemon.Conquest.zip", "size": 75622865, "sha256": "0ab6153b8ceda04a1c91d56fdc45a9c799d208aaf4d277d394e839c37a7f8c15" }
       ]
     },
     {
@@ -1068,18 +1068,6 @@
       "art": "library/art/pok-mon-black-version-2.png",
       "files": [
         { "name": "Pokemon - Black Version 2 (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-black-version-2__Pokemon.-.Black.Version.2.USA.Europe.NDSi.Enhanced.zip", "size": 154063144, "sha256": "4a21aee8f169facf25068d67e24f3275603c7b3a96c18bcd950ce53cd6d8bba8" }
-      ]
-    },
-    {
-      "id": "pok-mon-conquest",
-      "title": "Pokmon Conquest",
-      "system": "nds",
-      "players": "1",
-      "description": "In Pokemon Conquest, players take on the role of a young Warlord who is linked with a Pokemon. Together, they must set out to recruit Warrior allies to strengthen their growing kingdom. Along their journey, players will encounter a variety of Pokemon, as well as Warriors and...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-conquest.png",
-      "files": [
-        { "name": "Pokemon Conquest.zip", "url": "private:pok-mon-conquest__Pokemon.Conquest.zip", "size": 75622865, "sha256": "0ab6153b8ceda04a1c91d56fdc45a9c799d208aaf4d277d394e839c37a7f8c15" }
       ]
     },
     {
@@ -1164,6 +1152,18 @@
       "art": "library/art/pok-mon-soulsilver-version.png",
       "files": [
         { "name": "Pokemon - SoulSilver Version (USA).zip", "url": "private:pok-mon-soulsilver-version__Pokemon.-.SoulSilver.Version.USA.zip", "size": 60760051, "sha256": "c8b7174a6c03912226c41e59a80a222246583c18301d304a768a53d2cd4fe27e" }
+      ]
+    },
+    {
+      "id": "pok-mon-white-version",
+      "title": "Pokmon White Version",
+      "system": "nds",
+      "players": "1",
+      "description": "A NEW WORLD FILLED WITH NEVER-BEFORE-SEEN POKMON! What are the true motives of Team Plasma and the mysterious N? What is the secret of the Legendary Pokmon? Adventure across the Unova region and discover all-new Pokmon! The game changes with the seasons! New battle strategies...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-white-version.png",
+      "files": [
+        { "name": "Pokemon - White Version (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-white-version__Pokemon.-.White.Version.USA.Europe.NDSi.Enhanced.zip", "size": 110699618, "sha256": "bb8b634b22a911a48b1b5f41d6e42134f2aa61483bfcc7d67e3bbf967ca87b05" }
       ]
     },
     {
