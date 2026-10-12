@@ -471,6 +471,18 @@
       ]
     },
     {
+      "id": "pok-mon-crystal-version",
+      "title": "Pokmon Crystal Version",
+      "system": "gbc",
+      "players": "1",
+      "description": "Travel back to the world of Johto as the Gold and Silver series continues with brand-new features! Whether you're reading the fresh descriptions in your Pokdex, using the unique sort function to organize your Pokmon in new ways, watching the all-new battle animations, or...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-crystal-version.png",
+      "files": [
+        { "name": "Pokemon - Crystal Version (USA, Europe) (Rev 1).zip", "url": "private:pok-mon-crystal-version__Pokemon.-.Crystal.Version.USA.Europe.Rev.1.zip", "size": 999181, "sha256": "ec0f4d75ba268e679a991559845e767f4a6af6502786a7170f2b17171e469d4e" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-oracle-of-ages",
       "title": "The Legend of Zelda : Oracle of Ages",
       "system": "gbc",
