@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-diamond-version",
-      "title": "Pokmon Diamond Version",
+      "id": "pok-mon-white-version-2",
+      "title": "Pokmon White Version 2",
       "system": "nds",
       "players": "1",
-      "description": "Welcome to the next generation of Pokmon! As a rookie Pokmon Trainer, you will need to catch, train, and battle Pokmon on your journey to become the Pokmon League Champion. You will face many challenges along the way, as you search for the Pokmon that rules time in Pokmon...",
+      "description": "This is Pokmon White Version 2. The types and likelihood of Pokmon that will appear differ from Pokmon Black Version 2. This game can communicate, battle, and trade only with the various language versions of Pokmon Black Version 2, Pokmon White Version 2, Pokmon Black...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-diamond-version.png",
+      "art": "library/art/pok-mon-white-version-2.png",
       "files": [
-        { "name": "Pokemon_ Diamond Version.zip", "url": "private:pok-mon-diamond-version__Pokemon_.Diamond.Version.zip", "size": 27924117, "sha256": "d2479ffeca15a02430bb50006bbe2f969ecfb92ea922da54ca52d157c78adb8d" }
+        { "name": "Pokemon_ White Version 2.zip", "url": "private:pok-mon-white-version-2__Pokemon_.White.Version.2.zip", "size": 153748826, "sha256": "5f234e8f5d5169ebca3e6cb8c87e629c75e4c5fa62169c6f9f72ebfee4ebc008" }
       ]
     },
     {
@@ -1080,6 +1080,18 @@
       "art": "library/art/pok-mon-conquest.png",
       "files": [
         { "name": "Pokemon Conquest.zip", "url": "private:pok-mon-conquest__Pokemon.Conquest.zip", "size": 75622865, "sha256": "0ab6153b8ceda04a1c91d56fdc45a9c799d208aaf4d277d394e839c37a7f8c15" }
+      ]
+    },
+    {
+      "id": "pok-mon-diamond-version",
+      "title": "Pokmon Diamond Version",
+      "system": "nds",
+      "players": "1",
+      "description": "Welcome to the next generation of Pokmon! As a rookie Pokmon Trainer, you will need to catch, train, and battle Pokmon on your journey to become the Pokmon League Champion. You will face many challenges along the way, as you search for the Pokmon that rules time in Pokmon...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-diamond-version.png",
+      "files": [
+        { "name": "Pokemon_ Diamond Version.zip", "url": "private:pok-mon-diamond-version__Pokemon_.Diamond.Version.zip", "size": 27924117, "sha256": "d2479ffeca15a02430bb50006bbe2f969ecfb92ea922da54ca52d157c78adb8d" }
       ]
     },
     {
