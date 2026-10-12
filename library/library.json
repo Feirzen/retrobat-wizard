@@ -39,6 +39,18 @@
       ]
     },
     {
+      "id": "shadow-the-hedgehog",
+      "title": "Shadow the Hedgehog",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Shadow the Hedgehog is a Sonic the Hedgehog series spin off title. Players take the role of Shadow the Hedgehog, Sonic's Nemesis from Sonic Adventure 2. Shadow must fight his way through many levels to unveil the secrets of his past. Will he choose to join Dr. Eggman or the...",
+      "added": "2026-10-12",
+      "art": "library/art/shadow-the-hedgehog.png",
+      "files": [
+        { "name": "Shadow the Hedgehog (USA) (En,Ja,Fr,De,Es,It).rvz", "url": "private:shadow-the-hedgehog__Shadow.the.Hedgehog.USA.En.Ja.Fr.De.Es.It.rvz", "size": 1353077880, "sha256": "f86c71819fb0b1f3ca8f0ed93b7594c8883b72a67f51a327c3f617df65db6220" }
+      ]
+    },
+    {
       "id": "sonic-adventure-2-battle",
       "title": "Sonic Adventure 2 Battle",
       "system": "gamecube",
