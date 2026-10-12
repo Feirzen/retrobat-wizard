@@ -675,6 +675,18 @@
       ]
     },
     {
+      "id": "mega-man-x3",
+      "title": "Mega Man X3",
+      "system": "snes",
+      "players": "1",
+      "description": "A Reploid scientist named Dr. Doppler begins creation of a new city for Reploids, which will bring a new era of peace to the Reploids and humans. But something goes terribly wrong, and now Mavericks have begun to appear everywhere! It's up to X and Zero to find out who is behind...",
+      "added": "2026-10-12",
+      "art": "library/art/mega-man-x3.png",
+      "files": [
+        { "name": "Mega Man X3 (USA).sfc", "url": "private:mega-man-x3__Mega.Man.X3.USA.sfc", "size": 2097152, "sha256": "65b03268afac296330e8ff8d60dd0825879e13ed658b37713c034a3bd074f1d7" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
