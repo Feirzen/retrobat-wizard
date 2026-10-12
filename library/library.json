@@ -315,6 +315,18 @@
       ]
     },
     {
+      "id": "beetle-adventure-racing",
+      "title": "Beetle Adventure Racing!",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Take control of a collection of the latest Volkswagen Beetle \"2.0\" models (from street type to off-road designs) and race across varying road types that will test your speed and endurance (each track taking up to 4 minutes to complete from one end to another). Find shortcuts or...",
+      "added": "2026-10-12",
+      "art": "library/art/beetle-adventure-racing.png",
+      "files": [
+        { "name": "Beetle Adventure Racing! (USA) (En,Fr,De).zip", "url": "private:beetle-adventure-racing__Beetle.Adventure.Racing.USA.En.Fr.De.zip", "size": 12538756, "sha256": "d38dba7b2c06d2e1b87e53b65d15728383ffb5dba2c398cccd49e9993280430d" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
