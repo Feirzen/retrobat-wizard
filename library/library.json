@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-soulsilver-version",
-      "title": "Pokmon SoulSilver Version",
+      "id": "pok-mon-white-version",
+      "title": "Pokmon White Version",
       "system": "nds",
       "players": "1",
-      "description": "PREPARE FOR THRILLING NEW ADVENTURES AS LEGENDARY POKMON AWAKEN! Explore the Johto region as you catch, train, and battle with your favorite Pokmon by your side. Turn the tides--call forth the Legendary Pokmon! Enjoy minigames with your trained Pokmon! Travel with your...",
+      "description": "A NEW WORLD FILLED WITH NEVER-BEFORE-SEEN POKMON! What are the true motives of Team Plasma and the mysterious N? What is the secret of the Legendary Pokmon? Adventure across the Unova region and discover all-new Pokmon! The game changes with the seasons! New battle strategies...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-soulsilver-version.png",
+      "art": "library/art/pok-mon-white-version.png",
       "files": [
-        { "name": "Pokemon - SoulSilver Version (USA).zip", "url": "private:pok-mon-soulsilver-version__Pokemon.-.SoulSilver.Version.USA.zip", "size": 60760051, "sha256": "c8b7174a6c03912226c41e59a80a222246583c18301d304a768a53d2cd4fe27e" }
+        { "name": "Pokemon - White Version (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-white-version__Pokemon.-.White.Version.USA.Europe.NDSi.Enhanced.zip", "size": 110699618, "sha256": "bb8b634b22a911a48b1b5f41d6e42134f2aa61483bfcc7d67e3bbf967ca87b05" }
       ]
     },
     {
@@ -1155,15 +1155,15 @@
       ]
     },
     {
-      "id": "pok-mon-white-version",
-      "title": "Pokmon White Version",
+      "id": "pok-mon-soulsilver-version",
+      "title": "Pokmon SoulSilver Version",
       "system": "nds",
       "players": "1",
-      "description": "A NEW WORLD FILLED WITH NEVER-BEFORE-SEEN POKMON! What are the true motives of Team Plasma and the mysterious N? What is the secret of the Legendary Pokmon? Adventure across the Unova region and discover all-new Pokmon! The game changes with the seasons! New battle strategies...",
+      "description": "PREPARE FOR THRILLING NEW ADVENTURES AS LEGENDARY POKMON AWAKEN! Explore the Johto region as you catch, train, and battle with your favorite Pokmon by your side. Turn the tides--call forth the Legendary Pokmon! Enjoy minigames with your trained Pokmon! Travel with your...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-white-version.png",
+      "art": "library/art/pok-mon-soulsilver-version.png",
       "files": [
-        { "name": "Pokemon - White Version (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-white-version__Pokemon.-.White.Version.USA.Europe.NDSi.Enhanced.zip", "size": 110699618, "sha256": "bb8b634b22a911a48b1b5f41d6e42134f2aa61483bfcc7d67e3bbf967ca87b05" }
+        { "name": "Pokemon - SoulSilver Version (USA).zip", "url": "private:pok-mon-soulsilver-version__Pokemon.-.SoulSilver.Version.USA.zip", "size": 60760051, "sha256": "c8b7174a6c03912226c41e59a80a222246583c18301d304a768a53d2cd4fe27e" }
       ]
     },
     {
