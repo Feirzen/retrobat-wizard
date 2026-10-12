@@ -963,6 +963,18 @@
       ]
     },
     {
+      "id": "mario-luigi-bowser-s-inside-story",
+      "title": "Mario & Luigi : Bowser's Inside Story",
+      "system": "nds",
+      "players": "1",
+      "description": "Mario & Luigi: Bowser's Inside Story is the third game in the Mario & Luigi series of games. Players control Mario and Luigi simultaneously in the side-scrolling platform environment of Bowser's body, while also controlling the Koopa King himself in the top-down world of the...",
+      "added": "2026-10-12",
+      "art": "library/art/mario-luigi-bowser-s-inside-story.png",
+      "files": [
+        { "name": "Mario & Luigi - Bowser's Inside Story (USA) (En,Fr,Es).zip", "url": "private:mario-luigi-bowser-s-inside-story__Mario.Luigi.-.Bowser.s.Inside.Story.USA.En.Fr.Es.zip", "size": 63774619, "sha256": "d3ff1c81c7e6ed820ace118128fa2b820513a7e1d347575c768396734ccf83b9" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
