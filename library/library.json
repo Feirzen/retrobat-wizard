@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-mystery-dungeon-explorers-of-sky",
-      "title": "Pokmon Mystery Dungeon : Explorers of Sky",
+      "id": "pok-mon-ranger",
+      "title": "Pokmon Ranger",
       "system": "nds",
       "players": "1",
-      "description": "Pokemon Mystery Dungeon: Explorers of Sky expands on the fun found in Pokemon Mystery Dungeon: Explorers of Time and Pokemon Mystery Dungeon: Explorers of Darkness. Players become a Pokemon and team up with a partner Pokemon. Together the two set out on an adventure of...",
+      "description": "An action RPG set in the world of the Pokmon Ranger movie. You play as a Pokmon Ranger. Different from a Pokmon Trainer, a Ranger travels the lands, using Pokmon in a fight to defend nature from baddies. Its release precedes that of Diamond and Pearl, and all three games...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-mystery-dungeon-explorers-of-sky.png",
+      "art": "library/art/pok-mon-ranger.png",
       "files": [
-        { "name": "Pokemon Mystery Dungeon - Explorers of Sky (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-sky__Pokemon.Mystery.Dungeon.-.Explorers.of.Sky.USA.zip", "size": 46465544, "sha256": "d87541821866f5f1b01abad2df879bb3d1cacdbb7a5a13975eeccd889f1c9f44" }
+        { "name": "Pokemon Ranger (USA).zip", "url": "private:pok-mon-ranger__Pokemon.Ranger.USA.zip", "size": 14557174, "sha256": "35321c4dffbce68e5ae0cbb07ffe17f1218bdbff132be03b7e59f4a5f6a41e31" }
       ]
     },
     {
@@ -1104,6 +1104,18 @@
       "art": "library/art/pok-mon-mystery-dungeon-explorers-of-dar.png",
       "files": [
         { "name": "Pokemon Mystery Dungeon - Explorers of Darkness (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-dar__Pokemon.Mystery.Dungeon.-.Explorers.of.Darkness.USA.zip", "size": 31813218, "sha256": "59a771156d360595b4ec458ca4e2bbbb294e6bba95e8f7fcb963e2ec1bf17b72" }
+      ]
+    },
+    {
+      "id": "pok-mon-mystery-dungeon-explorers-of-sky",
+      "title": "Pokmon Mystery Dungeon : Explorers of Sky",
+      "system": "nds",
+      "players": "1",
+      "description": "Pokemon Mystery Dungeon: Explorers of Sky expands on the fun found in Pokemon Mystery Dungeon: Explorers of Time and Pokemon Mystery Dungeon: Explorers of Darkness. Players become a Pokemon and team up with a partner Pokemon. Together the two set out on an adventure of...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-mystery-dungeon-explorers-of-sky.png",
+      "files": [
+        { "name": "Pokemon Mystery Dungeon - Explorers of Sky (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-sky__Pokemon.Mystery.Dungeon.-.Explorers.of.Sky.USA.zip", "size": 46465544, "sha256": "d87541821866f5f1b01abad2df879bb3d1cacdbb7a5a13975eeccd889f1c9f44" }
       ]
     },
     {
