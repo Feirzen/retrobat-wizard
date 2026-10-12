@@ -351,6 +351,18 @@
       ]
     },
     {
+      "id": "kirby-the-amazing-mirror",
+      "title": "Kirby & the Amazing Mirror",
+      "system": "gba",
+      "players": "1",
+      "description": "The Mirror World has been invaded by an evil shadow, and Kirby's got to save the day! Fortunately, he won't have to go it alone! He's been split into four Kirbys of different colors, and with his trusty cell phone, he can call up his colorful clones to lend a hand!",
+      "added": "2026-10-12",
+      "art": "library/art/kirby-the-amazing-mirror.png",
+      "files": [
+        { "name": "Kirby & the Amazing Mirror.zip", "url": "private:kirby-the-amazing-mirror__Kirby.the.Amazing.Mirror.zip", "size": 5825015, "sha256": "c3e0bfd615131edd671fc9eb7cf4399515df290efb3115549d87f218964c89f4" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
