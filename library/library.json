@@ -3,6 +3,18 @@
   "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
   "games": [
     {
+      "id": "alien-hominid",
+      "title": "Alien Hominid",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "You're a little yellow alien. The FBI has shot down your ship while flying over planet Earth. And it, quite literally, lands right on their doorstep. After a series of FBI Agents swipe your ship, what option do you have other than to blow up everything in your path to get it...",
+      "added": "2026-10-12",
+      "art": "library/art/alien-hominid.png",
+      "files": [
+        { "name": "Alien Hominid (USA).ciso", "url": "private:alien-hominid__Alien.Hominid.USA.ciso", "size": 455115328, "sha256": "7f32ca41cc69f568be141cbccb84288362d62a30c26f2e9480bf5990cc58576f" }
+      ]
+    },
+    {
       "id": "fire-emblem-path-of-radiance",
       "title": "Fire Emblem : Path of Radiance",
       "system": "gamecube",
