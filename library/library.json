@@ -27,6 +27,18 @@
       ]
     },
     {
+      "id": "sonic-adventure-2-battle",
+      "title": "Sonic Adventure 2 Battle",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Sonic and company are back and better than ever in Sonic Adventure 2: Battle for Nintendo GameCube. Dr. Eggman is up to his old tricks, and it's up to Sonic, Tails, and Knuckles to stop him yet again. Sonic Adventure 2: Battle features faster action, all-new two-player games,...",
+      "added": "2026-10-11",
+      "art": "library/art/sonic-adventure-2-battle.png",
+      "files": [
+        { "name": "Sonic Adventure 2 - Battle (USA) (En,Ja,Fr,De,Es).iso", "url": "private:sonic-adventure-2-battle__Sonic.Adventure.2.-.Battle.USA.En.Ja.Fr.De.Es.iso", "size": 1459978240, "sha256": "c8f9db7c936fffed7a5ea12a099c39ad3197208731ebbe4bcdfc3cec9b350638" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-four-swords-adventur",
       "title": "The Legend of Zelda : Four Swords Adventures",
       "system": "gamecube",
