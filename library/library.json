@@ -375,6 +375,18 @@
       ]
     },
     {
+      "id": "mario-kart-64",
+      "title": "Mario Kart 64",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Mario Kart 64 races eight familiar faces, including Mario, Bowser and Yoshi, on four progressively tougher four-track circuits. Wide curves and gentle banks mark the Mushroom Cup tracks. Your commute gets notably tougher on the Flower Cup, though. The player will have to dodge...",
+      "added": "2026-10-12",
+      "art": "library/art/mario-kart-64.png",
+      "files": [
+        { "name": "Mario Kart 64 (USA).z64", "url": "private:mario-kart-64__Mario.Kart.64.USA.z64", "size": 12582912, "sha256": "d6b8538dd63f0132ecb2856e7d32816ed3c30e3e479aecd23cf83fb6ba17a5da" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
