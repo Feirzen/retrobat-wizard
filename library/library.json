@@ -3,6 +3,18 @@
   "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
   "games": [
     {
+      "id": "fire-emblem-path-of-radiance",
+      "title": "Fire Emblem : Path of Radiance",
+      "system": "gamecube",
+      "players": "1",
+      "description": "First console installment of the strategy-RPG series since the SNES days. Previously released on Famicom (Japan-only), Super Famicom (Japan-only), and Game Boy Advance, Fire Emblem leaves the 2D overhead maps of old behind to serve up 3D villages, fields, and caves, and...",
+      "added": "2026-10-12",
+      "art": "library/art/fire-emblem-path-of-radiance.png",
+      "files": [
+        { "name": "Fire Emblem - Path of Radiance (USA).ciso", "url": "private:fire-emblem-path-of-radiance__Fire.Emblem.-.Path.of.Radiance.USA.ciso", "size": 1304461888, "sha256": "91cbda0bfaa5966abd52d442e1d57dadc5754f1b6b40d3cd2719414f69a9280f" }
+      ]
+    },
+    {
       "id": "metroid-prime-2-echoes",
       "title": "Metroid Prime 2 : Echoes",
       "system": "gamecube",
