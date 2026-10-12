@@ -1047,15 +1047,15 @@
       ]
     },
     {
-      "id": "pok-mon-pearl-version",
-      "title": "Pokmon Pearl Version",
+      "id": "pok-mon-platinum-version",
+      "title": "Pokmon Platinum Version",
       "system": "nds",
-      "players": "1-8",
-      "description": "This is the Pearl version of Pokmon. The differences between the Diamond and Pearl versions include how often and which types of Pokmon appear. This game can communicate with the Diamond version using Nintendo Wi-Fi Connection and DS Wireless Communications. This game can also...",
+      "players": "1",
+      "description": "ANOTHER WORLD HAS EMERGED IN THE SINNOH REGION... ...A world where time and space are altered! Catch, train and battle your favorite Pokmon, and discover ancient, mythical Pokmon in this exciting new adventure! NEW DISCOVERIES, NEW CHALLENGES! EXPANDED ONLINE OPTIONS! New...",
       "added": "2026-10-12",
-      "art": "library/art/pok-mon-pearl-version.png",
+      "art": "library/art/pok-mon-platinum-version.png",
       "files": [
-        { "name": "Pokemon - Pearl Version (USA) (Rev 5).zip", "url": "private:pok-mon-pearl-version__Pokemon.-.Pearl.Version.USA.Rev.5.zip", "size": 27924476, "sha256": "b602407104e09b4daded46ff169099aea6d6407c8936d54af8c3e7b35ea58061" }
+        { "name": "Pokemon - Platinum Version (USA) (Rev 1) 2.zip", "url": "private:pok-mon-platinum-version__Pokemon.-.Platinum.Version.USA.Rev.1.2.zip", "size": 50777907, "sha256": "95ca960b6ed650227ed166b7da7fff3ff9d5f7ee036ac68eb4c2c9e0db212801" }
       ]
     },
     {
@@ -1068,6 +1068,18 @@
       "art": "library/art/pok-mon-black-version-2.png",
       "files": [
         { "name": "Pokemon - Black Version 2 (USA, Europe) (NDSi Enhanced).zip", "url": "private:pok-mon-black-version-2__Pokemon.-.Black.Version.2.USA.Europe.NDSi.Enhanced.zip", "size": 154063144, "sha256": "4a21aee8f169facf25068d67e24f3275603c7b3a96c18bcd950ce53cd6d8bba8" }
+      ]
+    },
+    {
+      "id": "pok-mon-pearl-version",
+      "title": "Pokmon Pearl Version",
+      "system": "nds",
+      "players": "1-8",
+      "description": "This is the Pearl version of Pokmon. The differences between the Diamond and Pearl versions include how often and which types of Pokmon appear. This game can communicate with the Diamond version using Nintendo Wi-Fi Connection and DS Wireless Communications. This game can also...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-pearl-version.png",
+      "files": [
+        { "name": "Pokemon - Pearl Version (USA) (Rev 5).zip", "url": "private:pok-mon-pearl-version__Pokemon.-.Pearl.Version.USA.Rev.5.zip", "size": 27924476, "sha256": "b602407104e09b4daded46ff169099aea6d6407c8936d54af8c3e7b35ea58061" }
       ]
     },
     {
