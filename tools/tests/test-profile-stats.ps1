@@ -75,6 +75,20 @@ $fromRec = New-SocialProfileFromRecord $rec
 A (@($fromRec.Share).Count -eq 1) 'logging in elsewhere keeps who you share with'
 A ((Format-SocialPlaytime 135) -eq '2 h 15 min' -and (Format-SocialPlaytime 40) -eq '40 min' -and (Format-SocialPlaytime 120) -eq '2 h') 'play time in words'
 
+# "Log back in" keeps a custom picture (2026-10-12)
+$pp = Get-SocialPaths $Ws
+New-SocialDir $pp.ProfileDir
+[IO.File]::WriteAllBytes($pp.Avatar, [byte[]](137, 80, 78, 71, 1, 2))
+$cp = New-SocialProfile 'Picture' 'custom:ee7d4d0f4dfa'
+Add-SocialLogin $Ws $cp
+$lg = @(Get-SocialLogins $Ws | Where-Object Id -eq $cp.Id)[0]
+A ($lg.Avatar -eq 'custom:ee7d4d0f4dfa') ('login keeps the custom picture: ' + $lg.Avatar)
+A (Test-Path (Join-SocialPath (Join-SocialPath $pp.Cache 'avatars') ($cp.Id + '-ee7d4d0f4dfa.png'))) 'a copy waits in the cache for the list'
+$ip = New-SocialProfile 'Icon' 'icon:n64'; Add-SocialLogin $Ws $ip
+A (@(Get-SocialLogins $Ws | Where-Object Id -eq $ip.Id)[0].Avatar -eq 'icon:n64') 'icons kept as before'
+[IO.File]::AppendAllText((Join-SocialPath $pp.ProfileDir 'logins.txt'), "bbbbbbbbbb|Odd|../../x`r`n")
+A (@(Get-SocialLogins $Ws | Where-Object Id -eq 'bbbbbbbbbb')[0].Avatar -eq 'icon:gameboy') 'an odd picture value falls back'
+
 Remove-Item -Recurse -Force $TR
 Write-Host ("profile stats tests: {0} passed, {1} failed" -f $script:pass, $script:fail)
 if ($script:fail -gt 0) { exit 1 }

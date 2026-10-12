@@ -64,7 +64,7 @@ A (Test-Path (Join-SsPath $TR 'saves/n64/Super Smash Bros. (USA).srm')) 'ordinar
 A (Test-Path (Join-SsPath $TR 'saves/nds/Spirit Tracks.sav')) 'DS save left alone'
 A (Test-Path (Join-SsPath $TR 'saves/psx/duckstation/Crash.mcd')) 'memory card left alone'
 A (Test-Path (Join-SsPath $TR 'emulators/dolphin-emu/User/StateSaves/lastState.sav')) 'Dolphin lastState.sav left alone'
-A (Test-Path (Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) 'placeholder untouched'
+A ($sw.Retired -eq 1 -and -not (Test-Path (Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and (Test-Path (Join-SsPath $TR '_ClaudeWorkspace/_SAFE TO DELETE/retroarch-placeholders/saves/n64/libretro.mupen64plus_next'))) 'old placeholder retired to _SAFE TO DELETE (2026-10-12), not deleted'
 $org = [IO.File]::ReadAllLines((Join-Path $day.FullName 'origins.txt'))
 A ($org.Count -eq 9) 'every file has an origin line'
 A (@($org | Where-Object { $_ -like "*Super Smash Bros. (USA).state1`temulators\retroarch\states\*" }).Count -eq 1) 'origin recorded'
@@ -92,25 +92,35 @@ $sg = @($all | Where-Object GameId -eq 'Super Smash Bros. (USA)')[0]
 A ($sg.Savestates.Count -eq 1 -and $sg.Savestates[0].Kind -eq 'retroarch-loose') 'state listed against its game, kind kept'
 
 # --- jump in: RetroArch behind a placeholder -------------------------------
+# (a drive that still has one: put it back for this part)
+F 'saves/n64/libretro.mupen64plus_next' '' | Out-Null
 A (Test-SavestateJumpIn $sg.Savestates[0] 'n64') 'RetroArch can jump in'
-$j = Set-SavestateJumpIn $TR $sg.Savestates[0] 'n64'
+$j = Set-SavestateJumpIn $TR $sg.Savestates[0] 'n64' 'Smash'
 A $j.Ok ('jump in placed: ' + $j.Message)
 $placed = Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next/Super Smash Bros. (USA).state1'
 A ([IO.Directory]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next'))) 'placeholder moved aside, real folder made'
 A ((Test-Path $placed) -and (Test-Path ($placed + '.png'))) 'state and picture where the launch menu looks'
 A (Test-Path (Join-SsPath $TR '_ClaudeWorkspace/SaveBackups/jump-in-placeholders/n64/libretro.mupen64plus_next')) 'placeholder waiting'
 $h = @(Get-SsHolds $TR)
-A ($h.Count -eq 3) ("hold list: 2 files + 1 placeholder ($($h.Count))")
+A ($h.Count -eq 4) ("hold list: 2 files + 1 placeholder + the game ($($h.Count))")
+A (@($h | Where-Object Type -eq 'game')[0].Other -like 'Super Smash Bros. (USA)|*|Smash') 'hold remembers which game'
 A ((Test-Path $smash.Path)) 'archived original still there'
 $m1 = Invoke-SavestateSweep -Root $TR -MidGame
 A ($m1.Moved -eq 0 -and (Test-Path $placed)) 'mid-game sweep leaves the held copy alone'
 F 'saves/n64/libretro.mupen64plus_next/Super Smash Bros. (USA).state2' 'NEW' | Out-Null
 $m2 = Invoke-SavestateSweep -Root $TR -MidGame
 A ($m2.Moved -eq 1 -and (Test-Path $placed)) 'mid-game sweep takes a new state but not the held one'
+# another game ending is just another game (Steven 2026-10-12: he only
+# looked at the menu, and the jump in was gone)
+Set-SsLastGame $TR 'R:/RetroBat/roms/nes/Galaga (USA).nes'
+$ox = Invoke-SavestateSweep -Root $TR
+A ($ox.Dropped -eq 0 -and (Test-Path $placed) -and @(Get-SsHolds $TR).Count -eq 4) 'another game ended: still ready'
+A ((Get-SavestateJumpInState $TR).Ready -and (Get-SavestateJumpInState $TR).Name -eq 'Smash') 'Saves tab sees it waiting'
+Set-SsLastGame $TR 'R:/RetroBat/roms/n64/Super Smash Bros. (USA).z64'
 $e1 = Invoke-SavestateSweep -Root $TR
 A ($e1.Dropped -eq 2 -and -not (Test-Path $placed)) 'game end: unchanged held copy and picture removed'
 A ($e1.Restored -eq 1) 'game end: placeholder back'
-A ((Test-Path (Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and -not [IO.Directory]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next'))) 'placeholder is a file again'
+A ($e1.Retired -eq 1 -and -not [IO.File]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and (Test-Path (Join-SsPath $TR '_ClaudeWorkspace/_SAFE TO DELETE/retroarch-placeholders/saves/n64/libretro.mupen64plus_next.2'))) 'then retired, nothing overwritten'
 A (@(Get-SsHolds $TR).Count -eq 0) 'hold list cleared'
 A ((Test-Path $smash.Path)) 'archived original kept'
 $states2 = @(Get-QuarantinedSavestates $arch)
@@ -119,8 +129,9 @@ A (@($states2 | Where-Object Key -eq 'SUPER SMASH BROS. (USA)').Count -eq 2) 'no
 # --- jump in: a held copy the game changed is swept, not removed -----------
 $j2 = Set-SavestateJumpIn $TR $sg.Savestates[0] 'n64'
 [IO.File]::WriteAllText($placed, 'CHANGED')
+Set-SsLastGame $TR 'R:\RetroBat\roms\n64\Super Smash Bros. (USA).z64'
 $e2 = Invoke-SavestateSweep -Root $TR
-A ($e2.Moved -ge 1 -and -not (Test-Path $placed) -and $e2.Restored -eq 1) 'changed held copy swept into the archive, placeholder back'
+A ($e2.Moved -ge 1 -and -not (Test-Path $placed)) 'changed held copy swept into the archive'
 
 # --- jump in: Dolphin, both copies -----------------------------------------
 $kgames = @([pscustomobject]@{ System = 'gamecube'; GameId = 'GKYE'; Kind = 'code'; Category = 'game'; Why = ''; DisplayName = 'Kirby'; Name = 'Kirby Air Ride (USA)'; NameSource = 'found'; Image = ''; Files = New-Object System.Collections.ArrayList; Changed = (Get-Date); Bytes = 0 })
@@ -131,8 +142,18 @@ $kg = @($k | Where-Object GameId -eq 'GKYE')[0]
 A ($kg.Savestates.Count -eq 1 -and @($kg.Savestates[0].Copies).Count -eq 2) 'Dolphin: one moment, two copies merged'
 $j3 = Set-SavestateJumpIn $TR $kg.Savestates[0] 'gamecube'
 A ($j3.Ok -and (Test-Path (Join-SsPath $TR 'saves/gamecube/dolphin/Kirby Air Ride (USA).s01')) -and (Test-Path (Join-SsPath $TR 'emulators/dolphin-emu/User/StateSaves/GKYE01.s01'))) 'Dolphin: both copies back where they came from'
+Set-SsLastGame $TR 'R:/RetroBat/roms/gamecube/Kirby Air Ride (USA).iso'
 $e3 = Invoke-SavestateSweep -Root $TR
 A (-not (Test-Path (Join-SsPath $TR 'saves/gamecube/dolphin/Kirby Air Ride (USA).s01'))) 'Dolphin: cleared after the game'
+
+# --- cancelling, and only one at a time -----------------------------------
+$j5 = Set-SavestateJumpIn $TR $sg.Savestates[0] 'n64' 'Smash'
+$j6 = Set-SavestateJumpIn $TR $kg.Savestates[0] 'gamecube' 'Kirby'
+A ($j6.Ok -and -not (Test-Path $placed) -and (Get-SavestateJumpInState $TR).Name -eq 'Kirby') 'a second jump in replaces the first'
+A (-not [IO.File]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next'))) 'replaced: no placeholder file comes back'
+$c1 = Clear-SavestateJumpIn $TR
+A (-not (Test-Path (Join-SsPath $TR 'saves/gamecube/dolphin/Kirby Air Ride (USA).s01')) -and -not (Get-SavestateJumpInState $TR).Ready) 'cancel clears it'
+A ((Get-SsRomKey 'Mario (USA).state1') -eq 'Mario (USA)' -and (Get-SsRomKey 'X.nkit.s03') -eq 'X.nkit' -and (Get-SsRomKey 'Y.state.auto') -eq 'Y') 'rom key from a state name'
 
 # --- jump in: not possible -------------------------------------------------
 $ds = @($states | Where-Object Key -eq 'SPIRIT TRACKS')[0]
