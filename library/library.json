@@ -49,6 +49,18 @@
       "files": [
         { "name": "Super Smash Bros. (USA).zip", "url": "private:super-smash-bros__Super.Smash.Bros.USA.zip", "size": 12381516, "sha256": "be67c6f3af64db0b74be70cd6083d8bc29cf303fb9d6a1e4009f6dcb8add336c" }
       ]
+    },
+    {
+      "id": "wave-race-64",
+      "title": "Wave Race 64",
+      "system": "n64",
+      "players": "1-2",
+      "description": "Wave Race 64 is sure to provide some of the most exciting racing you've ever experienced. Feel the pounding and crashing of the waves as you accelerate into straight-aways, whip around the marker buoys and go airborne on the jump ramps. Don't race alone - challenge a friend!...",
+      "added": "2026-10-11",
+      "art": "library/art/wave-race-64.png",
+      "files": [
+        { "name": "Wave Race 64 - Kawasaki Jet Ski (USA) (Rev 1).zip", "url": "private:wave-race-64__Wave.Race.64.-.Kawasaki.Jet.Ski.USA.Rev.1.zip", "size": 6052836, "sha256": "63c5af52c4c2c050d386cea1e197b00694e14a8a2b3c8ddc0e84bef9f9e3af96" }
+      ]
     }
   ]
 }
