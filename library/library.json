@@ -553,6 +553,18 @@
       "files": [
         { "name": "Galaga - Demons of Death (USA).nes", "url": "private:galaga-demons-of-death__Galaga.-.Demons.of.Death.USA.nes", "size": 40976, "sha256": "116ff51eabad94da0c3bf32de9d50cc84becf73814fa2bf5574676b058a0a09a" }
       ]
+    },
+    {
+      "id": "the-legend-of-zelda",
+      "title": "The Legend of Zelda",
+      "system": "nes",
+      "players": "1",
+      "description": "In one of the darkest times in the Kingdom of Hyrule, a young, pointy-eared boy named Link takes on an epic quest to restore the fragmented Triforce of Wisdom and save the Princess Zelda from the clutches of the evil, power-hungry Ganon. The Legend of Zelda for the NES marks the...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda.png",
+      "files": [
+        { "name": "Legend of Zelda, The (USA) (Rev 1).nes", "url": "private:the-legend-of-zelda__Legend.of.Zelda.The.USA.Rev.1.nes", "size": 131088, "sha256": "44e33dc0a6fb663b98908ea761b33bbd77ca5092f25c624b10bf2a97e5406a5a" }
+      ]
     }
   ]
 }
