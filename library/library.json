@@ -423,18 +423,6 @@
       ]
     },
     {
-      "id": "pok-mon-stadium-2",
-      "title": "Pokmon Stadium 2",
-      "system": "n64",
-      "players": "1-4",
-      "description": "Hundreds of Pokmon in Three-mendous 3-D! What's sweeter than victory in a Pokmon battle! Victory in a 3-D arena on the N64?! Set your strategy and stand back while your Pokmon battle it out. You can even set the Pokmon you've trained--fully rendered in 3-D and ready for...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-stadium-2.png",
-      "files": [
-        { "name": "Pokemon Stadium 2 (USA).zip", "url": "private:pok-mon-stadium-2__Pokemon.Stadium.2.USA.zip", "size": 48045275, "sha256": "f525de47574eedc4f644be1c376ff29379c8a83c3b68ba85ac1297aabe005d2e" }
-      ]
-    },
-    {
       "id": "pok-mon-snap",
       "title": "Pokmon Snap",
       "system": "n64",
@@ -459,12 +447,24 @@
       ]
     },
     {
+      "id": "pok-mon-stadium-2",
+      "title": "Pokmon Stadium 2",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Hundreds of Pokmon in Three-mendous 3-D! What's sweeter than victory in a Pokmon battle! Victory in a 3-D arena on the N64?! Set your strategy and stand back while your Pokmon battle it out. You can even set the Pokmon you've trained--fully rendered in 3-D and ready for...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-stadium-2.png",
+      "files": [
+        { "name": "Pokemon Stadium 2 (USA).zip", "url": "private:pok-mon-stadium-2__Pokemon.Stadium.2.USA.zip", "size": 48045275, "sha256": "f525de47574eedc4f644be1c376ff29379c8a83c3b68ba85ac1297aabe005d2e" }
+      ]
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
       "players": "1-4",
       "description": "The Lylat system has been invaded! Join Fox McCloud and his Star Fox team as they fight to save the galaxy from the clutches of the evil Andross. Travel to many different 3-D worlds. Battle the enemy in the air and on the ground and listen in as Fox McCloud interacts with a cast...",
-      "added": "2026-10-11",
+      "added": "2026-10-12",
       "art": "library/art/star-fox-64.png",
       "files": [
         { "name": "Star Fox 64 (USA) (Rev 1).zip", "url": "private:star-fox-64__Star.Fox.64.USA.Rev.1.zip", "size": 10510321, "sha256": "90b63a8470d999a72d37345d63ab35db7bb8d714009b7970a60d6e2deb3f805c" }
