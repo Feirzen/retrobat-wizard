@@ -543,6 +543,18 @@
       ]
     },
     {
+      "id": "wario-land-3",
+      "title": "Wario Land 3",
+      "system": "gbc",
+      "players": "1",
+      "description": "During a joyride in his biplane, the engine blows and Wario crashes into the woods. It's here where he finds a hidden cave with a magic Music box. Before he can say \"I hate Mario\", the box pulls him inside and into a room with a dark figure, who strikes a deal with him. Find all...",
+      "added": "2026-10-12",
+      "art": "library/art/wario-land-3.png",
+      "files": [
+        { "name": "Wario Land 3 (World) (En,Ja).zip", "url": "private:wario-land-3__Wario.Land.3.World.En.Ja.zip", "size": 620401, "sha256": "fa6b2bfb0a008fad314150225fbbbfd84e1ec9ba9edc91664023d3a496b47df7" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
