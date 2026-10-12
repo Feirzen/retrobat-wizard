@@ -507,6 +507,18 @@
       ]
     },
     {
+      "id": "super-mario-bros-deluxe",
+      "title": "Super Mario Bros. Deluxe",
+      "system": "gbc",
+      "players": "1-2",
+      "description": "The Mushroom Kingdom has been invaded by the Koopa, a tribe of turtles who possess dark magic. Their king Bowser has transformed all its inhabitants into stones, bricks, and mushrooms; he has also captured Princess Toadstool. She is the only one who can break the evil spell....",
+      "added": "2026-10-12",
+      "art": "library/art/super-mario-bros-deluxe.png",
+      "files": [
+        { "name": "Super Mario Bros. Deluxe (Europe) (Rev 2).zip", "url": "private:super-mario-bros-deluxe__Super.Mario.Bros.Deluxe.Europe.Rev.2.zip", "size": 336071, "sha256": "9682738cc29315921ed0980bcebbcee80d61fd2f13b6f4b74a7ab445e83110d2" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-oracle-of-ages",
       "title": "The Legend of Zelda : Oracle of Ages",
       "system": "gbc",
