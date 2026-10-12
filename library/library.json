@@ -625,6 +625,18 @@
       "files": [
         { "name": "Zelda II - The Adventure of Link (USA).nes", "url": "private:zelda-ii-the-adventure-of-link__Zelda.II.-.The.Adventure.of.Link.USA.nes", "size": 262160, "sha256": "9fca03064a5113e6a92f550d9f42bac9ac1ae248a84df1f653d7cd7f76a1803d" }
       ]
+    },
+    {
+      "id": "donkey-kong-country",
+      "title": "Donkey Kong Country",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Help Donkey Kong and Diddy Kong get back those stolen bananas!After a dark and stormy night, Donkey Kong finds all of his bananas stolen by K. Rool and his reptilian crew of Kremlings! Armed with chest-pounding muscle, mighty barrel rolls, and awesome vine-swinging skills,...",
+      "added": "2026-10-12",
+      "art": "library/art/donkey-kong-country.png",
+      "files": [
+        { "name": "Donkey Kong Country (USA) (Rev 2).sfc", "url": "private:donkey-kong-country__Donkey.Kong.Country.USA.Rev.2.sfc", "size": 4194304, "sha256": "628147468c3539283197f58f03b94df49758a332831857481ea9cc31645f0527" }
+      ]
     }
   ]
 }
