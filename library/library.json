@@ -339,18 +339,6 @@
       ]
     },
     {
-      "id": "pok-mon-yellow-special-pikachu-edition",
-      "title": "Pokmon Yellow Special Pikachu Edition",
-      "system": "gb",
-      "players": "1-2",
-      "description": "You've finally been granted your Pokemon trainer's license, and now you're on your way to becoming the world's greatest Pokemon trainer! The shockingly cute Pikachu tags along behind you as you search the enormous world for monsters to train and evolve. Face off against...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-yellow-special-pikachu-edition.png",
-      "files": [
-        { "name": "Pokemon - Yellow Version - Special Pikachu Edition (USA, Europe) (CGB+SGB Enhanced).zip", "url": "private:pok-mon-yellow-special-pikachu-edition__Pokemon.-.Yellow.Version.-.Special.Pikachu.Edition.USA.Europe.CGB.SGB.Enhanced.zip", "size": 495259, "sha256": "12ce4935540a5cb7ba4d386625356429c2b95d66cb141ed53685d97d8599bc38" }
-      ]
-    },
-    {
       "id": "pok-mon-blue-version",
       "title": "Pokmon : Blue Version",
       "system": "gb",
@@ -372,6 +360,30 @@
       "art": "library/art/pok-mon-red-version.png",
       "files": [
         { "name": "Pokemon - Red Version (USA, Europe) (SGB Enhanced).zip", "url": "private:pok-mon-red-version__Pokemon.-.Red.Version.USA.Europe.SGB.Enhanced.zip", "size": 368511, "sha256": "a7b8edf992168bf9043254825f817e51aa002c281adccba0dfa606218120d1b4" }
+      ]
+    },
+    {
+      "id": "pok-mon-yellow-special-pikachu-edition",
+      "title": "Pokmon Yellow Special Pikachu Edition",
+      "system": "gb",
+      "players": "1-2",
+      "description": "You've finally been granted your Pokemon trainer's license, and now you're on your way to becoming the world's greatest Pokemon trainer! The shockingly cute Pikachu tags along behind you as you search the enormous world for monsters to train and evolve. Face off against...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-yellow-special-pikachu-edition.png",
+      "files": [
+        { "name": "Pokemon - Yellow Version - Special Pikachu Edition (USA, Europe) (CGB+SGB Enhanced).zip", "url": "private:pok-mon-yellow-special-pikachu-edition__Pokemon.-.Yellow.Version.-.Special.Pikachu.Edition.USA.Europe.CGB.SGB.Enhanced.zip", "size": 495259, "sha256": "12ce4935540a5cb7ba4d386625356429c2b95d66cb141ed53685d97d8599bc38" }
+      ]
+    },
+    {
+      "id": "super-mario-land",
+      "title": "Super Mario Land",
+      "system": "gb",
+      "players": "1",
+      "description": "Once upon a time, there was a peaceful world called Sarasaland. In this world there were 4 kingdoms named Birabuto, Muda, Easton and Chai. One day, the skies of Sarasaland were suddenly covered by a huge black cloud. From a crack in this cloud, the unknown space monster Tatanga...",
+      "added": "2026-10-12",
+      "art": "library/art/super-mario-land.png",
+      "files": [
+        { "name": "Super Mario Land (World) (Rev 1).zip", "url": "private:super-mario-land__Super.Mario.Land.World.Rev.1.zip", "size": 36651, "sha256": "4c9bf1dc8ea93752c4dff0babca0349dcc09ad32298c7e7cc1b71bccf3b6efff" }
       ]
     },
     {
