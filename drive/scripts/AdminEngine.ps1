@@ -20,16 +20,44 @@
                        person's own wizard changes their name
         admins         who has the tab
         phone alerts   the ntfy channel in admin\notify.txt
-        library        Publish a game: uploads the file to the PUBLIC repo's
-                       "library" release and adds it to library\library.json,
-                       in one go. This needs a second key that can write to
-                       the public repo, kept only on the admin's own drive in
-                       social\library-key.txt (never shipped, never sent).
+        library        Publish a game, in one go. Since 2026-10-11 (Steven:
+                       "list on the public one but reside in the private"):
+                         - the FILE goes to the PRIVATE repo's "library"
+                           release, with the shared key every wizard already
+                           has. Strangers cannot download it; only a wizard
+                           can (GameLibrary.ps1, Install-LibGame).
+                         - the LISTING (name, console, players, words, size,
+                           checksum) goes into the PUBLIC library\library.json,
+                           with the file written as "private:<name>" instead
+                           of a link. The website shows it with "Get it in
+                           the wizard" instead of a download button.
+                       Writing that public list needs a second key that can
+                       write to the public repo, kept only on the admin's own
+                       drive in social\library-key.txt (never shipped).
+                       Since 2026-10-11 (Steven: "pull what is needed",
+                       "upload multiple games at once"): several games in
+                       one go (Publish-AdminLibraryGames), and each game's
+                       box art goes to the PUBLIC repo as library\art\<id>.png
+                       (or .jpg), listed as "art" for the website and wizard.
+                       Since 2026-10-11 (Steven's first real test: "GitHub
+                       took the file but did not say where it is"): GitHub
+                       tidies file names on upload (a run of dots becomes
+                       one), so the name it ANSWERS with is the one written
+                       down; a file already up with the same fingerprint is
+                       not sent again (a retry after a hiccup is instant);
+                       older copies of the same game are cleared once the
+                       list is saved. And Remove-AdminLibraryGames takes
+                       games off again: the list entry, the box art, the
+                       private file, plus any leftover upload not on the
+                       list.
 
     ASCII ONLY, Windows PowerShell 5.1. Every root is a parameter.
 #>
 
-$script:AdminLibRepo = 'Feirzen/retrobat-wizard'
+$script:AdminLibRepo = 'Feirzen/retrobat-wizard'           # the public list
+# The files live in the private repo, whatever social\social.ini names
+# (Get-SocialRepo). Set this only to override it, as the tests do.
+$script:AdminFileRepo = ''
 $script:AdminApiBase = 'https://api.github.com'          # the tests point these
 $script:AdminUploadBase = 'https://uploads.github.com'   # at a fake GitHub
 
@@ -184,6 +212,7 @@ function ConvertTo-AdminLibraryJson($Note, $Games) {
         [void]$sb.Append('      "players": ' + (ConvertTo-AdminJsonString $g.players) + ",`n")
         [void]$sb.Append('      "description": ' + (ConvertTo-AdminJsonString $g.description) + ",`n")
         [void]$sb.Append('      "added": ' + (ConvertTo-AdminJsonString $g.added) + ",`n")
+        if ([string]$g.art -ne '') { [void]$sb.Append('      "art": ' + (ConvertTo-AdminJsonString $g.art) + ",`n") }
         [void]$sb.Append('      "files": [')
         $ff = $true
         foreach ($f in @($g.files)) {
@@ -198,6 +227,22 @@ function ConvertTo-AdminLibraryJson($Note, $Games) {
     return $sb.ToString()
 }
 
+# The name the file gets in the private release: <id>__<file name>, cleaned
+# the way GitHub cleans names (anything but letters, digits, - and _ becomes
+# a dot, a run of dots becomes one, none at either end). GitHub's answer is
+# still what gets written down, in case it tidies something else one day.
+function Get-AdminLibAssetName([string]$Id, [string]$Leaf) {
+    $s = (([string]$Leaf) -replace '[^A-Za-z0-9_\-.]+', '.') -replace '\.{2,}', '.'
+    $s = $s.Trim('.')
+    if ($s -eq '') { $s = 'file' }
+    return ($Id + '__' + $s)
+}
+
+# Every file in the private release (the release's own list).
+function Get-AdminLibAssets($RelObj) {
+    return @(@($RelObj.assets) | Where-Object { $null -ne $_ -and [string]$_.name -ne '' })
+}
+
 function Get-AdminLibId([string]$Title) {
     $id = (([string]$Title).ToLower() -replace '[^a-z0-9]+', '-').Trim('-')
     if ($id -eq '') { $id = 'game' }
@@ -209,15 +254,22 @@ function Get-AdminLibId([string]$Title) {
 # synchronized hashtable the window reads: Stage (words) and Percent.
 # Returns @{ Ok; Message }.
 #   1. fingerprint the file (SHA-256)
-#   2. find the "library" release on the public repo, or make it
+#   2. find the "library" release on the PRIVATE repo, or make it
 #   3. upload the file to it (replacing one with the same name)
-#   4. add the game to library\library.json (replacing one with the same id)
-function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync) {
+#   4. put its box art (Art, a picture file; '' for none) in the PUBLIC
+#      repo's library\art\. A picture that fails never stops the game.
+#   5. add the game to the PUBLIC library\library.json (replacing one with
+#      the same id), its file written as "private:<name>"
+function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '') {
     $res = @{ Ok = $false; Message = '' }
     $key = Get-AdminLibKey $Ws
     if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    $fkey = Get-SocialToken $Ws
+    if ($fkey -eq '') { $res.Message = 'This drive has no friends key (social\social-token.txt), so there is nowhere private to put the file.'; return $res }
     if (-not (Test-Path -LiteralPath $File)) { $res.Message = 'The file is gone.'; return $res }
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
+    $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
+    $fapi = "$script:AdminApiBase/repos/$frepo"
     $id = Get-AdminLibId $Title
     $leaf = [System.IO.Path]::GetFileName($File)
     if ($leaf -match '[^\x20-\x7E]' -or $leaf -match '[\\/:*?"<>|]') { $res.Message = 'Rename the file to plain letters and numbers first.'; return $res }
@@ -227,33 +279,45 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $Sync.Stage = 'Fingerprinting the file...'; $Sync.Percent = 0
     $sha = (Get-FileHash -LiteralPath $File -Algorithm SHA256).Hash.ToLower()
 
-    $Sync.Stage = 'Finding the library on GitHub...'
-    $rel = Invoke-AdminLibApi $key 'GET' "$api/releases/tags/library"
+    # Check the list can be written BEFORE uploading a big file, so a bad
+    # library key fails in a second instead of after the upload.
+    $Sync.Stage = 'Checking the library key...'
+    $chk = Invoke-AdminLibApi $key 'GET' "$api/contents/library/library.json"
+    if ($chk.Status -eq 401 -or $chk.Status -eq 403) { $res.Message = 'GitHub refused the library key. It may have expired, or it needs "Contents: Read and write" on retrobat-wizard.'; return $res }
+
+    $Sync.Stage = 'Finding the private library on GitHub...'
+    $rel = Invoke-AdminLibApi $fkey 'GET' "$fapi/releases/tags/library"
     if ($rel.Status -eq 404) {
-        $body = '{"tag_name":"library","target_commitish":"main","name":"Game library","body":"Files for the wizard''s online game library. Added from the Admin tab."}'
-        $rel = Invoke-AdminLibApi $key 'POST' "$api/releases" $body
+        $body = '{"tag_name":"library","name":"Game library","body":"Files for the wizard''s online game library. Added from the Admin tab. Private: only a wizard can download them."}'
+        $rel = Invoke-AdminLibApi $fkey 'POST' "$fapi/releases" $body
     }
     if ($rel.Status -ne 200 -and $rel.Status -ne 201) {
-        $res.Message = $(if ($rel.Status -eq 401 -or $rel.Status -eq 403) { 'GitHub refused the library key. It may have expired, or it needs "Contents: Read and write" on retrobat-wizard.' } else { "Could not reach the library on GitHub ($($rel.Status))." })
+        $res.Message = $(if ($rel.Status -eq 401 -or $rel.Status -eq 403) { 'GitHub refused the friends key for the private library.' } else { "Could not reach the private library on GitHub ($($rel.Status))." })
         return $res
     }
     $relObj = $rel.Body | ConvertFrom-Json
-    $asset = ($id + '__' + ($leaf -replace '[^A-Za-z0-9._\-]', '.'))
-    foreach ($a in @($relObj.assets)) {
-        if ($null -ne $a -and [string]$a.name -eq $asset) { [void](Invoke-AdminLibApi $key 'DELETE' "$api/releases/assets/$($a.id)") }
+    $asset = Get-AdminLibAssetName $id $leaf
+    # Already up with the same fingerprint (a retry, or the same game again):
+    # keep it and skip the upload. Anything else under that exact name goes,
+    # or GitHub would refuse the new one.
+    $upName = ''
+    foreach ($a in (Get-AdminLibAssets $relObj)) {
+        $n = [string]$a.name
+        if ($upName -eq '' -and $n.StartsWith($id + '__') -and [string]$a.state -eq 'uploaded' -and [string]$a.digest -eq ('sha256:' + $sha) -and [long]$a.size -eq $len) { $upName = $n; continue }
+        if ($n -eq $asset) { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)") }
     }
 
     # The upload streams the file, so a big disc never sits in memory.
+    if ($upName -eq '') {
     $Sync.Stage = 'Uploading...'
-    $upUrl = '{0}/repos/{1}/releases/{2}/assets?name={3}' -f $script:AdminUploadBase, $script:AdminLibRepo, $relObj.id, [Uri]::EscapeDataString($asset)
-    $dlUrl = ''
+    $upUrl = '{0}/repos/{1}/releases/{2}/assets?name={3}' -f $script:AdminUploadBase, $frepo, $relObj.id, [Uri]::EscapeDataString($asset)
     try {
         $req = [System.Net.HttpWebRequest]::Create($upUrl)
         $req.Method = 'POST'; $req.ContentType = 'application/octet-stream'; $req.ContentLength = $len
         $req.AllowWriteStreamBuffering = $false; $req.SendChunked = $false
         $req.Timeout = 3600000; $req.ReadWriteTimeout = 3600000
         $req.UserAgent = 'RetroBat-Wizard'; $req.Accept = 'application/vnd.github+json'
-        $req.Headers.Add('Authorization', "Bearer $key")
+        $req.Headers.Add('Authorization', "Bearer $fkey")
         $req.Headers.Add('X-GitHub-Api-Version', '2022-11-28')
         $in = [System.IO.File]::OpenRead($File)
         try {
@@ -269,23 +333,36 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
         $resp = $req.GetResponse()
         $txt = (New-Object System.IO.StreamReader($resp.GetResponseStream())).ReadToEnd()
         $resp.Close()
-        $dlUrl = [string](($txt | ConvertFrom-Json).browser_download_url)
+        $upName = [string](($txt | ConvertFrom-Json).name)
     }
     catch {
         $res.Message = 'The upload stopped: ' + $_.Exception.Message
         return $res
     }
-    if ($dlUrl -notmatch '^https://github\.com/') { $res.Message = 'GitHub took the file but did not say where it is.'; return $res }
+    }
+    else { $Sync.Stage = 'Already uploaded, skipping the upload...'; $Sync.Percent = 100 }
+    # GitHub's own name for it is the one written down (it may tidy ours).
+    if ($upName -notmatch '^[A-Za-z0-9._\-]{1,200}$') { $res.Message = 'GitHub took the file but answered with an odd name. Press Publish again: a file that is already up is not sent twice.'; return $res }
+    $dlUrl = 'private:' + $upName
+
+    $artPath = ''
+    if ($Art -ne '') {
+        $Sync.Stage = 'Adding the box art...'
+        $artPath = Send-AdminLibArt $key $api $id $Art
+    }
 
     $Sync.Stage = 'Adding it to the library list...'
     $lib = Invoke-AdminLibApi $key 'GET' "$api/contents/library/library.json"
     if ($lib.Status -ne 200) { $res.Message = "The file is up, but the library list could not be read ($($lib.Status)). Try Publish again."; return $res }
     $lo = $lib.Body | ConvertFrom-Json
     $cur = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(([string]$lo.content -replace '\s', ''))) | ConvertFrom-Json
+    # No new picture this time: keep the one it already had.
+    $old = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -eq $id })
+    if ($artPath -eq '' -and $old.Count -gt 0) { $artPath = [string]$old[0].art }
     $games = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -ne $id })
     $games += [pscustomobject]@{
         id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
-        added = (Get-Date -Format 'yyyy-MM-dd')
+        added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
         files = @([pscustomobject]@{ name = $leaf; url = $dlUrl; size = $len; sha256 = $sha })
     }
     $games = @($games | Sort-Object @{ Expression = { [string]$_.system } }, @{ Expression = { ([string]$_.title).ToLower() } })
@@ -293,8 +370,193 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $b64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
     $put = Invoke-AdminLibApi $key 'PUT' "$api/contents/library/library.json" ('{"message":' + (ConvertTo-AdminJsonString ("library: add " + $Title)) + ',"content":"' + $b64 + '","sha":"' + [string]$lo.sha + '"}')
     if ($put.Status -ne 200 -and $put.Status -ne 201) { $res.Message = "The file is up, but the library list could not be saved ($($put.Status)). Try Publish again."; return $res }
+    # Older copies of this same game (another file name, or an upload that
+    # never made the list) are not needed any more.
+    $again = Invoke-AdminLibApi $fkey 'GET' "$fapi/releases/tags/library"
+    if ($again.Status -eq 200) {
+        foreach ($a in (Get-AdminLibAssets ($again.Body | ConvertFrom-Json))) {
+            if ([string]$a.name -ne $upName -and ([string]$a.name).StartsWith($id + '__')) { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)") }
+        }
+    }
     $Sync.Percent = 100
     $res.Ok = $true
-    $res.Message = "$($Title.Trim()) is in the online library. Friends see it within about 5 minutes (GitHub's copy refreshes)."
+    $res.Message = "$($Title.Trim()) is in the online library. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)."
+    return $res
+}
+
+# Puts one game's box art in the PUBLIC repo at library/art/<id>.<ext>, the
+# way the website and the wizard read it. Returns that path, or '' when the
+# picture is missing, not a picture, too big (over 3 MB), or GitHub said no.
+function Send-AdminLibArt([string]$Key, [string]$Api, [string]$Id, [string]$Art) {
+    try {
+        if (-not (Test-Path -LiteralPath $Art)) { return '' }
+        $ext = ([System.IO.Path]::GetExtension($Art)).ToLower()
+        if ($ext -eq '.jpeg') { $ext = '.jpg' }
+        if (@('.png', '.jpg', '.gif', '.webp') -notcontains $ext) { return '' }
+        $bytes = [System.IO.File]::ReadAllBytes($Art)
+        if ($bytes.Length -eq 0 -or $bytes.Length -gt 3MB) { return '' }
+        $rel = 'library/art/' + $Id + $ext
+        # the same game again: replace its picture (GitHub wants the old one's sha)
+        $shaPart = ''
+        $have = Invoke-AdminLibApi $Key 'GET' "$Api/contents/$rel"
+        if ($have.Status -eq 200) { $shaPart = ',"sha":"' + [string](($have.Body | ConvertFrom-Json).sha) + '"' }
+        $body = '{"message":' + (ConvertTo-AdminJsonString ('library: art for ' + $Id)) + ',"content":"' + [Convert]::ToBase64String($bytes) + '"' + $shaPart + '}'
+        $put = Invoke-AdminLibApi $Key 'PUT' "$Api/contents/$rel" $body
+        if ($put.Status -eq 200 -or $put.Status -eq 201) { return $rel }
+    } catch { }
+    return ''
+}
+
+# Several games in one go (the Admin tab's multi-pick). $Items is a list of
+# @{ File; System; Title; Players; Description; Art }. Each one is published
+# on its own, so one that fails never stops the rest. $Sync.Prefix says which
+# game it is on ("Game 2 of 5: "). Returns @{ Ok; Message; Done; Failed }.
+function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
+    $list = @($Items | Where-Object { $null -ne $_ })
+    $done = @(); $failed = @(); $lastMsg = ''
+    $n = 0
+    foreach ($it in $list) {
+        $n++
+        $Sync.Prefix = $(if ($list.Count -gt 1) { "Game $n of $($list.Count): " } else { '' })
+        $Sync.Percent = 0
+        $r = Publish-AdminLibraryGame $Ws ([string]$it.File) ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art)
+        if ($r.Ok) { $done += [string]$it.Title } else { $failed += ('{0}: {1}' -f $it.Title, $r.Message); if ($lastMsg -eq '') { $lastMsg = [string]$r.Message } }
+        # A missing key stops every game the same way: say it once.
+        if (-not $r.Ok -and ($r.Message -like '*library key*' -or $r.Message -like '*friends key*')) { break }
+    }
+    $Sync.Prefix = ''
+    $res = @{ Ok = ($failed.Count -eq 0 -and $done.Count -gt 0); Done = $done; Failed = $failed; Message = '' }
+    if ($list.Count -eq 1) {
+        $res.Message = $(if ($res.Ok) { "$($done[0]) is in the online library. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)." } else { $lastMsg })
+        return $res
+    }
+    $m = @()
+    if ($done.Count -gt 0) { $m += ('In the online library ({0}): {1}.' -f $done.Count, ($done -join ', ')) }
+    if ($failed.Count -gt 0) { $m += ("Did not go up:`n" + ($failed -join "`n")) }
+    if ($done.Count -gt 0) { $m += "Friends see them within about 5 minutes (GitHub's copy refreshes)." }
+    $res.Message = ($m -join "`n`n")
+    return $res
+}
+
+# ---------------------------------------------------------------------------
+#  Taking games off the online library (Steven, 2026-10-11: "is there any
+#  way to remove games from the online library? There had better be")
+# ---------------------------------------------------------------------------
+# The private file names a list of games uses (their "private:<name>" files).
+function Get-AdminLibUsedNames($Games) {
+    $used = @{}
+    foreach ($g in @($Games)) {
+        if ($null -eq $g) { continue }
+        foreach ($f in @($g.files)) {
+            if ($null -eq $f) { continue }
+            $u = [string]$f.url
+            if ($u -like 'private:*') { $used[$u.Substring(8)] = $true }
+        }
+    }
+    return $used
+}
+
+# What is up there now. Returns @{ Ok; Message; Games; Leftovers }:
+#   Games      the list's entries (id, title, system, files, art)
+#   Leftovers  files in the private release that no game on the list uses
+#              (an upload that stopped before the list was saved)
+function Get-AdminLibraryContents([string]$Ws) {
+    $res = @{ Ok = $false; Message = ''; Games = @(); Leftovers = @() }
+    $key = Get-AdminLibKey $Ws
+    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    $fkey = Get-SocialToken $Ws
+    $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
+    $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
+    $fapi = "$script:AdminApiBase/repos/$frepo"
+    $lib = Invoke-AdminLibApi $key 'GET' "$api/contents/library/library.json"
+    if ($lib.Status -ne 200) { $res.Message = "Could not read the library list ($($lib.Status))."; return $res }
+    $cur = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(([string](($lib.Body | ConvertFrom-Json).content) -replace '\s', ''))) | ConvertFrom-Json
+    $res.Games = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -ne '' })
+    $used = Get-AdminLibUsedNames $res.Games
+    if ($fkey -ne '') {
+        $rel = Invoke-AdminLibApi $fkey 'GET' "$fapi/releases/tags/library"
+        if ($rel.Status -eq 200) {
+            $res.Leftovers = @(Get-AdminLibAssets ($rel.Body | ConvertFrom-Json) | Where-Object { -not $used.ContainsKey([string]$_.name) })
+        }
+    }
+    $res.Ok = $true
+    return $res
+}
+
+# Takes the games with these ids off: the list FIRST (so nobody is offered a
+# game whose file is gone), then each one's box art and private file. Also
+# deletes $Leftovers (unused files Get-AdminLibraryContents found).
+# Returns @{ Ok; Message; Removed (titles); Cleared (leftover count) }.
+function Remove-AdminLibraryGames([string]$Ws, [string[]]$GameIds, $Leftovers = @()) {
+    $res = @{ Ok = $false; Message = ''; Removed = @(); Cleared = 0 }
+    $key = Get-AdminLibKey $Ws
+    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    $fkey = Get-SocialToken $Ws
+    $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
+    $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
+    $fapi = "$script:AdminApiBase/repos/$frepo"
+    $want = @(@($GameIds) | Where-Object { [string]$_ -ne '' })
+    $gone = @()
+
+    if ($want.Count -gt 0) {
+        $lib = Invoke-AdminLibApi $key 'GET' "$api/contents/library/library.json"
+        if ($lib.Status -ne 200) { $res.Message = "Could not read the library list ($($lib.Status)). Nothing was removed."; return $res }
+        $lo = $lib.Body | ConvertFrom-Json
+        $cur = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String(([string]$lo.content -replace '\s', ''))) | ConvertFrom-Json
+        $gone = @(@($cur.games) | Where-Object { $null -ne $_ -and $want -contains [string]$_.id })
+        $keep = @(@($cur.games) | Where-Object { $null -ne $_ -and $want -notcontains [string]$_.id })
+        if ($gone.Count -gt 0) {
+            $json = ConvertTo-AdminLibraryJson ([string]$cur.note) $keep
+            $b64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
+            $msg = 'library: remove ' + ((@($gone | ForEach-Object { [string]$_.title })) -join ', ')
+            $put = Invoke-AdminLibApi $key 'PUT' "$api/contents/library/library.json" ('{"message":' + (ConvertTo-AdminJsonString $msg) + ',"content":"' + $b64 + '","sha":"' + [string]$lo.sha + '"}')
+            if ($put.Status -ne 200 -and $put.Status -ne 201) { $res.Message = "The library list could not be saved ($($put.Status)). Nothing was removed."; return $res }
+        }
+    }
+
+    $problems = 0
+    # their box art (only ever our own library/art/ files)
+    foreach ($g in $gone) {
+        $art = [string]$g.art
+        if ($art -notmatch '^library/art/[A-Za-z0-9._\-]+$') { continue }
+        $have = Invoke-AdminLibApi $key 'GET' "$api/contents/$art"
+        if ($have.Status -ne 200) { continue }
+        $body = '{"message":' + (ConvertTo-AdminJsonString ('library: remove art for ' + [string]$g.id)) + ',"sha":"' + [string](($have.Body | ConvertFrom-Json).sha) + '"}'
+        $d = Invoke-AdminLibApi $key 'DELETE' "$api/contents/$art" $body
+        if ($d.Status -ne 200) { $problems++ }
+    }
+
+    # their private files, any older copy of them, and the leftovers
+    $names = Get-AdminLibUsedNames $gone
+    $extra = @{}
+    foreach ($l in @($Leftovers)) { if ($null -ne $l -and [string]$l.name -ne '') { $names[[string]$l.name] = $true; $extra[[string]$l.name] = $true } }
+    $goneIds = @($gone | ForEach-Object { [string]$_.id })
+    if ($names.Count -gt 0 -or $goneIds.Count -gt 0) {
+        if ($fkey -eq '') { $problems++ }
+        else {
+            $rel = Invoke-AdminLibApi $fkey 'GET' "$fapi/releases/tags/library"
+            if ($rel.Status -eq 200) {
+                foreach ($a in (Get-AdminLibAssets ($rel.Body | ConvertFrom-Json))) {
+                    $n = [string]$a.name
+                    $hit = $names.ContainsKey($n)
+                    foreach ($gi in $goneIds) { if ($n.StartsWith($gi + '__')) { $hit = $true } }
+                    if (-not $hit) { continue }
+                    $d = Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)"
+                    if ($d.Status -eq 204 -or $d.Status -eq 200) { if ($extra.ContainsKey($n)) { $res.Cleared++ } }
+                    else { $problems++ }
+                }
+            }
+            elseif ($rel.Status -ne 404) { $problems++ }
+        }
+    }
+
+    $res.Removed = @($gone | ForEach-Object { [string]$_.title })
+    $res.Ok = ($problems -eq 0)
+    $m = @()
+    if ($res.Removed.Count -gt 0) { $m += ('Taken off the online library: {0}. It leaves the website and friends'' wizards within about 5 minutes (GitHub''s copy refreshes). Anyone who already downloaded it keeps their copy.' -f ($res.Removed -join ', ')) }
+    if ($res.Cleared -gt 0) { $m += ('Cleared {0} leftover upload(s) that were not on the list.' -f $res.Cleared) }
+    if ($problems -gt 0) { $m += 'GitHub would not delete everything. Open Remove games again to clear what is left.' }
+    if ($m.Count -eq 0) { $m += 'Nothing to remove.' }
+    $res.Message = ($m -join "`n`n")
     return $res
 }

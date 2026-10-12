@@ -76,6 +76,10 @@ public static class RBPad
     static int polls = 0;
     static Dictionary<int, IntPtr> pads = new Dictionary<int, IntPtr>();
     public static string LastError = "";
+    // The left stick as numbers (-32768..32767), from whichever pad is pushing
+    // it furthest. Added 2026-10-11 for the wizard's mouse mode (L3), which
+    // needs how FAR the stick is pushed, not just which way.
+    public static int LX = 0, LY = 0;
 
     public static bool IsReady { get { return ok; } }
     public static int Count { get { return pads.Count; } }
@@ -133,6 +137,7 @@ public static class RBPad
             polls++;
             if (polls % 20 == 0) Rescan();   // pick up pads plugged in later
             int s = 0;
+            int bx = 0, by = 0;
             foreach (IntPtr p in pads.Values)
             {
                 for (int b = 0; b <= 14; b++)
@@ -140,6 +145,7 @@ public static class RBPad
                 int lx = SDL_GameControllerGetAxis(p, 0), ly = SDL_GameControllerGetAxis(p, 1);
                 int ry = SDL_GameControllerGetAxis(p, 3);
                 int lt = SDL_GameControllerGetAxis(p, 4), rt = SDL_GameControllerGetAxis(p, 5);
+                if ((long)lx * lx + (long)ly * ly > (long)bx * bx + (long)by * by) { bx = lx; by = ly; }
                 const int dz = 16000;
                 if (lx < -dz) s |= 1 << 16;
                 if (lx >  dz) s |= 1 << 17;
@@ -150,6 +156,7 @@ public static class RBPad
                 if (lt >  dz) s |= 1 << 22;
                 if (rt >  dz) s |= 1 << 23;
             }
+            LX = bx; LY = by;
             return s;
         }
         catch { return 0; }
@@ -173,7 +180,7 @@ public static class RBPad
 
 # Button bits, by name, for the scripts that use this.
 $script:PadBit = @{
-    A = 1; B = 2; X = 4; Y = 8; Back = 16; Guide = 32; Start = 64
+    A = 1; B = 2; X = 4; Y = 8; Back = 16; Guide = 32; Start = 64; L3 = 128
     LB = 512; RB = 1024
     Up = 2048; Down = 4096; Left = 8192; Right = 16384
     StickLeft = 65536; StickRight = 131072; StickUp = 262144; StickDown = 524288

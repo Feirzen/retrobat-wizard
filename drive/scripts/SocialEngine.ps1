@@ -175,11 +175,12 @@ function Get-SocialRepo([string]$Ws) {
 # ---------------------------------------------------------------------------
 #  Returns $null when there is no profile at all (the first-run question has
 #  not been answered). A guest comes back with Guest = $true.
-function Read-SocialProfile([string]$Ws) {
+function Read-SocialProfile([string]$Ws, [string]$File = '') {
     $P = Get-SocialPaths $Ws
-    if (-not (Test-Path -LiteralPath $P.Profile)) { return $null }
+    $pf = $(if ($File -ne '') { $File } else { $P.Profile })
+    if (-not (Test-Path -LiteralPath $pf)) { return $null }
     $ini = @{}
-    foreach ($line in [System.IO.File]::ReadAllLines($P.Profile)) {
+    foreach ($line in [System.IO.File]::ReadAllLines($pf)) {
         $t = $line.Trim()
         if ($t -eq '' -or $t.StartsWith(';') -or $t.StartsWith('#')) { continue }
         $eq = $t.IndexOf('=')
@@ -201,11 +202,34 @@ function Read-SocialProfile([string]$Ws) {
         Popups   = (OnOff $ini['popups'] $true)
         Friends  = (IdList $ini['friends'])
         Declined = (IdList $ini['declined'])
+        Share    = (IdList $ini['share'])
         Created  = [string]$ini['created']
         Pw       = $(if ([string]$ini['pw'] -match '^[a-f0-9]{64}$') { [string]$ini['pw'] } else { '' })
         PwSet    = [string]$ini['pwset']
         NameReq  = Get-SocialClean ([string]$ini['namereq']) 20
+        # 2026-10-12: three favourite games shown beside the name ("system|rom|picture",
+        # paths relative to roms\<system>\), and whether the helper stays
+        # running after the wizard and RetroBat close, so invites still arrive.
+        Favs     = @((ConvertTo-SocialFavSlot ([string]$ini['fav1'])), (ConvertTo-SocialFavSlot ([string]$ini['fav2'])), (ConvertTo-SocialFavSlot ([string]$ini['fav3'])))
+        Reach    = (OnOff $ini['reach'] $true)
     }
+}
+
+# One favourite slot as written in profile.ini: "system|rom|picture", or ''.
+# Anything that does not look right is dropped, so a hand-edited file can
+# never point the wizard outside roms\.
+function ConvertTo-SocialFavSlot([string]$Text) {
+    $t = $Text.Trim()
+    if ($t -eq '') { return '' }
+    $f = $t.Split('|')
+    if ($f.Count -ne 3) { return '' }
+    $sys = $f[0].Trim().ToLower()
+    if ($sys -notmatch '^[a-z0-9\-]{1,20}$') { return '' }
+    foreach ($rel in @($f[1], $f[2])) {
+        if ($rel -match '\.\.' -or $rel -match '^[\\/]' -or $rel -match ':') { return '' }
+    }
+    if ($f[1].Trim() -eq '') { return '' }
+    return ('{0}|{1}|{2}' -f $sys, $f[1].Trim(), $f[2].Trim())
 }
 
 function Write-SocialProfile([string]$Ws, $Prof) {
@@ -235,11 +259,21 @@ function Write-SocialProfile([string]$Ws, $Prof) {
             ('popups   = ' + (& $oo $Prof.Popups)),
             ('friends  = ' + (@($Prof.Friends) -join ',')),
             ('declined = ' + (@($Prof.Declined) -join ',')),
+            ('share    = ' + (@($Prof.Share) -join ',')),
             ('created  = ' + $Prof.Created),
             ('pw       = ' + [string]$Prof.Pw),
             ('pwset    = ' + [string]$Prof.PwSet),
             ('namereq  = ' + (Get-SocialClean ([string]$Prof.NameReq) 20))
         )
+        $favs = @($Prof.Favs)
+        for ($i = 0; $i -lt 3; $i++) {
+            $v = ''
+            if ($i -lt $favs.Count) { $v = ConvertTo-SocialFavSlot ([string]$favs[$i]) }
+            $lines += ('fav{0}     = {1}' -f ($i + 1), $v)
+        }
+        $reach = $true
+        if ($null -ne $Prof.PSObject.Properties['Reach']) { $reach = [bool]$Prof.Reach }
+        $lines += ('reach    = ' + (& $oo $reach))
     }
     [System.IO.File]::WriteAllLines($P.Profile, [string[]]$lines)
 }
@@ -248,8 +282,8 @@ function New-SocialProfile([string]$Username, [string]$Avatar) {
     return [pscustomobject]@{
         Guest = $false; Id = (New-SocialId); Username = $Username.Trim(); Avatar = $Avatar
         Status = 'online'; Text = ''; ShowGame = $true; Popups = $true
-        Friends = @(); Declined = @(); Created = (Format-SocialTime (Get-SocialNowUtc))
-        Pw = ''; PwSet = ''; NameReq = ''
+        Friends = @(); Declined = @(); Share = @(); Created = (Format-SocialTime (Get-SocialNowUtc))
+        Pw = ''; PwSet = ''; NameReq = ''; Favs = @('', '', ''); Reach = $true
     }
 }
 
@@ -278,7 +312,13 @@ function Invoke-SocialApi([string]$Ws, [string]$Method, [string]$Url, [string]$B
         if ($OutFile -ne '') { $r.Status = 200 }
         else {
             $r.Status = [int]$resp.StatusCode
-            $r.Body = [string]$resp.Content
+            # THE 2026-10-11 FIX. Windows PowerShell 5.1 hands back a file
+            # asked for "raw" (admin\notify.txt) as a list of BYTES, not
+            # text, and [string] of that is "114 98 119 ...". That is why
+            # phone alerts never fired: the channel name never matched.
+            $c = $resp.Content
+            if ($c -is [byte[]]) { $r.Body = [System.Text.Encoding]::UTF8.GetString($c) }
+            else { $r.Body = [string]$c }
         }
     }
     catch {
@@ -299,7 +339,7 @@ function ConvertTo-SocialJsonString([string]$s) {
 
 # The one file each person owns. Written by hand rather than ConvertTo-Json,
 # because Windows PowerShell 5.1 and 7 disagree about one-item lists.
-function ConvertTo-SocialRecordJson($Prof, $Presence, [string]$Version) {
+function ConvertTo-SocialRecordJson($Prof, $Presence, [string]$Version, $Stats = $null, $Live = $null) {
     $j = New-Object System.Text.StringBuilder
     [void]$j.Append('{')
     [void]$j.Append('"v":1')
@@ -325,6 +365,48 @@ function ConvertTo-SocialRecordJson($Prof, $Presence, [string]$Version) {
     [void]$j.Append(',"namereq":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$Prof.NameReq) 20)))
     $ids = @(@($Prof.Friends) | Where-Object { $_ -match $script:SocialIdPattern } | ForEach-Object { '"' + $_ + '"' })
     [void]$j.Append(',"friends":[' + ($ids -join ',') + ']')
+    # Played games (2026-10-11): only when this person shares them with at
+    # least one friend ("for" lists who). Left out entirely otherwise.
+    $for = @(@($Prof.Share) | Where-Object { $_ -match $script:SocialIdPattern -and @($Prof.Friends) -contains $_ })
+    if ($null -ne $Stats -and $for.Count -gt 0) {
+        $one = {
+            param($g)
+            $t = ''
+            if ($null -ne $g.Last) { $t = ([DateTime]$g.Last).ToString('yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture) }
+            '{"n":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$g.Name) 60)) + ',"s":' + (ConvertTo-SocialJsonString ([string]$g.System)) +
+            ',"m":' + ([int][math]::Round([double]$g.Minutes)) + ',"t":' + (ConvertTo-SocialJsonString $t) + '}'
+        }
+        $part = { param($list) (@(@($list) | Where-Object { $null -ne $_ } | ForEach-Object { & $one $_ }) -join ',') }
+        [void]$j.Append(',"games":{"for":[' + ((@($for | ForEach-Object { '"' + $_ + '"' })) -join ',') + ']')
+        [void]$j.Append(',"top":[' + (& $part $Stats.Top) + ']')
+        [void]$j.Append(',"recent":[' + (& $part $Stats.Recent) + ']')
+        # RetroBat's star list is no longer shown (Steven, 2026-10-12); the
+        # three favourites picked on the profile go in "favs" below instead.
+        [void]$j.Append(',"fav":[]}')
+    }
+    # 2026-10-12: the three favourite games (always sent: they are chosen to
+    # be shown), the play-together invite, and the answer to one.
+    if ($null -ne $Live) {
+        $fv = @(@($Live.Favs) | Where-Object { $null -ne $_ } | Select-Object -First 3 | ForEach-Object {
+            '{"n":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$_.Name) 60)) + ',"s":' + (ConvertTo-SocialJsonString ([string]$_.System)) + '}'
+        })
+        [void]$j.Append(',"favs":[' + ($fv -join ',') + ']')
+        $inv = $Live.Invite
+        if ($null -ne $inv) {
+            $to = @(@($inv.To) | Where-Object { $_ -match $script:SocialIdPattern } | ForEach-Object { '"' + $_ + '"' })
+            [void]$j.Append(',"invite":{"id":' + (ConvertTo-SocialJsonString ([string]$inv.Id)) + ',"to":[' + ($to -join ',') + ']' +
+                ',"n":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$inv.Game) 60)) +
+                ',"s":' + (ConvertTo-SocialJsonString ([string]$inv.System)) +
+                ',"note":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$inv.Note) 60)) +
+                ',"code":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$inv.Code) 40)) +
+                ',"at":' + (ConvertTo-SocialJsonString ([string]$inv.At)) + '}')
+        }
+        $rp = $Live.Reply
+        if ($null -ne $rp) {
+            [void]$j.Append(',"reply":{"to":' + (ConvertTo-SocialJsonString ([string]$rp.To)) + ',"inv":' + (ConvertTo-SocialJsonString ([string]$rp.Inv)) +
+                ',"ans":' + (ConvertTo-SocialJsonString ([string]$rp.Ans)) + ',"at":' + (ConvertTo-SocialJsonString ([string]$rp.At)) + '}')
+        }
+    }
     [void]$j.Append('}')
     return $j.ToString()
 }
@@ -358,6 +440,10 @@ function ConvertFrom-SocialRecord([string]$Text, [string]$BlobId) {
         Pw       = $(if ([string]$o.pw -match '^[a-f0-9]{64}$') { [string]$o.pw } else { '' })
         PwSet    = $(if ($o.pwset -is [DateTime]) { Format-SocialTime $o.pwset.ToUniversalTime() } else { Get-SocialClean ([string]$o.pwset) 20 })
         NameReq  = Get-SocialClean ([string]$o.namereq) 20
+        Games    = (ConvertFrom-SocialGames $o.games)
+        Favs     = @(@($o.favs) | Select-Object -First 3 | ForEach-Object { ConvertFrom-SocialGameItem $_ } | Where-Object { $null -ne $_ })
+        Invite   = (ConvertFrom-SocialInvite $o.invite)
+        Reply    = (ConvertFrom-SocialReply $o.reply)
         Blob     = $BlobId
     }
 }
@@ -421,12 +507,12 @@ function Get-SocialCachedPlayers([string]$Ws) {
 
 # Writes this drive's own players\<id>.json. $Presence: State ('on' or
 # 'offline'), InGame, Game, Console, Since. Returns @{ Ok; Message }.
-function Publish-SocialRecord([string]$Ws, $Prof, $Presence, [string]$Version, [string]$KnownBlob = '') {
+function Publish-SocialRecord([string]$Ws, $Prof, $Presence, [string]$Version, [string]$KnownBlob = '', $Stats = $null, $Live = $null) {
     $res = @{ Ok = $false; Message = '' }
     if ($null -eq $Prof -or $Prof.Guest -or $Prof.Id -notmatch $script:SocialIdPattern) { $res.Message = 'No profile, nothing to send.'; return $res }
     $repo = Get-SocialRepo $Ws
     $url = "https://api.github.com/repos/$repo/contents/players/$($Prof.Id).json"
-    $json = ConvertTo-SocialRecordJson $Prof $Presence $Version
+    $json = ConvertTo-SocialRecordJson $Prof $Presence $Version $Stats $Live
     $b64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
 
     $sha = $KnownBlob
@@ -665,7 +751,9 @@ function New-SocialProfileFromRecord($Rec) {
         Guest = $false; Id = $Rec.Id; Username = $Rec.Username; Avatar = $Rec.Avatar
         Status = $(if ($Rec.Status) { $Rec.Status } else { 'online' }); Text = $Rec.Text
         ShowGame = $true; Popups = $true; Friends = @($Rec.Friends); Declined = @()
+        Share = $(if ($null -ne $Rec.Games) { @($Rec.Games.For) } else { @() })
         Created = ''; Pw = $Rec.Pw; PwSet = $Rec.PwSet; NameReq = $Rec.NameReq
+        Favs = @('', '', ''); Reach = $true
     }
 }
 
@@ -678,7 +766,11 @@ function Get-SocialLogins([string]$Ws) {
         foreach ($l in [System.IO.File]::ReadAllLines($f)) {
             $parts = $l.Split('|')
             if ($parts.Count -ge 3 -and $parts[0] -match $script:SocialIdPattern) {
-                $out += [pscustomobject]@{ Id = $parts[0]; Username = (Get-SocialClean $parts[1] 20); Avatar = $parts[2] }
+                $av = [string]$parts[2]
+                if ($av -notmatch '^(icon:[a-z0-9\-]{1,30}|custom:[a-f0-9]{1,40})$') { $av = 'icon:gameboy' }
+                $tr = ''
+                if ($parts.Count -ge 4 -and $parts[3] -match '^\d{4}-\d{2}-\d{2}$') { $tr = $parts[3] }
+                $out += [pscustomobject]@{ Id = $parts[0]; Username = (Get-SocialClean $parts[1] 20); Avatar = $av; Trusted = $tr }
             }
         }
     }
@@ -688,23 +780,44 @@ function Get-SocialLogins([string]$Ws) {
         try {
             $oid = ''; $oname = ''
             foreach ($l in [System.IO.File]::ReadAllLines($old)) { if ($l -match '^\s*id\s*=\s*([a-z0-9]{10})\s*$') { $oid = $Matches[1] }; if ($l -match '^\s*username\s*=\s*(.+)$') { $oname = $Matches[1].Trim() } }
-            if ($oid -and $oname) { $out += [pscustomobject]@{ Id = $oid; Username = $oname; Avatar = 'icon:gameboy' } }
+            if ($oid -and $oname) { $out += [pscustomobject]@{ Id = $oid; Username = $oname; Avatar = 'icon:gameboy'; Trusted = '' } }
         } catch { }
     }
-    return @($out | Group-Object Id | ForEach-Object { $_.Group[0] })
+    # one per profile, newest first (Group-Object would sort them in PS 7)
+    $seen = @{}; $uniq = @()
+    foreach ($o in $out) { if (-not $seen.ContainsKey($o.Id)) { $seen[$o.Id] = $true; $uniq += $o } }
+    return $uniq
 }
 
 function Save-SocialLogins([string]$Ws, $List) {
     $P = Get-SocialPaths $Ws
     New-SocialDir $P.ProfileDir
-    $lines = @($List | ForEach-Object { '{0}|{1}|{2}' -f $_.Id, $_.Username, $_.Avatar })
+    $lines = @($List | ForEach-Object { '{0}|{1}|{2}|{3}' -f $_.Id, $_.Username, $_.Avatar, [string]$_.Trusted })
     [System.IO.File]::WriteAllLines((Join-SocialPath $P.ProfileDir 'logins.txt'), [string[]]$lines)
 }
 
-function Add-SocialLogin([string]$Ws, $Prof) {
-    $list = @(Get-SocialLogins $Ws | Where-Object { $_.Id -ne $Prof.Id })
-    $av = $(if ([string]$Prof.Avatar -like 'icon:*') { $Prof.Avatar } else { 'icon:gameboy' })
-    Save-SocialLogins $Ws (@([pscustomobject]@{ Id = $Prof.Id; Username = $Prof.Username; Avatar = $av }) + $list)
+# Since 2026-10-12 (Steven: the picture in "Log back in" was not his) a
+# custom picture is remembered too: its value is kept, and a copy goes into
+# social\cache\avatars\ where the list reads it after logging out.
+function Add-SocialLogin([string]$Ws, $Prof, [bool]$Trusted = $false) {
+    $all = @(Get-SocialLogins $Ws)
+    $was = @($all | Where-Object { $_.Id -eq $Prof.Id }) | Select-Object -First 1
+    $tr = $(if ($Trusted) { (Get-Date).ToString('yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture) } elseif ($null -ne $was) { [string]$was.Trusted } else { '' })
+    $list = @($all | Where-Object { $_.Id -ne $Prof.Id })
+    $av = [string]$Prof.Avatar
+    if ($av -match '^custom:([a-f0-9]{1,40})$') {
+        $tag = $Matches[1]
+        try {
+            $P = Get-SocialPaths $Ws
+            if (Test-Path -LiteralPath $P.Avatar) {
+                $d = Join-SocialPath $P.Cache 'avatars'
+                New-SocialDir $d
+                Copy-Item -LiteralPath $P.Avatar -Destination (Join-SocialPath $d ($Prof.Id + '-' + $tag + '.png')) -Force
+            }
+        } catch { }
+    }
+    elseif ($av -notmatch '^icon:[a-z0-9\-]{1,30}$') { $av = 'icon:gameboy' }
+    Save-SocialLogins $Ws (@([pscustomobject]@{ Id = $Prof.Id; Username = $Prof.Username; Avatar = $av; Trusted = $tr }) + $list)
 }
 
 function Remove-SocialLogin([string]$Ws, [string]$Id) {
@@ -729,9 +842,10 @@ function Get-SocialNotifyTopic([string]$Ws) {
 function Send-SocialNotify([string]$Ws, [string]$Title, [string]$Text) {
     try {
         $topic = Get-SocialNotifyTopic $Ws
-        if ($topic -eq '') { return $false }
+        if ($topic -eq '') { Write-SocialLog $Ws 'notify: no alert channel found online, nothing sent'; return $false }
         $h = @{ Title = (Get-SocialClean $Title 80); Tags = 'video_game' }
         Invoke-WebRequest -Uri ("https://ntfy.sh/" + $topic) -Method Post -Headers $h -Body ([System.Text.Encoding]::UTF8.GetBytes((Get-SocialClean $Text 300))) -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop | Out-Null
+        Write-SocialLog $Ws ('notify: sent "' + (Get-SocialClean $Title 40) + '"')
         return $true
     } catch { Write-SocialLog $Ws ("notify: " + $_.Exception.Message); return $false }
 }
@@ -749,4 +863,444 @@ function Remove-SocialFriend($Prof, [string]$Id) {
 function Deny-SocialRequest($Prof, [string]$Id) {
     Remove-SocialFriend $Prof $Id
     if ($Id -match $script:SocialIdPattern -and @($Prof.Declined) -notcontains $Id) { $Prof.Declined = @(@($Prof.Declined) + $Id) }
+}
+
+# ===========================================================================
+#  PLAYED GAMES ON THE PROFILE   (Steven, 2026-10-11)
+# ===========================================================================
+#  RetroBat already keeps, for every game, how long it has been played
+#  (<gametime>, seconds), when it was last played (<lastplayed>) and whether it
+#  is a favourite (<favorite>, the star in RetroBat's game list). This reads
+#  those from roms\<system>\gamelist.xml - nothing new is tracked.
+#
+#  Shared per friend: profile.ini "share" lists who may see them (asked when a
+#  request is sent or accepted). A game can be hidden: profile\hidden-games.txt,
+#  one "system|path" line each. Hidden games never leave the drive.
+#  The light-lock rule holds: anyone with the shared key could read the file;
+#  the wizard only SHOWS a friend's games when their "for" list names you.
+
+function Get-SocialHiddenGames([string]$Ws) {
+    $P = Get-SocialPaths $Ws
+    $f = Join-SocialPath $P.ProfileDir 'hidden-games.txt'
+    $out = @{}
+    if (-not (Test-Path -LiteralPath $f)) { return $out }
+    foreach ($line in @([System.IO.File]::ReadAllLines($f))) {
+        $t = $line.Trim()
+        if ($t -eq '' -or $t.StartsWith(';')) { continue }
+        $out[$t.ToLower()] = $true
+    }
+    return $out
+}
+
+function Set-SocialHiddenGame([string]$Ws, [string]$System, [string]$Path, [bool]$Hide) {
+    $P = Get-SocialPaths $Ws
+    New-SocialDir $P.ProfileDir
+    $f = Join-SocialPath $P.ProfileDir 'hidden-games.txt'
+    $key = ('{0}|{1}' -f $System, $Path)
+    $lines = @()
+    if (Test-Path -LiteralPath $f) { $lines = @([System.IO.File]::ReadAllLines($f) | Where-Object { $_.Trim() -ne '' -and $_.Trim().ToLower() -ne $key.ToLower() }) }
+    if ($Hide) { $lines += $key }
+    if (@($lines | Where-Object { -not $_.StartsWith(';') }).Count -eq 0) { $lines = @() }
+    $head = @('; Games kept off your profile (the wizard''s Profile tab, Hide). system|path, one per line.')
+    [System.IO.File]::WriteAllLines($f, [string[]](@($head) + @($lines | Where-Object { -not $_.StartsWith(';') })))
+}
+
+# Every played or starred game on this drive. Returns @{ Top; Recent; Fav; All }
+# of @{ Name; System; Path; Minutes; Last; Image; Favorite }. $Hidden is the
+# table Get-SocialHiddenGames returns.
+function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6) {
+    $all = New-Object System.Collections.ArrayList
+    $roms = Join-SocialPath $Root 'roms'
+    if (Test-Path -LiteralPath $roms) {
+        foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+            $gl = Join-Path $sd 'gamelist.xml'
+            if (-not (Test-Path -LiteralPath $gl)) { continue }
+            $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+            if ($sys -notmatch '^[a-z0-9\-]{1,20}$') { continue }
+            $x = $null
+            try { [xml]$x = [System.IO.File]::ReadAllText($gl) } catch { continue }
+            foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+                if ($null -eq $g) { continue }
+                $secs = 0; $last = $null; $fav = $false
+                $n1 = $g.SelectSingleNode('gametime');   if ($null -ne $n1) { [int]::TryParse([string]$n1.InnerText, [ref]$secs) | Out-Null }
+                $n2 = $g.SelectSingleNode('lastplayed'); if ($null -ne $n2) {
+                    $d = [DateTime]::MinValue
+                    if ([DateTime]::TryParseExact(([string]$n2.InnerText).Trim(), 'yyyyMMddTHHmmss', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { $last = $d }
+                }
+                $n3 = $g.SelectSingleNode('favorite');   if ($null -ne $n3 -and ([string]$n3.InnerText).Trim() -eq 'true') { $fav = $true }
+                if ($secs -le 0 -and $null -eq $last -and -not $fav) { continue }
+                $path = ''; $pn = $g.SelectSingleNode('path'); if ($null -ne $pn) { $path = ([string]$pn.InnerText).Trim() }
+                if ($Hidden.ContainsKey(('{0}|{1}' -f $sys, $path).ToLower())) { continue }
+                $name = ''; $nn = $g.SelectSingleNode('name'); if ($null -ne $nn) { $name = ([string]$nn.InnerText).Trim() }
+                if ($name -eq '') { $name = [System.IO.Path]::GetFileNameWithoutExtension($path) }
+                $img = ''
+                foreach ($tag in @('image', 'thumbnail')) {
+                    $im = $g.SelectSingleNode($tag)
+                    if ($null -eq $im) { continue }
+                    $rel = ([string]$im.InnerText).Trim()
+                    if ($rel -eq '') { continue }
+                    $full = $(if ($rel.StartsWith('./') -or $rel.StartsWith('.\')) { Join-SocialPath $sd $rel.Substring(2) } else { $rel })
+                    if (Test-Path -LiteralPath $full) { $img = $full; break }
+                }
+                [void]$all.Add([pscustomobject]@{ Name = $name; System = $sys; Path = $path; Minutes = [math]::Round($secs / 60.0, 1)
+                                                 Last = $last; Image = $img; Favorite = $fav })
+            }
+        }
+    }
+    $list = @($all.ToArray())
+    return @{
+        Top    = @($list | Where-Object { $_.Minutes -gt 0 } | Sort-Object Minutes -Descending | Select-Object -First $TopN)
+        Recent = @($list | Where-Object { $null -ne $_.Last } | Sort-Object Last -Descending | Select-Object -First $RecentN)
+        Fav    = @($list | Where-Object { $_.Favorite } | Sort-Object Minutes -Descending | Select-Object -First $FavN)
+        All    = $list
+    }
+}
+
+# A friend's "games" block, read back defensively like the rest.
+function ConvertFrom-SocialGameItem($x) {
+    if ($null -eq $x) { return $null }
+    $sys = ([string]$x.s).ToLower()
+    if ($sys -notmatch '^[a-z0-9\-]{1,20}$') { return $null }
+    $n = Get-SocialClean ([string]$x.n) 60
+    if ($n -eq '') { return $null }
+    $m = 0; [int]::TryParse([string]$x.m, [ref]$m) | Out-Null
+    if ($m -lt 0 -or $m -gt 10000000) { $m = 0 }
+    $t = [string]$x.t
+    if ($x.t -is [DateTime]) { $t = ([DateTime]$x.t).ToString('yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture) }
+    if ($t -notmatch '^\d{4}-\d{2}-\d{2}$') { $t = '' }
+    return [pscustomobject]@{ Name = $n; System = $sys; Minutes = $m; Last = $t }
+}
+
+function ConvertFrom-SocialGames($G) {
+    if ($null -eq $G) { return $null }
+    $item = { param($x) $r = ConvertFrom-SocialGameItem $x; if ($null -ne $r) { $r } }
+    return [pscustomobject]@{
+        For    = @(@($G.for) | ForEach-Object { [string]$_ } | Where-Object { $_ -match $script:SocialIdPattern } | Select-Object -Unique)
+        Top    = @(@($G.top)    | Select-Object -First 3 | ForEach-Object { & $item $_ })
+        Recent = @(@($G.recent) | Select-Object -First 3 | ForEach-Object { & $item $_ })
+        Fav    = @(@($G.fav)    | Select-Object -First 6 | ForEach-Object { & $item $_ })
+    }
+}
+
+# How long, in plain words: "2 h 15 min", "40 min".
+function Format-SocialPlaytime([double]$Minutes) {
+    $m = [int][math]::Round($Minutes)
+    if ($m -lt 1) { return 'under a minute' }
+    if ($m -lt 60) { return "$m min" }
+    $h = [math]::Floor($m / 60); $r = $m % 60
+    if ($r -eq 0) { return "$h h" }
+    return "$h h $r min"
+}
+
+# ===========================================================================
+#  FAVOURITES, PLAY TOGETHER, AND MORE THAN ONE PERSON PER DRIVE (2026-10-12)
+# ===========================================================================
+
+# --- the three favourite games ---------------------------------------------
+#  Picked on the Profile tab from the same console > game > picture choices
+#  as the shortcut maker. profile.ini keeps "system|rom|picture" per slot.
+#  This turns a slot into what the screen and the online file need, from the
+#  game list: @{ Slot; System; Rom; Name; Image } or $null for an empty or
+#  vanished slot.
+function Resolve-SocialFav([string]$Root, [string]$Slot) {
+    $s = ConvertTo-SocialFavSlot $Slot
+    if ($s -eq '') { return $null }
+    $f = $s.Split('|')
+    $sys = $f[0]; $rom = $f[1]; $pic = $f[2]
+    $sd = Join-SocialPath (Join-SocialPath $Root 'roms') $sys
+    $romFull = Join-SocialPath $sd $rom
+    if (-not (Test-Path -LiteralPath $romFull)) { return $null }
+    $name = [System.IO.Path]::GetFileNameWithoutExtension($rom)
+    $gl = Join-SocialPath $sd 'gamelist.xml'
+    if (Test-Path -LiteralPath $gl) {
+        try {
+            [xml]$x = [System.IO.File]::ReadAllText($gl)
+            $want = ($rom -replace '\\', '/').TrimStart('.', '/').ToLower()
+            foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+                if ($null -eq $g) { continue }
+                $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+                $p = (([string]$pn.InnerText).Trim() -replace '\\', '/').TrimStart('.', '/').ToLower()
+                if ($p -ne $want) { continue }
+                $nn = $g.SelectSingleNode('name')
+                if ($null -ne $nn -and ([string]$nn.InnerText).Trim() -ne '') { $name = ([string]$nn.InnerText).Trim() }
+                break
+            }
+        } catch { }
+    }
+    $img = ''
+    if ($pic -ne '') {
+        $pf = Join-SocialPath $sd $pic
+        if (Test-Path -LiteralPath $pf) { $img = $pf }
+    }
+    return [pscustomobject]@{ Slot = $s; System = $sys; Rom = $rom; Name = $name; Image = $img }
+}
+
+function Get-SocialFavs([string]$Root, $Prof) {
+    $out = @()
+    foreach ($slot in @($Prof.Favs)) { $out += , (Resolve-SocialFav $Root ([string]$slot)) }
+    while ($out.Count -lt 3) { $out += , $null }
+    return $out
+}
+
+# A path inside roms\<system>\, written the way profile.ini keeps it.
+function Get-SocialRelPath([string]$Root, [string]$System, [string]$Full) {
+    $base = Join-SocialPath (Join-SocialPath $Root 'roms') $System
+    $b = $base.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $Full.StartsWith($b, [StringComparison]::OrdinalIgnoreCase)) { return '' }
+    return ($Full.Substring($b.Length) -replace '\\', '/')
+}
+
+# --- play together ------------------------------------------------------------
+#  An invite lives in the SENDER's own file (the one rule: nobody writes
+#  anybody else's), for $SocialInviteMinutes. The friends it names see a
+#  banner from their helper, even with the wizard closed, and their answer
+#  goes in THEIR own file as "reply". profile\invite.ini and
+#  profile\reply.ini hold this drive's own; the helper sends them.
+$script:SocialInviteMinutes = 15
+
+function ConvertFrom-SocialInvite($o) {
+    if ($null -eq $o) { return $null }
+    $id = [string]$o.id
+    if ($id -notmatch '^[a-z0-9]{6,12}$') { return $null }
+    $at = Get-SocialTimeValue $o.at
+    if ($null -eq $at) { return $null }
+    $sys = ([string]$o.s).ToLower()
+    if ($sys -notmatch '^[a-z0-9\-]{0,20}$') { $sys = '' }
+    return [pscustomobject]@{
+        Id = $id
+        To = @(@($o.to) | ForEach-Object { [string]$_ } | Where-Object { $_ -match $script:SocialIdPattern } | Select-Object -Unique)
+        Game = Get-SocialClean ([string]$o.n) 60; System = $sys
+        Note = Get-SocialClean ([string]$o.note) 60; Code = Get-SocialClean ([string]$o.code) 40
+        At = $at
+    }
+}
+
+function ConvertFrom-SocialReply($o) {
+    if ($null -eq $o) { return $null }
+    $to = [string]$o.to; $inv = [string]$o.inv; $ans = [string]$o.ans
+    if ($to -notmatch $script:SocialIdPattern -or $inv -notmatch '^[a-z0-9]{6,12}$') { return $null }
+    if (@('yes', 'no') -notcontains $ans) { return $null }
+    $at = Get-SocialTimeValue $o.at
+    if ($null -eq $at) { return $null }
+    return [pscustomobject]@{ To = $to; Inv = $inv; Ans = $ans; At = $at }
+}
+
+function Read-SocialSmallIni([string]$Path) {
+    $o = @{}
+    if (-not (Test-Path -LiteralPath $Path)) { return $o }
+    foreach ($line in [System.IO.File]::ReadAllLines($Path)) {
+        $t = $line.Trim()
+        if ($t -eq '' -or $t.StartsWith(';')) { continue }
+        $eq = $t.IndexOf('=')
+        if ($eq -lt 1) { continue }
+        $o[$t.Substring(0, $eq).Trim().ToLower()] = $t.Substring($eq + 1).Trim()
+    }
+    return $o
+}
+
+# This drive's own invite, or $null when there is none or it has run out.
+function Read-SocialInvite([string]$Ws, [DateTime]$NowUtc) {
+    $P = Get-SocialPaths $Ws
+    $i = Read-SocialSmallIni (Join-SocialPath $P.ProfileDir 'invite.ini')
+    if ($i.Count -eq 0) { return $null }
+    $inv = ConvertFrom-SocialInvite ([pscustomobject]@{ id = $i['id']; to = @(([string]$i['to']).Split(',') | ForEach-Object { $_.Trim() }); n = $i['game']; s = $i['system']; note = $i['note']; code = $i['code']; at = $i['at'] })
+    if ($null -eq $inv) { return $null }
+    if (($NowUtc - $inv.At).TotalMinutes -gt $script:SocialInviteMinutes) { return $null }
+    return $inv
+}
+
+function Write-SocialInvite([string]$Ws, [string[]]$To, [string]$Game, [string]$System, [string]$Note, [string]$Code) {
+    $P = Get-SocialPaths $Ws
+    New-SocialDir $P.ProfileDir
+    $id = (New-SocialId).Substring(0, 8)
+    $lines = @('; A play-together invite this drive sent. It runs out by itself after 15 minutes.',
+        ('id     = ' + $id),
+        ('to     = ' + ((@($To) | Where-Object { $_ -match $script:SocialIdPattern }) -join ',')),
+        ('game   = ' + (Get-SocialClean $Game 60)),
+        ('system = ' + (([string]$System).ToLower() -replace '[^a-z0-9\-]', '')),
+        ('note   = ' + (Get-SocialClean $Note 60)),
+        ('code   = ' + (Get-SocialClean $Code 40)),
+        ('at     = ' + (Format-SocialTime (Get-SocialNowUtc))))
+    [System.IO.File]::WriteAllLines((Join-SocialPath $P.ProfileDir 'invite.ini'), [string[]]$lines)
+    return $id
+}
+
+function Clear-SocialInvite([string]$Ws) {
+    $P = Get-SocialPaths $Ws
+    foreach ($n in @('invite.ini', 'reply.ini')) {
+        $f = Join-SocialPath $P.ProfileDir $n
+        if (Test-Path -LiteralPath $f) { Remove-Item -LiteralPath $f -Force }
+    }
+}
+
+function Read-SocialReply([string]$Ws, [DateTime]$NowUtc) {
+    $P = Get-SocialPaths $Ws
+    $i = Read-SocialSmallIni (Join-SocialPath $P.ProfileDir 'reply.ini')
+    if ($i.Count -eq 0) { return $null }
+    $r = ConvertFrom-SocialReply ([pscustomobject]@{ to = $i['to']; inv = $i['inv']; ans = $i['ans']; at = $i['at'] })
+    if ($null -eq $r -or ($NowUtc - $r.At).TotalMinutes -gt $script:SocialInviteMinutes) { return $null }
+    return $r
+}
+
+function Write-SocialReply([string]$Ws, [string]$To, [string]$Inv, [bool]$Yes) {
+    $P = Get-SocialPaths $Ws
+    New-SocialDir $P.ProfileDir
+    [System.IO.File]::WriteAllLines((Join-SocialPath $P.ProfileDir 'reply.ini'), [string[]]@(
+        '; This drive''s answer to a friend''s invite.',
+        ('to  = ' + $To), ('inv = ' + $Inv), ('ans = ' + $(if ($Yes) { 'yes' } else { 'no' })),
+        ('at  = ' + (Format-SocialTime (Get-SocialNowUtc)))))
+}
+
+# Invites friends sent to $Prof that are still live, newest first.
+function Get-SocialInvitesFor($Prof, $Players, [DateTime]$NowUtc) {
+    if ($null -eq $Prof -or $Prof.Guest) { return @() }
+    $view = Get-SocialView $Prof $Players $NowUtc
+    $out = @()
+    foreach ($f in @($view.Friends)) {
+        $inv = $f.Invite
+        if ($null -eq $inv) { continue }
+        if (@($inv.To) -notcontains $Prof.Id) { continue }
+        $age = ($NowUtc - $inv.At).TotalMinutes
+        if ($age -lt -5 -or $age -gt $script:SocialInviteMinutes) { continue }
+        $out += [pscustomobject]@{ From = $f; Invite = $inv }
+    }
+    return @($out | Sort-Object { $_.Invite.At } -Descending)
+}
+
+# Answers to THIS drive's live invite: @(@{ From; Yes }).
+function Get-SocialRepliesFor($Prof, $Players, $MyInvite) {
+    if ($null -eq $MyInvite) { return @() }
+    $out = @()
+    foreach ($p in @($Players)) {
+        if ($null -eq $p -or $null -eq $p.Reply) { continue }
+        if ($p.Reply.To -ne $Prof.Id -or $p.Reply.Inv -ne $MyInvite.Id) { continue }
+        if (@($MyInvite.To) -notcontains $p.Id) { continue }
+        $out += [pscustomobject]@{ From = $p; Yes = ($p.Reply.Ans -eq 'yes') }
+    }
+    return $out
+}
+
+# Invites and answers already shown on this drive, so the helper and the
+# wizard never show the same one twice. social\invites-seen.txt, newest last.
+function Test-SocialSeen([string]$Ws, [string]$Key) {
+    $f = Join-SocialPath (Get-SocialPaths $Ws).SocialDir 'invites-seen.txt'
+    if (-not (Test-Path -LiteralPath $f)) { return $false }
+    return (@([System.IO.File]::ReadAllLines($f)) -contains $Key)
+}
+
+function Add-SocialSeen([string]$Ws, [string]$Key) {
+    $P = Get-SocialPaths $Ws
+    New-SocialDir $P.SocialDir
+    $f = Join-SocialPath $P.SocialDir 'invites-seen.txt'
+    $lines = @()
+    if (Test-Path -LiteralPath $f) { $lines = @([System.IO.File]::ReadAllLines($f) | Where-Object { $_ -ne $Key }) }
+    $lines = @(@($lines | Select-Object -Last 199) + $Key)
+    [System.IO.File]::WriteAllLines($f, [string[]]$lines)
+}
+
+# --- this session only: incognito --------------------------------------------
+#  profile\session.ini, written by the "Who's playing?" box on PLAY. While
+#  it says incognito, the check-ins say "invisible" whatever the profile's
+#  own status is. The helper deletes it when it signs off, so the next time
+#  is back to normal by itself.
+function Test-SocialIncognito([string]$Ws) {
+    $P = Get-SocialPaths $Ws
+    $i = Read-SocialSmallIni (Join-SocialPath $P.ProfileDir 'session.ini')
+    return ([string]$i['incognito'] -eq 'yes')
+}
+
+function Set-SocialIncognito([string]$Ws, [bool]$On) {
+    $P = Get-SocialPaths $Ws
+    $f = Join-SocialPath $P.ProfileDir 'session.ini'
+    if ($On) {
+        New-SocialDir $P.ProfileDir
+        [System.IO.File]::WriteAllLines($f, [string[]]@('; This session only. Deleted when the session ends.', 'incognito = yes'))
+    }
+    elseif (Test-Path -LiteralPath $f) { Remove-Item -LiteralPath $f -Force }
+}
+
+# --- more than one person per drive ----------------------------------------------
+#  Each person who logs in on this drive keeps their own copy of the things
+#  that only live here - their switches, favourites, hidden games and
+#  picture - in profile\people\<id>\. Switching person puts the current one
+#  away and brings the other back, so everybody's settings come back as
+#  they left them.
+$script:SocialPersonFiles = @('profile.ini', 'hidden-games.txt', 'avatar.png')
+
+function Get-SocialPersonDir([string]$Ws, [string]$Id) {
+    return (Join-SocialPath (Join-SocialPath (Get-SocialPaths $Ws).ProfileDir 'people') $Id)
+}
+
+function Save-SocialPersonCopy([string]$Ws) {
+    $prof = Read-SocialProfile $Ws
+    if ($null -eq $prof -or $prof.Guest -or $prof.Id -notmatch $script:SocialIdPattern) { return $false }
+    $P = Get-SocialPaths $Ws
+    $dir = Get-SocialPersonDir $Ws $prof.Id
+    New-SocialDir $dir
+    foreach ($n in $script:SocialPersonFiles) {
+        $src = Join-SocialPath $P.ProfileDir $n
+        $dst = Join-SocialPath $dir $n
+        if (Test-Path -LiteralPath $src) { Copy-Item -LiteralPath $src -Destination $dst -Force }
+        elseif (Test-Path -LiteralPath $dst) { Remove-Item -LiteralPath $dst -Force }
+    }
+    return $true
+}
+
+# The saved profile for $Id, read without bringing it back, or $null.
+function Read-SocialPersonCopy([string]$Ws, [string]$Id) {
+    if ($Id -notmatch $script:SocialIdPattern) { return $null }
+    $f = Join-SocialPath (Get-SocialPersonDir $Ws $Id) 'profile.ini'
+    if (-not (Test-Path -LiteralPath $f)) { return $null }
+    $p = Read-SocialProfile $Ws $f
+    if ($null -ne $p -and -not $p.Guest -and $p.Id -eq $Id) { return $p }
+    return $null
+}
+
+# Brings $Id's own files back as the current profile. Returns $true when
+# there was a copy to bring back. The current person must be put away first.
+function Restore-SocialPersonCopy([string]$Ws, [string]$Id) {
+    if ($null -eq (Read-SocialPersonCopy $Ws $Id)) { return $false }
+    $P = Get-SocialPaths $Ws
+    $dir = Get-SocialPersonDir $Ws $Id
+    foreach ($n in $script:SocialPersonFiles) {
+        $src = Join-SocialPath $dir $n
+        $dst = Join-SocialPath $P.ProfileDir $n
+        if (Test-Path -LiteralPath $src) { Copy-Item -LiteralPath $src -Destination $dst -Force }
+        elseif (Test-Path -LiteralPath $dst) { Remove-Item -LiteralPath $dst -Force }
+    }
+    return $true
+}
+
+# --- remembering a password ---------------------------------------------------------
+#  profile\logins.txt gains a fourth field: the day the password was last
+#  typed on this drive. Within $SocialTrustDays of it, the "Who's playing?"
+#  box lets that person straight in.
+$script:SocialTrustDays = 60
+
+function Set-SocialLoginTrusted([string]$Ws, [string]$Id) {
+    $today = (Get-Date).ToString('yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture)
+    $list = @(Get-SocialLogins $Ws | ForEach-Object { if ($_.Id -eq $Id) { $_.Trusted = $today }; $_ })
+    Save-SocialLogins $Ws $list
+}
+
+function Test-SocialLoginTrusted([string]$Ws, [string]$Id) {
+    $l = @(Get-SocialLogins $Ws | Where-Object { $_.Id -eq $Id }) | Select-Object -First 1
+    if ($null -eq $l -or [string]$l.Trusted -eq '') { return $false }
+    $d = [DateTime]::MinValue
+    if (-not [DateTime]::TryParseExact([string]$l.Trusted, 'yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { return $false }
+    return (((Get-Date) - $d).TotalDays -le $script:SocialTrustDays)
+}
+
+# The drive's own picker switch: profile\picker.ini, "ask = on|off".
+function Get-SocialAskWho([string]$Ws) {
+    $i = Read-SocialSmallIni (Join-SocialPath (Get-SocialPaths $Ws).ProfileDir 'picker.ini')
+    return ([string]$i['ask'] -ne 'off')
+}
+
+function Set-SocialAskWho([string]$Ws, [bool]$On) {
+    $P = Get-SocialPaths $Ws
+    New-SocialDir $P.ProfileDir
+    [System.IO.File]::WriteAllLines((Join-SocialPath $P.ProfileDir 'picker.ini'), [string[]]@(
+        '; Show "Who''s playing?" when PLAY is pressed. off = go straight in as whoever is logged in.',
+        ('ask = ' + $(if ($On) { 'on' } else { 'off' }))))
 }

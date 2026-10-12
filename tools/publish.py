@@ -4,6 +4,12 @@
 usage:
   publish.py build  <ws_dir> <repo_dir> <version>      drive/..., manifest.txt, .gitattributes
   publish.py latest <repo_dir> <version> <commit> <notes>   latest.ini, pointing at <commit>
+  publish.py dev    <repo_dir> <version> <commit> <notes>   latest-dev.ini, the same for the dev channel
+
+The dev channel (2026-10-12): drives set to Dev on the Admin tab read
+latest-dev.ini instead. Build the dev version on a dev branch (say 2.4-dev),
+commit and push it there, then write latest-dev.ini ON MAIN pointing at that
+commit. Friends on Stable never read latest-dev.ini.
 
 Two steps because latest.ini names the COMMIT that holds the files, and a
 commit cannot name itself: build, commit, push, then latest with that commit's
@@ -14,15 +20,18 @@ if a path is not plain ASCII, or if a file is over GitHub's 100 MB limit.
 """
 import hashlib, os, re, shutil, sys
 
-if sys.argv[1] == 'latest':
+if sys.argv[1] in ('latest', 'dev'):
     repo, version, commit, notes = sys.argv[2:6]
     assert re.match(r'^[0-9a-f]{40}$', commit), 'need a full commit id'
-    open(os.path.join(repo, 'latest.ini'), 'w', newline='\n').write(
-        '; The newest version. Read by scripts\\UpdateEngine.ps1 on every drive.\n'
+    name = 'latest.ini' if sys.argv[1] == 'latest' else 'latest-dev.ini'
+    head = ('; The newest version. Read by scripts\\UpdateEngine.ps1 on every drive.\n' if name == 'latest.ini'
+            else '; The DEV version: read only by drives set to Dev on the Admin tab.\n')
+    open(os.path.join(repo, name), 'w', newline='\n').write(
+        head +
         '; "tag" is the commit whose manifest.txt and drive\\ files ARE that version.\n'
         '; A commit id never changes, so a download can never get a mix of two versions.\n'
         'version = %s\ntag = %s\nnotes = %s\n' % (version, commit, notes))
-    print('latest.ini ->', version, commit)
+    print(name, '->', version, commit)
     sys.exit(0)
 
 assert sys.argv[1] == 'build'

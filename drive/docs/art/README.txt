@@ -141,3 +141,21 @@ the book turns. The mage floats, blinks, glows and casts a spell once every
 eight seconds. The rules above still hold - same width as the still, a
 whole number of frames tall - except that a strip may now be up to 400
 frames. The old pictures are in archive\wizard-anim-revamp_2026-09-23.
+
+===========================================================================
+ The four newer tabs                                (added 2026-10-11)
+===========================================================================
+
+    motion2.py          Profile, Games, Netplay and Admin: the four page
+                        pictures (moving) and their tab pictures. Borrows
+                        motion.py's helpers. python motion2.py
+    hat-source.png      Steven's blue wizard hat, put back onto its own
+                        25 x 22 grid, six colours. motion2.py draws the
+                        Profile pictures FROM it (the tab is this file as
+                        it is) and moves its tail.
+    sword-source.png    Steven's sword, 11 x 48, five colours. The Admin
+                        page picture is this with gold flames round it.
+
+Redraw either source in any pixel editor and run motion2.py again; the
+animations follow. The hat's moving tail is the pixels left of column 7,
+rows 3 to 8 - keep the tail there if you redraw it.

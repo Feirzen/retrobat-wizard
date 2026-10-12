@@ -63,7 +63,7 @@ function Get-FeatureCatalogue {
 
     $c['launchmenu'] = @{
         title   = 'Ask before a slow launch'
-        desc    = 'A confirmation menu on 3DS, Wii U, DS and the ports.'
+        desc    = 'A "Launch game?" screen before every game, on every console.'
         off     = 'Off removes it. Those games launch the moment you press A.'
         scripts = @('Apply-Settings.ps1')
         reverts = $true
@@ -109,6 +109,16 @@ function Get-FeatureCatalogue {
         scripts = @()
         reverts = $false
         warn    = "Turning this off stops your game saves being backed up.`n`nEverything already backed up stays, and you can still put an old save back. But from here on, a save that gets corrupted or overwritten is gone for good.`n`nThis is the only switch here that can cost you something you cannot get back."
+    }
+
+    # 2026-10-11. Read by scripts\Watch-Dolphin.ps1 each pass, so turning it
+    # off takes effect within a minute, with nothing to run.
+    $c['autosavetimer'] = @{
+        title   = 'Auto save state timer'
+        desc    = 'A save state 45 minutes into a game, then every 30 (RetroArch and Dolphin). They land on the Saves tab.'
+        off     = 'Off stops the timer. Save states already taken stay on the Saves tab.'
+        scripts = @()
+        reverts = $false
     }
 
     $c['videovolume'] = @{

@@ -59,3 +59,4 @@ code  theme-assets/steam.mp4
 
 seed  features.ini
 seed  controllers.ini
+seed  couch-mouse.txt

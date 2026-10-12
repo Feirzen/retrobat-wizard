@@ -1,27 +1,30 @@
 <#
     Quarantine-Savestates.ps1
     -------------------------------------------------------------------------
-    Moves Dolphin savestates out of reach so they can't be loaded by accident.
-    That's all it does.
+    Moves EVERY emulator's save states out of reach so they can't be loaded
+    by accident (Dolphin only until 2026-10-11; every emulator since). The
+    rules live in SaveStates.ps1; this is the button and the game-end hook's
+    way in.
 
-    Checks three folders:
-        emulators\dolphin-emu\User\StateSaves    <- where Dolphin actually writes
-        saves\gamecube\dolphin                   <- RetroBat's copy
-        saves\wii\dolphin
-
-    Anything savestate-shaped gets MOVED to:
+    Swept files go to:
         _ClaudeWorkspace\archive\quarantined-savestates\<date>\
+    with origins.txt in that folder saying where each one came from, which is
+    what lets the Saves tab's "Jump in here" put one back in the right place.
 
-    Nothing is deleted. If you ever want one back, it's sitting right there.
+    Run by the game-end hook (scripts\game-end\zz-backup-saves.bat) with no
+    switch: that run also clears a "jump in" hold and puts the RetroArch
+    placeholders back. Watch-Dolphin.ps1 runs it with -MidGame while a game
+    is on, which leaves a held "jump in" copy alone.
 
-    If the emulator still has a file open the move fails silently and the next
-    pass picks it up. No errors, no crashes.
+    Nothing is deleted, with one exception: a held "jump in" copy that is
+    still byte-for-byte its archived original (the original never left).
 #>
 
 param(
     [string] $RetroBatRoot   = '',
-    [string] $QuarantineRoot = '',
-    [switch] $Quiet
+    [string] $QuarantineRoot = '',   # kept for old callers; the folder is fixed
+    [switch] $Quiet,
+    [switch] $MidGame
 )
 
 # ---------------------------------------------------------------------------
@@ -33,56 +36,27 @@ param(
 #  the script dies on its first Split-Path before it can even write to its own
 #  log. That is exactly what happened here for a week in August 2026: saves
 #  quietly stopped being backed up and nothing said a word.
-#
-#  In the body, below the param block, $PSScriptRoot is filled in properly. So
-#  the paths get built here, and the parameters above just default to empty.
 # ---------------------------------------------------------------------------
 $ScriptDir = $PSScriptRoot
 if (-not $ScriptDir) { $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
 if (-not $ScriptDir) { throw 'Could not work out which folder this script is in.' }
 $WorkspaceDir = Split-Path $ScriptDir -Parent      # <RetroBat>\_ClaudeWorkspace
 $RetroBatDir  = Split-Path $WorkspaceDir -Parent   # <RetroBat>
+if (-not $RetroBatRoot) { $RetroBatRoot = $RetroBatDir }
 
-if (-not $RetroBatRoot)   { $RetroBatRoot   = $RetroBatDir }
-if (-not $QuarantineRoot) { $QuarantineRoot = Join-Path $WorkspaceDir 'archive\quarantined-savestates' }
+$engine = Join-Path $ScriptDir 'SaveStates.ps1'
+if (-not (Test-Path -LiteralPath $engine)) { if (-not $Quiet) { Write-Host '  SaveStates.ps1 is missing - nothing swept.' }; exit 0 }
+. $engine
 
-
-$dirs = @(
-    "$RetroBatRoot\emulators\dolphin-emu\User\StateSaves"
-    "$RetroBatRoot\saves\gamecube\dolphin"
-    "$RetroBatRoot\saves\wii\dolphin"
-)
-
-# Dolphin savestates are .s01 through .s10, plus their thumbnail .png.
-# .txt is deliberately left alone - RetroBat writes a .txt sidecar on exit
-# and throws an unhandled exception if things vanish underneath it.
-$pattern = '\.s\d{2}$|\.s\d{2}\.png$'
-
-$moved = 0
-
-foreach ($dir in $dirs) {
-    if (-not (Test-Path -LiteralPath $dir -PathType Container)) { continue }
-
-    foreach ($f in (Get-ChildItem -LiteralPath $dir -File -ErrorAction SilentlyContinue |
-                    Where-Object { $_.Name -match $pattern })) {
-
-        $destDir = Join-Path $QuarantineRoot (Get-Date -Format 'yyyy-MM-dd')
-        if (-not (Test-Path -LiteralPath $destDir)) {
-            try { New-Item -ItemType Directory -Path $destDir -Force -ErrorAction Stop | Out-Null } catch { continue }
-        }
-
-        $dest = Join-Path $destDir ('{0}__{1}' -f (Get-Date -Format 'HHmmss'), $f.Name)
-
-        try {
-            Move-Item -LiteralPath $f.FullName -Destination $dest -Force -ErrorAction Stop
-            $moved++
-            if (-not $Quiet) { Write-Host "  moved: $($f.Name)" }
-        }
-        catch { }   # still in use - next pass gets it
-    }
-}
-
+$r = Invoke-SavestateSweep -Root $RetroBatRoot -MidGame:$MidGame
 if (-not $Quiet) {
     Write-Host ''
-    Write-Host "  $moved savestate(s) moved."
+    Write-Host ("  {0} save state file(s) moved aside." -f $r.Moved)
+    if ($r.Dropped -gt 0)  { Write-Host ("  {0} unchanged 'jump in' copy(ies) removed (the originals are in the archive)." -f $r.Dropped) }
+    if ($r.Restored -gt 0) { Write-Host ("  {0} RetroArch placeholder(s) put back." -f $r.Restored) }
+    foreach ($m in @($r.Messages)) { Write-Host ('  ' + $m) }
 }
+else {
+    Write-Output ("sweep: moved {0}, dropped {1}, placeholders back {2}, retired {4}{3}" -f $r.Moved, $r.Dropped, $r.Restored, $(if (@($r.Messages).Count) { '; ' + (@($r.Messages) -join '; ') } else { '' }), [int]$r.Retired)
+}
+exit 0

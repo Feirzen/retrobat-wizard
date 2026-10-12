@@ -967,8 +967,15 @@ function Invoke-SuDisconnect {
     if ($doUnin) { $msg += "`n`nUninstalling Steam cannot be undone from here." }
     else { $msg += "`n`nAll of this can be done again by running Connect Steam." }
 
-    $ans = [System.Windows.MessageBox]::Show($msg, 'Are you sure?', 'OKCancel', 'Warning')
-    if ($ans -ne [System.Windows.MessageBoxResult]::OK) { return }
+    # Inside the wizard, its own box, which a controller can answer
+    # (2026-10-11). On its own (Connect Steam.bat), Windows' message box.
+    if (Get-Command Show-Choice -ErrorAction SilentlyContinue) {
+        if ((Show-Choice 'Are you sure?' $msg @('Go ahead', 'Cancel')) -ne 'Go ahead') { return }
+    }
+    else {
+        $ans = [System.Windows.MessageBox]::Show($msg, 'Are you sure?', 'OKCancel', 'Warning')
+        if ($ans -ne [System.Windows.MessageBoxResult]::OK) { return }
+    }
 
     $script:sudGo.IsEnabled = $false
     $script:sudNote.Text = 'Working...'
@@ -977,6 +984,7 @@ function Invoke-SuDisconnect {
     $r = Disconnect-Steam -Root $script:sudRoot -RestoreLibraries:$doLib -LogOut:$doOut -UninstallSteam:$doUnin
 
     $script:sudResult = 'disconnected'
-    [void][System.Windows.MessageBox]::Show((($r.Steps) -join "`n"), 'Disconnect Steam', 'OK', 'Information')
+    if (Get-Command Show-Choice -ErrorAction SilentlyContinue) { [void](Show-Choice 'Disconnect Steam' (($r.Steps) -join "`n") @('OK')) }
+    else { [void][System.Windows.MessageBox]::Show((($r.Steps) -join "`n"), 'Disconnect Steam', 'OK', 'Information') }
     $script:sudWin.Close()
 }

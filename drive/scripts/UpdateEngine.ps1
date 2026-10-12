@@ -43,6 +43,21 @@
        tab. The version gone back from is remembered in update\skip.txt, so
        the same update is not offered again straight away. A NEWER one is.
 
+    TWO CHANNELS (2026-10-12, Steven: "a dev branch toggle on the admin's
+    wizard, so I can see the latest update that's active, or toggle the dev
+    branch instead and see the one under development"):
+        stable   latest.ini        what everybody gets (the default)
+        dev      latest-dev.ini    the version being worked on
+    Both files sit on the main branch; each names a COMMIT, so the dev build
+    can live on any branch. update\update.ini "channel = dev" picks dev.
+    update\installed.ini remembers the version, commit and channel that were
+    last installed, which is how the check knows when:
+      - the channel was switched: the other channel's version is offered,
+        even when it is OLDER (stable after dev is a step back on purpose)
+      - a dev build was republished under the same version number: on dev a
+        different commit is enough to offer it
+    Go back after a switch also switches the channel back.
+
     TWO KINDS OF FILE in the manifest:
         code   the update owns it. Replaced whenever it differs.
         seed   the PERSON owns it (features.ini, wizard.ini, ...). Written
@@ -131,7 +146,50 @@ function Get-UpdConfig([string]$Ws) {
     $ini = Read-UpdIni $P.Config
     $repo   = if ($ini['repo'])   { $ini['repo'] }   else { $script:UpdDefaultRepo }
     $branch = if ($ini['branch']) { $ini['branch'] } else { $script:UpdDefaultBranch }
-    return @{ Repo = $repo; Branch = $branch }
+    $chan   = if ([string]$ini['channel'] -eq 'dev') { 'dev' } else { 'stable' }
+    return @{ Repo = $repo; Branch = $branch; Channel = $chan
+              Latest = $(if ($chan -eq 'dev') { 'latest-dev.ini' } else { 'latest.ini' }) }
+}
+
+# Picks the channel, keeping every other line of update.ini as it was.
+function Set-UpdChannel([string]$Ws, [string]$Channel) {
+    $P = Get-UpdPaths $Ws
+    New-UpdDir $P.Dir
+    $c = $(if ($Channel -eq 'dev') { 'dev' } else { 'stable' })
+    $lines = @()
+    if (Test-Path -LiteralPath $P.Config) {
+        $lines = @([System.IO.File]::ReadAllLines($P.Config) | Where-Object { $_ -notmatch '^\s*channel\s*=' })
+    }
+    else { $lines = @('; Where this drive updates from. Written by scripts\UpdateEngine.ps1.') }
+    $lines += ('channel = ' + $c)
+    [System.IO.File]::WriteAllLines($P.Config, [string[]]$lines)
+}
+
+# What was installed last: @{ Version; Tag; Channel }. A drive no update ever
+# touched says stable, with no tag.
+function Get-UpdInstalled([string]$Ws) {
+    $ini = Read-UpdIni (Join-UpdPath (Get-UpdPaths $Ws).Dir 'installed.ini')
+    return @{
+        Version = [string]$ini['version']
+        Tag     = [string]$ini['tag']
+        Channel = $(if ([string]$ini['channel'] -eq 'dev') { 'dev' } else { 'stable' })
+    }
+}
+
+# Should this version be offered? See TWO CHANNELS at the top.
+function Test-UpdOffer([string]$Remote, [string]$Tag, [string]$Local, $Inst, $Cfg) {
+    if ($Cfg.Channel -ne $Inst.Channel) { return $true }
+    if (Test-UpdNewer $Remote $Local) { return $true }
+    if ($Cfg.Channel -eq 'dev' -and $Inst.Tag -ne '' -and $Tag -ne '' -and $Tag -ne $Inst.Tag) { return $true }
+    return $false
+}
+
+# The folder a download waits in. Stable keeps the plain version, as always;
+# dev adds the commit, because a dev build can be republished under the same
+# version number.
+function Get-UpdIncomingName([string]$Remote, [string]$Tag, $Cfg) {
+    if ($Cfg.Channel -eq 'dev' -and $Tag.Length -ge 7) { return ($Remote + '-' + $Tag.Substring(0, 7)) }
+    return $Remote
 }
 
 # The version of the wizard on this drive. version.txt is the one place it
@@ -356,12 +414,12 @@ function Invoke-UpdateCheck {
 
         # --- what is the newest version? -----------------------------------
         $latestFile = Join-UpdPath $P.Dir 'latest.tmp'
-        $url = (Get-UpdRawUrl $cfg $cfg.Branch 'latest.ini') + '?t=' + [DateTime]::UtcNow.Ticks
+        $url = (Get-UpdRawUrl $cfg $cfg.Branch $cfg.Latest) + '?t=' + [DateTime]::UtcNow.Ticks
         try { Invoke-UpdFetch $url $latestFile }
         catch {
             $st = @{ state = 'offline'; current = $local; message = 'Could not reach GitHub. No internet, or GitHub is down. Nothing changed.' }
             Write-UpdStatus $Ws $st
-            Write-UpdLog $Ws ("check: could not fetch latest.ini - " + $_.Exception.Message)
+            Write-UpdLog $Ws ("check: could not fetch {0} - {1}" -f $cfg.Latest, $_.Exception.Message)
             return $st
         }
         $latest = Read-UpdIni $latestFile
@@ -370,7 +428,7 @@ function Invoke-UpdateCheck {
         $tag    = [string]$latest['tag']
         $notes  = [string]$latest['notes']
         if ($remote -eq '' -or $tag -eq '') {
-            $st = @{ state = 'error'; current = $local; message = 'latest.ini on GitHub is missing its version or tag.' }
+            $st = @{ state = 'error'; current = $local; message = ($cfg.Latest + ' on GitHub is missing its version or tag.') }
             Write-UpdStatus $Ws $st; Write-UpdLog $Ws 'check: latest.ini unreadable'
             return $st
         }
@@ -378,9 +436,13 @@ function Invoke-UpdateCheck {
         $skip = ''
         if (Test-Path -LiteralPath $P.Skip) { $skip = ([System.IO.File]::ReadAllText($P.Skip)).Trim() }
 
-        if (-not (Test-UpdNewer $remote $local) -or ($skip -ne '' -and -not (Test-UpdNewer $remote $skip))) {
+        $inst = Get-UpdInstalled $Ws
+        $switching = ($cfg.Channel -ne $inst.Channel)
+        $offer = Test-UpdOffer $remote $tag $local $inst $cfg
+        $skipped = (-not $switching) -and $skip -ne '' -and -not (Test-UpdNewer $remote $skip)
+        if (-not $offer -or $skipped) {
             $st = @{ state = 'uptodate'; version = $remote; current = $local }
-            if ($skip -ne '' -and -not (Test-UpdNewer $remote $skip) -and (Test-UpdNewer $remote $local)) {
+            if ($skipped -and $offer) {
                 $st.message = "You went back from $skip, so it is not offered again. A newer one will be."
             }
             Write-UpdStatus $Ws $st
@@ -394,13 +456,14 @@ function Invoke-UpdateCheck {
         #  (Steven, 2026-10-10: no surprise waits when the wizard is reopened).
         if ($NoDownload) {
             $st = @{ state = 'available'; version = $remote; current = $local; notes = $notes }
+            if ($switching) { $st.message = $(if ($cfg.Channel -eq 'dev') { 'Switching to the dev version.' } else { 'Switching back to the stable version.' }) }
             Write-UpdStatus $Ws $st
             Write-UpdLog $Ws ("check: {0} is available (here {1})" -f $remote, $local)
             return $st
         }
 
         # --- already downloaded? ---------------------------------------------
-        $inDir   = Join-UpdPath $P.Incoming $remote
+        $inDir   = Join-UpdPath $P.Incoming (Get-UpdIncomingName $remote $tag $cfg)
         $readyF  = Join-UpdPath $inDir 'READY.txt'
         $manPath = Join-UpdPath $inDir 'manifest.txt'
         if ((Test-Path -LiteralPath $readyF) -and (Read-UpdManifest $manPath).Ok) {
@@ -473,6 +536,8 @@ function Invoke-UpdateCheck {
         if (Test-Path -LiteralPath $manPath) { Remove-Item -LiteralPath $manPath -Force }
         Move-Item -LiteralPath $manTmp -Destination $manPath
         [System.IO.File]::WriteAllText((Join-UpdPath $inDir 'notes.txt'), $notes)
+        [System.IO.File]::WriteAllLines((Join-UpdPath $inDir 'target.ini'), [string[]]@(
+            ('version = ' + $remote), ('tag = ' + $tag), ('channel = ' + $cfg.Channel)))
         [System.IO.File]::WriteAllText($readyF, ("{0} file(s) to install, checked {1}" -f $need.Count, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
         $st = @{ state = 'ready'; version = $remote; current = $local; notes = $notes; files = $need.Count }
         Write-UpdStatus $Ws $st
@@ -489,17 +554,34 @@ function Invoke-UpdateCheck {
 }
 
 # The version waiting in update\incoming, or '' when there is none.
+#  Since 2026-10-12 a download says what it is in target.ini (version,
+#  commit, channel) and only one for the CURRENT channel counts; the folder
+#  name is returned. A folder from before that is judged by its name, as
+#  always.
 function Get-UpdReadyVersion([string]$Ws) {
     $P = Get-UpdPaths $Ws
     if (-not (Test-Path -LiteralPath $P.Incoming)) { return '' }
     $local = Get-UpdLocalVersion $Ws
-    $best = ''
+    $cfg = Get-UpdConfig $Ws
+    $inst = Get-UpdInstalled $Ws
+    $best = ''; $bestTime = [DateTime]::MinValue; $legacy = ''
     foreach ($d in @(Get-ChildItem -LiteralPath $P.Incoming -Directory -ErrorAction SilentlyContinue)) {
         if (-not (Test-Path -LiteralPath (Join-UpdPath $d.FullName 'READY.txt'))) { continue }
+        $t = Read-UpdIni (Join-UpdPath $d.FullName 'target.ini')
+        if ($t['tag']) {
+            $tc = $(if ([string]$t['channel'] -eq 'dev') { 'dev' } else { 'stable' })
+            if ($tc -ne $cfg.Channel) { continue }
+            if (-not (Test-UpdOffer ([string]$t['version']) ([string]$t['tag']) $local $inst $cfg)) { continue }
+            $when = (Get-Item -LiteralPath (Join-UpdPath $d.FullName 'READY.txt')).LastWriteTime
+            if ($best -eq '' -or $when -gt $bestTime) { $best = $d.Name; $bestTime = $when }
+            continue
+        }
+        if ($cfg.Channel -ne 'stable' -or $inst.Channel -ne 'stable') { continue }
         if (-not (Test-UpdNewer $d.Name $local)) { continue }
-        if ($best -eq '' -or (Test-UpdNewer $d.Name $best)) { $best = $d.Name }
+        if ($legacy -eq '' -or (Test-UpdNewer $d.Name $legacy)) { $legacy = $d.Name }
     }
-    return $best
+    if ($best -ne '') { return $best }
+    return $legacy
 }
 
 # ===========================================================================
@@ -522,19 +604,26 @@ function Invoke-UpdateInstall {
     $P = Get-UpdPaths $Ws
     $from = Get-UpdLocalVersion $Ws
 
-    $ver = Get-UpdReadyVersion $Ws
-    if ($ver -eq '') { $res.Message = 'There is no downloaded update waiting.'; return $res }
+    $dirName = Get-UpdReadyVersion $Ws
+    if ($dirName -eq '') { $res.Message = 'There is no downloaded update waiting.'; return $res }
+    $ver = $dirName
     $res.Version = $ver
     if (Test-UpdRetroBatRunning) { $res.Message = 'RetroBat is open. Close it completely, then try again.'; return $res }
     if (-not (Enter-UpdLock $Ws)) { $res.Message = 'An update check is still running. Try again in a minute.'; return $res }
 
-    $inDir = Join-UpdPath $P.Incoming $ver
+    $inDir = Join-UpdPath $P.Incoming $dirName
     $man = Read-UpdManifest (Join-UpdPath $inDir 'manifest.txt')
     if (-not $man.Ok) {
         Exit-UpdLock $Ws
         $res.Message = 'The downloaded file list is damaged: ' + $man.Problem
         return $res
     }
+    # The version is the manifest's own; the folder name can carry a commit.
+    $ver = $man.Version
+    $res.Version = $ver
+    $target = Read-UpdIni (Join-UpdPath $inDir 'target.ini')
+    $instIni = Join-UpdPath $P.Dir 'installed.ini'
+    $fromChan = (Get-UpdInstalled $Ws).Channel
     $filesDir = Join-UpdPath $inDir 'files'
     $prevDir  = $P.Previous
     $journal  = Join-UpdPath $prevDir 'changes.txt'
@@ -551,10 +640,12 @@ function Invoke-UpdateInstall {
         New-UpdDir (Join-UpdPath $prevDir 'files')
         [System.IO.File]::WriteAllLines((Join-UpdPath $prevDir 'info.ini'), [string[]]@(
             '; What "Go back one update" puts back. Written by scripts\UpdateEngine.ps1.',
-            ('from = ' + $from), ('to = ' + $ver), ('time = ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))))
+            ('from = ' + $from), ('to = ' + $ver), ('time = ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')),
+            ('fromchannel = ' + $fromChan)))
         if (Test-Path -LiteralPath $P.Installed) {
             Copy-UpdFile $P.Installed (Join-UpdPath $prevDir 'installed-manifest.txt')
         }
+        if (Test-Path -LiteralPath $instIni) { Copy-UpdFile $instIni (Join-UpdPath $prevDir 'installed.ini') }
         [System.IO.File]::WriteAllText($journal, '')
 
         # --- one-time renames, before any file lands -------------------------
@@ -618,6 +709,12 @@ function Invoke-UpdateInstall {
         }
 
         Copy-UpdFile (Join-UpdPath $inDir 'manifest.txt') $P.Installed
+        if ($target['tag']) {
+            [System.IO.File]::WriteAllLines($instIni, [string[]]@(
+                '; The version this drive last installed, and from which channel. scripts\UpdateEngine.ps1.',
+                ('version = ' + $ver), ('tag = ' + [string]$target['tag']),
+                ('channel = ' + $(if ([string]$target['channel'] -eq 'dev') { 'dev' } else { 'stable' }))))
+        }
     }
     catch {
         $why = $_.Exception.Message
@@ -630,7 +727,7 @@ function Invoke-UpdateInstall {
     }
 
     # --- the download has done its job ---------------------------------------
-    try { [void](Move-UpdToSafe $Ws $inDir 'updates' ("downloaded-" + $ver + '-' + $stamp)) } catch { }
+    try { [void](Move-UpdToSafe $Ws $inDir 'updates' ("downloaded-" + $dirName + '-' + $stamp)) } catch { }
     if (Test-Path -LiteralPath $P.Skip) { try { Remove-Item -LiteralPath $P.Skip -Force } catch { } }
     Exit-UpdLock $Ws
 
@@ -727,6 +824,10 @@ function Undo-UpdJournal([string]$Ws, [string]$Bucket) {
     $prevMan = Join-UpdPath $prevDir 'installed-manifest.txt'
     if (Test-Path -LiteralPath $prevMan) { Copy-UpdFile $prevMan $P.Installed }
     elseif (Test-Path -LiteralPath $P.Installed) { [void](Move-UpdToSafe $Ws $P.Installed 'updates' ("$Bucket-$stamp/installed-manifest.txt")) }
+    $instIni = Join-UpdPath $P.Dir 'installed.ini'
+    $prevInst = Join-UpdPath $prevDir 'installed.ini'
+    if (Test-Path -LiteralPath $prevInst) { Copy-UpdFile $prevInst $instIni }
+    elseif (Test-Path -LiteralPath $instIni) { [void](Move-UpdToSafe $Ws $instIni 'updates' ("$Bucket-$stamp/installed.ini")) }
 
     # previous\ has been used up. Into SAFE TO DELETE with it.
     if (Test-Path -LiteralPath $prevDir) { [void](Move-UpdToSafe $Ws $prevDir 'updates' ("previous-used-" + $stamp)) }
@@ -753,8 +854,14 @@ function Invoke-UpdateGoBack {
     if (-not (Enter-UpdLock $Ws)) { $res.Message = 'An update check is still running. Try again in a minute.'; return $res }
     $P = Get-UpdPaths $Ws
     try {
+        $fromChan = [string](Read-UpdIni (Join-UpdPath $P.Previous 'info.ini'))['fromchannel']
         $n = Undo-UpdJournal $Ws ('went-back-from-' + $info.To)
         [System.IO.File]::WriteAllText($P.Skip, $info.To)
+        # Going back from a channel switch switches the channel back too.
+        if ($fromChan -ne '' -and $fromChan -ne (Get-UpdConfig $Ws).Channel) {
+            Set-UpdChannel $Ws $fromChan
+            Write-UpdLog $Ws ("go back: channel back to {0}" -f $fromChan)
+        }
         $res.Ok = $true
         $res.Version = $info.From
         $res.Message = "Went back from $($info.To) to $($info.From)."

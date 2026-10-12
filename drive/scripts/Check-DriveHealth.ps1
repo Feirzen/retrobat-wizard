@@ -694,7 +694,7 @@ try {
 
     if (Test-Path -LiteralPath $qRoot) {
         $qFiles = @(Get-ChildItem -LiteralPath $qRoot -Recurse -File -ErrorAction SilentlyContinue |
-                    Where-Object { $_.Name -match '\.s\d{2}$' })
+                    Where-Object { $_.Name -notmatch '\.(png|txt)$' })   # every emulator since 2026-10-11
         if ($qFiles.Count -gt 0) {
             $qNewest = ($qFiles | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
         }

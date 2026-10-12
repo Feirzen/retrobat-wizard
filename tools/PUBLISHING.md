@@ -16,6 +16,19 @@ Everything under `tools/` is for whoever publishes. Drives never read it.
 `latest.ini` names a COMMIT, not a branch, so a drive can never download half
 of one version and half of another. Tags are not used.
 
+## The dev channel (2026-10-12)
+
+An admin can set a drive to **Dev** on the Admin tab. That drive reads
+`latest-dev.ini` (on main) instead of `latest.ini`. To publish a dev build:
+
+1. Build as above, but commit and push on the dev branch (for example `2.4-dev`).
+2. `python3 tools/publish.py dev . <version> <commit id> "note | note"` on
+   **main**, commit and push. Only Dev drives see it.
+
+A new dev commit is offered to Dev drives even under the same version number.
+Switching channel offers the other channel's version, even an older one, and
+Go back one update undoes a switch, channel included. `tools/tests/test-channels.ps1`.
+
 `tools/test-update.ps1` is the engine's test suite (PowerShell 7): a fake drive
 and a fake GitHub, 105 assertions covering check, download, checksum refusal,
 install, rollback, go back, skip, removed files and the profiles to machine rename.

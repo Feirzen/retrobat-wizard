@@ -45,6 +45,8 @@ If WScript.Arguments.Count > 0 Then
     ' -pad: sent by PadWatch.ps1 when SELECT + START is pressed on a controller.
     ' The wizard opens full screen, ready for the controller. (2026-09-23)
     If LCase(WScript.Arguments(0)) = "-pad"   Then mode = " -Pad"
+    ' -netplay: sent by the friends helper's Join button. (2026-10-12)
+    If LCase(WScript.Arguments(0)) = "-netplay" Then mode = " -Tab netplay"
 End If
 
 ps = shell.ExpandEnvironmentStrings("%SystemRoot%") & _

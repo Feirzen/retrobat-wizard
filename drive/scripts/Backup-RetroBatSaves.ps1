@@ -163,6 +163,24 @@ if (Test-Path -LiteralPath $featuresLib) {
 }
 
 if (-not (Test-Path -LiteralPath $SavesRoot)) { throw "Saves folder not found: $SavesRoot" }
+
+# The shared table of save folders OUTSIDE saves\ (the PC ports), 2026-10-11.
+$extraRoots = @()
+$saveIndexLib = Join-Path $ScriptDir 'SaveIndex.ps1'
+if (Test-Path -LiteralPath $saveIndexLib) {
+    try { . $saveIndexLib; $extraRoots = @($script:SaveExtraRoots) } catch { $extraRoots = @() }
+}
+
+# How much to keep (SaveBackups\storage.ini, set from the Saves tab, 2026-10-11).
+# "versions = N" keeps the newest N of each save, whatever their age. Missing
+# or 0: the defaults above (200, and nothing younger than a year is trimmed).
+$keepAnyAge = $false
+$storageIni = Join-Path $BackupRoot 'storage.ini'
+if (-not $PSBoundParameters.ContainsKey('KeepPerFile') -and (Test-Path -LiteralPath $storageIni)) {
+    foreach ($line in @([System.IO.File]::ReadAllLines($storageIni))) {
+        if ($line -match '^\s*versions\s*=\s*(\d+)' -and [int]$Matches[1] -gt 0) { $KeepPerFile = [int]$Matches[1]; $keepAnyAge = $true }
+    }
+}
 foreach ($d in @($BackupRoot, $versionRoot)) {
     if (-not (Test-Path -LiteralPath $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
 }
@@ -238,8 +256,22 @@ $seen       = @{}
 $enumerated = $false
 
 try {
-    $files = Get-ChildItem -LiteralPath $SavesRoot -Recurse -File -Force -ErrorAction SilentlyContinue |
-             Where-Object { $_.Name -notmatch $excludeFile -and $_.Length -le $maxBytes }
+    $files = @(Get-ChildItem -LiteralPath $SavesRoot -Recurse -File -Force -ErrorAction SilentlyContinue |
+             Where-Object { $_.Name -notmatch $excludeFile -and $_.Length -le $maxBytes })
+
+    # the PC ports' own save folders, filed as <system>\_port\<file>
+    $portRel = @{}
+    $seenDir = @{}
+    foreach ($xr in $extraRoots) {
+        $xd = Join-Path $RetroBatDir $xr.Dir
+        if (-not (Test-Path -LiteralPath $xd) -or $seenDir.ContainsKey($xr.System)) { continue }
+        $seenDir[$xr.System] = $true
+        foreach ($pf in @(Get-ChildItem -LiteralPath $xd -Recurse -File -Force -ErrorAction SilentlyContinue |
+                          Where-Object { $_.Name -notmatch $excludeFile -and $_.Length -le $maxBytes })) {
+            $portRel[$pf.FullName] = ('{0}\_port\{1}' -f $xr.System, $pf.FullName.Substring($xd.Length).TrimStart('\'))
+            $files += $pf
+        }
+    }
 
     if (-not $files) { Write-Log "No save data found under $SavesRoot." 'WARN'; return }
 
@@ -249,7 +281,7 @@ try {
 
     foreach ($f in $files) {
 
-        $rel    = $f.FullName.Substring($SavesRoot.Length).TrimStart('\')
+        $rel    = $(if ($portRel.ContainsKey($f.FullName)) { $portRel[$f.FullName] } else { $f.FullName.Substring($SavesRoot.Length).TrimStart('\') })
         $relDir = Split-Path $rel -Parent
 
         if ($relDir -and $relDir -match $excludeDirRegex)  { $skipped++; continue }
@@ -328,7 +360,7 @@ try {
         $history = Get-ChildItem -LiteralPath $histDir -File -ErrorAction SilentlyContinue | Sort-Object Name -Descending
         if ($history.Count -gt $KeepPerFile) {
             foreach ($old in $history | Select-Object -Skip $KeepPerFile) {
-                if ($old.LastWriteTime -gt $cutoff) { continue }
+                if (-not $keepAnyAge -and $old.LastWriteTime -gt $cutoff) { continue }
                 try { Remove-Item -LiteralPath $old.FullName -Force -ErrorAction Stop; $pruned++ } catch { }
             }
         }
