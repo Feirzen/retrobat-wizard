@@ -339,6 +339,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-link-s-awakening",
+      "title": "The Legend of Zelda : Link's Awakening",
+      "system": "gb",
+      "players": "1",
+      "description": "After being attacked at sea, Link's ship sinks, and he finds himself stranded on Koholint Island. He awakens to see a beautiful woman looking down at him. He soon learns the island has a giant egg on top of a mountain that the Wind Fish inhabits deep inside. Link is told to...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-link-s-awakening.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Link's Awakening (USA, Europe) (Rev 2).zip", "url": "private:the-legend-of-zelda-link-s-awakening__Legend.of.Zelda.The.-.Link.s.Awakening.USA.Europe.Rev.2.zip", "size": 287088, "sha256": "fa6eb851c1c257e544865efed7511a63d90a58db3d12647dd034b7bddd3992c9" }
+      ]
+    },
+    {
       "id": "2-games-in-1-finding-nemo-the-continuing",
       "title": "2 Games In 1 - Finding Nemo - The Continuing Adventures + The Incredibles",
       "system": "gba",
