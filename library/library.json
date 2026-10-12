@@ -363,6 +363,18 @@
       ]
     },
     {
+      "id": "pok-mon-leafgreen-version",
+      "title": "Pokmon LeafGreen Version",
+      "system": "gba",
+      "players": "1-4",
+      "description": "In the Kanto region, your adventure begins as you form a close bond with your Pokmon and catch various species to complete the Pokdex. Face other trainers in exciting battles, take on Team Rocket, and defeat the Gym Leaders to earn all eight badges. With these, you can...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-leafgreen-version.png",
+      "files": [
+        { "name": "Pokemon - LeafGreen Version (USA, Europe) (Rev 1).zip", "url": "private:pok-mon-leafgreen-version__Pokemon.-.LeafGreen.Version.USA.Europe.Rev.1.zip", "size": 5192998, "sha256": "9567c2a1cfc0864c8ce9a6a064fb139f97bd706f6098e346d243237bb6d260b5" }
+      ]
+    },
+    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
