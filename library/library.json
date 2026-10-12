@@ -159,6 +159,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-twilight-princess",
+      "title": "The Legend of Zelda : Twilight Princess",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Link, a young man raised as a wrangler in a small, rural village, is ordered by the mayor to attend the Hyrule Summit. He sets off, oblivious to the dark fate that has descended upon the kingdom. When he enters the Twilight Realm that has covered Hyrule, he transforms into a...",
+      "added": "2026-10-12",
+      "art": "library/art/the-legend-of-zelda-twilight-princess.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Twilight Princess (USA) (En,Fr,Es) (Rev 2).rvz", "url": "private:the-legend-of-zelda-twilight-princess__Legend.of.Zelda.The.-.Twilight.Princess.USA.En.Fr.Es.Rev.2.rvz", "size": 1072890700, "sha256": "2f36b9e529c827b0e3ceff439c002a62055d72c584a3d1789a39d091322ed918" }
+      ]
+    },
+    {
       "id": "tony-hawk-s-pro-skater-3",
       "title": "Tony Hawk's Pro Skater 3",
       "system": "gamecube",
