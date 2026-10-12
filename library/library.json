@@ -699,6 +699,18 @@
       ]
     },
     {
+      "id": "super-mario-world",
+      "title": "Super Mario World",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Once again, the evil Bowser has captured Princess Peach (while on a holiday on Yoshi's Island), and it's up to Mario to save her. To aid him in his quest, Mario must use the flying ability of the feather to get him to places hard to reach. But what's even more important is his...",
+      "added": "2026-10-12",
+      "art": "library/art/super-mario-world.png",
+      "files": [
+        { "name": "Super Mario World (USA).sfc", "url": "private:super-mario-world__Super.Mario.World.USA.sfc", "size": 524288, "sha256": "0838e531fe22c077528febe14cb3ff7c492f1f5fa8de354192bdff7137c27f5b" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
