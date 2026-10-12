@@ -939,6 +939,18 @@
       ]
     },
     {
+      "id": "animal-crossing-wild-world",
+      "title": "Animal Crossing : Wild World",
+      "system": "nds",
+      "players": "1",
+      "description": "Animal Crossing: Wild World is a 2005 social simulation video game developed and published by Nintendo for the Nintendo DS handheld game console, and is the second game in the Animal Crossing series. Wild World focuses on living in a remote village populated with anthropomorphic...",
+      "added": "2026-10-12",
+      "art": "library/art/animal-crossing-wild-world.png",
+      "files": [
+        { "name": "Welcome to Animal Crossing_ Wild World.zip", "url": "private:animal-crossing-wild-world__Welcome.to.Animal.Crossing_.Wild.World.zip", "size": 21688982, "sha256": "108cc755b40d41e3ec74481ea7604ee701027fe0d3d33568f272efc2a9180f8c" }
+      ]
+    },
+    {
       "id": "chrono-trigger",
       "title": "Chrono Trigger",
       "system": "nds",
