@@ -579,6 +579,18 @@
       ]
     },
     {
+      "id": "super-mario-bros",
+      "title": "Super Mario Bros.",
+      "system": "nes",
+      "players": "1-2",
+      "description": "Super Mario Bros. follows Mario and Luigi as they race to rescue Princess Peach from the evil Bowser. In their debut platforming quest, the brothers leap through enemy-filled levels, dodge traps, and uncover hidden bonuses. The Super Mushroom makes Mario grow, the Fire Flower...",
+      "added": "2026-10-12",
+      "art": "library/art/super-mario-bros.png",
+      "files": [
+        { "name": "Super Mario Bros. (World).nes", "url": "private:super-mario-bros__Super.Mario.Bros.World.nes", "size": 40976, "sha256": "0b3d9e1f01ed1668205bab34d6c82b0e281456e137352e4f36a9b2cfa3b66dea" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda",
       "title": "The Legend of Zelda",
       "system": "nes",
