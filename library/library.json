@@ -123,6 +123,18 @@
       ]
     },
     {
+      "id": "super-monkey-ball-2",
+      "title": "Super Monkey Ball 2",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "The object of Super Monkey Ball 2 is to guide a monkey trapped inside a plastic ball through a maze to the goal. There are three variations, story mode, challenge mode, and practice mode. In story mode you have unlimited number of tries to complete a stage, and after clearing 10...",
+      "added": "2026-10-12",
+      "art": "library/art/super-monkey-ball-2.png",
+      "files": [
+        { "name": "Super Monkey Ball 2 (USA).ciso", "url": "private:super-monkey-ball-2__Super.Monkey.Ball.2.USA.ciso", "size": 1042317888, "sha256": "f047f4ac27542c6db96ec72fcaa8614d389e2bdfdba7604e7eb58f7ca58276d6" }
+      ]
+    },
+    {
       "id": "super-smash-bros-melee",
       "title": "Super Smash Bros. Melee",
       "system": "gamecube",
