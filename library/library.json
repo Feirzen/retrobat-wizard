@@ -1215,6 +1215,18 @@
       ]
     },
     {
+      "id": "professor-layton-and-the-last-specter",
+      "title": "Professor Layton and the Last Specter",
+      "system": "nds",
+      "players": "1",
+      "description": "Three years before the events in the first game, Professor Layton receives a letter from his old schoolmate Clark Triton. It states that ?a mysterious giant shrouded in fog has been laying waste to our houses.? The professor heads to the town of Misthallery to investigate, and...",
+      "added": "2026-10-12",
+      "art": "library/art/professor-layton-and-the-last-specter.png",
+      "files": [
+        { "name": "Professor Layton and the Last Specter (USA).zip", "url": "private:professor-layton-and-the-last-specter__Professor.Layton.and.the.Last.Specter.USA.zip", "size": 216697918, "sha256": "0477097e12034ff8bef1751d0b50e73194af1b37ab985d5dd33c8e9e3e3c8835" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
