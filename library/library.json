@@ -723,6 +723,18 @@
       ]
     },
     {
+      "id": "super-metroid",
+      "title": "Super Metroid",
+      "system": "snes",
+      "players": "1",
+      "description": "Join forces with the power of Samus for a Super Metroid clash! Take on the legion of space pirates and take on a new Metroid force as you progress through the underworld of the planet Zebes! It's up to you and Samus to find the larval Metroid before evil forces misuse its...",
+      "added": "2026-10-12",
+      "art": "library/art/super-metroid.png",
+      "files": [
+        { "name": "Super Metroid (Japan, USA) (En,Ja).sfc", "url": "private:super-metroid__Super.Metroid.Japan.USA.En.Ja.sfc", "size": 3145728, "sha256": "12b77c4bc9c1832cee8881244659065ee1d84c70c3d29e6eaf92e6798cc2ca72" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
