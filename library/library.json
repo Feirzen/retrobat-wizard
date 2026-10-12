@@ -1035,6 +1035,18 @@
       ]
     },
     {
+      "id": "pokemon-black-version",
+      "title": "Pokemon - Black Version",
+      "system": "nds",
+      "players": "1-5",
+      "description": "A NEW WORLD FILLED WITH NEVER-BEFORE-SEEN POKMON! What are the true motives of Team Plasma and the mysterious N? What is the secret of the Legendary Pokmon? Adventure across the Unova region and discover all-new Pokmon! The game changes with the seasons! New battle strategies...",
+      "added": "2026-10-12",
+      "art": "library/art/pokemon-black-version.png",
+      "files": [
+        { "name": "Pokemon - Black Version (USA, Europe) (NDSi Enhanced).zip", "url": "private:pokemon-black-version__Pokemon.-.Black.Version.USA.Europe.NDSi.Enhanced.zip", "size": 110697413, "sha256": "e6acfb34b4b5b3d3590fc4bc30343908186739230935f866777c6168c3dd83ad" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
