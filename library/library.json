@@ -339,6 +339,18 @@
       ]
     },
     {
+      "id": "golden-sun",
+      "title": "Golden Sun",
+      "system": "gba",
+      "players": "1",
+      "description": "Evil is slowly covering the world. Forces of darkness are pursuing the lost art of Alchemy, and as they draw ever closer to their foul purpose, mankind hangs in the balance. You and your companions are the last hope: armed with noble weapons, magical Psynergy, and a host of...",
+      "added": "2026-10-12",
+      "art": "library/art/golden-sun.png",
+      "files": [
+        { "name": "Golden Sun (USA, Europe).zip", "url": "private:golden-sun__Golden.Sun.USA.Europe.zip", "size": 7098437, "sha256": "57a8c1316e68d56240f68ad094156be6b476dd6f1db916663adb4eea00e669e6" }
+      ]
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
