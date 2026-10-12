@@ -339,6 +339,18 @@
       ]
     },
     {
+      "id": "pok-mon-red-version",
+      "title": "Pokmon : Red Version",
+      "system": "gb",
+      "players": "1-2",
+      "description": "You begin your journey in Pallet Town as a young boy. After a dangerous brush with wild Pokmon, Professor Oak teaches you how to capture Pokmon, and then sends you on your way as a fledgling Trainer. During your journey through Kanto, you must capture Pokmon to record their...",
+      "added": "2026-10-12",
+      "art": "library/art/pok-mon-red-version.png",
+      "files": [
+        { "name": "Pokemon - Red Version (USA, Europe) (SGB Enhanced).zip", "url": "private:pok-mon-red-version__Pokemon.-.Red.Version.USA.Europe.SGB.Enhanced.zip", "size": 368511, "sha256": "a7b8edf992168bf9043254825f817e51aa002c281adccba0dfa606218120d1b4" }
+      ]
+    },
+    {
       "id": "pok-mon-blue-version",
       "title": "Pokmon : Blue Version",
       "system": "gb",
