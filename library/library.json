@@ -387,6 +387,18 @@
       ]
     },
     {
+      "id": "super-mario-land-2-6-golden-coins",
+      "title": "Super Mario Land 2: 6 Golden Coins",
+      "system": "gb",
+      "players": "1",
+      "description": "Second in the Game Boy's line of Mario games, this one takes the evolutionary steps that Super Mario 3 for the NES took with it's predecessors. New graphics, power-ups, challenges, and a completely original storyline. A bad version of Mario, Wario, takes over Mario's castle and...",
+      "added": "2026-10-12",
+      "art": "library/art/super-mario-land-2-6-golden-coins.png",
+      "files": [
+        { "name": "Super Mario Land 2 - 6 Golden Coins (USA, Europe) (Rev 2).zip", "url": "private:super-mario-land-2-6-golden-coins__Super.Mario.Land.2.-.6.Golden.Coins.USA.Europe.Rev.2.zip", "size": 278274, "sha256": "e028e3c66ceedd75196359aec08564d6fbbabbb2d3e77e827837eebde7e79e0e" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-link-s-awakening",
       "title": "The Legend of Zelda : Link's Awakening",
       "system": "gb",
