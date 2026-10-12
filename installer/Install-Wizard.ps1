@@ -12,7 +12,11 @@
          checked against its SHA-256 before it lands. A fresh install is an
          update from "nothing".
       3. Puts the friends-list key and the wizard's button in place.
-      4. Opens the wizard's first-run setup (Quick or Advanced).
+      4. Gets the ckau-book theme (the look the wizard is built for) from its
+         own GitHub, unless it is already there or the person presses N.
+         Added 2026-10-12 (Steven: "install ckau automatically ... less extra
+         steps"). The wizard's setup switches RetroBat to it by itself.
+      5. Opens the wizard's first-run setup (Quick or Advanced).
 
     Nothing outside the RetroBat folder is touched here. The setup that follows
     asks before it puts buttons on the computer.
@@ -111,7 +115,61 @@ $tpl = Join-Path $ws 'defaults\Setup Wizard.bat'
 if ((Test-Path -LiteralPath $tpl) -and -not (Test-Path -LiteralPath $btn)) { Copy-Item -LiteralPath $tpl -Destination $btn; Say ("Made the button '{0}.bat' in your RetroBat folder." -f $name) }
 [System.IO.File]::WriteAllText((Join-Path $ws 'first-run.txt'), ("Installed {0}. The wizard's first-run setup reads this and then sets it aside." -f (Get-Date -Format 'yyyy-MM-dd HH:mm')))
 
-# --- 4. the wizard's own setup --------------------------------------------------
+# --- 4. the ckau-book theme, straight from its own GitHub ---------------------
+#  RetroBat's own theme downloader fetches the same thing. curl.exe (in every
+#  Windows 10 and 11) is used when it is there because it shows how far it
+#  has got; Invoke-WebRequest otherwise. Unpacked into a short folder in the
+#  RetroBat folder (some theme paths are long, and Windows dislikes paths
+#  over 260 letters), then moved into place, so a half-done copy never looks
+#  like a theme.
+$themes = Join-Path $root 'emulationstation\.emulationstation\themes'
+$ckau = Join-Path $themes 'ckau-book'
+if (Test-Path -LiteralPath (Join-Path $ckau 'theme.xml')) {
+    Say 'The ckau-book theme is already here.'
+}
+else {
+    Write-Host ''
+    Say 'Next: the ckau-book theme, the look this wizard is built for. It is a big download (1 to 2 GB).' 'White'
+    $ans = (Read-Host '  Press Enter to get it now, or type N and Enter to skip').Trim().ToUpper()
+    if ($ans -eq 'N') { Say 'Skipped. The wizard explains how to get it later.' 'Yellow' }
+    else {
+        $zip = Join-Path $ws 'ckau-book-download.zip'
+        $tmpDir = Join-Path $root '_ck'
+        try {
+            if (-not (Test-Path -LiteralPath $themes)) { [void](New-Item -ItemType Directory -Path $themes -Force) }
+            $url = 'https://github.com/CkauNui/ckau-book/archive/refs/heads/master.zip'
+            Say 'Downloading ckau-book. This can take a while; leave this window open.' 'DarkGray'
+            $curl = Join-Path $env:SystemRoot 'System32\curl.exe'
+            if (Test-Path -LiteralPath $curl) {
+                if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
+                & $curl -L --fail --retry 3 -o $zip $url
+                if ($LASTEXITCODE -ne 0) { throw "the download stopped (curl $LASTEXITCODE)" }
+            }
+            else { Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing -TimeoutSec 3600 }
+            Say 'Unpacking ckau-book...' 'DarkGray'
+            if (Test-Path -LiteralPath $tmpDir) { Remove-Item -LiteralPath $tmpDir -Recurse -Force }
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($zip, $tmpDir)
+            # the zip holds one folder (ckau-book-master); that folder is the theme
+            $inner = @(Get-ChildItem -LiteralPath $tmpDir -Directory)
+            $src = $(if ($inner.Count -eq 1 -and -not (Test-Path -LiteralPath (Join-Path $tmpDir 'theme.xml'))) { $inner[0].FullName } else { $tmpDir })
+            if (-not (Test-Path -LiteralPath (Join-Path $src 'theme.xml'))) { throw 'the download did not look like the theme' }
+            if (Test-Path -LiteralPath $ckau) { Rename-Item -LiteralPath $ckau -NewName ('ckau-book-old-' + (Get-Date -Format 'yyyyMMddHHmmss')) }
+            Move-Item -LiteralPath $src -Destination $ckau
+            if (Test-Path -LiteralPath $tmpDir) { Remove-Item -LiteralPath $tmpDir -Recurse -Force }
+            Remove-Item -LiteralPath $zip -Force
+            Say 'ckau-book is in place. The wizard switches RetroBat to it.' 'Green'
+        }
+        catch {
+            Say ('ckau-book could not be set up: ' + $_.Exception.Message) 'Yellow'
+            Say 'Everything else works without it. Run this installer again to try again.' 'Yellow'
+            try { if (Test-Path -LiteralPath $tmpDir) { Remove-Item -LiteralPath $tmpDir -Recurse -Force } } catch { }
+            try { if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force } } catch { }
+        }
+    }
+}
+
+# --- 5. the wizard's own setup --------------------------------------------------
 Write-Host ''
 Say 'Done. Opening the wizard''s setup now: pick Quick setup if you are not sure.' 'Green'
 $vbs = Join-Path $ws 'wizard\Launch-Wizard.vbs'

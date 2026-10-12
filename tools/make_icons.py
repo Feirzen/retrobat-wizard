@@ -70,13 +70,18 @@ def hexc(c):
     return '#%02x%02x%02x' % c[:3]
 
 # The homepage loop (Steven, 2026-10-11): a burst of button presses, then a
-# rest, then again. Each press throws a few one-pixel sparks off the button
-# that was pressed. CYCLE is the whole loop in seconds; PRESSES are
-# (button, when as a percent of the loop). Nothing happens after REST_FROM.
-CYCLE = 7.0
-REST_FROM = 64
-PRESSES = [('a', 3), ('b', 9), ('a', 14), ('dpad', 19), ('a', 24), ('a', 28),
-           ('b', 33), ('dpad', 38), ('menu', 43), ('a', 48), ('b', 53), ('a', 58)]
+# rest, then again. 2026-10-12, Steven: "make the remote control animation stop
+# pausing, it can just keep going as is nonstop" - so the presses now run the
+# whole loop with no rest (REST_FROM = 100), at the same speed as before.
+# Each press throws a few one-pixel sparks off the button that was pressed.
+# CYCLE is the whole loop in seconds; PRESSES are (button, when as a percent of
+# the loop). TICK converts the old 7-second timings so a press, a spark and a
+# shake last exactly as long as they used to.
+CYCLE = 4.6
+REST_FROM = 100
+TICK = 7.0 / CYCLE
+PRESSES = [('a', 2), ('b', 10), ('a', 18), ('dpad', 26), ('a', 34), ('a', 41),
+           ('b', 49), ('dpad', 57), ('menu', 65), ('a', 73), ('b', 81), ('a', 88)]
 # where sparks leave each button, and the directions they fly (pixels)
 SPARK_FROM = {
     'a':    [((24, 12), (1, -4)), ((26, 14), (4, -2)), ((23, 12), (-1, -5))],
@@ -100,8 +105,8 @@ def anim_svg():
             'translate(0,-.5px) rotate(-1deg)', 'translate(0,0) rotate(0)']
     t, i = 2.0, 0
     while t < REST_FROM:
-        sh.append('%.1f%%{transform:%s}' % (t, offs[i % 4])); t += 3.2; i += 1
-    sh.append('%d%%{transform:translate(0,0) rotate(0)}100%%{transform:translate(0,0) rotate(0)}' % REST_FROM)
+        sh.append('%.1f%%{transform:%s}' % (t, offs[i % 4])); t += 3.2 * TICK; i += 1
+    sh.append('100%{transform:translate(0,0) rotate(0)}')
     css.append('.pad{transform-origin:16px 17px;animation-name:shake;animation-timing-function:steps(1,end)}')
     css.append('@keyframes shake{' + ''.join(sh) + '}')
     # each button dims for a moment at each of its presses
@@ -109,7 +114,7 @@ def anim_svg():
         kf = ['0%{filter:none}']
         for p, at in PRESSES:
             if p == part:
-                kf.append('%d%%{filter:brightness(.5)}%.1f%%{filter:none}' % (at, at + 2.5))
+                kf.append('%d%%{filter:brightness(.5)}%.1f%%{filter:none}' % (at, at + 2.5 * TICK))
         kf.append('100%{filter:none}')
         css.append('.%s{animation-name:p%s;animation-timing-function:steps(1,end)}' % (part, part))
         css.append('@keyframes p%s{%s}' % (part, ''.join(kf)))
@@ -122,12 +127,12 @@ def anim_svg():
         for j, ((x, y), (dx, dy)) in enumerate(pick):
             fill = '#ffffff' if (k + j) % 2 == 0 else hexc(SPARK)
             sparks.append('<rect class="sp sp%d" x="%d" y="%d" width="1" height="1" fill="%s"/>' % (n, x, y, fill))
-            go = at + 0.5 * j
+            go = at + 0.5 * TICK * j
             css.append('.sp%d{animation-name:f%d}' % (n, n))
             css.append('@keyframes f%d{0%%{opacity:0;transform:translate(0,0)}%.1f%%{opacity:0;transform:translate(0,0)}'
                        '%.1f%%{opacity:1;transform:translate(0,0)}%.1f%%{opacity:0;transform:translate(%dpx,%dpx)}'
                        '100%%{opacity:0;transform:translate(%dpx,%dpx)}}'
-                       % (n, go - 0.1, go, go + 7, dx, dy, dx, dy))
+                       % (n, go - 0.1, go, min(go + 7 * TICK, 99.9), dx, dy, dx, dy))
             n += 1
     css.append('.sp{opacity:0;animation-timing-function:ease-out}')
     css.append('@media (prefers-reduced-motion:reduce){*{animation:none!important}.sp{opacity:0}}')

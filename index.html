@@ -63,6 +63,13 @@ p, li { line-height: 1.65; color: var(--dim); }
 .btn.ghost { background: transparent; color: var(--accent); }
 .hero { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
 .hero img { width: 160px; height: auto; }
+/* The wizard's own mage, top right of Home (Steven, 2026-10-12): the same
+   160 frames as the wizard's Play tab, 20 a second, as a 10 x 16 sheet. */
+.mage { margin-left: auto; width: 138px; height: 150px; flex: 0 0 138px; image-rendering: pixelated;
+  background: url(site/mage-sheet.png) 0 0 / 1380px 2400px no-repeat;
+  animation: magex .5s steps(10) infinite, magey 8s steps(16) infinite; }
+@keyframes magex { to { background-position-x: -1380px; } }
+@keyframes magey { to { background-position-y: -2400px; } }
 .video { aspect-ratio: 16/5; background: var(--surface2); border: 2px dashed var(--border2); border-radius: 2px;
   display: flex; align-items: center; justify-content: center; color: var(--muted); margin-top: 18px; font-family: 'Press Start 2P', monospace; font-size: 10px; }
 ol.steps { padding-left: 0; list-style: none; counter-reset: s; }
@@ -92,6 +99,33 @@ main { margin-left: 92px; }
 @keyframes slidein { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
 
 /* ---- the library: one fold-up section per console ---- */
+/* Compact or Big (Steven, 2026-10-12): every console starts folded; Compact
+   is a short row per game that opens the full card in a little window. */
+.libbar { display: flex; align-items: center; gap: 12px; margin: 18px 0 6px; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 2px solid var(--border2); box-shadow: 3px 3px 0 var(--border); }
+.seg button { background: var(--surface); color: var(--dim); border: none; padding: 9px 14px; cursor: pointer;
+  font-family: 'Press Start 2P', monospace; font-size: 9px; }
+.seg button + button { border-left: 2px solid var(--border2); }
+.seg button.on { background: var(--accBg); color: var(--accent); }
+.rows { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: none; border: none;
+  border-top: 2px solid var(--border); padding: 10px 16px; cursor: pointer; color: inherit; font: inherit; }
+.rows .row:first-child { border-top: none; }
+.row:hover { background: var(--surface2); }
+.row .thumb { width: 48px; height: 48px; flex: 0 0 48px; display: flex; align-items: center; justify-content: center; background: var(--bg); border: 2px solid var(--border2); }
+.row .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.row .thumb img.fallback { width: 70%; image-rendering: pixelated; opacity: .6; }
+.row .txt { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.row .txt b { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .txt span { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .open { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--accent); }
+.modal { position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; padding: 16px; }
+.modal.on { display: flex; animation: pop .14s ease-out; }
+@keyframes pop { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+.modal-box { position: relative; width: 100%; max-width: 380px; max-height: 92vh; overflow: auto; box-shadow: 6px 6px 0 var(--shadow); }
+.modal-box .game .art { height: 240px; }
+.modal-x { position: absolute; top: 6px; right: 6px; z-index: 2; width: 34px; height: 34px; border-radius: 0; cursor: pointer;
+  background: var(--surface); color: var(--text); border: 2px solid var(--border2); font-family: 'Press Start 2P', monospace; font-size: 11px; }
 details.sys { margin: 16px 0; background: var(--surface); border: 2px solid var(--border2); box-shadow: 4px 4px 0 var(--border); }
 details.sys > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 12px 16px;
   background: var(--surface2); border-bottom: 2px solid transparent; user-select: none; }
@@ -148,7 +182,10 @@ body.in #site { display: block; }
   .rail a img { width: 38px; height: 30px; }
   main { margin-left: 0; padding-bottom: 80px; }
   h1 { font-size: 19px; }
-  .hero img { width: 120px; }
+  .hero { flex-wrap: nowrap; gap: 12px; }
+  .hero img { width: 84px; }
+  .hero h1 { font-size: 16px; }
+  .mage { zoom: .5; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
 </style>
@@ -181,6 +218,7 @@ body.in #site { display: block; }
         <div class="eyebrow">Retro gaming for game nights</div>
         <h1>RetroBat Wizard</h1>
       </div>
+      <div class="mage" role="img" aria-label="The wizard's mage"></div>
     </div>
     <p>A portable retro game setup built for party and co-op nights, mostly Nintendo, plus some silly classics. RetroBat runs the games. The wizard sets everything up for you, keeps it up to date with one button, finds your friends online, and gets netplay going without the headache.</p>
     <div class="video">Video coming soon</div>
@@ -200,13 +238,15 @@ body.in #site { display: block; }
     <h1>Get started</h1>
     <div class="card">
       <ol class="steps">
-        <li><b>Get RetroBat (free).</b> Go to <a href="https://www.retrobat.org" target="_blank" rel="noopener">retrobat.org</a> and download it. If you see a standalone or 7z download, take that one. Put it on a drive with lots of room, ideally an external drive, so your games go wherever you go. Use a short folder like <code>D:\RetroBat</code>: not right at the top of the drive, no spaces, not in Program Files.</li>
-        <li><b>Open RetroBat once</b> by double-clicking <code>RetroBat.exe</code>, let it finish starting up, set up your controller if it asks, then close it.</li>
-        <li><b>Download the wizard installer</b> with the button below and unzip it <b>into your RetroBat folder</b>, right next to <code>RetroBat.exe</code>.</li>
-        <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It downloads the wizard, then asks a few quick questions (pick Quick setup if you are not sure). Everything can be changed later inside the wizard.</li>
+        <li><b>Download RetroBat (free).</b> Straight from RetroBat's own GitHub, about 1.9 GB:
+          <br><a class="btn" style="margin-top:10px" href="https://github.com/RetroBat-Official/retrobat/releases/download/8.2.1/RetroBat-v8.2.1-stable-win64-setup.exe">Download RetroBat 8.2.1</a>
+          <br><span class="note">This is the full, standalone RetroBat for Windows: everything lives in one folder and runs from anywhere. If you have an external hard drive, this is a great use for it, because your games and saves go wherever the drive goes.</span></li>
+        <li><b>Install it and open it once.</b> Run the file you downloaded and pick a short folder like <code>D:\RetroBat</code>: not right at the top of the drive, no spaces, not in Program Files. Then double-click <code>RetroBat.exe</code>, let it finish starting up, set up your controller if it asks, and close it.</li>
+        <li><b>Download the wizard installer</b> and unzip it <b>into your RetroBat folder</b>, right next to <code>RetroBat.exe</code>.
+          <br><a class="btn" style="margin-top:10px" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the installer</a></li>
+        <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It downloads the wizard and the ckau-book look the wizard is built for (a big one, 1 to 2 GB; press N if you would rather skip it), then asks a few quick questions (pick Quick setup if you are not sure). Everything can be changed later inside the wizard.</li>
         <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
       </ol>
-      <a class="btn" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the installer</a>
       <p class="note">Windows may warn about a downloaded script. Choose More info, then Run anyway. You never need a GitHub account.</p>
     </div>
   </section>
@@ -214,12 +254,15 @@ body.in #site { display: block; }
   <section class="panel" id="p-library">
     <div class="eyebrow">Picked for game nights</div>
     <h1>Game library</h1>
-    <p>The easy way to get these is the wizard's <b>Games</b> tab, which puts them in the right place for you. Tap a console to fold it up.</p>
+    <p>The easy way to get these is the wizard's <b>Games</b> tab, which puts them in the right place for you. Tap a console to open it.</p>
+    <div class="libbar"><span class="note">View</span>
+      <div class="seg" id="viewSeg"><button data-v="compact">Compact</button><button data-v="big">Big</button></div></div>
     <div id="lib"><p class="note">Loading the library...</p></div>
   </section>
 
   </div></main>
 </div>
+<div class="modal" id="gameModal" aria-hidden="true"><div class="modal-box"><button class="modal-x" id="modalX" aria-label="Close">X</button><div id="modalBody"></div></div></div>
 
 <script>
 // ---- the gate: a polite front door, not a lock. Two passwords work. ----
@@ -256,15 +299,17 @@ if (store("rbw-in") === "1") letIn();
 
 // ---- the library, straight from library/library.json, one section per console ----
 // Order and pictures. The pictures are the wizard's own console icons.
-const W = "drive/wizard/";
+// site/consoles/ holds the website's own copies (2026-10-12: the NES and SNES
+// ones cleaned of stray pixels cut in from the sheet they came from).
+const W = "site/consoles/";
 const CONSOLES = [
-  ["nes", "NES", "profile-nes"], ["snes", "SNES", "profile-snes"], ["n64", "Nintendo 64", "profile-n64"],
-  ["gamecube", "GameCube", "profile-gamecube"], ["wii", "Wii", "profile-wiimote"], ["wiiu", "Wii U", "profile-wiimote"],
-  ["switch", "Switch", "profile-switch"], ["gb", "Game Boy", "profile-gameboy"], ["gbc", "Game Boy Color", "profile-gameboy"],
-  ["gba", "Game Boy Advance", "profile-gba"], ["nds", "Nintendo DS", "profile-ds"], ["3ds", "3DS", "profile-ds"],
-  ["flash", "Flash", "profile-pc"], ["scummvm", "ScummVM", "profile-pc"], ["windows", "PC", "profile-pc"]
+  ["nes", "NES", "nes"], ["snes", "SNES", "snes"], ["n64", "Nintendo 64", "n64"],
+  ["gamecube", "GameCube", "gamecube"], ["wii", "Wii", "wiimote"], ["wiiu", "Wii U", "wiimote"],
+  ["switch", "Switch", "switch"], ["gb", "Game Boy", "gameboy"], ["gbc", "Game Boy Color", "gameboy"],
+  ["gba", "Game Boy Advance", "gba"], ["nds", "Nintendo DS", "ds"], ["3ds", "3DS", "ds"],
+  ["flash", "Flash", "pc"], ["scummvm", "ScummVM", "pc"], ["windows", "PC", "pc"]
 ];
-const pic = sys => W + ((CONSOLES.find(c => c[0] === sys) || [0, 0, "profile-pc"])[2]) + ".png";
+const pic = sys => W + ((CONSOLES.find(c => c[0] === sys) || [0, 0, "pc"])[2]) + ".png";
 function esc(s) { return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function card(g) {
   const files = g.files || [];
@@ -281,24 +326,60 @@ function card(g) {
     <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
     ${g.description ? `<p>${esc(g.description)}</p>` : ""}<div class="get">${get}</div></div></div>`;
 }
-async function loadLibrary() {
+// One short row per game for the Compact view: small art, the name, one line.
+function row(g, i) {
+  const files = g.files || [];
+  const mb = (files.reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
+  const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
+    : `<img class="fallback" src="${pic(g.system)}" alt="">`;
+  const line = (g.players ? esc(g.players) + " players &middot; " : "") + mb + " MB" + (g.description ? " &middot; " + esc(g.description) : "");
+  return `<button class="row" data-i="${i}"><span class="thumb">${art}</span><span class="txt"><b>${esc(g.title)}</b><span>${line}</span></span><span class="open">&#9654;</span></button>`;
+}
+let LIB = [], VIEW = store("rbw-libview") === "big" ? "big" : "compact";
+const openSys = new Set();   // consoles start folded; this remembers which are open
+function drawLibrary() {
   const box = document.getElementById("lib");
+  document.querySelectorAll("#viewSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === VIEW));
+  if (!LIB.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
+  const order = CONSOLES.map(c => c[0]);
+  const systems = [...new Set(LIB.map(g => g.system))].sort((a, b) =>
+    (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
+  box.innerHTML = systems.map(sys => {
+    const list = LIB.map((g, i) => [g, i]).filter(x => x[0].system === sys)
+      .sort((a, b) => String(a[0].title).localeCompare(String(b[0].title)));
+    const name = (CONSOLES.find(c => c[0] === sys) || [0, sys])[1];
+    const inner = VIEW === "big" ? `<div class="games">${list.map(x => card(x[0])).join("")}</div>`
+      : `<div class="rows">${list.map(x => row(x[0], x[1])).join("")}</div>`;
+    return `<details class="sys" data-sys="${esc(sys)}"${openSys.has(sys) ? " open" : ""}><summary><img src="${pic(sys)}" alt=""><h3>${esc(name)}</h3>
+      <span class="count">${list.length} game${list.length === 1 ? "" : "s"}</span><span class="arrow">&#9654;</span></summary>${inner}</details>`;
+  }).join("");
+  box.querySelectorAll("details.sys").forEach(d => d.addEventListener("toggle", () => {
+    if (d.open) openSys.add(d.dataset.sys); else openSys.delete(d.dataset.sys);
+  }));
+  box.querySelectorAll(".row").forEach(b => b.addEventListener("click", () => openGame(LIB[+b.dataset.i])));
+}
+async function loadLibrary() {
   try {
     const r = await fetch("library/library.json", { cache: "no-store" });
-    const games = (await r.json()).games || [];
-    if (!games.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
-    const order = CONSOLES.map(c => c[0]);
-    const systems = [...new Set(games.map(g => g.system))].sort((a, b) =>
-      (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
-    box.innerHTML = systems.map(sys => {
-      const list = games.filter(g => g.system === sys).sort((a, b) => String(a.title).localeCompare(String(b.title)));
-      const name = (CONSOLES.find(c => c[0] === sys) || [0, sys])[1];
-      return `<details class="sys" open><summary><img src="${pic(sys)}" alt=""><h3>${esc(name)}</h3>
-        <span class="count">${list.length} game${list.length === 1 ? "" : "s"}</span><span class="arrow">&#9654;</span></summary>
-        <div class="games">${list.map(card).join("")}</div></details>`;
-    }).join("");
-  } catch (e) { box.innerHTML = '<div class="card"><p>The library could not load right now.</p></div>'; }
+    LIB = (await r.json()).games || [];
+    drawLibrary();
+  } catch (e) { document.getElementById("lib").innerHTML = '<div class="card"><p>The library could not load right now.</p></div>'; }
 }
+document.querySelectorAll("#viewSeg button").forEach(b => b.addEventListener("click", () => {
+  VIEW = b.dataset.v; store("rbw-libview", VIEW); drawLibrary();
+}));
+// the little window with the full card
+const modal = document.getElementById("gameModal");
+function openGame(g) {
+  if (!g) return;
+  document.getElementById("modalBody").innerHTML = card(g);
+  modal.classList.add("on"); modal.setAttribute("aria-hidden", "false");
+  document.getElementById("modalX").focus();
+}
+function closeGame() { modal.classList.remove("on"); modal.setAttribute("aria-hidden", "true"); }
+document.getElementById("modalX").addEventListener("click", closeGame);
+modal.addEventListener("click", e => { if (e.target === modal) closeGame(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeGame(); });
 
 // ---- themes: midnight, paper, sepia, chameleon (same as Study Decks) ----
 const THEMES = {
