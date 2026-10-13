@@ -891,6 +891,8 @@ function Show-WhoIsPlaying {
     $cur = $null
     try { $cur = Read-SocialProfile $Ws } catch { }
     if ($null -eq $cur) { return 'play' }   # nobody has ever chosen on this drive yet
+    # keep the login list's picture in step with the profile's (it keeps the trust date)
+    if (-not $cur.Guest) { try { Add-SocialLogin $Ws $cur } catch { } }
     $people = @()
     try { $people = @(Get-SocialLogins $Ws) } catch { }
     if (-not $cur.Guest -and @($people | Where-Object { $_.Id -eq $cur.Id }).Count -eq 0) {
@@ -920,7 +922,23 @@ function Show-WhoIsPlaying {
         $b.Background = (New-Brush $(if ($here) { '#FF2A3A2E' } else { '#FF262636' }))
         $b.BorderBrush = (New-Brush $(if ($here) { $ColOnline } else { '#FF3A3A50' })); $b.BorderThickness = '2'
         $bs = New-Object System.Windows.Controls.StackPanel; $bs.HorizontalAlignment = 'Center'
-        $av = New-SocialAvatar $p 80 $here; $av.Margin = '0,4,0,8'; $av.HorizontalAlignment = 'Center'
+        # The picture: the profile's own (2026-10-12 fix, Steven: "it's still
+        # using a gameboy instead of the wizard image I chose"). The login list
+        # can hold an old picture, so the person's own profile wins: the live
+        # one for whoever is logged in, their put-away copy for anyone else.
+        $face = $p
+        try {
+            if ($here) { $face = $cur }
+            else { $pc = Read-SocialPersonCopy $Ws $p.Id; if ($null -ne $pc) { $face = $pc } }
+        } catch { }
+        $av = New-SocialAvatar $face 80 $here; $av.Margin = '0,4,0,8'; $av.HorizontalAlignment = 'Center'
+        if ($null -eq $av.Source -and [string]$face.Avatar -like 'custom:*') {
+            try {
+                $own = Join-Path (Get-SocialPersonDir $Ws $p.Id) 'avatar.png'
+                $bmp = Get-PixelBitmap $own
+                if ($null -ne $bmp) { $av.Source = $bmp }
+            } catch { }
+        }
         [void]$bs.Children.Add($av)
         $n = New-Text $p.Username $ColText 15 $true; $n.HorizontalAlignment = 'Center'; $n.TextWrapping = 'NoWrap'; $n.TextTrimming = 'CharacterEllipsis'; $n.MaxWidth = 120
         [void]$bs.Children.Add($n)
