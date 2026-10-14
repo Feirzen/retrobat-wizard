@@ -1516,6 +1516,22 @@
       "files": [
         { "name": "Bit.Trip Complete (USA).wbfs", "url": "private:bit-trip-complete__Bit.Trip.Complete.USA.wbfs", "size": 924844032, "sha256": "1e59c571d356e537821362b3f931a4c78979c4b05cc01cfbfe09dbdd3c18c315" }
       ]
+    },
+    {
+      "id": "disney-epic-mickey-2-the-power-of-two",
+      "title": "Disney Epic Mickey 2 : The Power Of Two",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Epic Mickey 2 takes place in a world based on classic and retired Disney characters and attractions. The story begins sometime after the conclusion of the original Epic Mickey, with Oswald and the other Wasteland characters starting to rebuild...",
+      "added": "2026-10-14",
+      "art": "library/art/disney-epic-mickey-2-the-power-of-two.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso", "size": 4699979776, "sha256": "2c1f91631c25a0bbf20658f4a1170b7cbcf1a938e15a7969f78fdcbe9b36928d", "pieces": [
+        { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso.part01", "url": "private:disney-epic-mickey-2-the-power-of-two__Disney.Epic.Mickey.2.-.The.Power.of.Two.USA.En.Fr.Es.Pt.iso.part01", "size": 1992294400, "sha256": "c44cc86e0342000fbc360a245b392fd9961950ea038ffdd607ee55ea62acfdce" },
+        { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso.part02", "url": "private:disney-epic-mickey-2-the-power-of-two__Disney.Epic.Mickey.2.-.The.Power.of.Two.USA.En.Fr.Es.Pt.iso.part02", "size": 1992294400, "sha256": "d7e76f4209fb08dc3dd3eb4721a0db91be0eb20a8601d23d639743475563a245" },
+        { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso.part03", "url": "private:disney-epic-mickey-2-the-power-of-two__Disney.Epic.Mickey.2.-.The.Power.of.Two.USA.En.Fr.Es.Pt.iso.part03", "size": 715390976, "sha256": "7a92972bd4b16442a18e6aa337ebcce734331672146eeffe50132345eb51163e" }
+      ] }
     }
   ]
 }
