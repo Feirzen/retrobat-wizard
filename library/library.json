@@ -1609,6 +1609,18 @@
         { "name": "Just Dance 4 (USA) (En,Fr,Es).iso.part02", "url": "private:just-dance-4__Just.Dance.4.USA.En.Fr.Es.iso.part02", "size": 1992294400, "sha256": "a65c9dcc7f473ae1cc9b1604273f61098a2ff3b41b419c6f5733b26c56e345e6" },
         { "name": "Just Dance 4 (USA) (En,Fr,Es).iso.part03", "url": "private:just-dance-4__Just.Dance.4.USA.En.Fr.Es.iso.part03", "size": 715390976, "sha256": "4b7b91f5e4f4f10e7f420d68b58c9a73a66f907462a06b07ffb4aa1d0726c935" }
       ] }
+    },
+    {
+      "id": "kirby-s-dream-collection-special-edition",
+      "title": "Kirby's Dream Collection : Special Edition",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, or a controller (Xbox, PlayStation, Switch Pro, etc.) which acts as a GameCube controller. On a Wii Remote, hold it sideways. Celebrate 20 Years of Kirby Fun with a Special Collection for Wii The pink, surprisingly powerful Kirby character is one of the...",
+      "added": "2026-10-14",
+      "art": "library/art/kirby-s-dream-collection-special-edition.jpg",
+      "files": [
+        { "name": "Kirby's Dream Collection - Special Edition (USA).wbfs", "url": "private:kirby-s-dream-collection-special-edition__Kirby.s.Dream.Collection.-.Special.Edition.USA.wbfs", "size": 1910505472, "sha256": "30057def3274c0fd28122eb5d50175bb00e1ed2a2f34b3dac07f0a36c5d6dc2b" }
+      ]
     }
   ]
 }
