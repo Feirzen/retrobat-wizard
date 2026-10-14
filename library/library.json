@@ -1477,6 +1477,18 @@
       "files": [
         { "name": "Legend of Zelda, The - A Link to the Past (USA).sfc", "url": "private:the-legend-of-zelda-a-link-to-the-past__Legend.of.Zelda.The.-.A.Link.to.the.Past.USA.sfc", "size": 1048576, "sha256": "66871d66be19ad2c34c927d6b14cd8eb6fc3181965b6e517cb361f7316009cfb" }
       ]
+    },
+    {
+      "id": "animal-crossing-city-folk",
+      "title": "Animal Crossing : City Folk",
+      "system": "wii",
+      "players": "1",
+      "description": "Controllers: Wii Remote + Nunchuk. If life were an endless vacation, what would you do? Go fishing, collect shells or watch fireworks with friends? Build a snowman, exchange presents with family or decorate your house for the holidays? Take a trip to the city, go on a shopping...",
+      "added": "2026-10-14",
+      "art": "library/art/animal-crossing-city-folk.jpg",
+      "files": [
+        { "name": "Animal Crossing - City Folk (USA) (En,Fr,Es).wbfs", "url": "private:animal-crossing-city-folk__Animal.Crossing.-.City.Folk.USA.En.Fr.Es.wbfs", "size": 339738624, "sha256": "aae9fd1d0c1d9270875c7438edb2aa820ee5a40fd040e8647ac4f8c3f0784220" }
+      ]
     }
   ]
 }
