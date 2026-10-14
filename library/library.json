@@ -1489,6 +1489,21 @@
       "files": [
         { "name": "Animal Crossing - City Folk (USA) (En,Fr,Es).wbfs", "url": "private:animal-crossing-city-folk__Animal.Crossing.-.City.Folk.USA.En.Fr.Es.wbfs", "size": 339738624, "sha256": "aae9fd1d0c1d9270875c7438edb2aa820ee5a40fd040e8647ac4f8c3f0784220" }
       ]
+    },
+    {
+      "id": "bakugan-battle-brawlers",
+      "title": "Bakugan Battle Brawlers",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote + Nunchuk. The world of Bakugan comes alive! The 6 unique arenas burst with incredible action, and new play mechanics take the Bakugan experience beyond cartoons and board games to a whole new level! Based on the wildly popular card game and television...",
+      "added": "2026-10-14",
+      "art": "library/art/bakugan-battle-brawlers.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Bakugan - Battle Brawlers (USA) (En,Fr).wbfs", "size": 3732930560, "sha256": "e8ddbedf86a3038ca4f57121b098e8e8f9cc76f192859c777abae6e8cf40cc67", "pieces": [
+        { "name": "Bakugan - Battle Brawlers (USA) (En,Fr).wbfs.part01", "url": "private:bakugan-battle-brawlers__Bakugan.-.Battle.Brawlers.USA.En.Fr.wbfs.part01", "size": 1992294400, "sha256": "6b1327969412b9b6b81ae6ba6dd55dbabc42be2a77e5d4cfdc1578c60cd2a348" },
+        { "name": "Bakugan - Battle Brawlers (USA) (En,Fr).wbfs.part02", "url": "private:bakugan-battle-brawlers__Bakugan.-.Battle.Brawlers.USA.En.Fr.wbfs.part02", "size": 1740636160, "sha256": "19f6c5bc941903b16b8b6394879a3b8553994fb8d5f9ac89a7a89120018be5e4" }
+      ] }
     }
   ]
 }
