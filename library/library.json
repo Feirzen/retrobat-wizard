@@ -1621,6 +1621,22 @@
       "files": [
         { "name": "Kirby's Dream Collection - Special Edition (USA).wbfs", "url": "private:kirby-s-dream-collection-special-edition__Kirby.s.Dream.Collection.-.Special.Edition.USA.wbfs", "size": 1910505472, "sha256": "30057def3274c0fd28122eb5d50175bb00e1ed2a2f34b3dac07f0a36c5d6dc2b" }
       ]
+    },
+    {
+      "id": "kirby-s-epic-yarn",
+      "title": "Kirby's Epic Yarn",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote, held sideways. While walking through Dream Land, Kirby discovers a tomato and decides to eat it. Yin-Yarn, the evil sorceror who possessed the tomato (revealed to be a Metamato), appears and magically banishes Kirby into Patch Land, a world completely...",
+      "added": "2026-10-14",
+      "art": "library/art/kirby-s-epic-yarn.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso", "size": 4699979776, "sha256": "bfd33f41eaf8c8cffe8eabb72bc8eb5f10a473446ab23990c3b71f3fa5acfa7b", "pieces": [
+        { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso.part01", "url": "private:kirby-s-epic-yarn__Kirby.s.Epic.Yarn.USA.En.Fr.Es.iso.part01", "size": 1992294400, "sha256": "ba56730fb36bb24ed900f4460bbbfb5e740f21f3e092f2ba6a9e0ce93b4fc45c" },
+        { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso.part02", "url": "private:kirby-s-epic-yarn__Kirby.s.Epic.Yarn.USA.En.Fr.Es.iso.part02", "size": 1992294400, "sha256": "9b10a71aaab5359e9aa6c097ffdc8c097bf5d26acfae81c3569631691fd671e2" },
+        { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso.part03", "url": "private:kirby-s-epic-yarn__Kirby.s.Epic.Yarn.USA.En.Fr.Es.iso.part03", "size": 715390976, "sha256": "4d9c42c60774fde064dfdf185f4daad0afe7fa6fb1e3c40e4708ec14a9347752" }
+      ] }
     }
   ]
 }
