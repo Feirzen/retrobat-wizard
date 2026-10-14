@@ -39,8 +39,13 @@ $script:ScUiGold  = '#FFE5B83B'
 $script:ScUiGreen = '#FF7FD17F'
 $script:ScUiWarn  = '#FFE0A050'
 
+# Light / dark / follow Windows, shared by every window (scripts\Theme.ps1,
+# 2026-10-13). Missing file = the original dark colours, untouched.
+try { . (Join-Path $PSScriptRoot 'Theme.ps1') } catch { }
+if (-not (Get-Command Convert-ThemeHex -ErrorAction SilentlyContinue)) { function Convert-ThemeHex([string]$hex) { return $hex } }
+
 function New-ScUiBrush([string]$hex) {
-    return (New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.ColorConverter]::ConvertFromString($hex)))
+    return (New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.ColorConverter]::ConvertFromString((Convert-ThemeHex $hex))))
 }
 
 function New-ScUiText([string]$text, [string]$colour, [int]$size = 14, [bool]$bold = $false) {

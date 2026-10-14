@@ -34,8 +34,14 @@ code  wizard/*.ps1
 code  wizard/*.vbs
 code  wizard/*.ico
 code  wizard/*.png
-skip  wizard/wordmark.png
-skip  wizard/wordmark-anim.png
+; v3 (2026-10-14): the wordmark says "THE RETROBAT WIZARD" now, nobody's
+; name, so it ships. The test copy of the new look and pictures no longer
+; used stay at home.
+skip  wizard/SetupWizard-v3.ps1
+skip  wizard/SetupWizard-legacy*.ps1
+skip  wizard/icon-potions.png
+skip  wizard/icon-potions-anim.png
+skip  wizard/profile-wiimote.png
 seed  wizard/wizard.ini  <-  defaults/wizard.ini
 code  defaults/Setup Wizard.bat
 
@@ -43,7 +49,9 @@ code  Maintenance Steps/*.bat
 code  SaveBackups/*.bat
 
 code  update-restore/**
-skip  update-restore/Steven the Setup Wizard.bat
+; The owner's own wizard button, whatever it is called (it follows the
+; name in wizard.ini). Everybody else's drive has its own.
+skip  update-restore/*Wizard*.bat
 code  update-restore-off/**
 code  drive-root/**
 
@@ -59,3 +67,4 @@ code  theme-assets/steam.mp4
 
 seed  features.ini
 seed  controllers.ini
+seed  couch-mouse.txt

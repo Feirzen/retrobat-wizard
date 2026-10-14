@@ -241,7 +241,7 @@ Add-SocialLogin $wsA $pd
 Assert (@(Get-SocialLogins $wsA).Count -eq 1) 'one login per profile'
 Add-SocialLogin $wsA ([pscustomobject]@{ Id = 'bbbbbbbbbb'; Username = 'Bee'; Avatar = 'custom:abc' })
 $lg = @(Get-SocialLogins $wsA)
-Assert ($lg.Count -eq 2 -and $lg[0].Id -eq 'bbbbbbbbbb' -and $lg[0].Avatar -eq 'icon:gameboy') 'newest first, custom picture not kept'
+Assert ($lg.Count -eq 2 -and $lg[0].Id -eq 'bbbbbbbbbb' -and $lg[0].Avatar -eq 'custom:abc') 'newest first, custom picture kept (2026-10-12)'
 Remove-SocialLogin $wsA 'bbbbbbbbbb'
 Assert (@(Get-SocialLogins $wsA).Count -eq 1) 'forget a login'
 # notify channel

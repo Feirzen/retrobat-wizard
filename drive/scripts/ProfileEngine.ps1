@@ -634,7 +634,8 @@ $script:ProfileIcons = @('gamecube', 'n64', 'snes', 'nes')
 #  is a wizard\profile-<name>.png; a name with no picture simply shows no
 #  picture, like every other picture in this window. Add a file, add a line.
 $script:ProfileIconChoices = @(
-    'nes', 'snes', 'n64', 'gamecube', 'wiimote',
+    # 'wiimote' removed 2026-10-14 (Steven: the picture was broken).
+    'nes', 'snes', 'n64', 'gamecube',
     'gameboy', 'gba', 'ds', 'switch',
     'pc', 'laptop', 'monitor', 'brokenlaptop'
 )

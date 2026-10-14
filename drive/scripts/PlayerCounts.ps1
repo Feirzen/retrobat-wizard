@@ -24,7 +24,8 @@
     non-breaking space the scraper put there (found 2026-09-06), a file name
     cannot.
 
-    Games not in the list are left alone and written to
+    Handheld systems (DS, 3DS, Game Boy...) give 1 to any game not in the
+    list (added 2026-10-13). Other games not in the list are left alone and written to
     player-counts-todo.txt, so new games are never missed. That file is
     removed again once every game is covered.
 
@@ -84,6 +85,15 @@ function Sync-PlayerCounts {
     if (-not (Test-Path -LiteralPath $romsDir))  { $r.Ok = $false; $r.Message = 'no roms folder found'; return $r }
 
     $list = Read-PlayerCountList $listPath
+
+    # Systems where one screen means one player. A game on one of these that
+    # is not in player-counts.ini gets 1 automatically instead of whatever
+    # the scraper said (the scraper reports link-cable / wireless counts,
+    # which is why DS games showed up as 4 players). To give one of these
+    # games a different number, just add it to player-counts.ini.
+    $handhelds = @('gb','gbc','gba','nds','3ds','gamegear','psp','ngp','ngpc',
+                   'wonderswan','wonderswancolor','pokemini','virtualboy','gw',
+                   'flash','scummvm')
     $todo = New-Object System.Collections.ArrayList
     $problems = @()
 
@@ -118,7 +128,15 @@ function Sync-PlayerCounts {
                 $current = ''
                 if ($pl.Success) { $current = $pl.Groups[1].Value.Trim() }
 
-                if (-not $wanted.ContainsKey($key)) {
+                if ($wanted.ContainsKey($key)) {
+                    $count = [string]$wanted[$key]
+                }
+                elseif ($handhelds -contains $console) {
+                    # Handheld and one-person systems: couch count is 1
+                    # unless the list says otherwise (2026-10-13).
+                    $count = '1'
+                }
+                else {
                     $nm = $nameRx.Match($block)
                     $title = $path
                     if ($nm.Success) { $title = [System.Net.WebUtility]::HtmlDecode($nm.Groups[1].Value).Trim() }
@@ -130,7 +148,6 @@ function Sync-PlayerCounts {
                     continue
                 }
 
-                $count = [string]$wanted[$key]
                 if ($current -eq $count) { continue }
 
                 if ($pl.Success) {

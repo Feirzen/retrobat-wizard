@@ -48,13 +48,19 @@ $lib = @{ version=1; games=@(
   @{ id='cool-game'; title='Cool Game'; system='nes'; players='1-2'; description='A homebrew'; files=@(@{ name='Cool Game.nes'; url='https://raw.githubusercontent.com/Feirzen/retrobat-wizard/main/library/files/Cool%20Game.nes'; size=100; sha256=$sha }) },
   @{ id='evil'; title='Evil'; system='nes'; files=@(@{ name='..\x.nes'; url='https://raw.githubusercontent.com/x'; size=1; sha256=$sha }) },
   @{ id='evil2'; title='Evil2'; system='nes'; files=@(@{ name='x.nes'; url='https://evil.example.com/x'; size=1; sha256=$sha }) },
-  @{ id='bad'; title='Bad'; system='../nes'; files=@(@{ name='x.nes'; url='https://raw.githubusercontent.com/x'; size=1; sha256=$sha }) }
+  @{ id='bad'; title='Bad'; system='../nes'; files=@(@{ name='x.nes'; url='https://raw.githubusercontent.com/x'; size=1; sha256=$sha }) },
+  @{ id='priv'; title='Priv Game'; system='nes'; files=@(@{ name='Priv.nes'; url='private:priv__Priv.nes'; size=100; sha256=$sha }) },
+  @{ id='evil3'; title='Evil3'; system='nes'; files=@(@{ name='y.nes'; url='private:../y.nes'; size=1; sha256=$sha }) }
 )} | ConvertTo-Json -Depth 6
 [IO.File]::WriteAllText("$gh/library.json", $lib)
-$script:LibFetchOverride = { param($Url,$Out) if ($script:libDown) { throw 'offline' }; if ($Url -like '*library.json*') { Copy-Item "$gh/library.json" $Out -Force } elseif ($Url -like '*Cool%20Game.nes') { Copy-Item "$gh/files/Cool Game.nes" $Out -Force } else { throw "404 $Url" } }
+$script:LibFetchOverride = { param($Url,$Out) if ($script:libDown) { throw 'offline' }; if ($Url -like '*library.json*') { Copy-Item "$gh/library.json" $Out -Force } elseif ($Url -like '*Cool%20Game.nes' -or $Url -eq 'private:priv__Priv.nes') { Copy-Item "$gh/files/Cool Game.nes" $Out -Force } else { throw "404 $Url" } }
 $script:libDown = $false
 $c = Get-LibCatalog "$Root/_ClaudeWorkspace"
-A ($c.Ok -and @($c.Games).Count -eq 1 -and $c.Games[0].Title -eq 'Cool Game') "only the safe entry kept ($(@($c.Games).Count))"
+A ($c.Ok -and @($c.Games).Count -eq 2 -and $c.Games[0].Title -eq 'Cool Game') "only the safe entries kept ($(@($c.Games).Count))"
+$pg = @($c.Games | Where-Object Id -eq 'priv')[0]
+A ($null -ne $pg -and $pg.Files[0].Url -eq 'private:priv__Priv.nes') 'private file listed by name'
+$r = Install-LibGame "$Root/_ClaudeWorkspace" $pg $sys
+A ($r.Ok -and (Test-Path "$Root/roms/nes/Priv.nes")) "private game installs: $($r.Message)"
 A (-not (Test-LibGameInstalled $c.Games[0] $sys)) 'not installed yet'
 $r = Install-LibGame "$Root/_ClaudeWorkspace" $c.Games[0] $sys
 A ($r.Ok -and (Test-Path "$Root/roms/nes/Cool Game.nes")) "installed: $($r.Message)"
@@ -66,7 +72,12 @@ $r = Install-LibGame "$Root/_ClaudeWorkspace" $c.Games[0] $sys
 A (-not $r.Ok -and $r.Message -match 'checksum' -and -not (Test-Path "$Root/roms/nes/Cool Game.nes")) 'bad checksum refused'
 $script:libDown = $true
 $c = Get-LibCatalog "$Root/_ClaudeWorkspace"
-A ($c.Ok -and $c.FromCache -and @($c.Games).Count -eq 1) 'offline uses cache'
+A ($c.Ok -and $c.FromCache -and @($c.Games).Count -eq 2) 'offline uses cache'
+# a private file with no friends key on the drive: a plain message, no crash
+$script:LibFetchOverride = $null
+$caught = ''
+try { Invoke-LibFetch 'private:x.nes' "$Root/x.part" "$Root/_ClaudeWorkspace" } catch { $caught = $_.Exception.Message }
+A ($caught -like '*no friends key*') "private without key: plain words ($caught)"
 # publish entry
 New-Item -ItemType Directory "$Root/_ClaudeWorkspace/library-to-publish" | Out-Null
 A (Test-LibCanPublish "$Root/_ClaudeWorkspace") 'owner can publish'
@@ -76,5 +87,18 @@ $ini = Get-Content "$($r.Folder)/game.ini"
 A (($ini -match '^description = Co-op puzzles$').Count -eq 1) 'description one line'
 $r2 = New-LibPublishEntry "$Root/_ClaudeWorkspace" "$Root/in/Game.gba" 'gba' "Fireboy & Watergirl: Forest Temple!" '' ''
 A (-not $r2.Ok) 'no double queue'
+# what RetroBat knows (gamelist.xml): name, players, words, box art; sub-folders too (2026-10-11)
+$wiiS = @($sys | Where-Object Name -eq 'wii')[0]
+New-Item -ItemType Directory -Force (Join-Path $wiiS.Folder 'Party Game'), (Join-Path $wiiS.Folder 'images') | Out-Null
+$pf = Join-Path $wiiS.Folder 'Party Game/game.rvz'; [IO.File]::WriteAllBytes($pf, [byte[]](1,2))
+[IO.File]::WriteAllBytes((Join-Path $wiiS.Folder 'images/party-image.png'), [byte[]](1,2))
+[IO.File]::WriteAllText((Join-Path $wiiS.Folder 'gamelist.xml'), '<?xml version="1.0"?><gameList><game><path>./Party Game/game.rvz</path><name>Party Game</name><players>1-4</players><desc>Fun.</desc><image>./images/party-image.png</image><thumbnail>./images/missing.png</thumbnail></game><game><path>./plain.wbfs</path><name>Plain</name><image>./images/none.png</image></game></gameList>')
+$i = Get-LibGamelistInfo $wiiS $pf
+A ($i.Title -eq 'Party Game' -and $i.Players -eq '1-4' -and $i.Description -eq 'Fun.') "gamelist details in a sub-folder ($($i.Title))"
+A ($i.Art -eq (Join-Path $wiiS.Folder 'images/party-image.png')) "box art found ($($i.Art))"
+$i = Get-LibGamelistInfo $wiiS (Join-Path $wiiS.Folder 'plain.wbfs')
+A ($i.Title -eq 'Plain' -and $i.Art -eq '') 'missing picture: no art'
+$i = Get-LibGamelistInfo $wiiS (Join-Path $wiiS.Folder 'unknown.wbfs')
+A ($i.Title -eq 'unknown' -and $i.Art -eq '') 'not in the list: file name, no art'
 Remove-Item -Recurse -Force $Root
 "games tests: $pass passed, $fail failed"

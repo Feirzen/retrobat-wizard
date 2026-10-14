@@ -165,6 +165,53 @@ else {
     }
 }
 
+# ---------------------------------------------------------------------------
+#  JOB 1b - Wii U launch command (added 2026-10-13)
+#  Points Wii U at system\scripts\wiiu-launch.vbs, which asks "Wii Remotes
+#  or Pro Controller?" before each game (scripts\ControllerChooser.ps1).
+#  Switched by 'wiiuchooser' in features.ini - only a clear "off" turns it
+#  off. Off, or the script missing, puts RetroBat's own command back.
+#  Runs on its own after a RetroBat update (the wizard's update check).
+# ---------------------------------------------------------------------------
+Say "[1b] Checking the Wii U launch command in es_systems.cfg" 'White'
+try {
+    $wiiuVbs = Join-Path $Root 'system\scripts\wiiu-launch.vbs'
+    $wiiuOn = $true
+    $featIni = Join-Path $Root '_ClaudeWorkspace\features.ini'
+    if (Test-Path -LiteralPath $featIni) {
+        foreach ($fl in [System.IO.File]::ReadAllLines($featIni)) {
+            if ($fl -match '^\s*wiiuchooser\s*=\s*off\b') { $wiiuOn = $false }
+        }
+    }
+    if ($wiiuOn -and (Test-Path -LiteralPath $wiiuVbs)) {
+        $wiiuWanted = 'wscript.exe //nologo "%HOME%\..\system\scripts\wiiu-launch.vbs" -gameinfo %GAMEINFOXML% %CONTROLLERSCONFIG% -system %SYSTEM% -emulator %EMULATOR% -core %CORE% -rom %ROM%'
+    }
+    else {
+        $wiiuWanted = '"%HOME%\emulatorLauncher.exe" -gameinfo %GAMEINFOXML% %CONTROLLERSCONFIG% -system %SYSTEM% -emulator %EMULATOR% -core %CORE% -rom %ROM%'
+    }
+    if (Test-Path -LiteralPath $esSystems) {
+        $f    = Read-TextFile $esSystems
+        $text = $f.Text
+        $m = [regex]::Match($text, '(?s)(<system>(?:(?!</system>).)*?<name>wiiu</name>.*?</system>)')
+        if (-not $m.Success) { Say "    Could not locate the Wii U system block. Skipping." 'Yellow' }
+        else {
+            $block    = $m.Groups[1].Value
+            $cmdMatch = [regex]::Match($block, '(?s)<command>(.*?)</command>')
+            if (-not $cmdMatch.Success) { Say "    Wii U block has no <command> line. Skipping." 'Yellow' }
+            elseif ($cmdMatch.Groups[1].Value -eq $wiiuWanted) { Say "    Already correct." 'Green' }
+            else {
+                Backup-Once $esSystems
+                $newBlock = $block.Remove($cmdMatch.Groups[1].Index, $cmdMatch.Groups[1].Length).Insert($cmdMatch.Groups[1].Index, $wiiuWanted)
+                $text     = $text.Remove($m.Groups[1].Index, $m.Groups[1].Length).Insert($m.Groups[1].Index, $newBlock)
+                Write-TextFile $esSystems $text $f.HasBom
+                if ($wiiuOn) { Say "    Done. Wii U games now ask Wii Remotes or Pro Controller." 'Green' }
+                else { Say "    Done. Wii U is back to RetroBat's own launch." 'Green' }
+            }
+        }
+    }
+}
+catch { Say ("    Wii U check failed, nothing changed: " + $_.Exception.Message) 'Yellow' }
+
 Say ""
 
 # ===========================================================================

@@ -57,8 +57,13 @@ $script:SuGold  = '#FFE5B83B'
 $script:SuGreen = '#FF7FD17F'
 $script:SuWarn  = '#FFE0A050'
 
+# Light / dark / follow Windows, shared by every window (scripts\Theme.ps1,
+# 2026-10-13). Missing file = the original dark colours, untouched.
+try { . (Join-Path $PSScriptRoot 'Theme.ps1') } catch { }
+if (-not (Get-Command Convert-ThemeHex -ErrorAction SilentlyContinue)) { function Convert-ThemeHex([string]$hex) { return $hex } }
+
 function New-SuBrush([string]$hex) {
-    return (New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.ColorConverter]::ConvertFromString($hex)))
+    return (New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.ColorConverter]::ConvertFromString((Convert-ThemeHex $hex))))
 }
 
 function New-SuText([string]$text, [string]$colour, [int]$size = 14, [bool]$bold = $false) {
@@ -266,7 +271,7 @@ function Render-SuStepSignIn {
 
     if ($script:suAccount -eq '') {
         [void](Add-SuLine 'Nobody is signed in yet.' $script:SuWarn 15 $true)
-        [void](Add-SuLine 'Steam has to be signed in before any Steam game will start - the drive owner''s account for the games on this drive, or your own account for your own games.' $script:SuText 14)
+        [void](Add-SuLine 'Steam has to be signed in before any Steam game will start, as whoever owns the games you want to play.' $script:SuText 14)
         [void](Add-SuLine 'This opens Steam''s sign-in window. Type your details there - nothing on this drive ever sees or stores a password. Steam may also want a code from a phone the first time on a new computer.' $script:SuDim 13)
         $script:suMainBtn.Content = 'Open Steam''s sign-in'
         return
@@ -288,27 +293,41 @@ function Render-SuStepSignIn {
     $prev = Get-SteamProfileState -Root $script:suRoot
     if ($prev.Connected -and $prev.Mode -eq 'guest' -and ([string]$prev.Account -ieq $script:suAccount)) { $isOwner = $false }
 
-    [void](Add-SuLine 'Whose games should RetroBat show on this computer?' $script:SuText 14 $false '0,6,0,8')
+    # 2026-10-13 (Steven): most people will NOT carry Steam games on a drive -
+    # they just want the Steam library they already have to show up. So the
+    # drive option is only offered when the drive actually has a Steam games
+    # folder; otherwise this page simply says what will happen.
+    $hasDriveLib = ((Get-SteamDriveLibrary -Root $script:suRoot) -ne '')
 
     $script:suOwnerRb = New-Object System.Windows.Controls.RadioButton
-    $script:suOwnerRb.Content = ('This is ' + $ownerName + '''s account')
+    $script:suOwnerRb.Content = 'My games on this computer, plus the ones on this drive'
     $script:suOwnerRb.Foreground = (New-SuBrush $script:SuText)
     $script:suOwnerRb.FontSize = 15
-    $script:suOwnerRb.IsChecked = $isOwner
-    [void]$script:suBody.Children.Add($script:suOwnerRb)
-    $o1 = New-SuText 'The games on this drive, plus any downloaded on this computer.' $script:SuDim 13
+    $script:suOwnerRb.IsChecked = ($isOwner -and $hasDriveLib)
+    $o1txt = 'Also lets Steam see the games folder on this drive. That only adds to Steam''s list - nothing already installed moves.'
+    if ($owner.Account -ne '') { $o1txt += (' The drive''s games belong to ' + $ownerName + '''s account.') }
+    $o1 = New-SuText $o1txt $script:SuDim 13
     $o1.Margin = '26,2,0,10'
-    [void]$script:suBody.Children.Add($o1)
 
     $script:suGuestRb = New-Object System.Windows.Controls.RadioButton
-    $script:suGuestRb.Content = 'This is my own account (a friend''s)'
+    $script:suGuestRb.Content = 'Just the games already on this computer'
     $script:suGuestRb.Foreground = (New-SuBrush $script:SuText)
     $script:suGuestRb.FontSize = 15
-    $script:suGuestRb.IsChecked = (-not $isOwner)
-    [void]$script:suBody.Children.Add($script:suGuestRb)
-    $g1 = New-SuText 'Only the games downloaded on this computer, under your own account. Your Steam settings are left exactly as they are.' $script:SuDim 13
+    $script:suGuestRb.IsChecked = (-not ($isOwner -and $hasDriveLib))
+    $g1 = New-SuText 'Uses the Steam games already downloaded here, on any drive Steam uses. Your Steam settings are left exactly as they are.' $script:SuDim 13
     $g1.Margin = '26,2,0,10'
-    [void]$script:suBody.Children.Add($g1)
+
+    if ($hasDriveLib) {
+        [void](Add-SuLine 'Which Steam games should RetroBat show?' $script:SuText 14 $false '0,6,0,8')
+        [void]$script:suBody.Children.Add($script:suGuestRb)
+        [void]$script:suBody.Children.Add($g1)
+        [void]$script:suBody.Children.Add($script:suOwnerRb)
+        [void]$script:suBody.Children.Add($o1)
+    }
+    else {
+        [void](Add-SuLine 'RetroBat will show the Steam games already downloaded on this computer, wherever Steam keeps them.' $script:SuText 14 $false '0,6,0,6')
+        [void](Add-SuLine 'Your Steam settings are left exactly as they are. You pick which games show on the next page.' $script:SuDim 13 $false '0,0,0,10')
+    }
 
     [void](Add-SuLine 'Wrong person signed in? "Sign in as someone else" switches Steam over first.' $script:SuDim 13 $false '0,4,0,0')
     if (Test-SteamRunning) {
@@ -350,24 +369,25 @@ function Render-SuStepLibrary {
 
     # the two ways
     $script:suAuto = New-Object System.Windows.Controls.RadioButton
-    $script:suAuto.Content = 'Automatic   (recommended)'
+    $script:suAuto.Content = 'Automatic'
     $script:suAuto.Foreground = (New-SuBrush $script:SuText)
     $script:suAuto.FontSize = 15
-    $script:suAuto.IsChecked = $true
+    $script:suAuto.IsChecked = $false
     $script:suAuto.Margin = '0,8,0,0'
     [void]$script:suBody.Children.Add($script:suAuto)
 
-    $a1 = New-SuText 'Closes Steam, adds this drive to the list, opens Steam again. Takes about a minute. A dated copy of the old list is saved onto this drive first, so the Disconnect button can put everything back in one click.' $script:SuDim 13
+    $a1 = New-SuText 'Closes Steam, writes this drive into Steam''s list itself, opens Steam again. Faster, but Steam does not always accept it. A dated copy of the old list is saved onto this drive first, so the Disconnect button can put everything back in one click.' $script:SuDim 13
     $a1.Margin = '26,4,0,12'
     [void]$script:suBody.Children.Add($a1)
 
     $script:suManual = New-Object System.Windows.Controls.RadioButton
-    $script:suManual.Content = 'Manual'
+    $script:suManual.Content = 'Let Steam add it   (recommended)'
     $script:suManual.Foreground = (New-SuBrush $script:SuText)
     $script:suManual.FontSize = 15
     [void]$script:suBody.Children.Add($script:suManual)
 
-    $m1 = New-SuText 'Opens Steam''s own storage settings and tells you what to click, so Steam does the writing rather than this drive. Only really worth choosing if you have added drives of your own to Steam and would rather watch it happen than have it done for you.' $script:SuDim 13
+    $script:suManual.IsChecked = $true
+    $m1 = New-SuText 'Opens Steam''s own storage settings and tells you what to click (Add Drive, then pick this drive). Steam does the writing itself, which is the one way it always accepts.' $script:SuDim 13
     $m1.Margin = '26,4,0,0'
     [void]$script:suBody.Children.Add($m1)
 
@@ -967,8 +987,15 @@ function Invoke-SuDisconnect {
     if ($doUnin) { $msg += "`n`nUninstalling Steam cannot be undone from here." }
     else { $msg += "`n`nAll of this can be done again by running Connect Steam." }
 
-    $ans = [System.Windows.MessageBox]::Show($msg, 'Are you sure?', 'OKCancel', 'Warning')
-    if ($ans -ne [System.Windows.MessageBoxResult]::OK) { return }
+    # Inside the wizard, its own box, which a controller can answer
+    # (2026-10-11). On its own (Connect Steam.bat), Windows' message box.
+    if (Get-Command Show-Choice -ErrorAction SilentlyContinue) {
+        if ((Show-Choice 'Are you sure?' $msg @('Go ahead', 'Cancel')) -ne 'Go ahead') { return }
+    }
+    else {
+        $ans = [System.Windows.MessageBox]::Show($msg, 'Are you sure?', 'OKCancel', 'Warning')
+        if ($ans -ne [System.Windows.MessageBoxResult]::OK) { return }
+    }
 
     $script:sudGo.IsEnabled = $false
     $script:sudNote.Text = 'Working...'
@@ -977,6 +1004,7 @@ function Invoke-SuDisconnect {
     $r = Disconnect-Steam -Root $script:sudRoot -RestoreLibraries:$doLib -LogOut:$doOut -UninstallSteam:$doUnin
 
     $script:sudResult = 'disconnected'
-    [void][System.Windows.MessageBox]::Show((($r.Steps) -join "`n"), 'Disconnect Steam', 'OK', 'Information')
+    if (Get-Command Show-Choice -ErrorAction SilentlyContinue) { [void](Show-Choice 'Disconnect Steam' (($r.Steps) -join "`n") @('OK')) }
+    else { [void][System.Windows.MessageBox]::Show((($r.Steps) -join "`n"), 'Disconnect Steam', 'OK', 'Information') }
     $script:sudWin.Close()
 }

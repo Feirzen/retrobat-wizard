@@ -455,6 +455,15 @@ $DecorationsToHide = @(
 #
 #  Existing entries are never touched, so a RetroBat update that adds real
 #  savestate support for one of these will win and this will leave it alone.
+#
+#  Since 2026-10-11 (Steven: the "Launch game?" screen on every system) the
+#  list below is only the start: EVERY emulator named in RetroBat's own
+#  es_systems*.cfg gets the same entry, unless RetroBat already lists it. So a
+#  console added later gets the screen too. Each added entry points at an
+#  empty folder (saves\<system>\<emulator>), which is why the menu shows only
+#  LAUNCH GAME. The emulators whose save states RetroBat really reads
+#  (RetroArch, Dolphin...) keep RetroBat's own entries, and the save-state
+#  sweep (SaveStates.ps1) keeps their folders empty.
 # ---------------------------------------------------------------------------
 $SaveStateMenuEmulators = @(
     'azahar'      # 3DS
@@ -579,91 +588,25 @@ if ($null -ne $MachineProfile) {
 }
 
 # --- launch confirmation menu ----------------------------------------------
-if ($SaveStateMenuEmulators.Count -gt 0) {
-    $ssPath = Join-Path $Root 'emulationstation\.emulationstation\es_savestates.cfg'
-
-    if (-not (Test-Path $ssPath)) {
-        Say "es_savestates.cfg not found - skipping launch menu step." 'Yellow'
-        Say ""
-    }
+# The rules live in LaunchMenu.ps1 since 2026-10-12, shared with the wizard's
+# PLAY button, which now checks this before every launch. Every emulator
+# RetroBat knows gets the screen; the list above is the start.
+$lmLib = Join-Path $PSScriptRoot 'LaunchMenu.ps1'
+if (Test-Path -LiteralPath $lmLib) {
+    . $lmLib
+    $script:LaunchMenuBase = @($SaveStateMenuEmulators)
+    Say "Launch confirmation menu:" 'White'
+    $lm = Update-LaunchMenu -Root $Root -On $featLaunchMenu
+    if (-not $lm.Ok) { Say ("  skipped: {0}" -f $lm.Message) 'Yellow' }
     else {
-        Say "Launch confirmation menu:" 'White'
-
-        [xml]$ssXml = Get-Content -LiteralPath $ssPath -Raw
-        $ssRoot     = $ssXml.SelectSingleNode('/savestates')
-        $ssChanged  = 0
-
-        if ($null -eq $ssRoot) {
-            Say "  ERROR: es_savestates.cfg has no <savestates> root - left alone." 'Red'
-        }
-        elseif (-not $featLaunchMenu) {
-            # SWITCHED OFF. Take our own entries back out, so the games launch
-            # the moment A is pressed. Only the emulators in the list above are
-            # ever removed - RetroBat's own entries for everything else are not
-            # ours to touch.
-            foreach ($emu in $SaveStateMenuEmulators) {
-                $ssOld = $ssRoot.SelectSingleNode("emulator[@name='$emu']")
-                if ($null -eq $ssOld) {
-                    Say ("  ok       {0,-16} not listed" -f $emu) 'DarkGray'
-                    continue
-                }
-
-                [void]$ssRoot.RemoveChild($ssOld)
-                Say ("  REMOVED  {0,-16} launches straight away now" -f $emu) 'Green'
-                $ssChanged++
-            }
-        }
-        else {
-            foreach ($emu in $SaveStateMenuEmulators) {
-                if ($ssRoot.SelectSingleNode("emulator[@name='$emu']")) {
-                    Say ("  ok       {0,-16} already listed" -f $emu) 'DarkGray'
-                    continue
-                }
-
-                $node = $ssXml.CreateElement('emulator')
-                $node.SetAttribute('name',        $emu)
-                $node.SetAttribute('firstslot',   '1')
-                $node.SetAttribute('lastslot',    '10')
-                $node.SetAttribute('autosave',    'false')
-                $node.SetAttribute('incremental', 'false')
-
-                foreach ($pair in @(
-                    @('directory', "{{system}}/$emu"),
-                    @('file',      '{{romfilename}}.state{{slot2d}}'),
-                    @('image',     '{{romfilename}}.state{{slot2d}}.png')
-                )) {
-                    $child = $ssXml.CreateElement($pair[0])
-                    $child.InnerText = $pair[1]
-                    [void]$node.AppendChild($child)
-                }
-
-                [void]$ssRoot.AppendChild($node)
-                Say ("  ADDED    {0,-16} will now show the launch menu" -f $emu) 'Green'
-                $ssChanged++
-            }
-        }
-
-        if ($ssChanged -gt 0) {
-            $stampSS  = Get-Date -Format 'yyyy-MM-dd_HHmmss'
-            $backupSS = Join-Path $Root "_ClaudeWorkspace\archive\savestates_$stampSS"
-            New-Item -ItemType Directory -Path $backupSS -Force | Out-Null
-            Copy-Item $ssPath (Join-Path $backupSS 'es_savestates.cfg') -Force
-
-            $ssSet             = New-Object System.Xml.XmlWriterSettings
-            $ssSet.Indent      = $true
-            $ssSet.IndentChars = "  "
-            $ssSet.Encoding    = New-Object System.Text.UTF8Encoding($false)
-
-            $ssWriter = [System.Xml.XmlWriter]::Create($ssPath, $ssSet)
-            try   { $ssXml.Save($ssWriter) }
-            finally { $ssWriter.Close() }
-
-            Say ("  Backup: _ClaudeWorkspace\archive\savestates_{0}\" -f $stampSS) 'DarkGray'
-        }
-
-        Say ""
+        foreach ($emu in @($lm.Added))   { Say ("  ADDED    {0,-16} will now show the launch menu" -f $emu) 'Green' }
+        foreach ($emu in @($lm.Removed)) { Say ("  REMOVED  {0,-16} launches straight away now" -f $emu) 'Green' }
+        if ($featLaunchMenu) { Say ("  ok       {0} emulators already had it" -f $lm.Already) 'DarkGray' }
+        if ($lm.Backup -ne '') { Say ("  Backup: {0}" -f $lm.Backup) 'DarkGray' }
     }
+    Say ""
 }
+else { Say "LaunchMenu.ps1 is missing - skipping the launch menu step." 'Yellow'; Say "" }
 
 # --- emulator config files -------------------------------------------------
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)

@@ -141,3 +141,47 @@ the book turns. The mage floats, blinks, glows and casts a spell once every
 eight seconds. The rules above still hold - same width as the still, a
 whole number of frames tall - except that a strip may now be up to 400
 frames. The old pictures are in archive\wizard-anim-revamp_2026-09-23.
+
+===========================================================================
+ The four newer tabs                                (added 2026-10-11)
+===========================================================================
+
+    motion2.py          Profile, Games, Netplay and Admin: the four page
+                        pictures (moving) and their tab pictures. Borrows
+                        motion.py's helpers. python motion2.py
+    hat-source.png      Steven's blue wizard hat, put back onto its own
+                        25 x 22 grid, six colours. motion2.py draws the
+                        Profile pictures FROM it (the tab is this file as
+                        it is) and moves its tail.
+    sword-source.png    Steven's sword, 11 x 48, five colours. The Admin
+                        page picture is this with gold flames round it.
+
+Redraw either source in any pixel editor and run motion2.py again; the
+animations follow. The hat's moving tail is the pixels left of column 7,
+rows 3 to 8 - keep the tail there if you redraw it.
+
+===========================================================================
+ The v3 icons and the new wordmark                   (added 2026-10-14)
+===========================================================================
+
+    icons3.py           the 32 x 32 icon set for the rail, the Home tiles and
+                        the Settings tiles: chest (Games), crystal ball
+                        (Social), mirror (Play online), potions (Saves), gold
+                        gears (Settings), book (Help), hearts (Health), floppy
+                        (This drive), key (Admin), controller (Controllers).
+                        Each is wizard\icon-<name>.png plus a 60-frame
+                        icon-<name>-anim.png (3 seconds at 20 a second).
+                        Frame 0 of each strip IS the still.
+                        python icons3.py            all of them, into .\out
+                        python icons3.py gears      just one
+    pad-source.png      Steven's Xbox-style controller picture. The
+                        controller icon is drawn from it, and
+                        wizard\pro-controller.png (the Wii U chooser) is it,
+                        recoloured.
+    wordmark3.py        "THE RETROBAT WIZARD" with fire that rises.
+                        python wordmark3.py wordmark-v2-source.png out
+    wordmark-v2-source.png  the older two-line wordmark it reads the pixel
+                        font from (one font pixel = 3 x 3 screen pixels).
+
+The wizard decides when icons move: the rail's current page all the time,
+the Home and Settings tiles one or two at a time every 5 to 10 seconds.

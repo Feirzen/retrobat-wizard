@@ -166,6 +166,20 @@ function Sync-Controllers {
 
     $list = Read-ControllerList $listPath
     $utf8 = New-Object System.Text.UTF8Encoding($false)
+
+    # 2026-10-13: Wii U games that ASK "Wii Remotes or Pro Controller?" as
+    # they start (scripts\ControllerChooser.ps1) no longer need the line in
+    # their description - the question says it. Their old line is taken back
+    # off. Since 2026-10-14 that is every Wii U game (the screen shows a
+    # GamePad game's needs too). Wii games keep theirs.
+    # With the question switched off ('wiiuchooser = off') every line comes back.
+    $chooserOn = $true
+    try {
+        $featIni = Join-Path $ws 'features.ini'
+        if (Test-Path -LiteralPath $featIni) {
+            foreach ($fl in [System.IO.File]::ReadAllLines($featIni)) { if ($fl -match '^\s*wiiuchooser\s*=\s*off\b') { $chooserOn = $false } }
+        }
+    } catch { }
     $todo = New-Object System.Collections.ArrayList
     $problems = @()
     $settingLines = New-Object System.Collections.ArrayList
@@ -210,6 +224,23 @@ function Sync-Controllers {
                     foreach ($s in $kind.Sets.Keys) {
                         [void]$settingLines.Add(("{0}[{1}].{2} = {3}" -f $console, $leaf, $s, $kind.Sets[$s]))
                     }
+                }
+
+                # Asked at launch instead: take any old line back off, write none.
+                # 2026-10-14: EVERY Wii U game now opens on that screen (the
+                # GamePad ones show what they need instead of a question), so
+                # no Wii U game keeps the line.
+                if ($chooserOn -and $console -eq 'wiiu') {
+                    $dm0 = $script:GiDescRx.Match($block)
+                    if (-not $dm0.Success) { continue }
+                    $rest0 = Remove-ControllerLine $dm0.Groups[1].Value
+                    if ($rest0 -eq $dm0.Groups[1].Value) { continue }
+                    $newBlock = $block.Substring(0, $dm0.Index) + '<desc>' + $rest0 + '</desc>' + $block.Substring($dm0.Index + $dm0.Length)
+                    [void]$out.Append($text.Substring($last, $m.Index - $last))
+                    [void]$out.Append($newBlock)
+                    $last = $m.Index + $m.Length
+                    $fixedHere++
+                    continue
                 }
 
                 # the line at the top of the description

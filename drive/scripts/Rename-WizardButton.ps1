@@ -220,11 +220,26 @@ else {
     Say ("  {0} renamed, {1} already right, {2} problems." -f $done, $already, $problems) 'White'
 }
 
-if ($done -gt 0) {
-    Say ""
-    Say "  Open the wizard once. The icon at the top of the drive follows the" 'Gray'
-    Say "  name by itself, and the old icon is retired into _SAFE TO DELETE" 'Gray'
-    Say "  the same way this .bat just was." 'Gray'
+# --- the icons at the top of the drive (added 2026-10-14) ------------------
+# They used to wait for the SETUP button, which nobody presses twice, so a
+# rename left "Old Name.lnk" sitting there. Now this button does them too.
+# Update-RootShortcuts writes the icon under the new name and retires the old
+# one into _SAFE TO DELETE, the same way this .bat was. Safe when nothing
+# changed: identical icons are left alone.
+if (-not $WhatIf) {
+    $lib = Join-Path $PSScriptRoot 'Shortcuts.ps1'
+    if (Test-Path -LiteralPath $lib) {
+        try {
+            . $lib
+            $r = Update-RootShortcuts -Root $RetroBatRoot -WizardName $driveName
+            Say ""
+            foreach ($k in @($r.Results.Keys | Sort-Object)) {
+                Say ("  icon       {0}   {1}" -f $k, $r.Results[$k]) 'DarkGray'
+            }
+            if ($r.Problem -ne '') { Say ("  icons: " + $r.Problem) 'Yellow' }
+        }
+        catch { Say ("  the icons could not be redone: " + $_.Exception.Message) 'Yellow' }
+    }
 }
 
 Say ""

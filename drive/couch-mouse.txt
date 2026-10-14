@@ -1,0 +1,27 @@
+; ===========================================================================
+;  THE COUCH MOUSE - which games turn the controller into a mouse
+; ===========================================================================
+;  While one of these is running, the controller drives the mouse: left
+;  stick moves it, A clicks, B right-clicks, right stick scrolls, D-pad is
+;  the arrow keys, X is Space, Y is Enter. pushing in the left stick switches
+;  it off and on during a game. SELECT + START still quits.
+;
+;  One console per line, named like its folder in roms\. A line with a dot
+;  in it is ONE GAME by its file name instead (handy for a shortcut on the
+;  Windows shelf, e.g. Monkey Quest Reborn.lnk). Put a ; in front of a line
+;  to switch it off. Delete this file to switch the couch mouse off
+;  completely.
+;
+;  Browser games (on the Windows shelf) always get it, and so does any game
+;  file with the words "couch mouse = on" in it.
+;
+;  ScummVM is not here on purpose: RetroBat's ScummVM already moves the
+;  cursor with the stick by itself, and two mice would fight.
+;
+;  wiiu-touch (added 2026-10-13) is special: Wii U games that need the
+;  GamePad's touch screen (Paper Mario Color Splash, LEGO City...) get the
+;  couch mouse switched OFF to start, so the controller plays the game.
+;  Push in the left stick to turn it on and tap the GamePad window, again to go back.
+; ===========================================================================
+flash
+wiiu-touch

@@ -313,10 +313,12 @@ const pic = sys => W + ((CONSOLES.find(c => c[0] === sys) || [0, 0, "pc"])[2]) +
 function esc(s) { return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function card(g) {
   const files = g.files || [];
-  const mb = (files.reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
+  // A game over 2 GB (3.0.0) has no files, only "parts" that the wizard
+  // downloads in pieces and joins; they count toward the size the same way.
+  const mb = (files.concat(g.parts || []).reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
   // A private file (2026-10-11) is listed by name only: it downloads from the
   // wizard's Games tab, never from here.
-  const priv = files.some(f => String(f.url || "").startsWith("private:"));
+  const priv = (g.parts || []).length > 0 || files.some(f => String(f.url || "").startsWith("private:"));
   const get = priv ? `<span class="note">Get it in the wizard: Games tab</span>`
     : files.map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
   // Box art comes from the uploader (library/art/<id>.png). No art: the console icon.
@@ -329,7 +331,9 @@ function card(g) {
 // One short row per game for the Compact view: small art, the name, one line.
 function row(g, i) {
   const files = g.files || [];
-  const mb = (files.reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
+  // A game over 2 GB (3.0.0) has no files, only "parts" that the wizard
+  // downloads in pieces and joins; they count toward the size the same way.
+  const mb = (files.concat(g.parts || []).reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
   const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
     : `<img class="fallback" src="${pic(g.system)}" alt="">`;
   const line = (g.players ? esc(g.players) + " players &middot; " : "") + mb + " MB" + (g.description ? " &middot; " + esc(g.description) : "");

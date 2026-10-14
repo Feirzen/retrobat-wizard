@@ -30,12 +30,21 @@
     which uploads the file and updates library.json by itself. The
     library-to-publish functions below are the older by-hand route.
 
+    PRIVATE FILES (2026-10-11). A file whose url is "private:<name>" lives
+    in the PRIVATE repo's "library" release, not on the open internet. Only
+    a wizard can fetch it: it asks GitHub for that release with the shared
+    friends key (SocialEngine.ps1, Get-SocialToken) and downloads the file
+    by name. The list stays public so the website can show what is there.
+
     ASCII ONLY, Windows PowerShell 5.1. Every root is a parameter. Test hook:
         $script:LibFetchOverride   { param($Url, $OutFile) ... }
 #>
 
 $script:LibRepo  = 'Feirzen/retrobat-wizard'
 $script:LibFetchOverride = $null
+# Where SocialEngine.ps1 is, for the friends key that private files need.
+# Taken when this file is dot-sourced; inside a function it can be wrong.
+$script:LibScriptsDir = $PSScriptRoot
 # The order consoles are offered in when a file could be several: this
 # drive's own focus first.
 $script:LibPreferred = @('nes', 'snes', 'n64', 'gb', 'gbc', 'gba', 'nds', '3ds', 'gamecube', 'wii', 'wiiu',
@@ -186,12 +195,41 @@ function Add-LibGameFile([string]$File, $System, $Progress = $null) {
 # ---------------------------------------------------------------------------
 #  The online library
 # ---------------------------------------------------------------------------
-function Invoke-LibFetch([string]$Url, [string]$OutFile) {
+function Invoke-LibFetch([string]$Url, [string]$OutFile, [string]$Ws = '') {
     if ($null -ne $script:LibFetchOverride) { & $script:LibFetchOverride $Url $OutFile; return }
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
     $old = $ProgressPreference; $ProgressPreference = 'SilentlyContinue'
-    try { Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -TimeoutSec 600 -ErrorAction Stop }
+    try {
+        if ($Url -like 'private:*') { Get-LibPrivateFile $Ws $Url.Substring(8) $OutFile }
+        else { Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -TimeoutSec 600 -ErrorAction Stop }
+    }
     finally { $ProgressPreference = $old }
+}
+
+# One file from the private repo's "library" release. Throws with plain
+# words when it cannot, which Install-LibGame shows as it is.
+#   1. the friends key, from social\social-token.txt
+#   2. the release, to find the file's number by its name
+#   3. the file itself, asked for as raw bytes. GitHub answers with a short
+#      redirect to its file store; Windows drops the key on that hop by
+#      itself, which is what the file store wants.
+function Get-LibPrivateFile([string]$Ws, [string]$Name, [string]$OutFile) {
+    if (-not (Get-Command Get-SocialToken -ErrorAction SilentlyContinue)) {
+        $se = Join-LibPath ([string]$script:LibScriptsDir) 'SocialEngine.ps1'
+        if (-not (Test-Path -LiteralPath $se)) { throw 'the friends part of the wizard is missing (SocialEngine.ps1)' }
+        . $se
+    }
+    $key = Get-SocialToken $Ws
+    if ($key -eq '') { throw 'this drive has no friends key, which private library games need' }
+    $repo = Get-SocialRepo $Ws
+    $h = @{ Authorization = "Bearer $key"; Accept = 'application/vnd.github+json'; 'X-GitHub-Api-Version' = '2022-11-28' }
+    $rel = Invoke-WebRequest -Uri "https://api.github.com/repos/$repo/releases/tags/library" -Headers $h -UseBasicParsing -TimeoutSec 60 -ErrorAction Stop
+    $c = $rel.Content
+    if ($c -is [byte[]]) { $c = [System.Text.Encoding]::UTF8.GetString($c) }
+    $asset = @((([string]$c) | ConvertFrom-Json).assets | Where-Object { $null -ne $_ -and [string]$_.name -eq $Name })
+    if ($asset.Count -eq 0) { throw 'that game is not in the private library any more' }
+    $h.Accept = 'application/octet-stream'
+    Invoke-WebRequest -Uri ([string]$asset[0].url) -Headers $h -OutFile $OutFile -UseBasicParsing -TimeoutSec 3600 -ErrorAction Stop
 }
 
 function Get-LibCacheDir([string]$Ws) { return (Join-LibPath $Ws 'library') }
@@ -230,9 +268,23 @@ function Get-LibCatalog([string]$Ws) {
             $fn = [string]$f.name
             $u = [string]$f.url
             if ($fn -eq '' -or $fn -match '[\\/:*?"<>|]' -or $fn -match '^\.') { $bad = $true; break }
-            if ($u -notmatch '^https://(raw\.githubusercontent\.com|github\.com)/') { $bad = $true; break }
+            if ($u -notmatch '^https://(raw\.githubusercontent\.com|github\.com)/' -and $u -notmatch '^private:[A-Za-z0-9._\-]{1,200}$') { $bad = $true; break }
             if ([string]$f.sha256 -notmatch '^[0-9a-f]{64}$') { $bad = $true; break }
             $files += [pscustomobject]@{ Name = $fn; Url = $u; Size = [long]$f.size; Sha = [string]$f.sha256 }
+        }
+        # A game too big for one GitHub file comes in pieces (2026-10-13):
+        # shown and installed as ONE file, glued back together on download.
+        if (-not $bad -and $files.Count -eq 0 -and $null -ne $g.parts) {
+            $pn = [string]$g.parts.name
+            $pieces = @()
+            foreach ($pc in @($g.parts.pieces)) {
+                $u = [string]$pc.url
+                if ($u -notmatch '^https://(raw\.githubusercontent\.com|github\.com)/' -and $u -notmatch '^private:[A-Za-z0-9._\-]{1,200}$') { $bad = $true; break }
+                if ([string]$pc.sha256 -notmatch '^[0-9a-f]{64}$') { $bad = $true; break }
+                $pieces += [pscustomobject]@{ Url = $u; Size = [long]$pc.size; Sha = [string]$pc.sha256 }
+            }
+            if ($pn -eq '' -or $pn -match '[\\/:*?"<>|]' -or $pn -match '^\.' -or [string]$g.parts.sha256 -notmatch '^[0-9a-f]{64}$' -or $pieces.Count -lt 2) { $bad = $true }
+            if (-not $bad) { $files += [pscustomobject]@{ Name = $pn; Url = ''; Size = [long]$g.parts.size; Sha = [string]$g.parts.sha256; Pieces = $pieces } }
         }
         if ($bad -or $files.Count -eq 0) { continue }
         [void]$games.Add([pscustomobject]@{
@@ -243,7 +295,32 @@ function Get-LibCatalog([string]$Ws) {
             Description = (([string]$g.description) -replace '[^\x20-\x7E]', '').Trim()
             Files = $files
             Size = [long](($files | Measure-Object -Property Size -Sum).Sum)
+            ArtRel = $(if ([string]$g.art -match '^library/art/[a-z0-9\-]{1,40}\.(png|jpg|gif|webp)$') { [string]$g.art } else { '' })
+            Art = ''
         })
+    }
+    # Box art (2026-10-12, Steven: "box art there, small"): each picture is
+    # fetched once into library\art\ and fetched again after a week, in case
+    # it was replaced. Offline, the copy already here is used. A picture that
+    # cannot be had just means the console's picture shows instead.
+    $artDir = Join-LibPath $dir 'art'
+    foreach ($gm in $games) {
+        if ($gm.ArtRel -eq '') { continue }
+        try {
+            if (-not (Test-Path -LiteralPath $artDir)) { [void](New-Item -ItemType Directory -Path $artDir -Force) }
+            $leaf = $gm.ArtRel.Substring(12)
+            $local = Join-LibPath $artDir $leaf
+            $fresh = (Test-Path -LiteralPath $local) -and ((Get-Item -LiteralPath $local).LastWriteTime -gt (Get-Date).AddDays(-7))
+            if (-not $fresh -and -not $res.FromCache) {
+                $part = $local + '.part'
+                try {
+                    Invoke-LibFetch ('https://raw.githubusercontent.com/{0}/main/{1}?t={2}' -f $script:LibRepo, $gm.ArtRel, [DateTime]::UtcNow.Ticks) $part
+                    if ((Get-Item -LiteralPath $part).Length -gt 0 -and (Get-Item -LiteralPath $part).Length -le 3MB) { Move-Item -LiteralPath $part -Destination $local -Force }
+                } catch { }
+                if (Test-Path -LiteralPath $part) { Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue }
+            }
+            if (Test-Path -LiteralPath $local) { $gm.Art = $local }
+        } catch { }
     }
     $res.Ok = $true
     $res.Games = @($games | Sort-Object System, Title)
@@ -262,6 +339,46 @@ function Test-LibGameInstalled($Game, $Systems) {
     return $true
 }
 
+# Downloads every piece of a split game (each checked against its own
+# fingerprint; a piece already downloaded and correct is kept, so a stopped
+# download carries on), glues them in order into $OutFile, and deletes each
+# piece as soon as it is glued, so the drive never needs room for much more
+# than the game itself. The whole file is checked by the caller.
+function Join-LibPieces([string]$Ws, $File, [string]$Dir, [string]$OutFile) {
+    $res = @{ Ok = $false; Message = '' }
+    $paths = @()
+    $i = 0
+    foreach ($pc in @($File.Pieces)) {
+        $i++
+        $pp = Join-LibPath $Dir ('{0}.piece{1:D2}' -f $File.Name, $i)
+        $good = (Test-Path -LiteralPath $pp) -and ((Get-Item -LiteralPath $pp).Length -eq $pc.Size) -and ((Get-LibHash $pp) -eq $pc.Sha)
+        if (-not $good) {
+            try { Invoke-LibFetch $pc.Url $pp $Ws }
+            catch { $res.Message = ('The download stopped on piece {0}: {1}' -f $i, $_.Exception.Message); return $res }
+            if ((Get-Item -LiteralPath $pp).Length -ne $pc.Size -or (Get-LibHash $pp) -ne $pc.Sha) {
+                Remove-Item -LiteralPath $pp -Force
+                $res.Message = ('Piece {0} of {1} did not match its checksum, so it was not added.' -f $i, $File.Name)
+                return $res
+            }
+        }
+        $paths += $pp
+    }
+    try {
+        $out = [System.IO.File]::Create($OutFile)
+        try {
+            $buf = New-Object byte[] (4MB)
+            foreach ($pp in $paths) {
+                $in = [System.IO.File]::OpenRead($pp)
+                try { while (($n = $in.Read($buf, 0, $buf.Length)) -gt 0) { $out.Write($buf, 0, $n) } } finally { $in.Close() }
+                Remove-Item -LiteralPath $pp -Force -ErrorAction SilentlyContinue
+            }
+        } finally { $out.Close() }
+    }
+    catch { $res.Message = 'Putting the pieces back together failed: ' + $_.Exception.Message; return $res }
+    $res.Ok = $true
+    return $res
+}
+
 # Downloads a library game, checks every file, then moves it into place.
 # Returns @{ Ok; Message }.
 function Install-LibGame([string]$Ws, $Game, $Systems) {
@@ -273,8 +390,14 @@ function Install-LibGame([string]$Ws, $Game, $Systems) {
     $ready = @()
     foreach ($f in $Game.Files) {
         $tmp = Join-LibPath $dl ($f.Name + '.part')
-        try { Invoke-LibFetch $f.Url $tmp }
+        if ($null -ne $f.PSObject.Properties['Pieces'] -and @($f.Pieces).Count -gt 0) {
+            $j = Join-LibPieces $Ws $f $dl $tmp
+            if (-not $j.Ok) { $res.Message = $j.Message; return $res }
+        }
+        else {
+        try { Invoke-LibFetch $f.Url $tmp $Ws }
         catch { $res.Message = 'The download stopped: ' + $_.Exception.Message; return $res }
+        }
         if ((Get-Item -LiteralPath $tmp).Length -ne $f.Size -or (Get-LibHash $tmp) -ne $f.Sha) {
             Remove-Item -LiteralPath $tmp -Force
             $res.Message = "$($f.Name) did not match its checksum, so it was not added."
@@ -325,19 +448,32 @@ function New-LibPublishEntry([string]$Ws, [string]$File, [string]$System, [strin
     return $res
 }
 
-# What gamelist.xml already knows about a game: name, players, description.
+# What RetroBat already knows about a game (its gamelist.xml): name, players,
+# description, and its box art (Art: a full path, or '' when there is none).
+# Works for games in sub-folders too (2026-10-11, for the multi-upload).
 function Get-LibGamelistInfo($System, [string]$File) {
-    $out = @{ Title = [System.IO.Path]::GetFileNameWithoutExtension($File); Players = ''; Description = '' }
+    $out = @{ Title = [System.IO.Path]::GetFileNameWithoutExtension($File); Players = ''; Description = ''; Art = '' }
     $gl = Join-LibPath $System.Folder 'gamelist.xml'
     if (-not (Test-Path -LiteralPath $gl)) { return $out }
     try {
         [xml]$x = [System.IO.File]::ReadAllText($gl)
         $want = './' + [System.IO.Path]::GetFileName($File)
+        $base = ([string]$System.Folder).TrimEnd('\', '/')
+        if ($File.Length -gt $base.Length -and $File.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $want = './' + ($File.Substring($base.Length).TrimStart('\', '/') -replace '\\', '/')
+        }
         foreach ($g in @($x.gameList.game)) {
-            if ([string]$g.path -eq $want) {
+            if ($null -eq $g) { continue }
+            if (([string]$g.path -replace '\\', '/') -eq $want) {
                 if ($g.name) { $out.Title = [string]$g.name }
                 if ($g.players) { $out.Players = [string]$g.players }
                 if ($g.desc) { $out.Description = [string]$g.desc }
+                foreach ($k in @('image', 'thumbnail')) {
+                    $rel = [string]$g.$k
+                    if ($rel -eq '') { continue }
+                    $full = $(if ($rel.StartsWith('./') -or $rel.StartsWith('.\')) { Join-LibPath $System.Folder $rel.Substring(2) } else { $rel })
+                    if (Test-Path -LiteralPath $full) { $out.Art = $full; break }
+                }
                 break
             }
         }

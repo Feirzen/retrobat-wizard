@@ -58,7 +58,9 @@ param(
     [switch]$Setup,
     # -Pad: opened by SELECT + START on a controller (PadWatch.ps1). Opens
     # full screen with the controller hints showing. Added 2026-09-23.
-    [switch]$Pad
+    [switch]$Pad,
+    # -Tab: open on this tab (the helper's Join opens 'netplay'). 2026-10-12.
+    [string]$Tab = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -109,6 +111,16 @@ Add-Type -AssemblyName PresentationFramework
 #  It is Topmost because it is worth nothing behind another window, and
 #  ShowInTaskbar is off because it is not a thing you switch to.
 # ---------------------------------------------------------------------------
+# The theme is read FIRST (v3, 2026-10-14) so even the loading splash is
+# light or dark to match (Steven: "the launch loading image should match the
+# theme"). The full explanation is at "LIGHT, DARK, OR FOLLOW WINDOWS" below.
+try { . (Join-Path (Split-Path $PSScriptRoot -Parent) 'scripts\Theme.ps1') } catch { }
+function Get-SplashColour([string]$hex) {
+    try {
+        if (Get-Command Convert-ThemeHex -ErrorAction SilentlyContinue) { $hex = Convert-ThemeHex $hex }
+        return [System.Windows.Media.ColorConverter]::ConvertFromString($hex)
+    } catch { return [System.Windows.Media.Colors]::Black }
+}
 $script:splash = $null
 
 function Show-Splash {
@@ -125,10 +137,8 @@ function Show-Splash {
         $w.SizeToContent = 'WidthAndHeight'
 
         $b = New-Object System.Windows.Controls.Border
-        $b.Background = New-Object System.Windows.Media.SolidColorBrush(
-            [System.Windows.Media.Color]::FromRgb(27, 27, 34))
-        $b.BorderBrush = New-Object System.Windows.Media.SolidColorBrush(
-            [System.Windows.Media.Color]::FromRgb(58, 58, 72))
+        $b.Background = New-Object System.Windows.Media.SolidColorBrush((Get-SplashColour '#FF1B1B22'))
+        $b.BorderBrush = New-Object System.Windows.Media.SolidColorBrush((Get-SplashColour '#FFB8902E'))
         $b.BorderThickness = New-Object System.Windows.Thickness(2)
         $b.Padding = New-Object System.Windows.Thickness(34, 26, 34, 22)
 
@@ -162,8 +172,7 @@ function Show-Splash {
             $t.FontSize = 22
             $t.FontWeight = 'Bold'
             $t.HorizontalAlignment = 'Center'
-            $t.Foreground = New-Object System.Windows.Media.SolidColorBrush(
-                [System.Windows.Media.Color]::FromRgb(232, 232, 236))
+            $t.Foreground = New-Object System.Windows.Media.SolidColorBrush((Get-SplashColour '#FFE8E8EC'))
             [void]$stack.Children.Add($t)
         }
 
@@ -172,8 +181,7 @@ function Show-Splash {
         $sub.FontSize = 13
         $sub.Margin = New-Object System.Windows.Thickness(0, 14, 0, 0)
         $sub.HorizontalAlignment = 'Center'
-        $sub.Foreground = New-Object System.Windows.Media.SolidColorBrush(
-            [System.Windows.Media.Color]::FromRgb(154, 160, 170))
+        $sub.Foreground = New-Object System.Windows.Media.SolidColorBrush((Get-SplashColour '#FF9AA0AA'))
         [void]$stack.Children.Add($sub)
 
         $b.Child = $stack
@@ -403,8 +411,257 @@ $ColBg     = '#FF1B1B22'; $ColPanel = '#FF23232C'; $ColText = '#FFE8E8EC'
 $ColDim    = '#FF9AA0AA'
 $StatusColour = @{ ok = '#FF2FA84F'; warn = '#FFE5B83B'; bad = '#FFE0524D'; unknown = '#FF777777' }
 
+# ===========================================================================
+#  LIGHT, DARK, OR FOLLOW WINDOWS (v3, 2026-10-13) - scripts\Theme.ps1
+# ===========================================================================
+#  One shared file so every window on the drive matches. If it is missing,
+#  everything simply stays dark, exactly as the wizard always looked.
+$script:WizTheme = 'dark'
+try { . (Join-Path (Split-Path $PSScriptRoot -Parent) 'scripts\Theme.ps1') } catch { }
+if (-not (Get-Command Convert-ThemeHex -ErrorAction SilentlyContinue)) {
+    function Convert-ThemeHex([string]$hex) { return $hex }
+    function Convert-ThemeXaml([string]$Xaml) { return $Xaml }
+    function Get-WizThemeMode { return 'dark' }
+    function Set-WizThemeMode([string]$Mode) { }
+}
+
+# ===========================================================================
+#  THE SHARED LOOK (v3 polish, 2026-10-14)
+# ===========================================================================
+#  Steven: text boxes "charcoal and gold instead of drab grey", "nicer scroll
+#  bars (oval floating) everywhere", Saves "golden". These are IMPLICIT
+#  styles - they dress every TextBox, PasswordBox, ScrollBar, list row and
+#  plain Button without anything having to ask for them - and they live in
+#  the WPF application's resources, so the little question boxes match the
+#  main window. A button or box that names its own Style keeps it.
+#  Passed through Convert-ThemeXaml like the window, so light mode works.
+#  If any of it fails to load, every control simply keeps the stock look.
+$script:SharedStylesXaml = @'
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style TargetType="TextBox">
+    <Setter Property="Background" Value="#FF1A1820"/>
+    <Setter Property="Foreground" Value="#FFF0EBDD"/>
+    <Setter Property="BorderBrush" Value="#FF8A6D24"/>
+    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="CaretBrush" Value="#FFE5B83B"/>
+    <Setter Property="SelectionBrush" Value="#FFE5B83B"/>
+    <Setter Property="Padding" Value="6,4"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="TextBox">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" SnapsToDevicePixels="True">
+            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" Focusable="False"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFB8902E"/></Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Bd" Property="Opacity" Value="0.5"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style TargetType="PasswordBox">
+    <Setter Property="Background" Value="#FF1A1820"/>
+    <Setter Property="Foreground" Value="#FFF0EBDD"/>
+    <Setter Property="BorderBrush" Value="#FF8A6D24"/>
+    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="CaretBrush" Value="#FFE5B83B"/>
+    <Setter Property="SelectionBrush" Value="#FFE5B83B"/>
+    <Setter Property="Padding" Value="6,4"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="PasswordBox">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" SnapsToDevicePixels="True">
+            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" Focusable="False"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFB8902E"/></Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="GoldThumb" TargetType="Thumb">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Thumb">
+          <Border x:Name="T" CornerRadius="4" Background="#B3B8902E" Margin="2"/>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="T" Property="Background" Value="#FFE5B83B"/></Trigger>
+            <Trigger Property="IsDragging" Value="True"><Setter TargetName="T" Property="Background" Value="#FFF2CF6A"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="ClearRepeat" TargetType="RepeatButton">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="IsTabStop" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value>
+    </Setter>
+  </Style>
+  <Style TargetType="ScrollBar">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Width" Value="11"/>
+    <Setter Property="MinWidth" Value="11"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ScrollBar">
+          <Grid Background="Transparent">
+            <Track x:Name="PART_Track" IsDirectionReversed="True">
+              <Track.DecreaseRepeatButton><RepeatButton Style="{StaticResource ClearRepeat}" Command="ScrollBar.PageUpCommand"/></Track.DecreaseRepeatButton>
+              <Track.Thumb><Thumb Style="{StaticResource GoldThumb}" MinHeight="24"/></Track.Thumb>
+              <Track.IncreaseRepeatButton><RepeatButton Style="{StaticResource ClearRepeat}" Command="ScrollBar.PageDownCommand"/></Track.IncreaseRepeatButton>
+            </Track>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="Orientation" Value="Horizontal">
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="Height" Value="11"/>
+        <Setter Property="MinHeight" Value="11"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="ScrollBar">
+              <Grid Background="Transparent">
+                <Track x:Name="PART_Track">
+                  <Track.DecreaseRepeatButton><RepeatButton Style="{StaticResource ClearRepeat}" Command="ScrollBar.PageLeftCommand"/></Track.DecreaseRepeatButton>
+                  <Track.Thumb><Thumb Style="{StaticResource GoldThumb}" MinWidth="24"/></Track.Thumb>
+                  <Track.IncreaseRepeatButton><RepeatButton Style="{StaticResource ClearRepeat}" Command="ScrollBar.PageRightCommand"/></Track.IncreaseRepeatButton>
+                </Track>
+              </Grid>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+  <Style TargetType="ListBoxItem">
+    <Setter Property="Padding" Value="8,5"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ListBoxItem">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="3,0,0,0"
+                  Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="#FF2C2A36"/></Trigger>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="#FF3A3222"/>
+              <Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style TargetType="Button">
+    <Setter Property="Background" Value="#FF2A2733"/>
+    <Setter Property="Foreground" Value="#FFEDE6D6"/>
+    <Setter Property="BorderBrush" Value="#FF6B5526"/>
+    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="Padding" Value="10,4"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Padding="{TemplateBinding Padding}"
+                  SnapsToDevicePixels="True">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/>
+              <Setter TargetName="Bd" Property="Background" Value="#FF34303F"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="#FF3D3424"/>
+              <Setter TargetName="Bd" Property="RenderTransform"><Setter.Value><TranslateTransform Y="1"/></Setter.Value></Setter>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Bd" Property="Opacity" Value="0.45"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- Fold-up sections: a gold arrow that turns, no grey circle
+       (Steven, 2026-10-14). -->
+  <Style TargetType="Expander">
+    <Setter Property="Foreground" Value="#FFE8E8EC"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Expander">
+          <DockPanel>
+            <ToggleButton x:Name="Hd" DockPanel.Dock="Top" Cursor="Hand" HorizontalAlignment="Stretch"
+                          Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType="ToggleButton">
+                  <Border x:Name="B" Background="Transparent" Padding="4,4" CornerRadius="3">
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock x:Name="Arrow" Text="&#x203A;" Foreground="#FFE5B83B" FontSize="20" FontWeight="Bold" Width="14"
+                                 VerticalAlignment="Center" TextAlignment="Center" RenderTransformOrigin="0.5,0.5" Margin="0,-4,8,0"/>
+                      <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                      <Setter TargetName="Arrow" Property="RenderTransform"><Setter.Value><RotateTransform Angle="90"/></Setter.Value></Setter>
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="B" Property="Background" Value="#FF2C2A36"/></Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="B" Property="Background" Value="#FF2C2A36"/></Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+            </ToggleButton>
+            <ContentPresenter x:Name="Body" Visibility="Collapsed" Margin="0,4,0,0"/>
+          </DockPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsExpanded" Value="True"><Setter TargetName="Body" Property="Visibility" Value="Visible"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+</ResourceDictionary>
+'@
+
+function Initialize-SharedStyles {
+    if ($script:sharedStylesDone) { return }
+    $script:sharedStylesDone = $true
+    try {
+        $app = [System.Windows.Application]::Current
+        if ($null -eq $app) {
+            $app = New-Object System.Windows.Application
+            # Never let the application object close anything by itself; the
+            # wizard decides when it is finished, exactly as before.
+            $app.ShutdownMode = 'OnExplicitShutdown'
+        }
+        $dict = [System.Windows.Markup.XamlReader]::Parse((Convert-ThemeXaml $script:SharedStylesXaml))
+        [void]$app.Resources.MergedDictionaries.Add($dict)
+        Log 'new look: shared styles ready'
+    }
+    catch { Log ('new look: shared styles could not load, stock look kept - ' + $_.Exception.Message) }
+}
+Initialize-SharedStyles
+
 function New-Brush([string]$hex) {
-    (New-Object System.Windows.Media.BrushConverter).ConvertFromString($hex)
+    (New-Object System.Windows.Media.BrushConverter).ConvertFromString((Convert-ThemeHex $hex))
 }
 
 function New-Text([string]$text, [string]$colour, [double]$size, [bool]$bold = $false) {
@@ -421,6 +678,7 @@ function Show-Choice([string]$Title, [string]$Message, [string[]]$Buttons) {
     # Nothing should ever have to be read from behind the loading splash.
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 480; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -470,6 +728,7 @@ function Show-PlaceToggles([string]$Title, [string]$Message, [string[]]$Current)
     Close-Splash
 
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 500; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -554,6 +813,7 @@ function Update-PlaceNote {
 function Show-ListPick([string]$Title, [string]$Message, [string[]]$Items) {
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 540; $w.Height = 480
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -610,11 +870,68 @@ function Show-ListPick([string]$Title, [string]$Message, [string[]]$Items) {
     return $script:pickResult
 }
 
+# A list of tick boxes (Admin tab, Remove games, 2026-10-11). $Ticked says
+# which start ticked. Returns the ticked positions (an empty list when none),
+# or $null for Cancel. Script scope for the handlers, as above.
+function Show-CheckPick([string]$Title, [string]$Message, [string[]]$Items, [bool[]]$Ticked, [string]$OkText) {
+    Close-Splash
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $Title; $w.Width = 560; $w.Height = 500
+    $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
+    $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel
+    $dp.Margin = '20'
+    $msg = New-Text $Message $ColText 14
+    $msg.Margin = '0,0,0,12'
+    [System.Windows.Controls.DockPanel]::SetDock($msg, 'Top')
+    [void]$dp.Children.Add($msg)
+    $row = New-Object System.Windows.Controls.StackPanel
+    $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,14,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($row, 'Bottom')
+    $script:checkOk = $false
+    $script:checkWin = $w
+    $list = New-Object System.Windows.Controls.StackPanel
+    $script:checkBoxes = @()
+    $i = 0
+    foreach ($it in @($Items)) {
+        $cb = New-Object System.Windows.Controls.CheckBox
+        $cb.Content = [string]$it; $cb.Foreground = (New-Brush $ColText); $cb.FontSize = 14; $cb.Margin = '0,4,0,4'
+        $cb.IsChecked = ($null -ne $Ticked -and $i -lt $Ticked.Count -and $Ticked[$i])
+        [void]$list.Children.Add($cb)
+        $script:checkBoxes += $cb
+        $i++
+    }
+    $sv = New-Object System.Windows.Controls.ScrollViewer
+    $sv.VerticalScrollBarVisibility = 'Auto'; $sv.Content = $list
+    foreach ($pair in @(@('Cancel', 'x'), @($OkText, 'ok'))) {
+        $b = New-Object System.Windows.Controls.Button
+        $b.Content = $pair[0]; $b.Margin = '8,0,0,0'; $b.Padding = '16,7'; $b.FontSize = 14
+        $b.Tag = $pair[1]
+        $b.Add_Click({ param($s, $e) $script:checkOk = ([string]$s.Tag -eq 'ok'); $script:checkWin.Close() })
+        [void]$row.Children.Add($b)
+    }
+    [void]$dp.Children.Add($row)
+    [void]$dp.Children.Add($sv)
+    $w.Content = $dp
+    [void]$w.ShowDialog()
+    if (-not $script:checkOk) { return $null }
+    $picked = New-Object System.Collections.ArrayList
+    for ($k = 0; $k -lt $script:checkBoxes.Count; $k++) { if ($script:checkBoxes[$k].IsChecked) { [void]$picked.Add($k) } }
+    return ,([int[]]$picked.ToArray())
+}
+
 # --- engines ----------------------------------------------------------------
 . (Join-Path $ScriptsDir 'ProfileEngine.ps1')
 # The saves engine, shared with SaveBackups\Browse My Saves.bat so that button
 # and this window can never disagree about what counts as a game.
 . (Join-Path $ScriptsDir 'SaveIndex.ps1')
+# The save-state rules (the sweep, "Jump in here", the auto-save timer), shared
+# with the game-end hook and the watcher. 2026-10-11.
+$script:saveStatesOk = $false
+if (Test-Path -LiteralPath (Join-Path $ScriptsDir 'SaveStates.ps1')) {
+    try { . (Join-Path $ScriptsDir 'SaveStates.ps1'); $script:saveStatesOk = $true } catch { }
+}
 # Works out what a game code really is, and finds its box art, from the game
 # files and gamelist.xml files already on this drive.
 . (Join-Path $ScriptsDir 'GameNames.ps1')
@@ -652,6 +969,28 @@ function Invoke-Step([string]$ScriptName, [string]$FriendlyName, [hashtable]$Nam
     # step that dies is a failed step, not a dead window.
     $out  = ''
     $code = 0
+    if ((Get-Command Test-CanWorkInBackground -ErrorAction SilentlyContinue) -and (Test-CanWorkInBackground)) {
+        # 2026-10-12: with the window open the step runs beside it, so the
+        # window keeps moving (see "STAYING ALIVE WHILE WORKING").
+        Enter-Working $FriendlyName
+        try {
+            $r = Invoke-InBackground $script:StepRunner @($p, $NamedArgs)
+            if ($null -eq $r) { $code = 1; Log ("step '$FriendlyName' gave no answer") }
+            else {
+                $out = [string]$r.Out; $code = $r.Code
+                if ([string]$r.Err -ne '') { Log ("step '$FriendlyName' threw: {0}" -f $r.Err) }
+            }
+        }
+        catch {
+            $code = 1
+            Log ("step '$FriendlyName' could not run beside the window: {0}" -f $_.Exception.Message)
+        }
+        finally { Exit-Working }
+        if ($null -eq $code) { $code = 0 }
+        Log ("step '$FriendlyName' finished, exit code {0}" -f $code)
+        if ($out) { Log ($out.TrimEnd()) }
+        return $code
+    }
     try {
         $out  = & $p @NamedArgs *>&1 | Out-String
         $code = $LASTEXITCODE
@@ -682,6 +1021,7 @@ function Invoke-UpdateRepair([string]$newVersion) {
     # This has a progress window of its own, which says more than the splash.
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $WizardName; $w.Width = 470; $w.Height = 150
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -780,9 +1120,192 @@ function Resolve-ProfileQuestions {
 }
 
 # --- the Play flow ----------------------------------------------------------
+# ===========================================================================
+#  WHO'S PLAYING?                                                (2026-10-12)
+# ===========================================================================
+#  Steven: "an optional window, just like Steam, where you can select which
+#  profile to log in as when you hit PLAY ... without needing a password
+#  after you've already put it in before, except maybe after a month or two
+#  ... continue without logging in, and a little incognito toggle ... Maybe
+#  you can toggle it off so it just stays logged in always."
+#
+#  Shown by PLAY when the drive knows at least one profile and the switch
+#  (profile\picker.ini, also on the Profile tab) is on. Everybody who has
+#  logged in here gets a tile. Picking somebody else puts the current person
+#  away and brings theirs back (Enter-SocialPerson), with their own
+#  switches, favourites and hidden games. A password is asked only when it
+#  has not been typed on this drive for 60 days. Incognito lasts this
+#  session only. Closing the window cancels PLAY.
+#
+#  Returns 'play' (carry on), 'cancel' (do not start), or 'wizard' (somebody
+#  new: open the Profile tab instead).
+# ---------------------------------------------------------------------------
+function Show-WhoIsPlaying {
+    if (-not $script:socialOk) { return 'play' }
+    try { if (-not (Get-SocialAskWho $Ws)) { return 'play' } } catch { return 'play' }
+    $cur = $null
+    try { $cur = Read-SocialProfile $Ws } catch { }
+    if ($null -eq $cur) { return 'play' }   # nobody has ever chosen on this drive yet
+    # keep the login list's picture in step with the profile's (it keeps the trust date)
+    if (-not $cur.Guest) { try { Add-SocialLogin $Ws $cur } catch { } }
+    $people = @()
+    try { $people = @(Get-SocialLogins $Ws) } catch { }
+    if (-not $cur.Guest -and @($people | Where-Object { $_.Id -eq $cur.Id }).Count -eq 0) {
+        $people = @([pscustomobject]@{ Id = $cur.Id; Username = $cur.Username; Avatar = $cur.Avatar; Trusted = '' }) + $people
+    }
+    if ($people.Count -eq 0) { return 'play' }
+
+    Close-Splash
+    $script:whoAnswer = 'cancel'
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = "Who's playing?"; $w.Width = 700; $w.SizeToContent = 'Height'
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.ResizeMode = 'NoResize'
+    $w.Topmost = $true
+    $script:whoWin = $w
+    $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '28,22,28,22'
+    $t = New-Text "Who's playing?" $ColText 26 $true; $t.HorizontalAlignment = 'Center'
+    [void]$sp.Children.Add($t)
+
+    $wp = New-Object System.Windows.Controls.WrapPanel; $wp.HorizontalAlignment = 'Center'; $wp.Margin = '0,18,0,6'
+    $first = $null
+    foreach ($p in $people) {
+        if ([string]$p.Avatar -like 'custom:*' -and -not ((-not $cur.Guest) -and $cur.Id -eq $p.Id)) { try { [void](Get-SocialAvatarFile $Ws $p) } catch { } }
+        $b = New-Object System.Windows.Controls.Button
+        $b.Width = 132; $b.Height = 150; $b.Margin = '8'; $b.Tag = $p.Id; $b.Cursor = 'Hand'
+        $here = (-not $cur.Guest) -and $cur.Id -eq $p.Id
+        $b.Background = (New-Brush $(if ($here) { '#FF2A3A2E' } else { '#FF262636' }))
+        $b.BorderBrush = (New-Brush $(if ($here) { $ColOnline } else { '#FF3A3A50' })); $b.BorderThickness = '2'
+        $bs = New-Object System.Windows.Controls.StackPanel; $bs.HorizontalAlignment = 'Center'
+        # The picture: the profile's own (2026-10-12 fix, Steven: "it's still
+        # using a gameboy instead of the wizard image I chose"). The login list
+        # can hold an old picture, so the person's own profile wins: the live
+        # one for whoever is logged in, their put-away copy for anyone else.
+        $face = $p
+        try {
+            if ($here) { $face = $cur }
+            else { $pc = Read-SocialPersonCopy $Ws $p.Id; if ($null -ne $pc) { $face = $pc } }
+        } catch { }
+        $av = New-SocialAvatar $face 80 $here; $av.Margin = '0,4,0,8'; $av.HorizontalAlignment = 'Center'
+        if ($null -eq $av.Source -and [string]$face.Avatar -like 'custom:*') {
+            try {
+                $own = Join-Path (Get-SocialPersonDir $Ws $p.Id) 'avatar.png'
+                $bmp = Get-PixelBitmap $own
+                if ($null -ne $bmp) { $av.Source = $bmp }
+            } catch { }
+        }
+        [void]$bs.Children.Add($av)
+        $n = New-Text $p.Username $ColText 15 $true; $n.HorizontalAlignment = 'Center'; $n.TextWrapping = 'NoWrap'; $n.TextTrimming = 'CharacterEllipsis'; $n.MaxWidth = 120
+        [void]$bs.Children.Add($n)
+        if ($here) { $h = New-Text 'logged in' $ColOnline 11; $h.HorizontalAlignment = 'Center'; [void]$bs.Children.Add($h) }
+        $b.Content = $bs
+        $b.Add_Click({ param($s2, $e2) Invoke-WhoPick ([string]$s2.Tag) })
+        [void]$wp.Children.Add($b)
+        if ($null -eq $first -or $here) { $first = $b }
+    }
+    [void]$sp.Children.Add($wp)
+
+    $script:whoIncog = New-Object System.Windows.Controls.CheckBox
+    $script:whoIncog.Content = 'Incognito: show me as offline this time'
+    $script:whoIncog.Foreground = (New-Brush $ColText); $script:whoIncog.FontSize = 14; $script:whoIncog.HorizontalAlignment = 'Center'; $script:whoIncog.Margin = '0,8,0,0'
+    $script:whoIncog.ToolTip = 'You still log in as yourself. Friends see you as offline until you close RetroBat and the wizard.'
+    [void]$sp.Children.Add($script:whoIncog)
+
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Center'; $row.Margin = '0,18,0,0'
+    $g = New-Object System.Windows.Controls.Button; $g.Content = 'Continue without logging in'; $g.Padding = '14,7'; $g.FontSize = 14; $g.Margin = '0,0,10,0'
+    $g.Add_Click({ Invoke-WhoGuest })
+    $o = New-Object System.Windows.Controls.Button; $o.Content = 'Someone else...'; $o.Padding = '14,7'; $o.FontSize = 14
+    $o.ToolTip = 'Log in or make a profile on the wizard''s Profile tab'
+    $o.Add_Click({ $script:whoAnswer = 'wizard'; $script:whoWin.Close() })
+    [void]$row.Children.Add($g); [void]$row.Children.Add($o)
+    [void]$sp.Children.Add($row)
+
+    $ask = New-Object System.Windows.Controls.CheckBox
+    $ask.Content = 'Ask every time I press PLAY'; $ask.IsChecked = $true
+    $ask.Foreground = (New-Brush $ColDim); $ask.FontSize = 12; $ask.HorizontalAlignment = 'Center'; $ask.Margin = '0,16,0,0'
+    $ask.ToolTip = 'Off: PLAY goes straight in as whoever is logged in. Turn it back on from the Profile tab.'
+    $ask.Add_Click({ param($s2, $e2) try { Set-SocialAskWho $Ws ([bool]$s2.IsChecked); Log ("who's playing: ask = {0}" -f [bool]$s2.IsChecked) } catch { } })
+    [void]$sp.Children.Add($ask)
+
+    $w.Content = $sp
+    $w.Add_Loaded({ try { $script:whoWin.Topmost = $false; $script:whoWin.Activate() } catch { } })
+    if ($null -ne $first) { try { [void]$first.Focus() } catch { } }
+    [void]$w.ShowDialog()
+    Log ("who's playing: {0}" -f $script:whoAnswer)
+    return $script:whoAnswer
+}
+
+function Invoke-WhoPick([string]$Id) {
+    $cur = Read-SocialProfile $Ws
+    $incog = [bool]$script:whoIncog.IsChecked
+    if ($null -ne $cur -and -not $cur.Guest -and $cur.Id -eq $Id) {
+        try { Set-SocialIncognito $Ws $incog } catch { }
+        $script:whoAnswer = 'play'; $script:whoWin.Close(); return
+    }
+    # what this drive knows, and what is online (when there is internet)
+    $saved = $null
+    try { $saved = Read-SocialPersonCopy $Ws $Id } catch { }
+    $rec = $null
+    $old = [System.Windows.Input.Mouse]::OverrideCursor
+    [System.Windows.Input.Mouse]::OverrideCursor = [System.Windows.Input.Cursors]::Wait
+    try {
+        $all = Get-SocialPlayers $Ws
+        if ($all.Ok) { $rec = @($all.Players | Where-Object { $null -ne $_ -and $_.Id -eq $Id }) | Select-Object -First 1 }
+    } catch { }
+    finally { [System.Windows.Input.Mouse]::OverrideCursor = $old }
+    if ($null -eq $saved -and $null -eq $rec) {
+        [void](Show-Choice "Who's playing?" "That profile has not been used on this drive since this switcher arrived, so it needs the internet once to log in, and GitHub could not be reached.`n`nTry again when you are online, or pick someone else." @('OK'))
+        return
+    }
+    $hash = $(if ($null -ne $rec) { [string]$rec.Pw } else { [string]$saved.Pw })
+    $name = $(if ($null -ne $rec) { $rec.Username } else { $saved.Username })
+    $typed = $false
+    if ($hash -ne '' -and -not (Test-SocialLoginTrusted $Ws $Id)) {
+        $pw = Show-PasswordDialog "Who's playing?" ("Password for {0}:`n`nAsked every 60 days on this drive." -f $name) $false
+        if ($null -eq $pw) { return }
+        if ((Get-SocialPasswordHash $Id $pw) -ne $hash) { [void](Show-Choice "Who's playing?" 'That password is not right.' @('OK')); return }
+        $typed = $true
+    }
+    $prof = Enter-SocialPerson $Id $rec $typed
+    if ($null -eq $prof) { [void](Show-Choice "Who's playing?" 'That did not work. Details are in wizard.log.' @('OK')); return }
+    try { Set-SocialIncognito $Ws $incog } catch { }
+    Log ("who's playing: switched to {0}{1}" -f $prof.Username, $(if ($incog) { ' (incognito)' } else { '' }))
+    $script:whoAnswer = 'play'
+    $script:whoWin.Close()
+}
+
+# Guest for this session: the person is put away (their own copy waits in
+# profile\people\) and nothing about anybody is sent.
+function Invoke-WhoGuest {
+    try {
+        $cur = Read-SocialProfile $Ws
+        if ($null -ne $cur -and -not $cur.Guest) {
+            try {
+                $gone = [pscustomobject]@{ State = 'offline'; InGame = $false; Game = ''; Console = ''; Since = '' }
+                [void](Publish-SocialRecord $Ws $cur $gone $WizardVersion)
+            } catch { }
+            try { Add-SocialLogin $Ws $cur } catch { }
+            [void](Save-SocialPersonCopy $Ws)
+            Clear-SocialInvite $Ws
+        }
+        Set-SocialIncognito $Ws $false
+        [void](Save-SocialProfile ([pscustomobject]@{ Guest = $true }))
+        Log "who's playing: continuing without logging in"
+    } catch { Log ("who's playing: guest - {0}" -f $_.Exception.Message) }
+    $script:whoAnswer = 'play'
+    $script:whoWin.Close()
+}
+
 function Start-PlayFlow {
     Log '--- Play flow ---'
     if (Test-RetroBatRunning) { Log 'RetroBat already running, nothing to do'; Close-Splash; return }
+
+    # Who's playing? (2026-10-12) - first, so everything after it, the
+    # netplay name included, is about the person who picked.
+    $who = 'play'
+    try { $who = Show-WhoIsPlaying } catch { Log ("who's playing: {0}" -f $_.Exception.Message); $who = 'play' }
+    if ($who -eq 'cancel') { Log 'PLAY cancelled at Who''s playing'; return }
+    if ($who -eq 'wizard') { Show-MainWindow $null 'profile'; return }
 
     # RetroBat update detection
     $cur = Get-RetroBatVersion
@@ -914,6 +1437,57 @@ function Start-PlayFlow {
         }
         catch { Log ('netplay: could not set the name - ' + $_.Exception.Message) }
     }
+
+    # --- the "Launch game?" screen on every console (2026-10-12) -------------
+    #  Steven: "the launch game marker is NOT working on flash or Xbox". The
+    #  list only reached RetroBat when RUN THIS AFTER AN UPDATE ran. Now it is
+    #  checked here every time (scripts\LaunchMenu.ps1): it reads two small
+    #  files and writes only when an emulator is missing, so a RetroBat update
+    #  that replaces es_savestates.cfg is put right by the next PLAY. Honours
+    #  the 'launchmenu' switch; it can never stop the launch.
+    try {
+        $lmLib = Join-Path $ScriptsDir 'LaunchMenu.ps1'
+        if (Test-Path -LiteralPath $lmLib) {
+            . $lmLib
+            $lmOn = $true
+            if ($script:featuresOk) { try { $lmOn = [bool](Test-Feature $Root 'launchmenu') } catch { $lmOn = $true } }
+            $lm = Update-LaunchMenu -Root $Root -On $lmOn
+            if (@($lm.Added).Count + @($lm.Removed).Count -gt 0 -or -not $lm.Ok) { Log ('launch menu: ' + $lm.Message) }
+        }
+    }
+    catch { Log ('launch menu: could not check - ' + $_.Exception.Message) }
+
+    # --- the Wii U "Wii Remotes or Pro Controller?" question (v3) -----------
+    #  The question lives in system\scripts\wiiu-launch.vbs (put back from
+    #  update-restore when missing) and in RetroBat's Wii U launch line in
+    #  es_systems.cfg. A drive that got v3 through the updater, or whose
+    #  RetroBat was just updated, has neither yet, so PLAY checks both every
+    #  time and runs Fix-Portability (quietly) only when the line is wrong.
+    try {
+        $wuVbs = Join-Path $Root 'system\scripts\wiiu-launch.vbs'
+        $wuMaster = Join-Path $Ws 'update-restore\system\scripts\wiiu-launch.vbs'
+        if (-not (Test-Path -LiteralPath $wuVbs) -and (Test-Path -LiteralPath $wuMaster)) {
+            Copy-Item -LiteralPath $wuMaster -Destination $wuVbs -Force
+            Log 'wiiu chooser: launcher put back from update-restore'
+        }
+        $wuOn = $true
+        $featIni = Join-Path $Ws 'features.ini'
+        if (Test-Path -LiteralPath $featIni) { foreach ($fl in [System.IO.File]::ReadAllLines($featIni)) { if ($fl -match '^\s*wiiuchooser\s*=\s*off\b') { $wuOn = $false } } }
+        $esSys = Join-Path $Root 'emulationstation\.emulationstation\es_systems.cfg'
+        if (Test-Path -LiteralPath $esSys) {
+            $esText = [System.IO.File]::ReadAllText($esSys)
+            $wm = [regex]::Match($esText, '(?s)<system>(?:(?!</system>).)*?<name>wiiu</name>.*?<command>(.*?)</command>')
+            $hasIt = ($wm.Success -and $wm.Groups[1].Value -match 'wiiu-launch\.vbs')
+            if ($wm.Success -and ($hasIt -ne ($wuOn -and (Test-Path -LiteralPath $wuVbs)))) {
+                $fp = Join-Path $ScriptsDir 'Fix-Portability.ps1'
+                if (Test-Path -LiteralPath $fp) {
+                    $null = & $fp -Quiet *>&1
+                    Log 'wiiu chooser: Wii U launch line brought in step'
+                }
+            }
+        }
+    }
+    catch { Log ('wiiu chooser: could not check - ' + $_.Exception.Message) }
 
     Log 'launching RetroBat'
     Close-Splash
@@ -1201,6 +1775,7 @@ function Show-FeaturePicker {
     $cur = @{}
     try { $cur = Get-Features $Root } catch { }
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $WizardName; $w.Width = 600; $w.Height = 560
     $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
     $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
@@ -1248,6 +1823,7 @@ function Invoke-SetupWork($Work, [string[]]$Places) {
     Close-Splash
 
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $WizardName; $w.Width = 520; $w.Height = 160
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -1358,6 +1934,7 @@ $script:padRepeatAt   = [DateTime]::MinValue
 $script:padHintsShown = $false
 $script:padFading     = $false
 $script:padClickTarget = $null
+$script:padDialogTimer = $false
 
 # The glowing box, and a few things PowerShell cannot do comfortably itself:
 # which of our windows is in front, the first thing on a page that can be
@@ -1383,17 +1960,39 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
+// The controller highlight. v3 (Steven, 2026-10-14): "an amber glow,
+// rippling like magic". A steady amber ring with a soft glow, and one fainter
+// ring that keeps rippling outwards and fading. Phase runs 0 to 1 forever.
 public class RBPadRing : Adorner
 {
+    public static readonly DependencyProperty PhaseProperty = DependencyProperty.Register(
+        "Phase", typeof(double), typeof(RBPadRing),
+        new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
+    public double Phase { get { return (double)GetValue(PhaseProperty); } set { SetValue(PhaseProperty, value); } }
+
     public RBPadRing(UIElement e) : base(e) { IsHitTestVisible = false; }
+
+    public void StartRipple()
+    {
+        DoubleAnimation a = new DoubleAnimation(0.0, 1.0, new Duration(TimeSpan.FromSeconds(1.5)));
+        a.RepeatBehavior = RepeatBehavior.Forever;
+        BeginAnimation(PhaseProperty, a);
+    }
+
     protected override void OnRender(DrawingContext dc)
     {
         Rect r = new Rect(AdornedElement.RenderSize);
-        Rect outer = r; outer.Inflate(5, 5);
-        Rect inner = r; inner.Inflate(2, 2);
-        dc.DrawRectangle(null, new Pen(new SolidColorBrush(Color.FromArgb(110, 111, 195, 255)), 6), outer);
-        dc.DrawRectangle(null, new Pen(new SolidColorBrush(Color.FromRgb(191, 234, 255)), 3), inner);
+        double p = Phase;
+        Rect glow = r; glow.Inflate(4, 4);
+        dc.DrawRoundedRectangle(null, new Pen(new SolidColorBrush(Color.FromArgb(70, 255, 184, 59)), 8), glow, 6, 6);
+        Rect ring = r; ring.Inflate(2, 2);
+        dc.DrawRoundedRectangle(null, new Pen(new SolidColorBrush(Color.FromRgb(255, 200, 90)), 2.5), ring, 4, 4);
+        double g = 3 + 9 * p;
+        Rect rip = r; rip.Inflate(g, g);
+        byte al = (byte)(150 * (1 - p));
+        dc.DrawRoundedRectangle(null, new Pen(new SolidColorBrush(Color.FromArgb(al, 255, 214, 120)), 2), rip, 5 + g, 5 + g);
     }
 }
 
@@ -1422,6 +2021,7 @@ public static class RBPadUi
         ring = new RBPadRing(e);
         ringOn = e;
         l.Add(ring);
+        ring.StartRipple();
         FrameworkElement fe = e as FrameworkElement;
         if (fe != null) fe.BringIntoView();
     }
@@ -1638,6 +2238,10 @@ function Initialize-PadNav {
         if (-not (Test-Path -LiteralPath $dll) -and $script:padShortcutOk) { $dll = Join-Path (Get-PadFolder) 'SDL2.dll' }
         if (-not [RBPad]::Init($dll)) { Log ("pad: controller library would not start - " + [RBPad]::LastError); return }
 
+        # A timer started for boxes before the window existed stops here; the
+        # window's own one takes over.
+        if ($null -ne $script:padTimer) { try { $script:padTimer.Stop() } catch { }; $script:padTimer = $null }
+        $script:padDialogTimer = $false
         $script:padUiOk = Initialize-PadUi
         Initialize-PadGlyphs
         $script:win.Add_SizeChanged({ if ($script:padBumpersPlaced) { Update-PadBumpers } })
@@ -1695,6 +2299,8 @@ function Initialize-PadGlyphs {
 # never jump back and forth.
 $script:padBumpersPlaced = $false
 function Update-PadBumpers {
+    # v3: the tab strip is hidden, so there is nothing to put LB / RB beside.
+    return
     try {
         if (-not $script:padUiOk -or $null -eq $script:bumperL -or $null -eq $script:bumperR) { return }
         if ($null -eq $script:bumperL.Source) { return }
@@ -1822,22 +2428,67 @@ function Move-PadFocus($w, [string]$dir) {
     if ($script:padUiOk) { [RBPadUi]::ShowRing($cur) }
 }
 
+# The pad's work is queued on the window's dispatcher. Before the main window
+# exists (setup, the Play checks) or after it closed, that is this thread's.
+function Get-PadDispatcher {
+    if ($null -ne $script:win) { return $script:win.Dispatcher }
+    return [System.Windows.Threading.Dispatcher]::CurrentDispatcher
+}
+
+# A CONTROLLER IN THE BOXES THAT COME BEFORE OR AFTER THE MAIN WINDOW
+# (2026-10-11). Setup's questions, the Play checks ("fix it or play anyway?")
+# and the boxes after Play is pressed all appear with no main window open,
+# and the controller only started with the main window - so they could only
+# be answered with a mouse (Steven: "random popups ... arent controllable").
+# Every dialog now calls this first. With the main window's controller
+# already running it does nothing; otherwise it starts the same controller
+# reading, the same timer and the same motion, just without the main window.
+# It can never be the problem: every step is wrapped.
+function Start-PadForDialogs {
+    try {
+        if ($null -ne $script:padTimer) { return }
+        if (-not $script:motionOk) { Initialize-Motion }
+        $lib = Join-Path $ScriptsDir 'PadInput.ps1'
+        if (-not (Test-Path -LiteralPath $lib)) { return }
+        if (-not ([System.Management.Automation.PSTypeName]'RBPad').Type -or $null -eq $script:PadBit) { . $lib }
+        $dll = Join-Path $Root 'emulationstation\SDL2.dll'
+        if (-not (Test-Path -LiteralPath $dll) -and $script:padShortcutOk) { $dll = Join-Path (Get-PadFolder) 'SDL2.dll' }
+        if (-not [RBPad]::Init($dll)) { return }
+        if (-not $script:padUiOk) { $script:padUiOk = Initialize-PadUi }
+        $t = New-Object System.Windows.Threading.DispatcherTimer
+        $t.Interval = [TimeSpan]::FromMilliseconds(40)
+        $t.Add_Tick({ try { Invoke-PadTick } catch { } })
+        $t.Start()
+        $script:padTimer = $t
+        $script:padDialogTimer = $true
+        Log 'pad: controller ready for the boxes (no main window)'
+    }
+    catch { Log ("pad: boxes - " + $_.Exception.Message) }
+}
+
 function Step-PadTab([int]$d) {
     $n = $script:tabs.Items.Count
     if ($n -lt 1) { return }
-    $script:tabs.SelectedIndex = (($script:tabs.SelectedIndex + $d) % $n + $n) % $n
-    [void]$script:win.Dispatcher.BeginInvoke([action]{ Set-PadFocus (Get-PadDefault $script:win) }, [System.Windows.Threading.DispatcherPriority]::Loaded)
+    # v3: LB / RB step through the AREAS on the rail, in rail order.
+    $areas = @('play', 'games', 'profile', 'netplay', 'saves', 'settings', 'help')
+    if ($null -ne $script:adminTab) { $areas += 'admin' }
+    $cur = Get-RailArea
+    $i = [array]::IndexOf($areas, $cur); if ($i -lt 0) { $i = 0 }
+    $i = (($i + $d) % $areas.Count + $areas.Count) % $areas.Count
+    $script:tabs.SelectedIndex = (Get-TabIndex $areas[$i])
+    [void](Get-PadDispatcher).BeginInvoke([action]{ Set-PadFocus (Get-PadDefault $script:win) }, [System.Windows.Threading.DispatcherPriority]::Loaded)
 }
 
 # A press that opens a question box must not happen INSIDE the timer tick,
 # so buttons are pressed a moment later, on their own.
 function Invoke-PadClickLater($el) {
     $script:padClickTarget = $el
-    [void]$script:win.Dispatcher.BeginInvoke([action]{
+    [void](Get-PadDispatcher).BeginInvoke([action]{
         try {
             $t = $script:padClickTarget
             $script:padClickTarget = $null
             if ($null -eq $t) { return }
+            if ($script:motionOk) { try { [RBMotion]::Pulse($t) } catch { } }
             if ($script:padUiOk) { [void][RBPadUi]::Click($t) }
             else { $t.RaiseEvent((New-Object System.Windows.RoutedEventArgs([System.Windows.Controls.Primitives.ButtonBase]::ClickEvent))) }
         } catch { Log ("pad: press failed - " + $_.Exception.Message) }
@@ -1851,6 +2502,16 @@ function Invoke-PadSelect($w) {
         Set-PadFocus (Get-PadDefault $w); return
     }
     if ($el -is [System.Windows.Controls.Primitives.ButtonBase]) { Invoke-PadClickLater $el; return }
+    # A text box: the controller keyboard, opened a moment later, outside the
+    # timer tick, like any other box that waits for an answer.
+    if (($el -is [System.Windows.Controls.TextBox] -and -not $el.IsReadOnly) -or $el -is [System.Windows.Controls.PasswordBox]) {
+        $script:padKbOpen = $el
+        [void](Get-PadDispatcher).BeginInvoke([action]{
+            $t = $script:padKbOpen; $script:padKbOpen = $null
+            if ($null -ne $t) { Show-PadKeyboard $t }
+        }, [System.Windows.Threading.DispatcherPriority]::Input)
+        return
+    }
     if ($el -is [System.Windows.Controls.ComboBoxItem]) {
         $cb = [System.Windows.Controls.ItemsControl]::ItemsControlFromItemContainer($el)
         if ($null -ne $cb) {
@@ -1866,7 +2527,7 @@ function Invoke-PadSelect($w) {
             # Put the highlight on the choice that is already picked, so
             # up / down walks the list and A picks one.
             $script:padOpenCombo = $el
-            [void]$script:win.Dispatcher.BeginInvoke([action]{
+            [void](Get-PadDispatcher).BeginInvoke([action]{
                 $cb = $script:padOpenCombo
                 if ($null -eq $cb) { return }
                 $i = [math]::Max(0, $cb.SelectedIndex)
@@ -1883,7 +2544,7 @@ function Invoke-PadSelect($w) {
         # whole list to reach it. B brings it back to the game.
         $lb = [System.Windows.Controls.ItemsControl]::ItemsControlFromItemContainer($el)
         if ($null -ne $lb -and $lb -eq $script:saveListBox -and $null -ne $script:saveDetail) {
-            [void]$script:win.Dispatcher.BeginInvoke([action]{
+            [void](Get-PadDispatcher).BeginInvoke([action]{
                 $first = $null
                 if ($script:padUiOk) { $first = [RBPadUi]::FirstFocusable($script:saveDetail) }
                 if ($null -ne $first) { Set-PadFocus $first }
@@ -1920,7 +2581,12 @@ function Invoke-PadBack($w) {
         Set-PadFocus $script:saveListBox
         return
     }
-    if ($script:tabs.SelectedIndex -ne 0) { Step-PadTab (0 - $script:tabs.SelectedIndex) }
+    # v3: B goes up one level - a Settings page back to Settings, anything
+    # else back to Home.
+    if ($script:tabs.SelectedIndex -ne 0) {
+        if (@('features', 'machine', 'health') -contains (Get-RailArea)) { Show-Area 'settings' } else { Show-Area 'play' }
+        [void](Get-PadDispatcher).BeginInvoke([action]{ Set-PadFocus (Get-PadDefault $script:win) }, [System.Windows.Threading.DispatcherPriority]::Loaded)
+    }
     else { Set-PadFocus $script:playButton }
 }
 
@@ -1941,7 +2607,28 @@ function Invoke-PadTick {
     $now = [DateTime]::UtcNow
 
     if ($script:padHintsShown -and -not $script:padFading -and ($now - $script:padLastInput).TotalSeconds -gt 6) { Hide-PadHints }
+
+    # MOUSE MODE (L3) runs every tick, even with no button down: the stick
+    # moves the pointer long before it is pushed far enough to count as a
+    # direction. Only while one of our windows is in front.
+    if ($script:padMouse) {
+        $act = $script:win
+        if ($script:padUiOk) { $act = [RBPadUi]::ActiveWindow() }
+        if ($null -eq $act -and -not [RBMouse]::ForegroundIsOurs()) { Set-PadMouse $false; return }
+        Invoke-PadMouseTick $new $s
+        return
+    }
     if ($s -eq 0) { $script:padHeldDir = ''; return }
+
+    # A WINDOWS-DRAWN BOX OF OURS in front (the file picker for Add a game,
+    # Publish a game, a profile picture). The highlight cannot work inside
+    # it, so: L3 = mouse mode to click about in it, B = Escape (cancel).
+    if ($script:motionOk -and $script:padUiOk -and $null -eq [RBPadUi]::ActiveWindow() -and [RBMouse]::ForegroundIsOurs()) {
+        $B0 = $script:PadBit
+        if (($new -band $B0.L3) -ne 0) { Set-PadMouse $true; return }
+        if (($new -band $B0.B) -ne 0) { [RBMouse]::Tap(0x1B); return }
+        return
+    }
 
     # Only when one of OUR windows is in front.
     $active = $script:win
@@ -1968,6 +2655,14 @@ function Invoke-PadTick {
         if (($new -band $B.LB) -ne 0) { Step-PadTab -1; return }
         if (($new -band $B.RB) -ne 0) { Step-PadTab 1;  return }
     }
+    if (($new -band $B.L3) -ne 0) { Set-PadMouse $true; return }
+
+    # The controller keyboard's shortcuts.
+    if ($null -ne $script:padKbWin -and $active -eq $script:padKbWin) {
+        if (($new -band $B.X) -ne 0) { Remove-PadKbChar; return }
+        if (($new -band $B.Y) -ne 0) { Add-PadKbText ' '; return }
+        if (($new -band $B.Start) -ne 0) { $script:padKbOk = $true; $script:padKbWin.Close(); return }
+    }
 
     $dir = ''
     if     ($s -band ($B.Up    -bor $B.StickUp))    { $dir = 'Up' }
@@ -1993,7 +2688,1032 @@ function Invoke-PadTick {
 }
 
 
+# ===========================================================================
+#  MOTION                                                       (2026-10-11)
+# ---------------------------------------------------------------------------
+#  Three small touches, all in RBMotion below (C#, so they run smoothly and
+#  never trip over PowerShell's event scoping):
+#
+#    TABS      the new page glides in from the side it came from and fades
+#              up, about a fifth of a second.
+#    BUTTONS   grow a hair when the mouse is over them or the controller
+#              highlight lands on them, and squish when pressed, springing
+#              back. A button whose face is a pixel picture is left alone:
+#              pixel art only stays sharp at whole sizes.
+#    POPUPS    every question box and small window pops up from slightly
+#              smaller and fades in, instead of just appearing.
+#
+#  IT CAN NEVER BE THE PROBLEM. If the C# will not compile, nothing moves and
+#  everything works exactly as before. It also does nothing at all when
+#  Windows' own "Show animations in Windows" is switched off.
+#
+#  THE MOUSE MODE lives here too (RBMouse): press the LEFT STICK in (L3) and
+#  the stick moves the mouse pointer, A clicks, the right stick scrolls.
+#  B or L3 again goes back to moving the highlight. For the odd spot the
+#  highlight cannot reach.
+# ---------------------------------------------------------------------------
+$script:motionOk = $false
+
+function Initialize-Motion {
+    try {
+        if (-not ([System.Management.Automation.PSTypeName]'RBMotion').Type) {
+            Add-Type -AssemblyName System.Xaml
+            $refs = @(
+                [System.Windows.Window].Assembly.Location,
+                [System.Windows.UIElement].Assembly.Location,
+                [System.Windows.DependencyObject].Assembly.Location,
+                [System.Xaml.XamlReader].Assembly.Location
+            )
+            Add-Type -ReferencedAssemblies $refs -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+
+public static class RBMotion
+{
+    static Window main;
+    static bool on = true;
+    static bool installed = false;
+    static bool tabsHooked = false;
+    static int lastTab = -1;
+    const double Hover = 1.04, Press = 0.93;
+
+    public static void Install(Window w, TabControl tabs)
+    {
+        // Called once for the boxes before any main window (w and tabs null),
+        // and again when the main window opens: the second call only adds the
+        // window and its tab strip.
+        if (w != null) main = w;
+        try { on = SystemParameters.ClientAreaAnimation; } catch { on = true; }
+        if (!on) return;
+        if (installed) { HookTabs(tabs); return; }
+        installed = true;
+        EventManager.RegisterClassHandler(typeof(Button), UIElement.MouseEnterEvent, new MouseEventHandler(delegate(object s, MouseEventArgs e) { To(s as Button, Hover, 110, false); }));
+        EventManager.RegisterClassHandler(typeof(Button), UIElement.MouseLeaveEvent, new MouseEventHandler(delegate(object s, MouseEventArgs e) { Button b = s as Button; if (b != null && !b.IsKeyboardFocused) To(b, 1.0, 140, false); }));
+        EventManager.RegisterClassHandler(typeof(Button), UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(delegate(object s, KeyboardFocusChangedEventArgs e) { if (e.NewFocus == s) To(s as Button, Hover, 110, false); }));
+        EventManager.RegisterClassHandler(typeof(Button), UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(delegate(object s, KeyboardFocusChangedEventArgs e) { Button b = s as Button; if (b != null && e.OldFocus == s && !b.IsMouseOver) To(b, 1.0, 140, false); }));
+        EventManager.RegisterClassHandler(typeof(Button), UIElement.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(delegate(object s, MouseButtonEventArgs e) { To(s as Button, Press, 60, false); }), true);
+        EventManager.RegisterClassHandler(typeof(Button), UIElement.PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(delegate(object s, MouseButtonEventArgs e) { Button b = s as Button; if (b != null) To(b, b.IsMouseOver ? Hover : 1.0, 260, true); }), true);
+        EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler(delegate(object s, RoutedEventArgs e) { PopIn(s as Window); }));
+        HookTabs(tabs);
+    }
+
+    static void HookTabs(TabControl tabs)
+    {
+        if (tabs != null && !tabsHooked)
+        {
+            tabsHooked = true;
+            lastTab = tabs.SelectedIndex;
+            tabs.SelectionChanged += delegate(object s, SelectionChangedEventArgs e)
+            {
+                // A list or dropdown INSIDE a page raises this too, and bubbles
+                // it up; only the tab strip's own change counts.
+                if (e.OriginalSource != tabs) return;
+                int now = tabs.SelectedIndex;
+                SlideIn(tabs.SelectedContent as UIElement, now >= lastTab ? 1 : -1);
+                lastTab = now;
+            };
+        }
+    }
+
+    // A button's face is a pixel picture when its content is an Image (or a
+    // panel holding one). Those never scale.
+    static bool Skip(Button b)
+    {
+        if (b == null) return true;
+        object c = b.Content;
+        if (c is Image) return true;
+        Panel p = c as Panel;
+        if (p != null) foreach (UIElement k in p.Children) if (k is Image) return true;
+        return false;
+    }
+
+    // Reuses the button's own ScaleTransform once it has one. A button that
+    // already carries some OTHER transform is left alone.
+    static ScaleTransform Scale(Button b)
+    {
+        ScaleTransform st = b.RenderTransform as ScaleTransform;
+        if (st != null && !st.IsFrozen) return st;
+        Transform cur = b.RenderTransform;
+        if (cur != null && !cur.Value.IsIdentity) return null;
+        st = new ScaleTransform(1, 1);
+        b.RenderTransformOrigin = new Point(0.5, 0.5);
+        b.RenderTransform = st;
+        return st;
+    }
+
+    static void To(Button b, double to, int ms, bool spring)
+    {
+        if (!on || Skip(b)) return;
+        try
+        {
+            ScaleTransform st = Scale(b);
+            if (st == null) return;
+            DoubleAnimation a = new DoubleAnimation(to, new Duration(TimeSpan.FromMilliseconds(ms)));
+            if (spring) { BackEase be = new BackEase(); be.Amplitude = 0.6; be.EasingMode = EasingMode.EaseOut; a.EasingFunction = be; }
+            else { CubicEase ce = new CubicEase(); ce.EasingMode = EasingMode.EaseOut; a.EasingFunction = ce; }
+            st.BeginAnimation(ScaleTransform.ScaleXProperty, a);
+            st.BeginAnimation(ScaleTransform.ScaleYProperty, a);
+        }
+        catch { }
+    }
+
+    // The controller presses buttons without a mouse, so it asks for the
+    // squish and spring itself.
+    public static void Pulse(object o)
+    {
+        Button b = o as Button;
+        if (!on || Skip(b)) return;
+        try
+        {
+            ScaleTransform st = Scale(b);
+            if (st == null) return;
+            DoubleAnimationUsingKeyFrames k = new DoubleAnimationUsingKeyFrames();
+            k.KeyFrames.Add(new EasingDoubleKeyFrame(Press, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(70))));
+            BackEase be = new BackEase(); be.Amplitude = 0.6; be.EasingMode = EasingMode.EaseOut;
+            EasingDoubleKeyFrame back = new EasingDoubleKeyFrame(b.IsKeyboardFocused ? Hover : 1.0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(330)));
+            back.EasingFunction = be;
+            k.KeyFrames.Add(back);
+            st.BeginAnimation(ScaleTransform.ScaleXProperty, k);
+            st.BeginAnimation(ScaleTransform.ScaleYProperty, k);
+        }
+        catch { }
+    }
+
+    public static void SlideIn(UIElement el, int dir)
+    {
+        if (!on || el == null) return;
+        try
+        {
+            Transform old = el.RenderTransform;
+            TranslateTransform tt = new TranslateTransform(22 * dir, 0);
+            el.RenderTransform = tt;
+            CubicEase ce = new CubicEase(); ce.EasingMode = EasingMode.EaseOut;
+            DoubleAnimation x = new DoubleAnimation(22 * dir, 0, new Duration(TimeSpan.FromMilliseconds(230)));
+            x.EasingFunction = ce;
+            // Put the old transform back the moment it lands, so nothing is
+            // left half a pixel off (the pixel pictures would blur).
+            x.Completed += delegate { el.RenderTransform = old; };
+            tt.BeginAnimation(TranslateTransform.XProperty, x);
+            DoubleAnimation f = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(170)));
+            f.FillBehavior = FillBehavior.Stop;
+            el.BeginAnimation(UIElement.OpacityProperty, f);
+        }
+        catch { }
+    }
+
+    public static void PopIn(Window w)
+    {
+        if (!on || w == null || w == main) return;
+        try
+        {
+            FrameworkElement root = w.Content as FrameworkElement;
+            if (root == null) return;
+            Transform old = root.RenderTransform;
+            Point oldO = root.RenderTransformOrigin;
+            ScaleTransform st = new ScaleTransform(0.94, 0.94);
+            root.RenderTransformOrigin = new Point(0.5, 0.5);
+            root.RenderTransform = st;
+            BackEase be = new BackEase(); be.Amplitude = 0.35; be.EasingMode = EasingMode.EaseOut;
+            DoubleAnimation a = new DoubleAnimation(0.94, 1.0, new Duration(TimeSpan.FromMilliseconds(220)));
+            a.EasingFunction = be;
+            a.Completed += delegate { root.RenderTransform = old; root.RenderTransformOrigin = oldO; };
+            st.BeginAnimation(ScaleTransform.ScaleXProperty, a);
+            st.BeginAnimation(ScaleTransform.ScaleYProperty, a);
+            DoubleAnimation f = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(160)));
+            f.FillBehavior = FillBehavior.Stop;
+            root.BeginAnimation(UIElement.OpacityProperty, f);
+        }
+        catch { }
+    }
+}
+
+public static class RBMouse
+{
+    [StructLayout(LayoutKind.Sequential)] struct PT { public int X; public int Y; }
+    [DllImport("user32.dll")] static extern bool GetCursorPos(out PT p);
+    [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+    [DllImport("user32.dll")] static extern void mouse_event(uint f, uint dx, uint dy, int data, UIntPtr extra);
+
+    static double fx, fy;
+    static bool have = false;
+
+    // lx, ly: the stick, -32768..32767. Moves the pointer a little each tick,
+    // slowly near the middle and fast at the edge, so it can be both precise
+    // and quick.
+    public static void Move(int lx, int ly, double scale)
+    {
+        PT p;
+        if (!GetCursorPos(out p)) return;
+        if (!have || Math.Abs(p.X - fx) > 2 || Math.Abs(p.Y - fy) > 2) { fx = p.X; fy = p.Y; have = true; }
+        fx += Speed(lx) * scale; fy += Speed(ly) * scale;
+        SetCursorPos((int)Math.Round(fx), (int)Math.Round(fy));
+    }
+
+    static double Speed(int v)
+    {
+        double a = Math.Abs(v) / 32767.0;
+        if (a < 0.18) return 0;
+        a = (a - 0.18) / 0.82;
+        return Math.Sign(v) * (1.0 + a * a * 21.0);
+    }
+
+    [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+    [DllImport("user32.dll")] static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
+
+    // Is the window in front one of THIS program's, even a Windows-drawn one
+    // such as the file picker (which the WPF check cannot see)?
+    public static bool ForegroundIsOurs()
+    {
+        IntPtr h = GetForegroundWindow();
+        if (h == IntPtr.Zero) return false;
+        uint pid; GetWindowThreadProcessId(h, out pid);
+        return pid == (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+    }
+
+    public static void Tap(byte vk) { keybd_event(vk, 0, 0, UIntPtr.Zero); keybd_event(vk, 0, 2, UIntPtr.Zero); }
+
+    public static void Click()  { mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero); mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero); }
+    public static void Wheel(bool down) { mouse_event(0x0800, 0, 0, down ? -60 : 60, UIntPtr.Zero); }
+    public static void Reset() { have = false; }
+}
+'@
+        }
+        [RBMotion]::Install($script:win, $script:tabs)
+        $script:motionOk = $true
+        Log ("motion: ready{0}" -f $(if ([System.Windows.SystemParameters]::ClientAreaAnimation) { '' } else { ' (Windows has animations switched off, so nothing moves)' }))
+    }
+    catch { Log ("motion: off - " + $_.Exception.Message) }
+}
+
+# --- mouse mode -------------------------------------------------------------
+$script:padMouse = $false
+
+function Set-PadMouse([bool]$On) {
+    if (-not $script:motionOk) { return }
+    $script:padMouse = $On
+    try {
+        if ($On) {
+            if ($script:padUiOk) { [RBPadUi]::HideRing() }
+            [RBMouse]::Reset()
+            if ($null -ne $script:padMouseNote) { $script:padMouseNote.Visibility = 'Visible' }
+            Log 'pad: mouse mode on'
+        }
+        else {
+            if ($null -ne $script:padMouseNote) { $script:padMouseNote.Visibility = 'Collapsed' }
+            $f = Get-PadFocused
+            if ($null -ne $f -and $script:padUiOk) { [RBPadUi]::ShowRing($f) }
+            Log 'pad: mouse mode off'
+        }
+    } catch { }
+}
+
+# Called from Invoke-PadTick while mouse mode is on. Returns nothing; the
+# tick stops after it.
+function Invoke-PadMouseTick([int]$New, [int]$State) {
+    $B = $script:PadBit
+    if (($New -band ($B.B -bor $B.L3)) -ne 0) { Set-PadMouse $false; return }
+    try {
+        $scale = [math]::Max(1.0, (Get-DpiScale))
+        [RBMouse]::Move([RBPad]::LX, [RBPad]::LY, $scale)
+        if (($New -band $B.A) -ne 0) { [RBMouse]::Click() }
+        if ($State -band ($B.RStickUp -bor $B.RStickDown)) { [RBMouse]::Wheel((($State -band $B.RStickDown) -ne 0)) }
+    } catch { }
+}
+
+# ===========================================================================
+#  SCROLLING, AND STAYING ALIVE WHILE WORKING                   (2026-10-12)
+# ---------------------------------------------------------------------------
+#  Steven: "scrolling goes WAY faster than necessary" and "when I click for
+#  it to work on something, it all freezes ... someone else will think it's
+#  broken."
+#
+#  SCROLLING. WPF scrolls a page the same 48 pixels for EVERY wheel message,
+#  however small. A laptop touchpad sends dozens of small ones per swipe, so
+#  the page flew. RBQol scrolls by how far the wheel actually turned instead
+#  (Factor pixels per unit, 120 units a notch = about 36 pixels), and passes
+#  the scroll out to the page around a list once the list hits its end.
+#  Lists that scroll a whole row at a time (dropdowns, the Saves list) keep
+#  their own scrolling.
+#
+#  WORKING. Every repair, apply and backup goes through Invoke-Step, which
+#  used to run the script right here and freeze the window until it was
+#  done. Now, while the window is open, the script runs in a second runspace
+#  and the window keeps drawing: the WORKING bar shows at the top with a
+#  moving bar, the tabs can still be looked through and scrolled, and every
+#  button in the main window that would start something else is held back
+#  (RBQol.Busy) with a "one thing at a time" nudge. Question boxes and small
+#  windows are separate windows and are never held back. The code that
+#  pressed the button still waits for the answer, exactly as before, so
+#  nothing that came after a step has to change.
+#
+#  IT CAN NEVER BE THE PROBLEM. If the C# will not compile, the scrolling is
+#  WPF's own and Invoke-Step runs the old way.
+# ---------------------------------------------------------------------------
+$script:qolOk = $false
+$script:busyDepth = 0
+$script:busyLabel = ''
+$script:busyTimer = $null
+$script:busyBlockedSeen = 0
+$script:busyNudge = 0
+
+function Initialize-Qol {
+    if ($script:qolOk) { return }
+    try {
+        if (-not ([System.Management.Automation.PSTypeName]'RBQol').Type) {
+            Add-Type -AssemblyName System.Xaml
+            $refs = @(
+                [System.Windows.Window].Assembly.Location,
+                [System.Windows.UIElement].Assembly.Location,
+                [System.Windows.DependencyObject].Assembly.Location,
+                [System.Xaml.XamlReader].Assembly.Location
+            )
+            Add-Type -ReferencedAssemblies $refs -TypeDefinition @'
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
+
+public static class RBQol
+{
+    public static double Factor = 0.3;
+    public static bool Busy = false;
+    public static int Blocked = 0;
+    static Window main;
+    static bool installed = false;
+
+    public static void Install(Window w)
+    {
+        if (w != null) main = w;
+        if (installed) return;
+        installed = true;
+        EventManager.RegisterClassHandler(typeof(Window), UIElement.PreviewMouseWheelEvent, new MouseWheelEventHandler(OnWheel));
+        EventManager.RegisterClassHandler(typeof(Button), ButtonBase.ClickEvent, new RoutedEventHandler(OnClick));
+        EventManager.RegisterClassHandler(typeof(ToggleButton), UIElement.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(OnDown));
+        EventManager.RegisterClassHandler(typeof(ToggleButton), UIElement.PreviewKeyDownEvent, new KeyEventHandler(OnKey));
+        EventManager.RegisterClassHandler(typeof(ComboBox), UIElement.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(OnDown));
+    }
+
+    // ---- scrolling ---------------------------------------------------------
+    static void OnWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (e.Handled || e.Delta == 0) return;
+        DependencyObject d = e.OriginalSource as DependencyObject;
+        int guard = 0;
+        while (d != null && guard++ < 200)
+        {
+            ScrollViewer sv = d as ScrollViewer;
+            if (sv != null && sv.ScrollableHeight > 0 && sv.VerticalScrollBarVisibility != ScrollBarVisibility.Disabled)
+            {
+                bool up = e.Delta > 0;
+                bool can = up ? sv.VerticalOffset > 0.5 : sv.VerticalOffset < sv.ScrollableHeight - 0.5;
+                if (can)
+                {
+                    if (sv.CanContentScroll) return;   // a row-at-a-time list: its own scrolling
+                    sv.ScrollToVerticalOffset(sv.VerticalOffset - e.Delta * Factor);
+                    e.Handled = true;
+                    return;
+                }
+            }
+            d = Up(d);
+        }
+    }
+
+    static DependencyObject Up(DependencyObject d)
+    {
+        if (d is Visual || d is System.Windows.Media.Media3D.Visual3D)
+        {
+            DependencyObject p = VisualTreeHelper.GetParent(d);
+            if (p != null) return p;
+        }
+        FrameworkElement fe = d as FrameworkElement;
+        if (fe != null) return fe.Parent;
+        FrameworkContentElement fce = d as FrameworkContentElement;
+        if (fce != null) return fce.Parent;
+        return null;
+    }
+
+    // ---- one thing at a time -------------------------------------------------
+    static bool HoldBack(object s)
+    {
+        if (!Busy) return false;
+        FrameworkElement fe = s as FrameworkElement;
+        if (fe == null || main == null) return false;
+        if ("busy-ok".Equals(fe.Uid)) return false;
+        try { if (Window.GetWindow(fe) != main) return false; } catch { return false; }
+        Blocked++;
+        return true;
+    }
+
+    static void OnClick(object s, RoutedEventArgs e) { if (HoldBack(s)) e.Handled = true; }
+    static void OnDown(object s, MouseButtonEventArgs e) { if (HoldBack(s)) e.Handled = true; }
+    static void OnKey(object s, KeyEventArgs e)
+    {
+        if (e.Key != Key.Space && e.Key != Key.Enter) return;
+        if (HoldBack(s)) e.Handled = true;
+    }
+}
+'@
+        }
+        [RBQol]::Install($script:win)
+        $script:qolOk = $true
+        Log 'qol: scrolling and the working bar ready'
+    }
+    catch { Log ("qol: off - " + $_.Exception.Message) }
+}
+
+# Can a step run in the background right now? Only with the window open:
+# PLAY closes the window first, and its own progress box works as before.
+function Test-CanWorkInBackground {
+    try { return ($script:qolOk -and $null -ne $script:win -and $script:win.IsVisible) } catch { return $false }
+}
+
+function Enter-Working([string]$Label) {
+    $script:busyDepth++
+    if ($script:busyDepth -gt 1) { return }
+    $l = ([string]$Label).Trim()
+    if ($l.Length -gt 0) { $l = $l.Substring(0, 1).ToUpper() + $l.Substring(1) }
+    $script:busyLabel = $l
+    try { if ($script:qolOk) { [RBQol]::Busy = $true; $script:busyBlockedSeen = [RBQol]::Blocked } } catch { }
+    try {
+        if ($null -ne $script:workingBar) {
+            $script:workingText.Text = ('Working: {0}' -f $l)
+            $script:workingBar.Background = (New-Brush '#FF2A2440')
+            $script:workingBar.Visibility = 'Visible'
+            if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $true }
+        }
+        if ($null -eq $script:busyTimer) {
+            $script:busyTimer = New-Object System.Windows.Threading.DispatcherTimer
+            $script:busyTimer.Interval = [TimeSpan]::FromMilliseconds(250)
+            $script:busyTimer.Add_Tick({ Update-WorkingBar })
+        }
+        $script:busyNudge = 0
+        $script:busyTimer.Start()
+    } catch { }
+}
+
+function Exit-Working {
+    if ($script:busyDepth -gt 0) { $script:busyDepth-- }
+    if ($script:busyDepth -gt 0) { return }
+    try { if ($script:qolOk) { [RBQol]::Busy = $false } } catch { }
+    try {
+        if ($null -ne $script:busyTimer) { $script:busyTimer.Stop() }
+        if ($null -ne $script:workingBar) {
+            if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $false }
+            $script:workingBar.Visibility = 'Collapsed'
+        }
+    } catch { }
+}
+
+# Every quarter second while working: somebody pressed a held-back button?
+# Say so for two seconds, in a brighter bar, then go back to the label.
+function Update-WorkingBar {
+    try {
+        if ($null -eq $script:workingBar) { return }
+        $b = 0
+        if ($script:qolOk) { $b = [RBQol]::Blocked }
+        if ($b -ne $script:busyBlockedSeen) {
+            $script:busyBlockedSeen = $b
+            $script:busyNudge = 8
+            $script:workingText.Text = ('One thing at a time - still working on: {0}' -f $script:busyLabel)
+            $script:workingBar.Background = (New-Brush '#FF5A3A10')
+        }
+        elseif ($script:busyNudge -gt 0) {
+            $script:busyNudge--
+            if ($script:busyNudge -eq 0) {
+                $script:workingText.Text = ('Working: {0}' -f $script:busyLabel)
+                $script:workingBar.Background = (New-Brush '#FF2A2440')
+            }
+        }
+    } catch { }
+}
+
+# Keeps the window alive until $Handle (a BeginInvoke) is done. The same
+# thing a question box does while it waits for an answer: the window keeps
+# drawing and answering, and this line carries on afterwards.
+function Wait-Pumping($Handle) {
+    $frame = New-Object System.Windows.Threading.DispatcherFrame
+    $t = New-Object System.Windows.Threading.DispatcherTimer
+    $t.Interval = [TimeSpan]::FromMilliseconds(80)
+    $tick = { try { if ($Handle.IsCompleted) { $frame.Continue = $false } } catch { $frame.Continue = $false } }.GetNewClosure()
+    $t.Add_Tick($tick)
+    $t.Start()
+    try { [System.Windows.Threading.Dispatcher]::PushFrame($frame) }
+    finally { $t.Stop() }
+}
+
+# Runs one script file in a second runspace and waits with the window alive.
+# Returns @{ Out; Code; Err }, the same three things Invoke-Step logs.
+$script:StepRunner = @'
+param($Path, $Named)
+$ErrorActionPreference = 'Stop'
+$global:LASTEXITCODE = 0
+$out = ''; $code = 0; $err = ''
+try {
+    $out = & $Path @Named *>&1 | Out-String
+    $code = $LASTEXITCODE
+}
+catch { $code = 1; $err = $_.Exception.Message }
+if ($null -eq $code) { $code = 0 }
+[pscustomobject]@{ Out = $out; Code = $code; Err = $err }
+'@
+
+function Invoke-InBackground([string]$Code, [object[]]$ArgList) {
+    $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
+    try { $iss.ExecutionPolicy = 'Bypass' } catch { }
+    $rs = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace($iss)
+    try { $rs.ApartmentState = 'STA' } catch { }
+    $rs.Open()
+    $ps = [System.Management.Automation.PowerShell]::Create()
+    $ps.Runspace = $rs
+    try {
+        [void]$ps.AddScript($Code)
+        foreach ($a in @($ArgList)) { [void]$ps.AddArgument($a) }
+        $h = $ps.BeginInvoke()
+        Wait-Pumping $h
+        $res = @($ps.EndInvoke($h))
+        if ($ps.Streams.Error.Count -gt 0) { Log ("background: " + [string]$ps.Streams.Error[0]) }
+        if ($res.Count -eq 0) { return $null }
+        return $res[$res.Count - 1]
+    }
+    finally {
+        try { $ps.Dispose() } catch { }
+        try { $rs.Dispose() } catch { }
+    }
+}
+
+# Engine work (a function from one of the scripts\ files) with the window
+# alive. $Libs are file names in scripts\, dot-sourced in that order; $Code
+# is the text to run, with $args for the arguments.
+function Invoke-EngineWork([string]$Label, [string[]]$Libs, [string]$Code, [object[]]$ArgList = @()) {
+    $paths = @($Libs | ForEach-Object { Join-Path $ScriptsDir $_ })
+    if (-not (Test-CanWorkInBackground)) {
+        foreach ($p in $paths) { . $p }
+        return (& ([scriptblock]::Create($Code)) @ArgList)
+    }
+    $wrap = 'param($libs, $code, $rest) $ErrorActionPreference = ''Stop''; foreach ($l in $libs) { . $l }; & ([scriptblock]::Create($code)) @rest'
+    $al = @($paths, $Code, @($ArgList))
+    Enter-Working $Label
+    try { return (Invoke-InBackground $wrap $al) }
+    finally { Exit-Working }
+}
+
+# ===========================================================================
+#  TYPING WITH A CONTROLLER                                     (2026-10-11)
+# ---------------------------------------------------------------------------
+#  A on a text box (a name, a search, a password, a bug report) opens this
+#  little keyboard. Move with the D-pad, A types the key. X deletes, Y is a
+#  space, START is Done, B cancels and leaves the box as it was. Done puts
+#  the text in the box and, for a one-line box, presses Enter for you, so a
+#  search runs straight away.
+# ---------------------------------------------------------------------------
+$script:padKbWin = $null
+$script:padKbTarget = $null
+
+function Show-PadKeyboard($Target) {
+    if ($null -eq $Target) { return }
+    $isPw = $Target -is [System.Windows.Controls.PasswordBox]
+    $script:padKbPw = $isPw
+    $script:padKbText = $(if ($isPw) { [string]$Target.Password } else { [string]$Target.Text })
+    $script:padKbMax = [int]$Target.MaxLength
+    $script:padKbShift = $false
+    $script:padKbOk = $false
+    $script:padKbKeys = New-Object System.Collections.ArrayList
+
+    $w = New-Object System.Windows.Window
+    $w.Title = 'Type with the controller'; $w.SizeToContent = 'WidthAndHeight'; $w.ResizeMode = 'NoResize'
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    try { $o = [System.Windows.Window]::GetWindow($Target); if ($null -ne $o -and $o.IsVisible) { $w.Owner = $o; $w.WindowStartupLocation = 'CenterOwner' } } catch { }
+    $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '18'
+
+    $bd = New-Object System.Windows.Controls.Border
+    $bd.Background = (New-Brush $ColPanel); $bd.Padding = '12,8'; $bd.Margin = '0,0,0,10'; $bd.CornerRadius = '4'
+    $script:padKbShow = New-Text '' $ColText 20
+    $script:padKbShow.MinWidth = 560; $script:padKbShow.MinHeight = 28
+    $bd.Child = $script:padKbShow
+    [void]$sp.Children.Add($bd)
+
+    $rows = @('1234567890', 'qwertyuiop', 'asdfghjkl-', 'zxcvbnm.,@', "!?'_/:()&+")
+    foreach ($r in $rows) {
+        $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Center'
+        foreach ($ch in $r.ToCharArray()) {
+            $b = New-Object System.Windows.Controls.Button
+            $b.Content = [string]$ch; $b.Tag = [string]$ch
+            $b.Width = 50; $b.Height = 42; $b.FontSize = 17; $b.Margin = '3'
+            $b.Add_Click({ param($s, $e) Add-PadKbText ([string]$s.Content) })
+            [void]$row.Children.Add($b)
+            if ([char]::IsLetter($ch)) { [void]$script:padKbKeys.Add($b) }
+        }
+        [void]$sp.Children.Add($row)
+    }
+    $last = New-Object System.Windows.Controls.StackPanel; $last.Orientation = 'Horizontal'; $last.HorizontalAlignment = 'Center'; $last.Margin = '0,6,0,0'
+    $mk = {
+        param($text, $width, $click)
+        $b = New-Object System.Windows.Controls.Button
+        $b.Content = $text; $b.Width = $width; $b.Height = 42; $b.FontSize = 15; $b.Margin = '3'
+        $b.Add_Click($click)
+        return $b
+    }
+    [void]$last.Children.Add((& $mk 'Shift' 96 { Switch-PadKbShift }))
+    [void]$last.Children.Add((& $mk 'Space' 230 { Add-PadKbText ' ' }))
+    [void]$last.Children.Add((& $mk 'Delete' 96 { Remove-PadKbChar }))
+    $done = & $mk 'Done' 96 { $script:padKbOk = $true; $script:padKbWin.Close() }
+    $done.FontWeight = 'Bold'
+    [void]$last.Children.Add($done)
+    [void]$sp.Children.Add($last)
+    $hint = New-Text 'A types   X deletes   Y space   START done   B cancel' $ColDim 13
+    $hint.HorizontalAlignment = 'Center'; $hint.Margin = '0,10,0,0'
+    [void]$sp.Children.Add($hint)
+
+    $w.Content = $sp
+    $script:padKbWin = $w
+    $script:padKbTarget = $Target
+    Update-PadKbShow
+    $w.Add_ContentRendered({ try { $k = $script:padKbKeys[0]; if ($null -ne $k) { Set-PadFocus $k } } catch { } })
+    [void]$w.ShowDialog()
+    $script:padKbWin = $null
+
+    if ($script:padKbOk) {
+        try {
+            if ($isPw) { $Target.Password = $script:padKbText }
+            else {
+                $Target.Text = $script:padKbText
+                $Target.CaretIndex = $script:padKbText.Length
+                # Done = Enter, for a one-line box, so a search runs at once.
+                if (-not $Target.AcceptsReturn) {
+                    $src = [System.Windows.PresentationSource]::FromVisual($Target)
+                    if ($null -ne $src) {
+                        $ev = New-Object System.Windows.Input.KeyEventArgs([System.Windows.Input.Keyboard]::PrimaryDevice, $src, 0, [System.Windows.Input.Key]::Return)
+                        $ev.RoutedEvent = [System.Windows.Input.Keyboard]::KeyDownEvent
+                        $Target.RaiseEvent($ev)
+                    }
+                }
+            }
+        } catch { Log ("pad: keyboard - " + $_.Exception.Message) }
+    }
+    try { if ($Target.IsVisible) { Set-PadFocus $Target } } catch { }
+}
+
+function Update-PadKbShow {
+    if ($null -eq $script:padKbShow) { return }
+    $t = $script:padKbText
+    if ($script:padKbPw) { $t = '*' * $t.Length }
+    $script:padKbShow.Text = $t + '_'
+}
+
+function Add-PadKbText([string]$Ch) {
+    if ($script:padKbMax -gt 0 -and $script:padKbText.Length -ge $script:padKbMax) { return }
+    if ($script:padKbShift -and $Ch.Length -eq 1 -and [char]::IsLetter($Ch[0])) { $Ch = $Ch.ToUpper() }
+    $script:padKbText += $Ch
+    # Shift is for ONE letter, like a phone keyboard.
+    if ($script:padKbShift -and [char]::IsLetter($Ch[0])) { Switch-PadKbShift }
+    Update-PadKbShow
+}
+
+function Remove-PadKbChar {
+    if ($script:padKbText.Length -gt 0) { $script:padKbText = $script:padKbText.Substring(0, $script:padKbText.Length - 1) }
+    Update-PadKbShow
+}
+
+function Switch-PadKbShift {
+    $script:padKbShift = -not $script:padKbShift
+    foreach ($b in @($script:padKbKeys)) {
+        $c = [string]$b.Tag
+        $b.Content = $(if ($script:padKbShift) { $c.ToUpper() } else { $c })
+    }
+}
+
+
 # --- the main window --------------------------------------------------------
+
+# ===========================================================================
+#  THE NEW LOOK (v3, 2026-10-13): Home tiles, the side rail, Settings hub
+# ===========================================================================
+#  The pages are the old ones. What changed is how you get to them: Home is
+#  the PLAY button and four big tiles; every other page has the rail down the
+#  left. Machine, Features, Health and Help are reached from Settings.
+
+# Which rail entry a page belongs to. (v3 polish: Friends is Social.)
+$script:RailOf = @{
+    play = 'home'; games = 'games'; profile = 'social'; netplay = 'online'; saves = 'saves'
+    features = 'settings'; machine = 'settings'; health = 'settings'; settings = 'settings'
+    help = 'help'; admin = 'admin'
+}
+
+# Where the website and the change list live. Change them here and only here.
+$script:SiteUrl      = 'https://feirzen.github.io/retrobat-wizard/'
+$script:ChangelogUrl = 'https://github.com/Feirzen/retrobat-wizard/blob/main/CHANGELOG.md'
+
+function Get-RailArea {
+    try {
+        $i = [int]$script:tabs.SelectedIndex
+        if ($i -ge 0 -and $i -lt @($script:TabOrder).Count) { return [string]$script:TabOrder[$i] }
+    } catch { }
+    return 'play'
+}
+
+function Show-Area([string]$Name) {
+    try {
+        $i = Get-TabIndex $Name
+        if ($Name -ne 'play' -and $i -eq 0) { return }
+        $script:tabs.SelectedIndex = $i
+    } catch { Log ('new look: could not open ' + $Name + ' - ' + $_.Exception.Message) }
+}
+
+# ---------------------------------------------------------------------------
+#  THE ICONS (v3 polish, 2026-10-14)
+# ---------------------------------------------------------------------------
+#  wizard\icon-<name>.png is a 32 x 32 still and icon-<name>-anim.png its
+#  60-frame strip (docs\art\icons3.py). Steven's rules for when they move:
+#    the rail       the page you are on moves all the time, the rest are still
+#    Home and the   every 5 to 10 seconds one or two of them play once
+#    Settings tiles
+#  Each picture is registered with a BASE size - how many screen pixels one
+#  art pixel should be at the normal window size (1 in the rail, 2 on a tile)
+#  - and Update-PlayScale turns that into a whole number of real screen
+#  pixels at every window size, so they stay sharp.
+#  A missing icon file falls back to the old tab picture of the same idea,
+#  and a missing strip just leaves the still. Nothing here can stop a page.
+$script:artRegs   = New-Object System.Collections.ArrayList
+$script:iconLoops = @{}
+$script:IconFallback = @{
+    'icon-chest' = 'tab-saves'; 'icon-ball' = 'tab-profiles'; 'icon-mirror' = 'tab-netplay'; 'icon-potions' = 'tab-health'
+    'icon-gears' = 'tab-features'; 'icon-book' = 'tab-help'; 'icon-hearts' = 'tab-health'; 'icon-floppy' = 'tab-features'
+    'icon-key' = 'tab-admin'; 'icon-controller' = ''
+}
+
+function Register-ArtScale($Image, [double]$Base) {
+    if ($null -eq $Image) { return }
+    [void]$script:artRegs.Add(@{ Img = $Image; Base = $Base })
+}
+
+function Add-IconArt($Image, [string]$Stem, [double]$Base, [string]$Mode = 'paused') {
+    if ($null -eq $Image -or [string]::IsNullOrWhiteSpace($Stem)) { return }
+    $file = Join-Path $WizardDir ($Stem + '.png')
+    if (-not (Test-Path -LiteralPath $file) -and $script:IconFallback.ContainsKey($Stem) -and $script:IconFallback[$Stem] -ne '') {
+        $file = Join-Path $WizardDir ($script:IconFallback[$Stem] + '.png')
+    }
+    $bmp = Get-PixelBitmap $file
+    if ($null -eq $bmp) { return }
+    $Image.Source = $bmp
+    Register-ArtScale $Image $Base
+    $strip = Join-Path $WizardDir ($Stem + '-anim.png')
+    if (Test-Path -LiteralPath $strip) {
+        $before = $script:spriteLoops.Count
+        Add-SpriteLoop $Image $strip ([int]$bmp.PixelWidth) ([int]$bmp.PixelHeight) $Stem
+        if ($script:spriteLoops.Count -gt $before) {
+            $loop = $script:spriteLoops[$script:spriteLoops.Count - 1]
+            $loop.Mode = $Mode
+            $script:iconLoops[[string]$Image.GetHashCode()] = $loop
+        }
+    }
+}
+
+# 'always', 'paused' (back to frame 0 and stay), or 'once' (play through,
+# then pause). Pictures with no strip simply ignore it.
+function Set-SpriteMode($Image, [string]$Mode) {
+    if ($null -eq $Image) { return }
+    $loop = $script:iconLoops[[string]$Image.GetHashCode()]
+    if ($null -eq $loop) { return }
+    if ($Mode -eq 'once' -and [string]$loop.Mode -eq 'always') { return }
+    $loop.Mode = $Mode
+}
+
+# Every few seconds, one or two tiles on the page you are looking at play
+# their little moment once. Only Home and Settings have tiles.
+function Start-IdleTiles {
+    if ($null -ne $script:idleTimer) { return }
+    $script:idleRand = New-Object System.Random
+    $script:idleWait = 3
+    $t = New-Object System.Windows.Threading.DispatcherTimer
+    $t.Interval = [TimeSpan]::FromSeconds(1)
+    $t.Add_Tick({
+        try {
+            $script:idleWait = [int]$script:idleWait - 1
+            if ($script:idleWait -gt 0) { return }
+            $script:idleWait = $script:idleRand.Next(2, 6)   # twice as lively (Steven, 2026-10-14)
+            $area = Get-RailArea
+            $pool = $null
+            if ($area -eq 'play') { $pool = $script:homeIcons } elseif ($area -eq 'settings') { $pool = $script:hubIcons }
+            if ($null -eq $pool -or @($pool).Count -eq 0) { return }
+            $n = 1; if ($script:idleRand.Next(0, 3) -eq 0) { $n = 2 }
+            $picked = @{}
+            for ($k = 0; $k -lt $n; $k++) {
+                $ix = $script:idleRand.Next(0, @($pool).Count)
+                if ($picked.ContainsKey($ix)) { continue }
+                $picked[$ix] = $true
+                Set-SpriteMode $pool[$ix] 'once'
+            }
+        } catch { }
+    })
+    $t.Start()
+    $script:idleTimer = $t
+    if ($null -ne $script:win) { $script:win.Add_Closed({ try { $script:idleTimer.Stop() } catch { } }) }
+}
+
+function Update-Rail {
+    if ($null -eq $script:railButtons) { return }
+    try {
+        $page = Get-RailArea
+        $on = 'home'; if ($script:RailOf.ContainsKey($page)) { $on = $script:RailOf[$page] }
+        if ($null -ne $script:rail) {
+            if ($page -eq 'play') { $script:rail.Visibility = 'Collapsed' } else { $script:rail.Visibility = 'Visible' }
+        }
+        foreach ($k in @($script:railButtons.Keys)) {
+            $b = $script:railButtons[$k]
+            $img = $script:railIcons[$k]
+            if ($k -eq $on) {
+                $b.Background  = (New-Brush '#FF2E2C3A')
+                $b.BorderBrush = (New-Brush '#FFE5B83B')
+                $b.Foreground  = (New-Brush '#FFFFFFFF')
+                $b.FontWeight  = 'Bold'
+                if ($page -ne 'play') { Set-SpriteMode $img 'always' } else { Set-SpriteMode $img 'paused' }
+            } else {
+                $b.Background  = [System.Windows.Media.Brushes]::Transparent
+                $b.BorderBrush = [System.Windows.Media.Brushes]::Transparent
+                $b.Foreground  = (New-Brush '#FFC4C4CE')
+                $b.FontWeight  = 'Normal'
+                Set-SpriteMode $img 'paused'
+            }
+        }
+        if ($script:railButtons.ContainsKey('admin')) {
+            if ($null -ne $script:adminTab) { $script:railButtons['admin'].Visibility = 'Visible' }
+            else { $script:railButtons['admin'].Visibility = 'Collapsed' }
+        }
+    } catch { Log ('new look: rail - ' + $_.Exception.Message) }
+}
+
+# Choose first, THEN reload (Steven, 2026-10-14): the Theme button opens three
+# choices, and only picking one closes and reopens the window in it.
+function Switch-WizardTheme([string]$Mode = '') {
+    try {
+        if (@('system', 'light', 'dark') -notcontains $Mode) { return }
+        if ($Mode -eq (Get-WizThemeMode)) { if ($null -ne $script:themePick) { $script:themePick.Visibility = 'Collapsed' }; return }
+        Set-WizThemeMode $Mode
+        Log ('new look: theme -> ' + $Mode + ', reopening')
+        $me = $PSCommandPath; if ([string]::IsNullOrWhiteSpace($me)) { $me = Join-Path $WizardDir 'SetupWizard.ps1' }
+        $area = Get-RailArea
+        $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+        $cmd = "Start-Sleep -Milliseconds 700; & '" + $me.Replace("'", "''") + "' -Tab " + $area
+        Start-Process -FilePath $ps -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-Command', $cmd) -WindowStyle Hidden
+        $script:win.Close()
+    } catch { Log ('new look: theme switch failed - ' + $_.Exception.Message) }
+}
+
+# Windows' own controller list - the same as the controller picture on Home.
+function Open-ControllerList {
+    try { Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\control.exe') -ArgumentList 'joy.cpl' }
+    catch { Log ("controllers: could not open joy.cpl - {0}" -f $_.Exception.Message) }
+}
+
+# The bottom ribbon. Fed by Render-Status (health, machine) and Show-UpdateState
+# (alerts); the profile chip reads the social profile itself.
+function Update-FootChips($s) {
+    try {
+        if ($null -ne $s) {
+            $ov = ([string]$s.overall).ToLower()
+            $txt = 'Drive healthy'; $col = '#FF2FA84F'
+            if ($ov -eq 'warn') { $txt = 'Needs a look'; $col = '#FFE5B83B' }
+            elseif ($ov -eq 'bad') { $txt = 'Problem found'; $col = '#FFE0524D' }
+            elseif ($ov -ne 'ok') { $txt = 'Not checked yet'; $col = '#FF777777' }
+            $script:footHealthText.Text = $txt
+            $script:footHealthDot.Fill = (New-Brush $col)
+            $m = [string]$s.machine
+            if ($s.tier) { $m += '  -  ' + (Get-Culture).TextInfo.ToTitleCase(([string]$s.tier).ToLower()) }
+            $script:footMachineText.Text = $m
+        }
+        $script:footVersionText.Text = 'v' + $WizardVersion
+        $who = ''
+        if ($script:socialOk) {
+            try { $p = Read-SocialProfile $Ws; if ($null -ne $p -and -not $p.Guest) { $who = [string]$p.Username } } catch { }
+        }
+        if ($who -ne '') { $script:footWhoText.Text = 'Playing as ' + $who; $script:footWho.Visibility = 'Visible' }
+        else { $script:footWho.Visibility = 'Collapsed' }
+    } catch { Log ('footer: ' + $_.Exception.Message) }
+}
+
+function Set-FootAlert([string]$Text, [string]$Area = 'help') {
+    try {
+        if ($null -eq $script:footAlert) { return }
+        if ([string]::IsNullOrWhiteSpace($Text)) { $script:footAlert.Visibility = 'Collapsed'; return }
+        $script:footAlertText.Text = $Text
+        $script:footAlert.Tag = $Area
+        $script:footAlert.Visibility = 'Visible'
+    } catch { }
+}
+
+function Initialize-NewLook {
+    try {
+        $script:rail = $script:win.FindName('Rail')
+        $script:railButtons = @{}
+        $script:railIcons = @{}
+        $script:homeIcons = New-Object System.Collections.ArrayList
+        $script:hubIcons  = New-Object System.Collections.ArrayList
+        # name -> rail key ('' = not on the rail), page, icon base size, which idle pool
+        $map = [ordered]@{
+            RailHome = @('home', 'play', 1, ''); RailGames = @('games', 'games', 1, ''); RailSocial = @('social', 'profile', 1, '')
+            RailOnline = @('online', 'netplay', 1, ''); RailSaves = @('saves', 'saves', 1, ''); RailSettings = @('settings', 'settings', 1, '')
+            RailHelp = @('help', 'help', 1, ''); RailAdmin = @('admin', 'admin', 1, ''); RailControllers = @('', '', 1, '')
+            TileGames = @('', 'games', 2, 'home'); TileSocial = @('', 'profile', 2, 'home'); TileSaves = @('', 'saves', 2, 'home'); TileSettings = @('', 'settings', 2, 'home')
+            HubMachine = @('', 'machine', 2, 'hub'); HubFeatures = @('', 'features', 2, 'hub'); HubHealth = @('', 'health', 2, 'hub'); HubHelp = @('', 'help', 2, 'hub')
+        }
+        foreach ($name in $map.Keys) {
+            $b = $script:win.FindName($name)
+            if ($null -eq $b) { continue }
+            $m = $map[$name]
+            if ($name -eq 'RailControllers') { $b.Add_Click({ Open-ControllerList }) }
+            else {
+                $b.Tag = $m[1]
+                $b.Add_Click({ param($s, $e) Show-Area ([string]$s.Tag) })
+            }
+            $img = $script:win.FindName($name + 'Icon')
+            if ($null -ne $img) {
+                # The original potions (page-health) are drawn bigger than the
+                # 32 pixel icons, so they sit at half the tile scale.
+                $base = [double]$m[2]
+                if (([string]$img.Tag).StartsWith('page-')) { $base = [math]::Max(1.0, $base / 2) }
+                Add-IconArt $img ([string]$img.Tag) $base 'paused'
+                if ($m[3] -eq 'home') { [void]$script:homeIcons.Add($img) }
+                if ($m[3] -eq 'hub')  { [void]$script:hubIcons.Add($img) }
+            }
+            if ($m[0] -ne '') { $script:railButtons[$m[0]] = $b; $script:railIcons[$m[0]] = $img }
+        }
+        # "< Settings" on the settings pages
+        foreach ($bn in @('BackMachine', 'BackFeatures', 'BackHealth')) {
+            $bb = $script:win.FindName($bn)
+            if ($null -ne $bb) { $bb.Add_Click({ Show-Area 'settings' }) }
+        }
+        # the theme: pick, then it reloads
+        $script:themePick = $script:win.FindName('ThemePick')
+        $tb = $script:win.FindName('RailTheme')
+        $tt = $script:win.FindName('RailThemeText')
+        if ($null -ne $tt) {
+            switch (Get-WizThemeMode) {
+                'light' { $tt.Text = 'Theme: Light' }
+                'dark'  { $tt.Text = 'Theme: Dark' }
+                default { $tt.Text = 'Theme: Auto' }
+            }
+        }
+        if ($null -ne $tb -and $null -ne $script:themePick) {
+            $tb.Add_Click({ $script:themePick.Visibility = $(if ($script:themePick.Visibility -eq 'Visible') { 'Collapsed' } else { 'Visible' }) })
+        }
+        foreach ($pair in @(@('ThemeAuto', 'system'), @('ThemeLight', 'light'), @('ThemeDark', 'dark'))) {
+            $pb = $script:win.FindName($pair[0])
+            if ($null -eq $pb) { continue }
+            $pb.Tag = $pair[1]
+            if ($pair[1] -eq (Get-WizThemeMode)) { $pb.Content = [string]$pb.Content + '   (now)' }
+            $pb.Add_Click({ param($s, $e) Switch-WizardTheme ([string]$s.Tag) })
+        }
+        # one feedback link on Home
+        $fl = $script:win.FindName('FeedbackLink')
+        if ($null -ne $fl) { $fl.Add_Click({ if ($script:bugOk) { Show-BugDialog 'bug' } }) }
+        # the bottom ribbon
+        $script:footHealth     = $script:win.FindName('FootHealth')
+        $script:footHealthDot  = $script:win.FindName('FootHealthDot')
+        $script:footHealthText = $script:win.FindName('FootHealthText')
+        $script:footWho        = $script:win.FindName('FootWho')
+        $script:footWhoText    = $script:win.FindName('FootWhoText')
+        $script:footMachine    = $script:win.FindName('FootMachine')
+        $script:footMachineText = $script:win.FindName('FootMachineText')
+        $script:footVersion    = $script:win.FindName('FootVersion')
+        $script:footVersionText = $script:win.FindName('FootVersionText')
+        $script:footAlert      = $script:win.FindName('FootAlert')
+        $script:footAlertText  = $script:win.FindName('FootAlertText')
+        foreach ($pair in @(@($script:footHealth, 'health'), @($script:footWho, 'profile'), @($script:footMachine, 'machine'), @($script:footVersion, 'help'))) {
+            if ($null -eq $pair[0]) { continue }
+            $pair[0].Tag = $pair[1]
+            $pair[0].Add_Click({ param($s, $e) Show-Area ([string]$s.Tag) })
+        }
+        if ($null -ne $script:footAlert) { $script:footAlert.Add_Click({ param($s, $e) Show-Area ([string]$s.Tag) }) }
+        Update-FootChips $null
+        $script:tabs.Add_SelectionChanged({
+            param($s, $e)
+            if ($e.OriginalSource -ne $script:tabs) { return }
+            Update-Rail
+            if ($null -ne $script:themePick) { $script:themePick.Visibility = 'Collapsed' }
+            # Admin checks for new reports by itself when opened (Steven,
+            # 2026-10-14), at most once a minute.
+            if ((Get-RailArea) -eq 'admin') {
+                $due = ($null -eq $script:adminAutoAt) -or (((Get-Date) - $script:adminAutoAt).TotalSeconds -gt 60)
+                if ($due) {
+                    $script:adminAutoAt = Get-Date
+                    [void]$script:win.Dispatcher.BeginInvoke([action]{ try { Invoke-AdminRefresh } catch { } }, [System.Windows.Threading.DispatcherPriority]::Background)
+                }
+            }
+        })
+        Update-Rail
+        Start-IdleTiles
+        Log ('new look: ready, ' + $script:WizTheme + ' mode')
+    } catch { Log ('new look: could not set up - ' + $_.Exception.Message) }
+}
+
 function Show-MainWindow($status, [string]$startTab = 'play') {
 
     if ($null -eq $status) { $status = Invoke-Health }
@@ -2001,7 +3721,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="900" Height="640" WindowStartupLocation="CenterScreen"
+        Width="1120" Height="720" WindowStartupLocation="CenterScreen"
         Background="#FF1B1B22">
   <Window.Resources>
     <!-- The 8-bit Play button. The dark edge and the green fill are each
@@ -2017,7 +3737,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
-            <Grid Background="Transparent">
+            <Grid Background="Transparent" RenderTransformOrigin="0.5,0.5">
+              <Grid.RenderTransform><ScaleTransform x:Name="PSc" ScaleX="1" ScaleY="1"/></Grid.RenderTransform>
               <Border Background="#FF0E0E16" Margin="8,0,8,0"/>
               <Border Background="#FF0E0E16" Margin="0,8,0,8"/>
               <Border Background="#FF0E0E16" Margin="4,4,4,4"/>
@@ -2033,6 +3754,14 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                 <Setter TargetName="Fill3" Property="Background" Value="#FF3CC162"/>
               </Trigger>
               <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions><BeginStoryboard><Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="PSc" Storyboard.TargetProperty="ScaleX" To="0.95" Duration="0:0:0.06"/>
+                  <DoubleAnimation Storyboard.TargetName="PSc" Storyboard.TargetProperty="ScaleY" To="0.95" Duration="0:0:0.06"/>
+                </Storyboard></BeginStoryboard></Trigger.EnterActions>
+                <Trigger.ExitActions><BeginStoryboard><Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="PSc" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"><DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.6"/></DoubleAnimation.EasingFunction></DoubleAnimation>
+                  <DoubleAnimation Storyboard.TargetName="PSc" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"><DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.6"/></DoubleAnimation.EasingFunction></DoubleAnimation>
+                </Storyboard></BeginStoryboard></Trigger.ExitActions>
                 <Setter TargetName="Fill1" Property="Background" Value="#FF23803C"/>
                 <Setter TargetName="Fill2" Property="Background" Value="#FF23803C"/>
                 <Setter TargetName="Fill3" Property="Background" Value="#FF23803C"/>
@@ -2068,10 +3797,158 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         </Setter.Value>
       </Setter>
     </Style>
+    <!-- ===== v3 (2026-10-13): the new look's two button kinds ===========
+         Both press in a little when clicked and spring back, and light up
+         when the mouse is over them OR the controller has them selected.
+         The movement is on a ScaleTransform INSIDE the template, because a
+         transform set by a Style is shared and frozen and cannot animate. -->
+    <Style x:Key="RailButton" TargetType="Button">
+      <Setter Property="Foreground" Value="#FFC4C4CE"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderBrush" Value="Transparent"/>
+      <Setter Property="FontSize" Value="15"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Box" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="5,0,0,0" Padding="14,9,12,9" Margin="0,1" RenderTransformOrigin="0.5,0.5">
+              <Border.RenderTransform><ScaleTransform x:Name="Sc" ScaleX="1" ScaleY="1"/></Border.RenderTransform>
+              <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Box" Property="Background" Value="#FF262430"/></Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Box" Property="Background" Value="#FF262430"/></Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions><BeginStoryboard><Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="Sc" Storyboard.TargetProperty="ScaleX" To="0.95" Duration="0:0:0.06"/>
+                  <DoubleAnimation Storyboard.TargetName="Sc" Storyboard.TargetProperty="ScaleY" To="0.95" Duration="0:0:0.06"/>
+                </Storyboard></BeginStoryboard></Trigger.EnterActions>
+                <Trigger.ExitActions><BeginStoryboard><Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="Sc" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.18"><DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.5"/></DoubleAnimation.EasingFunction></DoubleAnimation>
+                  <DoubleAnimation Storyboard.TargetName="Sc" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.18"><DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.5"/></DoubleAnimation.EasingFunction></DoubleAnimation>
+                </Storyboard></BeginStoryboard></Trigger.ExitActions>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <!-- A big tile: a solid pixel shadow down and right, a border that turns
+         gold when pointed at, and a press that pushes the tile INTO its
+         shadow (it slides down-right and the shadow closes up). -->
+    <Style x:Key="HomeTile" TargetType="Button">
+      <Setter Property="Foreground" Value="#FFE8E8EC"/>
+      <Setter Property="Background" Value="#FF24222E"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Margin" Value="0,0,14,14"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Grid>
+              <Border Background="#FF0E0E14" Margin="6,6,0,0"/>
+              <Border x:Name="Box" Background="{TemplateBinding Background}" BorderBrush="#FF3A3A48" BorderThickness="3"
+                      Margin="0,0,6,6" Padding="18,16">
+                <Border.RenderTransform><TranslateTransform x:Name="Tr" X="0" Y="0"/></Border.RenderTransform>
+                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Top"/>
+              </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions><BeginStoryboard><Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="Tr" Storyboard.TargetProperty="X" To="5" Duration="0:0:0.05"/>
+                  <DoubleAnimation Storyboard.TargetName="Tr" Storyboard.TargetProperty="Y" To="5" Duration="0:0:0.05"/>
+                </Storyboard></BeginStoryboard></Trigger.EnterActions>
+                <Trigger.ExitActions><BeginStoryboard><Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="Tr" Storyboard.TargetProperty="X" To="0" Duration="0:0:0.16"><DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.6"/></DoubleAnimation.EasingFunction></DoubleAnimation>
+                  <DoubleAnimation Storyboard.TargetName="Tr" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.16"><DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.6"/></DoubleAnimation.EasingFunction></DoubleAnimation>
+                </Storyboard></BeginStoryboard></Trigger.ExitActions>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <!-- "< Settings" at the top of each settings page, for the mouse
+         (Steven, 2026-10-14). Looks like a link, behaves like a button. -->
+    <Style x:Key="BackLink" TargetType="Button">
+      <Setter Property="Foreground" Value="#FFE5B83B"/>
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="Margin" Value="6,0,0,8"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Background="Transparent" Padding="8,4" CornerRadius="3">
+              <ContentPresenter/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="#FF2C2A36"/></Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Bd" Property="Background" Value="#FF2C2A36"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <!-- A chip in the bottom ribbon: plain until pointed at, and every one
+         goes somewhere (health, social, this computer, help). -->
+    <Style x:Key="FootChip" TargetType="Button">
+      <Setter Property="Foreground" Value="#FFB4B4C0"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Margin" Value="0,0,6,0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Background="#FF1E1C26" BorderBrush="#FF2E2B38" BorderThickness="1" CornerRadius="9" Padding="10,3">
+              <ContentPresenter VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Bd" Property="BorderBrush" Value="#FFE5B83B"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
   </Window.Resources>
-  <DockPanel>
-    <Border DockPanel.Dock="Bottom" Background="#FF14141A" Padding="12,7">
-      <TextBlock x:Name="FooterText" Foreground="#FF9AA0AA" FontSize="13"/>
+  <DockPanel x:Name="RootPanel">
+    <!-- The bottom ribbon (v3 polish, 2026-10-14). Steven: "make it usable;
+         banners for health hazards, profile and machine running, wizard
+         version, alerts". Each chip is a button to the page it is about.
+         FooterText stays (hidden) for anything that still writes the old
+         one-line summary. -->
+    <Border DockPanel.Dock="Bottom" Background="#FF14141A" BorderBrush="#FF2A2A34" BorderThickness="0,2,0,0" Padding="10,5">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+          <Button x:Name="FootAlert" Style="{StaticResource FootChip}" Visibility="Collapsed">
+            <TextBlock x:Name="FootAlertText" Foreground="#FFE5B83B" FontWeight="Bold"/>
+          </Button>
+          <Button x:Name="FootVersion" Style="{StaticResource FootChip}" ToolTip="Help, updates and what changed">
+            <TextBlock x:Name="FootVersionText"/>
+          </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <Button x:Name="FootHealth" Style="{StaticResource FootChip}" ToolTip="Health and repair">
+            <StackPanel Orientation="Horizontal">
+              <Ellipse x:Name="FootHealthDot" Width="9" Height="9" Margin="0,0,7,0" VerticalAlignment="Center" Fill="#FF777777"/>
+              <TextBlock x:Name="FootHealthText" Text="Checking the drive"/>
+            </StackPanel>
+          </Button>
+          <Button x:Name="FootWho" Style="{StaticResource FootChip}" ToolTip="Your profile" Visibility="Collapsed">
+            <TextBlock x:Name="FootWhoText"/>
+          </Button>
+          <Button x:Name="FootMachine" Style="{StaticResource FootChip}" ToolTip="This computer">
+            <TextBlock x:Name="FootMachineText"/>
+          </Button>
+          <TextBlock x:Name="FooterText" Visibility="Collapsed"/>
+        </StackPanel>
+      </DockPanel>
     </Border>
     <!-- The controller hints (2026-09-23). Shown only when the wizard was
          opened with SELECT + START or a controller is being used, and faded
@@ -2098,6 +3975,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         <Image x:Name="HintA"/><TextBlock Text="Select"/>
         <Image x:Name="HintB"/><TextBlock Text="Back"/>
         <Image x:Name="HintR"/><TextBlock Text="Scroll"/>
+        <TextBlock Text="Push in left stick:" FontWeight="Bold" Margin="0,0,0,0"/><TextBlock Text="Mouse"/>
         <Image x:Name="HintView"/><TextBlock Text="+" Margin="4,0,4,0"/><Image x:Name="HintMenu"/><TextBlock Text="Close" Margin="7,0,0,0"/>
       </StackPanel>
     </Border>
@@ -2107,6 +3985,15 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     <!-- The update bar (2026-10-10). Hidden until a newer version turns up on
          GitHub. Nothing downloads and nothing installs until Update now is
          pressed. -->
+    <!-- The working bar (2026-10-12). Shown while a repair, apply or backup
+         runs beside the window; see "STAYING ALIVE WHILE WORKING". -->
+    <Border x:Name="WorkingBar" DockPanel.Dock="Top" Background="#FF2A2440" Padding="14,8" Visibility="Collapsed">
+      <StackPanel Orientation="Horizontal">
+        <ProgressBar x:Name="WorkingProg" Width="110" Height="8" VerticalAlignment="Center"
+                     Foreground="#FF6FC3FF" Background="#FF1B1B22" BorderThickness="0"/>
+        <TextBlock x:Name="WorkingText" Foreground="#FFCFE6FF" FontSize="14" VerticalAlignment="Center" Margin="14,0,0,0"/>
+      </StackPanel>
+    </Border>
     <Border x:Name="UpdateBar" DockPanel.Dock="Top" Background="#FF22223A" Padding="14,8" Visibility="Collapsed">
       <DockPanel>
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
@@ -2118,7 +4005,106 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
       </DockPanel>
     </Border>
     <Grid x:Name="TabsHost">
-    <TabControl x:Name="Tabs" Background="#FF1B1B22" BorderThickness="0" Margin="6">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <!-- v3: the side rail. Every page but Home has it; Home is the big
+         tiles. Built from the same pixel icons the old tabs used. -->
+    <!-- v3: the side rail. Every page but Home has it; Home is the big
+         tiles. v3 polish (2026-10-14): the new 32-pixel icons (wizard\icon-*.png),
+         the page you are on moves all the time, the rest are still. Friends
+         is Social now, and Controllers sits between Settings and Help. -->
+    <Border x:Name="Rail" Grid.Column="0" Width="210" Background="#FF15151B" BorderBrush="#FF2A2A34" BorderThickness="0,0,3,0" Visibility="Collapsed">
+      <!-- Never hides a button (Steven, 2026-10-14: in full screen Saves
+           disappeared). It fills the height when there is room and scrolls,
+           with the floating bar, only when there is not. -->
+      <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+      <DockPanel MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+        <TextBlock DockPanel.Dock="Top" Text="THE RETROBAT WIZARD" Foreground="#FFE5B83B" FontSize="14" FontWeight="Bold" Margin="19,14,0,16"/>
+        <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,10">
+        <Button x:Name="RailSettings" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailSettingsIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-gears"/>
+            <TextBlock Text="Settings" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailControllers" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailControllersIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-controller"/>
+            <TextBlock Text="Controllers" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailHelp" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailHelpIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-book"/>
+            <TextBlock Text="Help" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailAdmin" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailAdminIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-key"/>
+            <TextBlock Text="Admin" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+          <Button x:Name="RailTheme" Style="{StaticResource RailButton}" Margin="0,10,0,0">
+            <TextBlock x:Name="RailThemeText" Text="Theme" FontSize="13"/>
+          </Button>
+          <!-- Choose first, THEN it reloads (Steven, 2026-10-14). Opened by
+               the Theme button above. -->
+          <StackPanel x:Name="ThemePick" Visibility="Collapsed" Margin="14,2,10,0">
+            <Button x:Name="ThemeAuto"  Content="Auto (like Windows)" Margin="0,3,0,0" HorizontalContentAlignment="Left"/>
+            <Button x:Name="ThemeLight" Content="Light"              Margin="0,3,0,0" HorizontalContentAlignment="Left"/>
+            <Button x:Name="ThemeDark"  Content="Dark"               Margin="0,3,0,0" HorizontalContentAlignment="Left"/>
+          </StackPanel>
+        </StackPanel>
+        <StackPanel>
+        <Button x:Name="RailHome" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailHomeIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="tab-play"/>
+            <TextBlock Text="Home" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailGames" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailGamesIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-chest"/>
+            <TextBlock Text="Games" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailSocial" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailSocialIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-ball"/>
+            <TextBlock Text="Social" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailOnline" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailOnlineIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-mirror"/>
+            <TextBlock Text="Play online" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="RailSaves" Style="{StaticResource RailButton}">
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="RailSavesIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="tab-health"/>
+            <TextBlock Text="Saves" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        </StackPanel>
+      </DockPanel>
+      </ScrollViewer>
+    </Border>
+    <TabControl x:Name="Tabs" Grid.Column="1" Background="#FF1B1B22" BorderThickness="0" Margin="6" IsTabStop="False" Focusable="False">
+      <!-- v3: the old tab strip is hidden. The rail and the Home tiles pick
+           the page now; the pages themselves are unchanged. -->
+      <TabControl.ItemContainerStyle>
+        <Style TargetType="TabItem">
+          <Setter Property="Visibility" Value="Collapsed"/>
+          <!-- v3 polish: a hidden header that can still take the focus is
+               a place a controller gets lost in (Steven, 2026-10-14). -->
+          <Setter Property="Focusable" Value="False"/>
+          <Setter Property="IsTabStop" Value="False"/>
+        </Style>
+      </TabControl.ItemContainerStyle>
       <!-- The tab's own pixel icon. Stretch="None" keeps it at its real
            size, which is the only way pixel art stays square, and a
            missing wizard\tab-*.png just leaves the words on their own. -->
@@ -2163,9 +4149,59 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             <Image x:Name="LogoImage" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,20,0"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
           </Grid>
-          <Button x:Name="PlayButton" Grid.Row="1" Style="{StaticResource PixelButton}"
-                  Content="PLAY" Width="300" Height="106" FontSize="34" FontWeight="Bold"
-                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          <!-- v3 Home: PLAY on the left, the four areas as big tiles on the
+               right. PLAY keeps its name and its size rules (Update-PlayScale). -->
+          <Grid Grid.Row="1" Margin="26,10,12,0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="5*"/>
+              <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+              <Button x:Name="PlayButton" Style="{StaticResource PixelButton}"
+                      Content="PLAY" Width="300" Height="106" FontSize="34" FontWeight="Bold"
+                      HorizontalAlignment="Center"/>
+              <TextBlock Text="Opens RetroBat. Everything is checked on the way in." Foreground="#FFA8A8B4"
+                         FontSize="13" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+            </StackPanel>
+            <UniformGrid Grid.Column="1" Columns="2" Rows="2" VerticalAlignment="Center">
+              <Button x:Name="TileGames" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="TileGamesIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-chest"/>
+                  <TextBlock Grid.Column="1" Text="Games" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Add games, controllers and player counts." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+              <Button x:Name="TileSocial" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="TileSocialIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-ball"/>
+                  <TextBlock Grid.Column="1" Text="Social" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Your profile, friends, and who is on." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+              <Button x:Name="TileSaves" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="TileSavesIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="page-health"/>
+                  <TextBlock Grid.Column="1" Text="Saves" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Backups, and going back to an earlier save." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+              <Button x:Name="TileSettings" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="TileSettingsIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-gears"/>
+                  <TextBlock Grid.Column="1" Text="Settings" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="This computer, this drive, health checks." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+            </UniformGrid>
+          </Grid>
           <!-- The controller button, bottom left of the front page. It is the
                SAME picture as the Controllers icon this drive writes onto a
                computer, so the thing you click here and the thing you click on
@@ -2180,7 +4216,12 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             <Image x:Name="PadImage" Stretch="None"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
           </Button>
-          <StackPanel x:Name="LightsPanel" Grid.Row="2" Margin="110,0,110,20"/>
+          <StackPanel x:Name="LightsPanel" Grid.Row="2" Margin="110,0,160,20"/>
+          <!-- One way to say something (Steven, 2026-10-14): bugs, ideas and
+               game requests all start here. -->
+          <TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,28,18" FontSize="14">
+            <Hyperlink x:Name="FeedbackLink" Foreground="#FFE5B83B" FontWeight="Bold">Send feedback</Hyperlink>
+          </TextBlock>
         </Grid>
       </TabItem>
       <!-- The tab's own pixel icon. Stretch="None" keeps it at its real
@@ -2203,7 +4244,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="SocialPanel" Margin="6,0,14,10"/>
+              <StackPanel x:Name="SocialPanel" Margin="6,0,14,10" MaxWidth="1040" HorizontalAlignment="Center"/>
             </ScrollViewer>
           </Grid>
         </DockPanel>
@@ -2224,97 +4265,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="GamesPanel" Margin="6,0,14,10"/>
-            </ScrollViewer>
-          </Grid>
-        </DockPanel>
-      </TabItem>
-      <!-- The Netplay tab (2026-10-10): playing online, one card per
-           console. Built in code by Render-Netplay. -->
-      <TabItem>
-        <TabItem.Header>
-          <StackPanel Orientation="Horizontal">
-            <Image x:Name="IconNetplay" Stretch="None" VerticalAlignment="Center" Margin="2,0,7,0"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <TextBlock Text="Netplay" VerticalAlignment="Center" Margin="0,0,4,0"/>
-          </StackPanel>
-        </TabItem.Header>
-        <DockPanel Margin="10">
-          <Grid>
-            <Image x:Name="ArtNetplay" Stretch="None"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="NetplayPanel" Margin="6,0,14,10"/>
-            </ScrollViewer>
-          </Grid>
-        </DockPanel>
-      </TabItem>
-      <TabItem>
-        <TabItem.Header>
-          <StackPanel Orientation="Horizontal">
-            <Image x:Name="IconHealth" Stretch="None" VerticalAlignment="Center" Margin="2,0,7,0"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <TextBlock Text="Health" VerticalAlignment="Center" Margin="0,0,4,0"/>
-          </StackPanel>
-        </TabItem.Header>
-        <DockPanel Margin="10">
-          <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="6,4,0,10">
-            <Button x:Name="RefreshButton" Content="Re-run the checks" Padding="14,6" FontSize="14"/>
-            <!-- The "Check my controllers" button used to be here. It moved to
-                 the bottom left of the Play tab on 2026-09-18, as the
-                 controller picture, because that is the page that is already
-                 open when somebody picks up a pad. -->
-            <TextBlock x:Name="RefreshNote" Foreground="#FF9AA0AA" FontSize="13" Margin="14,8,0,0"/>
-          </StackPanel>
-          <!-- The corner picture and the page share ONE cell since
-               2026-09-23. It used to be docked along the bottom, which
-               took the whole width of the page and cut every list off
-               at its top edge. Now it sits BEHIND the page in the
-               bottom-right corner, so lists run all the way down and
-               anything with a background simply covers it. -->
-          <Grid>
-            <Image x:Name="ArtHealth" Stretch="None"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="HealthPanel" Margin="6,0"/>
-            </ScrollViewer>
-          </Grid>
-        </DockPanel>
-      </TabItem>
-      <!-- The tab's own pixel icon. Stretch="None" keeps it at its real
-           size, which is the only way pixel art stays square, and a
-           missing wizard\tab-*.png just leaves the words on their own. -->
-      <TabItem>
-        <TabItem.Header>
-          <StackPanel Orientation="Horizontal">
-            <Image x:Name="IconProfiles" Stretch="None" VerticalAlignment="Center" Margin="2,0,7,0"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <TextBlock Text="Machine" VerticalAlignment="Center" Margin="0,0,4,0"/>
-          </StackPanel>
-        </TabItem.Header>
-        <DockPanel Margin="10">
-          <Border x:Name="ProfileBar" DockPanel.Dock="Bottom" Background="#FF2A2A34"
-                  Padding="12,9" Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-              <TextBlock x:Name="ProfileBarText" Foreground="#FFE5B83B" FontSize="13" Margin="0,7,16,0"/>
-              <Button x:Name="ProfileUndo" Content="Undo" Padding="14,6" FontSize="14" Margin="0,0,8,0"/>
-              <Button x:Name="ProfileApply" Content="Apply changes" Padding="14,6" FontSize="14"/>
-            </StackPanel>
-          </Border>
-          <!-- The corner picture and the page share ONE cell since
-               2026-09-23. It used to be docked along the bottom, which
-               took the whole width of the page and cut every list off
-               at its top edge. Now it sits BEHIND the page in the
-               bottom-right corner, so lists run all the way down and
-               anything with a background simply covers it. -->
-          <Grid>
-            <Image x:Name="ArtProfiles" Stretch="None"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="ProfilePanel" Margin="6,0,14,10"/>
+              <StackPanel x:Name="GamesPanel" Margin="6,0,14,10" MaxWidth="1040" HorizontalAlignment="Center"/>
             </ScrollViewer>
           </Grid>
         </DockPanel>
@@ -2333,6 +4284,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         <DockPanel Margin="10">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="6,4,0,10">
             <Button x:Name="SaveBackupBtn" Content="Back up saves now" Padding="14,6" FontSize="14"/>
+            <Button x:Name="SaveStorageBtn" Content="Storage..." Padding="10,6" FontSize="13" Margin="8,0,0,0"/>
             <TextBlock Text="Console:" Foreground="#FF9AA0AA" FontSize="13" Margin="16,9,6,0"/>
             <ComboBox x:Name="SaveConsole" Width="120" FontSize="13" Height="26"/>
             <CheckBox x:Name="SaveShowAll" Content="Show arcade and system files too" Foreground="#FFE8E8EC"
@@ -2364,6 +4316,27 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
           </Grid>
         </DockPanel>
       </TabItem>
+      <!-- The Netplay tab (2026-10-10): playing online, one card per
+           console. Built in code by Render-Netplay. -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="IconNetplay" Stretch="None" VerticalAlignment="Center" Margin="2,0,7,0"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <TextBlock Text="Netplay" VerticalAlignment="Center" Margin="0,0,4,0"/>
+          </StackPanel>
+        </TabItem.Header>
+        <DockPanel Margin="10">
+          <Grid>
+            <Image x:Name="ArtNetplay" Stretch="None"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel x:Name="NetplayPanel" Margin="6,0,14,10" MaxWidth="1040" HorizontalAlignment="Center"/>
+            </ScrollViewer>
+          </Grid>
+        </DockPanel>
+      </TabItem>
       <!-- The tab's own pixel icon. Stretch="None" keeps it at its real
            size, which is the only way pixel art stays square, and a
            missing wizard\tab-*.png just leaves the words on their own. -->
@@ -2376,6 +4349,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
           </StackPanel>
         </TabItem.Header>
         <DockPanel Margin="10">
+          <Button x:Name="BackFeatures" DockPanel.Dock="Top" Style="{StaticResource BackLink}" Content="&lt;  Settings"/>
           <Border x:Name="FeatureBar" DockPanel.Dock="Bottom" Background="#FF2A2A34"
                   Padding="12,9" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -2395,7 +4369,78 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="FeaturePanel" Margin="6,0,14,10"/>
+              <StackPanel x:Name="FeaturePanel" Margin="6,0,14,10" MaxWidth="1040" HorizontalAlignment="Center"/>
+            </ScrollViewer>
+          </Grid>
+        </DockPanel>
+      </TabItem>
+      <!-- The tab's own pixel icon. Stretch="None" keeps it at its real
+           size, which is the only way pixel art stays square, and a
+           missing wizard\tab-*.png just leaves the words on their own. -->
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="IconProfiles" Stretch="None" VerticalAlignment="Center" Margin="2,0,7,0"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <TextBlock Text="Machine" VerticalAlignment="Center" Margin="0,0,4,0"/>
+          </StackPanel>
+        </TabItem.Header>
+        <DockPanel Margin="10">
+          <Button x:Name="BackMachine" DockPanel.Dock="Top" Style="{StaticResource BackLink}" Content="&lt;  Settings"/>
+          <Border x:Name="ProfileBar" DockPanel.Dock="Bottom" Background="#FF2A2A34"
+                  Padding="12,9" Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+              <TextBlock x:Name="ProfileBarText" Foreground="#FFE5B83B" FontSize="13" Margin="0,7,16,0"/>
+              <Button x:Name="ProfileUndo" Content="Undo" Padding="14,6" FontSize="14" Margin="0,0,8,0"/>
+              <Button x:Name="ProfileApply" Content="Apply changes" Padding="14,6" FontSize="14"/>
+            </StackPanel>
+          </Border>
+          <!-- The corner picture and the page share ONE cell since
+               2026-09-23. It used to be docked along the bottom, which
+               took the whole width of the page and cut every list off
+               at its top edge. Now it sits BEHIND the page in the
+               bottom-right corner, so lists run all the way down and
+               anything with a background simply covers it. -->
+          <Grid>
+            <Image x:Name="ArtProfiles" Stretch="None"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel x:Name="ProfilePanel" Margin="6,0,14,10" MaxWidth="1040" HorizontalAlignment="Center"/>
+            </ScrollViewer>
+          </Grid>
+        </DockPanel>
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal">
+            <Image x:Name="IconHealth" Stretch="None" VerticalAlignment="Center" Margin="2,0,7,0"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <TextBlock Text="Health" VerticalAlignment="Center" Margin="0,0,4,0"/>
+          </StackPanel>
+        </TabItem.Header>
+        <DockPanel Margin="10">
+          <Button x:Name="BackHealth" DockPanel.Dock="Top" Style="{StaticResource BackLink}" Content="&lt;  Settings"/>
+          <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="6,4,0,10">
+            <Button x:Name="RefreshButton" Content="Re-run the checks" Padding="14,6" FontSize="14"/>
+            <!-- The "Check my controllers" button used to be here. It moved to
+                 the bottom left of the Play tab on 2026-09-18, as the
+                 controller picture, because that is the page that is already
+                 open when somebody picks up a pad. -->
+            <TextBlock x:Name="RefreshNote" Foreground="#FF9AA0AA" FontSize="13" Margin="14,8,0,0"/>
+          </StackPanel>
+          <!-- The corner picture and the page share ONE cell since
+               2026-09-23. It used to be docked along the bottom, which
+               took the whole width of the page and cut every list off
+               at its top edge. Now it sits BEHIND the page in the
+               bottom-right corner, so lists run all the way down and
+               anything with a background simply covers it. -->
+          <Grid>
+            <Image x:Name="ArtHealth" Stretch="None"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel x:Name="HealthPanel" Margin="6,0" MaxWidth="1040" HorizontalAlignment="Center"/>
             </ScrollViewer>
           </Grid>
         </DockPanel>
@@ -2423,16 +4468,72 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-              <StackPanel x:Name="HelpPanel" Margin="20,12,20,16"/>
+              <StackPanel x:Name="HelpPanel" Margin="20,12,20,16" MaxWidth="980" HorizontalAlignment="Center"/>
             </ScrollViewer>
           </Grid>
         </DockPanel>
       </TabItem>
+      <!-- v3: the Settings hub. Machine, Features, Health and Help keep their
+           pages; this is the one place that leads to them. v3 polish: centred
+           at any size, and its own pictures (Steven, 2026-10-14). -->
+      <TabItem>
+        <TabItem.Header><TextBlock Text="Settings"/></TabItem.Header>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="22,14,22,16" MaxWidth="860" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Settings" Foreground="#FFE8E8EC" FontSize="28" FontWeight="Bold"/>
+            <TextBlock Text="This computer, this drive, and keeping it all healthy." Foreground="#FFA8A8B4" FontSize="13" Margin="0,4,0,18"/>
+            <UniformGrid Columns="2">
+              <Button x:Name="HubMachine" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="HubMachineIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="profile-pc"/>
+                  <TextBlock Grid.Column="1" Text="This computer" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="How hard it is pushed, screen fixes, Steam." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+              <Button x:Name="HubFeatures" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="HubFeaturesIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-floppy"/>
+                  <TextBlock Grid.Column="1" Text="This drive" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="The extras this drive adds on top of RetroBat." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+              <Button x:Name="HubHealth" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="HubHealthIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-hearts"/>
+                  <TextBlock Grid.Column="1" Text="Health and repair" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Drive checks, and fixing things after an update." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+              <Button x:Name="HubHelp" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <Image x:Name="HubHelpIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-book"/>
+                  <TextBlock Grid.Column="1" Text="Help and updates" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="How it works, new versions, send feedback." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </Grid>
+              </Button>
+            </UniformGrid>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
     </TabControl>
-    <Image x:Name="BumperL" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top"
+    <Image x:Name="BumperL" Grid.ColumnSpan="2" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top"
            Visibility="Collapsed" IsHitTestVisible="False" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-    <Image x:Name="BumperR" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top"
+    <Image x:Name="BumperR" Grid.ColumnSpan="2" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top"
            Visibility="Collapsed" IsHitTestVisible="False" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+    <!-- Shown only while the controller is driving the mouse (L3). -->
+    <Border x:Name="PadMouseNote" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,14"
+            Background="#E622223A" BorderBrush="#FF6FC3FF" BorderThickness="1" CornerRadius="4" Padding="14,6"
+            Visibility="Collapsed" IsHitTestVisible="False">
+      <TextBlock Foreground="#FFCFE6FF" FontSize="14" Text="Mouse mode: the stick moves the pointer, A clicks, right stick scrolls. B, or push in the left stick, to stop."/>
+    </Border>
     </Grid>
   </DockPanel>
 </Window>
@@ -2441,6 +4542,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     # Everything the event handlers touch lives at SCRIPT scope. Event
     # scriptblocks in Windows PowerShell reliably see script scope and
     # top-level functions, but NOT a function's local variables.
+    $xaml = Convert-ThemeXaml $xaml
     $script:win         = [Windows.Markup.XamlReader]::Parse($xaml)
     # A mistake inside a button's code used to take the whole window down
     # (2026-10-10, the first profile). Now it is caught here: logged, a report
@@ -2451,7 +4553,9 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         try { Invoke-SoftCrash $e2.Exception } catch { }
     })
     $script:win.Title   = "$WizardName  -  v$WizardVersion"
+    try { if ($script:updateOk -and (Get-UpdConfig $Ws).Channel -eq 'dev') { $script:win.Title += '  (dev channel)' } } catch { }
     $script:tabs        = $script:win.FindName('Tabs')
+    Initialize-NewLook
     $script:playButton  = $script:win.FindName('PlayButton')
     $script:lightsPanel = $script:win.FindName('LightsPanel')
     $script:healthPanel = $script:win.FindName('HealthPanel')
@@ -2460,6 +4564,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $script:footer      = $script:win.FindName('FooterText')
     $script:padHints    = $script:win.FindName('PadHints')
     $script:tabsHost    = $script:win.FindName('TabsHost')
+    $script:padMouseNote = $script:win.FindName('PadMouseNote')
     $script:bumperL     = $script:win.FindName('BumperL')
     $script:bumperR     = $script:win.FindName('BumperR')
     $script:profilePanel   = $script:win.FindName('ProfilePanel')
@@ -2489,6 +4594,9 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $script:netplayPanel = $script:win.FindName('NetplayPanel')
     $script:gamesPanel = $script:win.FindName('GamesPanel')
     $script:updateBar      = $script:win.FindName('UpdateBar')
+    $script:workingBar     = $script:win.FindName('WorkingBar')
+    $script:workingText    = $script:win.FindName('WorkingText')
+    $script:workingProg    = $script:win.FindName('WorkingProg')
     $script:updateBarText  = $script:win.FindName('UpdateBarText')
     $script:updateNowBtn   = $script:win.FindName('UpdateNowBtn')
     $script:updateLaterBtn = $script:win.FindName('UpdateLaterBtn')
@@ -2500,11 +4608,11 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         $script:win.FindName('IconPlay'),
         $script:win.FindName('IconProfile'),
         $script:win.FindName('IconGames'),
-        $script:win.FindName('IconNetplay'),
-        $script:win.FindName('IconHealth'),
-        $script:win.FindName('IconProfiles'),
         $script:win.FindName('IconSaves'),
+        $script:win.FindName('IconNetplay'),
         $script:win.FindName('IconFeatures'),
+        $script:win.FindName('IconProfiles'),
+        $script:win.FindName('IconHealth'),
         $script:win.FindName('IconHelp')
     )
     # The big picture in the corner of each page, in the SAME tab order. Play
@@ -2513,11 +4621,11 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         $null,
         $script:win.FindName('ArtProfile'),
         $script:win.FindName('ArtGames'),
-        $script:win.FindName('ArtNetplay'),
-        $script:win.FindName('ArtHealth'),
-        $script:win.FindName('ArtProfiles'),
         $script:win.FindName('ArtSaves'),
+        $script:win.FindName('ArtNetplay'),
         $script:win.FindName('ArtFeatures'),
+        $script:win.FindName('ArtProfiles'),
+        $script:win.FindName('ArtHealth'),
         $script:win.FindName('ArtHelp')
     )
     $script:uiStatus    = $status
@@ -2570,6 +4678,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         Render-SaveGames
     })
     $script:saveBackupBtn.Add_Click({ Invoke-SaveBackupNow })
+    $ssb = $script:win.FindName('SaveStorageBtn')
+    if ($null -ne $ssb) { $ssb.Add_Click({ Invoke-SaveStorage }) }
 
     $script:updateNowBtn.Add_Click({ Invoke-WizardUpdate 'Update' })
     $script:updateLaterBtn.Add_Click({ $script:updateBar.Visibility = 'Collapsed' })
@@ -2630,6 +4740,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             $script:win.Topmost = $false
         } catch { }
         Update-PlayScale
+        Initialize-Motion
+        Initialize-Qol
         Start-PadNav
         # A few bytes from GitHub, in the background, after the window is up,
         # so a slow or missing connection can never hold the window back.
@@ -2637,6 +4749,18 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         Start-SocialSession
     })
     $script:win.Add_SizeChanged({ Update-PlayScale })
+    # Closing while something is still working: ask, because a half-done
+    # repair or backup is worse than waiting a few seconds (2026-10-12).
+    $script:win.Add_Closing({
+        param($s2, $e2)
+        try {
+            if ($script:busyDepth -gt 0) {
+                $pick = Show-Choice $WizardName ("Still working on: {0}`n`nClosing now could leave it half done." -f $script:busyLabel) @('Keep waiting', 'Close anyway')
+                if ($pick -ne 'Close anyway') { $e2.Cancel = $true }
+                else { Log ("closed while still working on: {0}" -f $script:busyLabel) }
+            }
+        } catch { }
+    })
 
     Close-Splash
     [void]$script:win.ShowDialog()
@@ -2778,11 +4902,19 @@ function Start-SpriteTimer {
                 if ($null -eq $loop) { continue }
                 $fr = $loop.Frames
                 if ($null -eq $fr -or $fr.Count -eq 0) { continue }
+                # v3 polish: an icon can be paused on its first frame, or
+                # play through once and pause. No Mode = always, as before.
+                $mode = [string]$loop.Mode
+                if ($mode -eq 'paused') {
+                    if ([int]$loop.Index -ne 0) { $loop.Index = 0; $loop.Wait = 0; $loop.Img.Source = $fr[0] }
+                    continue
+                }
                 $loop.Wait = [int]$loop.Wait + 1
                 if ([int]$loop.Wait -lt [int]$loop.Every) { continue }
                 $loop.Wait = 0
                 $loop.Index = ([int]$loop.Index + 1) % $fr.Count
                 $loop.Img.Source = $fr[[int]$loop.Index]
+                if ($mode -eq 'once' -and [int]$loop.Index -eq 0) { $loop.Mode = 'paused' }
             }
         } catch { }
     })
@@ -2806,7 +4938,7 @@ function Start-SpriteTimer {
 function Start-WordmarkAnimation($StillImage) {
     if ($null -eq $script:brandWordmark -or $null -eq $StillImage) { return }
     Add-SpriteLoop $script:brandWordmark (Join-Path $WizardDir 'wordmark-anim.png') `
-        ([int]$StillImage.PixelWidth) ([int]$StillImage.PixelHeight) 'the wordmark' 100
+        ([int]$StillImage.PixelWidth) ([int]$StillImage.PixelHeight) 'the wordmark' 50
 }
 
 
@@ -2821,21 +4953,22 @@ function Start-WordmarkAnimation($StillImage) {
 #  Nothing here looks for a tab-*-anim.png, so putting one on the drive does
 #  nothing at all.
 #
-#  THE ORDER MATTERS and it is the tab order: play, health, profiles, saves,
-#  features, help. It lines up with $script:tabIconImages, which is filled in
-#  the same order in Show-MainWindow.
+#  THE ORDER MATTERS and it is the tab order (since 2026-10-12: play,
+#  profile, games, saves, netplay - the everyday ones - then features,
+#  machine, health, help - the setting-up ones). It lines up with
+#  $script:tabIconImages, which is filled in the same order in Show-MainWindow.
 # THE TAB ORDER, by name, since 2026-10-10. Everything that picks a tab by
 # number asks Get-TabIndex instead, so a new tab is one word here, in the
 # XAML, and in the two picture lists below.
-$script:TabOrder = @('play', 'profile', 'games', 'netplay', 'health', 'machine', 'saves', 'features', 'help')
+$script:TabOrder = @('play', 'profile', 'games', 'saves', 'netplay', 'features', 'machine', 'health', 'help', 'settings')
 function Get-TabIndex([string]$Name) {
     $i = [array]::IndexOf($script:TabOrder, ([string]$Name).ToLower())
     if ($i -lt 0) { return 0 }
     return $i
 }
 
-$script:TabIconFiles = @('tab-play', 'tab-profile', 'tab-games', 'tab-netplay', 'tab-health', 'tab-profiles',
-                         'tab-saves', 'tab-features', 'tab-help')
+$script:TabIconFiles = @('tab-play', 'tab-profile', 'tab-games', 'tab-saves', 'tab-netplay', 'tab-features',
+                         'tab-profiles', 'tab-health', 'tab-help')
 
 function Initialize-TabIcons {
     if ($null -eq $script:tabIconImages) { return }
@@ -2867,8 +5000,10 @@ function Initialize-TabIcons {
 #  Same two rules as everything else here: a missing file just leaves the
 #  corner empty, and the frame count comes out of the strip's height rather
 #  than being written down anywhere.
-$script:PageArtFiles = @('', 'page-profile', 'page-games', 'page-netplay', 'page-health', 'page-profiles',
-                         'page-saves', 'page-features', 'page-help')
+# v3 (Steven, 2026-10-13): only the crystal ball (This computer) and the
+# potions (Health) stay. The rest are gone so pages have room to breathe.
+$script:PageArtFiles = @('', '', '', '', '', '',
+                         'page-profiles', 'page-health', '')
 
 function Initialize-PageArt {
     if ($null -eq $script:pageArtImages) { return }
@@ -3061,143 +5196,83 @@ function Get-DpiScale {
 # THE HEALTH TAB'S RIGHT EDGE (2026-09-23). The potions sit in that page's
 # bottom-right corner behind the list, and on a small window the check cards
 # ran right over them. So the list stops short of them: its right margin is
-# the potions' width as currently drawn, plus a gap. Only the Health tab does
-# this - on the other tabs the picture is allowed to sit behind the page.
+# the potions' width as currently drawn, plus a gap.
+# THE NETPLAY TAB TOO (2026-10-11): its console cards covered the mirror
+# completely (Steven). Same rule, same code. On the other tabs the picture is
+# still allowed to sit behind the page.
 $script:artRatio = 1.0
 function Update-HealthMargin {
     try {
-        if ($null -eq $script:healthPanel -or $null -eq $script:pageArtImages) { return }
-        $img = @($script:pageArtImages)[(Get-TabIndex 'health')]
-        if ($null -eq $img -or $null -eq $img.Source) { return }
-        $aw = [double]$img.Source.PixelWidth * [double]$script:artRatio
-        $script:healthPanel.Margin = New-Object System.Windows.Thickness(6, 0, ($aw + 18), 0)
+        if ($null -eq $script:pageArtImages) { return }
+        foreach ($pair in @(@('health', $script:healthPanel, 0), @('netplay', $script:netplayPanel, 10))) {
+            $panel = $pair[1]
+            if ($null -eq $panel) { continue }
+            $img = @($script:pageArtImages)[(Get-TabIndex $pair[0])]
+            if ($null -eq $img -or $null -eq $img.Source) { continue }
+            $aw = [double]$img.Source.PixelWidth * [double]$script:artRatio
+            $panel.Margin = New-Object System.Windows.Thickness(6, 0, ($aw + 18), [double]$pair[2])
+        }
     }
-    catch { Log ("health margin: {0}" -f $_.Exception.Message) }
+    catch { Log ("art margin: {0}" -f $_.Exception.Message) }
 }
 
 function Update-PlayScale {
     [CmdletBinding()]
     param([switch]$Force)
 
+    # v3 polish (Steven, 2026-10-14): "full screen: the rail and the text
+    # should grow, pictures bigger, content centred". So the whole window -
+    # rail, pages, text, buttons, the ribbon - grows together from its
+    # normal 1120 x 720, by whichever side grew less, up to twice the size.
+    # Text and buttons are drawn, so any size is crisp.
+    #
+    # PIXEL ART is the exception: it is only sharp when one art pixel lands
+    # on a whole number of SCREEN pixels. Each picture is registered with a
+    # base size (Register-ArtScale), and gets its own LayoutTransform that
+    # undoes the window's growth and the display's scaling and puts back a
+    # whole number:  m = round(base x dpi x grow), drawn at m / (dpi x grow).
     if ($null -eq $script:win) { return }
     try {
         $w = [double]$script:win.ActualWidth
         $h = [double]$script:win.ActualHeight
         if ($w -le 0 -or $h -le 0) { return }
-
         $dpi = Get-DpiScale
+        # v3 polish 2 (Steven, 2026-10-14: "full screen is too much"): it
+        # grows at 60% of the window's growth, up to x1.5, and shrinks a
+        # little for a small window, never below x0.85, so nothing is lost.
+        $raw = [math]::Min($w / 1120.0, $h / 720.0)
+        if ($raw -gt 1.0) { $grow = 1.0 + ($raw - 1.0) * 0.6 } else { $grow = $raw }
+        $grow = [math]::Round([math]::Max(0.85, [math]::Min(1.5, $grow)), 2)
+        if ($grow -eq $script:uiGrow -and $dpi -eq $script:playDpi -and -not $Force) { return }
+        $script:uiGrow = $grow
+        $script:playDpi = $dpi
 
-        # THE SIZE STEP. Measured in the units WPF works in, which are NOT
-        # screen pixels: on a screen set to 150% a maximised 1920x1080 window
-        # reports about 1280 x 693 here. The first version of this asked for
-        # 840 and so never grew on a scaled screen at all - which is exactly
-        # what happened. These numbers are what a x2 Play page actually needs:
-        # about 860 across and 620 down, plus the tab strip and the footer.
-        #
-        # CHANGED 2026-09-23, because maximised was far too big. The step used
-        # to go to x2 as soon as the window reached about 1000 x 680, which
-        # on Steven's laptop (125%) meant every picture tripled - 1 screen
-        # pixel each to 3 - and the Play button nearly doubled. Now:
-        #
-        #   $grow  how much bigger the window is than its normal 800 x 620,
-        #          by whichever side grew LESS (a wide, short window has not
-        #          really got more room).
-        #   $k     pictures only step up when there is room for a whole
-        #          second copy of the page, i.e. $grow of 2 or more. Pixel
-        #          art cannot grow "a little" - x1.2 is exactly the wobble
-        #          described above - so it waits for real space.
-        #   $soft  the Play button and the text, which are not pixel art and
-        #          CAN grow a little: half as fast as the window, at most
-        #          +35%. Maximised on a laptop this comes out at about +13%.
-        $grow = [math]::Min($w / 800.0, $h / 620.0)
-        $k = 1
-        if ($grow -ge 2.0) { $k = 2 }
-        if ($grow -ge 3.0) { $k = 3 }
-        $soft = 1.0 + [math]::Min(0.35, [math]::Max(0.0, ($grow - 1.0) * 0.5))
-        $soft = [math]::Round($soft, 2)
-
-        # ADDED 2026-09-23 (second pass). $k above waits for double the room,
-        # which on a laptop means never, so maximised looked like nothing
-        # scaled at all. The PICTURES - the mage, the wordmark, the controller
-        # button and every page's corner picture - now take their own step
-        # as soon as the window is 20% bigger than normal: x2 screen pixels
-        # each, and x3 on something the size of a TV. Still whole numbers,
-        # so still sharp. The Play button and the text keep the gentle $soft.
-        $artK = 1
-        if ($grow -ge 1.2) { $artK = 2 }
-        if ($grow -ge 2.2) { $artK = 3 }
-
-        if ($k -eq $script:playScale -and $dpi -eq $script:playDpi -and $soft -eq $script:playSoft -and $artK -eq $script:playArtK -and -not $Force) { return }
-        $changed = ($k -ne $script:playScale -or $dpi -ne $script:playDpi -or $soft -ne $script:playSoft -or $artK -ne $script:playArtK)
-        $script:playScale = $k
-        $script:playDpi   = $dpi
-        $script:playSoft  = $soft
-        $script:playArtK  = $artK
-
-        # THE OTHER HALF, and the reason the mage looked soft. Pixel art only
-        # stays sharp when one of its pixels lands on a whole number of SCREEN
-        # pixels. WPF sizes everything in its own units and Windows then
-        # multiplies by the display scale, so at 150% a picture asked for at
-        # its natural size is drawn at 1.5 screen pixels per art pixel - half
-        # of them one size, half another. That is the blur.
-        #
-        # So the scale actually applied is chosen to come out whole AFTER
-        # Windows has multiplied:  round(k x dpi) / dpi.
-        #    100%: 1/1   = 1.00 -> 1 screen pixel each. Unchanged.
-        #    125%: 1/1.25 = 0.80 -> 1 screen pixel each.
-        #    150%: 2/1.5  = 1.33 -> 2 screen pixels each. Sharp, and bigger.
-        #    200%: 2/2   = 1.00 -> 2 screen pixels each.
-        # AwayFromZero, not .NET's default. The default rounds a half to the
-        # nearest EVEN number, so 4.5 becomes 4 and 5.5 becomes 6 - which is
-        # correct arithmetic and an unpredictable size step. Either answer is
-        # a whole number and so either is sharp; this one is just the one
-        # anybody reading it would expect.
-        $dev   = [math]::Max(1, [math]::Round($k * $dpi, [System.MidpointRounding]::AwayFromZero))
-        $art   = $dev / $dpi
-        $scale = New-Object System.Windows.Media.ScaleTransform($art, $art)
-
-        # Every pixel picture, through the SAME transform. A LayoutTransform
-        # rather than a RenderTransform, because that one also tells the
-        # layout how much room the picture now takes - a RenderTransform would
-        # draw it bigger and leave a hole where it used to be.
-        # The big pictures use $artK. One screen pixel per art pixel is
-        # round(dpi) (1 at 100% and 125%, 2 at 150% and 200%), times the step.
-        $devArt   = $artK * [math]::Max(1, [math]::Round($dpi, [System.MidpointRounding]::AwayFromZero))
-        $artScale = New-Object System.Windows.Media.ScaleTransform(($devArt / $dpi), ($devArt / $dpi))
-        foreach ($img in @($script:logoImage, $script:brandWordmark, $script:padImage)) {
-            if ($null -ne $img) { $img.LayoutTransform = $artScale }
+        $root = $script:win.FindName('RootPanel')
+        if ($null -ne $root) {
+            if ($grow -ne 1.0) { $root.LayoutTransform = New-Object System.Windows.Media.ScaleTransform($grow, $grow) }
+            else { $root.LayoutTransform = [System.Windows.Media.Transform]::Identity }
         }
-        foreach ($img in @($script:pageArtImages)) {
-            if ($null -ne $img) { $img.LayoutTransform = $artScale }
+
+        function Get-ArtTransform([double]$base) {
+            # The biggest whole number of screen pixels that keeps the picture
+            # within a quarter of its intended size, never more - so a
+            # picture can never push a button off the rail (2026-10-14).
+            $m = [math]::Max(1, [math]::Floor(1.25 * $base * $dpi * $grow + 0.0001))
+            $f = $m / ($dpi * $grow)
+            return (New-Object System.Windows.Media.ScaleTransform($f, $f))
         }
-        $script:artRatio = $devArt / $dpi
+        $big = Get-ArtTransform 1.0
+        foreach ($img in @($script:logoImage, $script:padImage, $script:brandWordmark)) { if ($null -ne $img) { $img.LayoutTransform = $big } }
+        foreach ($img in @($script:pageArtImages)) { if ($null -ne $img) { $img.LayoutTransform = $big } }
+        $script:artRatio = $big.ScaleX
         Update-HealthMargin
-
-        # The little status gem stays with the old step - it sits in a line
-        # of text and a doubled gem next to +13% text looks wrong.
-        if ($null -ne $script:playGem) { $script:playGem.LayoutTransform = $scale }
-
-        # Text is not pixel art, so it can be any size at all.
-        # Grows with $soft (a little) until the pictures take a real step,
-        # then keeps pace with them. Never the old flat +13 / +6 jumps.
-        $tk = [math]::Max($soft, [double]$k)
-        if ($null -ne $script:brandName) { $script:brandName.FontSize = [math]::Round(23 * $tk) }
-        if ($null -ne $script:brandSub)  { $script:brandSub.FontSize  = [math]::Round(13 * $tk) }
-        foreach ($t in @($script:playTexts)) {
-            if ($null -ne $t) { $t.FontSize = [math]::Round(14 * $tk) }
+        foreach ($r in @($script:artRegs)) {
+            if ($null -ne $r -and $null -ne $r.Img) { $r.Img.LayoutTransform = (Get-ArtTransform ([double]$r.Base)) }
         }
+        if ($null -ne $script:playGem) { $script:playGem.LayoutTransform = $big }
 
-        # The Play button is drawn from plain rectangles by the PixelButton
-        # style, not from a picture, so any size at all is crisp.
-        if ($null -ne $script:playButton) {
-            $script:playButton.Width    = [math]::Round(300 * $tk)
-            $script:playButton.Height   = [math]::Round(106 * $tk)
-            $script:playButton.FontSize = [math]::Round(34  * $tk)
-        }
-        if ($changed) {
-            Log ("window {0:N0} x {1:N0} at {2}% -> size step x{3}, pictures x{4:N2} ({5} screen pixels each), button and text x{6:N2}, big pictures {7} screen pixels each" -f `
-                 $w, $h, [int]($dpi * 100), $k, $art, $dev, [math]::Max($soft, [double]$k), $devArt)
-        }
+        Log ("window {0:N0} x {1:N0} at {2}% -> everything x{3:N2}, pictures {4} screen pixel(s) each" -f `
+             $w, $h, [int]($dpi * 100), $grow, [math]::Max(1, [math]::Floor(1.25 * $dpi * $grow + 0.0001)))
     }
     catch { Log ("scale: {0}" -f $_.Exception.Message) }
 }
@@ -3299,7 +5374,6 @@ function Add-HelpActions {
     if ($null -eq $script:helpPanel) { return }
 
     Add-UpdateActions
-    Add-BugAction
 
     # Each button below stands on its own: a missing LocalSetup.ps1 must not
     # take the rename button away with it, and the other way round.
@@ -3485,6 +5559,7 @@ function Invoke-LocalSetup {
 #  own file and they are watching it.
 # ---------------------------------------------------------------------------
 $script:libCatalog   = $null
+$script:libFold      = $null   # console sections folded up on the Games tab (name -> $false)
 $script:libNote      = ''
 $script:libBusy      = @{}       # game id -> 'Downloading...'
 $script:libJobs      = @()       # running downloads
@@ -3509,6 +5584,7 @@ function Set-GamesStatus([string]$Text) {
 function Show-ConsolePick([string]$Message, $Systems) {
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $WizardName; $w.Width = 460; $w.Height = 420
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -3579,6 +5655,7 @@ function Invoke-AddGames {
 # Show-Choice, but the text can be long (a list of games).
 function Show-ChoiceScroll([string]$Title, [string]$Message) {
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 560; $w.Height = 420
     $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
     $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
@@ -3603,11 +5680,14 @@ function Start-LibraryJob([string]$Kind, $Game = $null) {
         $rs.Open()
         $ps = [System.Management.Automation.PowerShell]::Create(); $ps.Runspace = $rs
         $lib = Join-Path $ScriptsDir 'GameLibrary.ps1'
+        # SocialEngine too since 2026-10-11: private library files are
+        # fetched with the friends key.
+        $se = Join-Path $ScriptsDir 'SocialEngine.ps1'
         if ($Kind -eq 'catalog') {
             [void]$ps.AddScript('param($lib, $ws) . $lib; Get-LibCatalog $ws').AddArgument($lib).AddArgument($Ws)
         }
         else {
-            [void]$ps.AddScript('param($lib, $ws, $root, $game) . $lib; $s = @(Get-LibSystems $root); Install-LibGame $ws $game $s').AddArgument($lib).AddArgument($Ws).AddArgument($Root).AddArgument($Game)
+            [void]$ps.AddScript('param($se, $lib, $ws, $root, $game) . $se; . $lib; $s = @(Get-LibSystems $root); Install-LibGame $ws $game $s').AddArgument($se).AddArgument($lib).AddArgument($Ws).AddArgument($Root).AddArgument($Game)
         }
         $script:libJobs += [pscustomobject]@{ Kind = $Kind; Game = $Game; Ps = $ps; Handle = $ps.BeginInvoke() }
         if ($null -eq $script:libTimer) {
@@ -3697,37 +5777,82 @@ function Render-Games {
         [void]$panel.Children.Add((New-Text 'Nothing in the library yet. Check back soon.' $ColDim 13))
     }
     else {
+        # One fold-up section per console, with the console's pixel picture
+        # (Steven, 2026-10-11: like the website). A folded section stays
+        # folded while the tab redraws (downloads redraw it often).
         $systems = Get-GamesSystems
-        $lastSys = ''
-        foreach ($g in @($cat.Games)) {
-            if ($g.System -ne $lastSys) {
-                $lastSys = $g.System
-                $full = @($systems | Where-Object Name -eq $g.System | ForEach-Object FullName)
-                $h = New-Text $(if ($full.Count -gt 0) { $full[0] } else { $g.System.ToUpper() }) $ColText 14 $true
-                $h.Margin = '0,12,0,2'
-                [void]$panel.Children.Add($h)
+        if ($null -eq $script:libFold) { $script:libFold = @{} }
+        $order = @('nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gb', 'gbc', 'gba', 'nds', '3ds', 'flash', 'scummvm', 'windows')
+        $pics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'gamecube'; wii = 'wiimote'; wiiu = 'wiimote'; switch = 'switch'
+                   gb = 'gameboy'; gbc = 'gameboy'; gba = 'gba'; nds = 'ds'; '3ds' = 'ds' }
+        $sysNames = @(@($cat.Games) | ForEach-Object { [string]$_.System } | Select-Object -Unique)
+        $sysNames = @($sysNames | Sort-Object @{ Expression = { $i = [array]::IndexOf($order, $_); if ($i -lt 0) { 99 } else { $i } } }, @{ Expression = { $_ } })
+        foreach ($sn in $sysNames) {
+            $list = @(@($cat.Games) | Where-Object { [string]$_.System -eq $sn } | Sort-Object @{ Expression = { ([string]$_.Title).ToLower() } })
+            $full = @($systems | Where-Object Name -eq $sn | ForEach-Object FullName)
+            $head = New-Object System.Windows.Controls.StackPanel; $head.Orientation = 'Horizontal'
+            $pn = $(if ($pics.ContainsKey($sn)) { $pics[$sn] } else { 'pc' })
+            $bmp = Get-PixelBitmap (Join-Path $WizardDir ('profile-' + $pn + '.png'))
+            if ($null -ne $bmp) {
+                $img = New-Object System.Windows.Controls.Image
+                $img.Source = $bmp; $img.Height = 30; $img.Width = 44; $img.Stretch = 'Uniform'; $img.Margin = '0,0,10,0'
+                [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+                [void]$head.Children.Add($img)
             }
-            $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,6,0,0'
-            $right = New-Object System.Windows.Controls.StackPanel; $right.Orientation = 'Horizontal'; $right.VerticalAlignment = 'Top'
-            [System.Windows.Controls.DockPanel]::SetDock($right, 'Right')
-            if ($script:libBusy.ContainsKey($g.Id)) { [void]$right.Children.Add((New-Text $script:libBusy[$g.Id] $ColAway 12)) }
-            elseif (Test-LibGameInstalled $g $systems) { [void]$right.Children.Add((New-Text 'On your drive' $ColOnline 12)) }
-            else {
-                $b = New-Object System.Windows.Controls.Button
-                $b.Content = 'Add to my drive'; $b.Padding = '10,3'; $b.FontSize = 13; $b.Tag = $g
-                $b.Add_Click({ param($s2, $e2) Invoke-LibraryAdd $s2.Tag })
-                [void]$right.Children.Add($b)
+            $hn = New-Text $(if ($full.Count -gt 0) { $full[0] } else { $sn.ToUpper() }) $ColText 14 $true; $hn.VerticalAlignment = 'Center'
+            [void]$head.Children.Add($hn)
+            $hc = New-Text ('   {0} game{1}' -f $list.Count, $(if ($list.Count -eq 1) { '' } else { 's' })) $ColDim 12; $hc.VerticalAlignment = 'Center'
+            [void]$head.Children.Add($hc)
+            $exp = New-Object System.Windows.Controls.Expander
+            $exp.Header = $head; $exp.Margin = '0,12,0,0'; $exp.Tag = $sn
+            # Folded until opened (Steven, 2026-10-14); one you open stays open.
+            $exp.IsExpanded = ($script:libFold.ContainsKey($sn) -and $script:libFold[$sn])
+            $exp.Add_Expanded({ param($s2, $e2) $script:libFold[[string]$s2.Tag] = $true })
+            $exp.Add_Collapsed({ param($s2, $e2) $script:libFold[[string]$s2.Tag] = $false })
+            $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,2,0,4'
+            foreach ($g in $list) {
+                $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,6,0,0'
+                $right = New-Object System.Windows.Controls.StackPanel; $right.Orientation = 'Horizontal'; $right.VerticalAlignment = 'Top'
+                [System.Windows.Controls.DockPanel]::SetDock($right, 'Right')
+                if ($script:libBusy.ContainsKey($g.Id)) { [void]$right.Children.Add((New-Text $script:libBusy[$g.Id] $ColAway 12)) }
+                elseif (Test-LibGameInstalled $g $systems) { [void]$right.Children.Add((New-Text 'On your drive' $ColOnline 12)) }
+                else {
+                    $b = New-Object System.Windows.Controls.Button
+                    $b.Content = 'Add to my drive'; $b.Padding = '10,3'; $b.FontSize = 13; $b.Tag = $g
+                    $b.Add_Click({ param($s2, $e2) Invoke-LibraryAdd $s2.Tag })
+                    [void]$right.Children.Add($b)
+                }
+                [void]$row.Children.Add($right)
+                # small box art (2026-10-12), the console's picture when none
+                $artBox = New-Object System.Windows.Controls.Border; $artBox.Width = 56; $artBox.Margin = '0,2,10,0'; $artBox.VerticalAlignment = 'Top'
+                [System.Windows.Controls.DockPanel]::SetDock($artBox, 'Left')
+                $ai = New-Object System.Windows.Controls.Image; $ai.MaxHeight = 56; $ai.MaxWidth = 56; $ai.Stretch = 'Uniform'
+                $shown = $false
+                if ([string]$g.Art -ne '') {
+                    try {
+                        $ab = New-Object System.Windows.Media.Imaging.BitmapImage
+                        $ab.BeginInit(); $ab.UriSource = New-Object System.Uri([string]$g.Art); $ab.CacheOption = 'OnLoad'; $ab.DecodePixelHeight = 112; $ab.EndInit()
+                        $ai.Source = $ab; $shown = $true
+                    } catch { }
+                }
+                if (-not $shown -and $null -ne $bmp) {
+                    $ai.Source = $bmp; $ai.MaxHeight = 30
+                    [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($ai, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+                }
+                $artBox.Child = $ai
+                [void]$row.Children.Add($artBox)
+                $info = New-Object System.Windows.Controls.StackPanel; $info.Margin = '0,0,12,0'
+                $meta = @()
+                if ($g.Players -ne '') { $meta += ('{0} players' -f $g.Players) }
+                $meta += ('{0} MB' -f [math]::Round($g.Size / 1MB, 1))
+                [void]$info.Children.Add((New-Text ($g.Title + '   ') $ColText 14 $true))
+                [void]$info.Children.Add((New-Text ($meta -join '  -  ') $ColDim 12))
+                if ($g.Description -ne '') { $d = New-Text $g.Description $ColDim 12; $d.TextWrapping = 'Wrap'; [void]$info.Children.Add($d) }
+                [void]$row.Children.Add($info)
+                [void]$body.Children.Add($row)
             }
-            [void]$row.Children.Add($right)
-            $info = New-Object System.Windows.Controls.StackPanel; $info.Margin = '0,0,12,0'
-            $meta = @()
-            if ($g.Players -ne '') { $meta += ('{0} players' -f $g.Players) }
-            $meta += ('{0} MB' -f [math]::Round($g.Size / 1MB, 1))
-            [void]$info.Children.Add((New-Text ($g.Title + '   ') $ColText 14 $true))
-            [void]$info.Children.Add((New-Text ($meta -join '  -  ') $ColDim 12))
-            if ($g.Description -ne '') { $d = New-Text $g.Description $ColDim 12; $d.TextWrapping = 'Wrap'; [void]$info.Children.Add($d) }
-            [void]$row.Children.Add($info)
-            [void]$panel.Children.Add($row)
+            $exp.Content = $body
+            [void]$panel.Children.Add($exp)
         }
     }
     $fr = New-Object System.Windows.Controls.StackPanel; $fr.Orientation = 'Horizontal'; $fr.Margin = '0,12,0,0'
@@ -3839,6 +5964,18 @@ function Open-NetplayLink([string]$Url) {
     try { Start-Process $Url } catch { Log ("netplay: could not open {0} - {1}" -f $Url, $_.Exception.Message) }
 }
 
+# How to join a friend for the console an invite names, in one line.
+function Get-NetplayJoinHint([string]$System) {
+    switch -regex ($System) {
+        '^(nes|snes|n64|gb|gbc|gba|megadrive|genesis|mastersystem|pcengine)$' { return 'How to join: open RetroBat, press the NETPLAY GAMES button on the console list, and pick their room once they host it.' }
+        '^(gamecube|wii)$' { return 'How to join: press "Open Dolphin for netplay" below, then Tools > Start NetPlay > Connect, and type the code from their note.' }
+        '^(3ds)$'          { return 'How to join: open Azahar below, Multiplayer > Direct Connect, with their address.' }
+        '^(steam)$'        { return 'How to join: they send a Remote Play Together invite from Steam. Accept it in Steam.' }
+        '^$'               { return 'How to join: ask them which game, then use the card for that console below.' }
+        default            { return 'How to join: Parsec, below. They share a link from Parsec and you click it.' }
+    }
+}
+
 function Render-Netplay {
     $panel = $script:netplayPanel
     if ($null -eq $panel) { return }
@@ -3850,6 +5987,23 @@ function Render-Netplay {
     $intro = New-Text 'Play with friends who are not in the room. Everyone needs this wizard (the same games and the same emulators are what keep two computers in step). Lowest lag first.' $ColText 14
     $intro.TextWrapping = 'Wrap'
     [void]$panel.Children.Add($intro)
+
+    # Play-together invites (2026-10-12): the same strip as the Profile tab,
+    # plus how to join for the console the invite names.
+    try {
+        if ($script:socialOk) {
+            $prof = Read-SocialProfile $Ws
+            if ($null -ne $prof -and -not $prof.Guest) {
+                $now = Get-SocialNowUtc
+                $pl = @(Get-SocialPlayersNow)
+                Add-SocialInviteStrip $panel $prof $pl $now
+                foreach ($x in @(Get-SocialInvitesFor $prof $pl $now)) {
+                    $how = Get-NetplayJoinHint $x.Invite.System
+                    if ($how -ne '') { $ht = New-Text $how $ColDim 12; $ht.Margin = '12,4,0,0'; [void]$panel.Children.Add($ht) }
+                }
+            }
+        }
+    } catch { Log ("netplay: invites - {0}" -f $_.Exception.Message) }
 
     # --- the RetroBat settings ------------------------------------------------
     $s = Get-NetplaySettings $Root
@@ -4016,7 +6170,10 @@ function New-PencilButton([scriptblock]$OnClick, [string]$Tip) {
     return $b
 }
 
-function New-SocialButton([string]$Text, [scriptblock]$OnClick, [string]$Tag = '') {
+# $Tag is deliberately NOT typed. It was [string] until 2026-10-11, which
+# quietly turned a report handed to the Read button into the words
+# "@{Number=...}", so Read opened an empty window and Done did nothing.
+function New-SocialButton([string]$Text, [scriptblock]$OnClick, $Tag = '') {
     $b = New-Object System.Windows.Controls.Button
     $b.Content = $Text; $b.Padding = '10,3'; $b.FontSize = 13; $b.Margin = '6,0,0,0'
     $b.VerticalAlignment = 'Center'; $b.Tag = $Tag
@@ -4121,8 +6278,36 @@ function Invoke-SocialFetchTick {
 
 # When the window opens: start the helper (only one ever runs), keep it told
 # that the wizard is open, fetch now and every two minutes.
+# The helper's Join button, with the wizard already open: it writes
+# social\goto.txt and the open window turns to that tab (2026-10-12).
+function Start-GotoWatch {
+    if ($null -ne $script:gotoTimer) { return }
+    try {
+        $script:gotoTimer = New-Object System.Windows.Threading.DispatcherTimer
+        $script:gotoTimer.Interval = [TimeSpan]::FromMilliseconds(1500)
+        $script:gotoTimer.Add_Tick({
+            try {
+                $f = Join-Path $Ws 'social\goto.txt'
+                if (-not (Test-Path -LiteralPath $f)) { return }
+                $t = ([System.IO.File]::ReadAllText($f)).Trim().ToLower()
+                Remove-Item -LiteralPath $f -Force
+                $ti = Get-TabIndex $t
+                if ($ti -gt 0) {
+                    Start-SocialFetch
+                    Render-Netplay
+                    $script:tabs.SelectedIndex = $ti
+                    if ($script:win.WindowState -eq 'Minimized') { $script:win.WindowState = 'Normal' }
+                    $script:win.Activate()
+                }
+            } catch { }
+        })
+        $script:gotoTimer.Start()
+    } catch { }
+}
+
 function Start-SocialSession {
     if (-not $script:socialOk) { return }
+    Start-GotoWatch
     $prof = $null
     try { $prof = Read-SocialProfile $Ws } catch { }
     if ($null -eq $prof -or $prof.Guest) { return }
@@ -4159,7 +6344,9 @@ function Start-SocialHelper {
         if (-not (Test-Path -LiteralPath $helper)) { return }
         $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
         $argLine = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}"' -f $helper
-        Start-Process -FilePath $ps -ArgumentList $argLine -WindowStyle Hidden
+        # Its working folder is NOT on the drive: it may run for hours, and a
+        # program sitting in a folder on the drive stops it ejecting safely.
+        Start-Process -FilePath $ps -ArgumentList $argLine -WindowStyle Hidden -WorkingDirectory $env:TEMP
         Log 'profile: helper started (it exits at once if one is already running)'
     }
     catch { Log ("profile: could not start the helper - {0}" -f $_.Exception.Message) }
@@ -4198,90 +6385,106 @@ function Render-Social {
     $now = Get-SocialNowUtc
     $players = @(Get-SocialPlayersNow)
 
-    # --- you -------------------------------------------------------------------
-    [void]$panel.Children.Add((New-SectionHeader 'You'))
-    $me = New-Object System.Windows.Controls.DockPanel; $me.Margin = '0,4,0,0'
-    $avBox = New-Object System.Windows.Controls.StackPanel; $avBox.Orientation = 'Horizontal'
-    [void]$avBox.Children.Add((New-SocialAvatar $prof 48 $true))
-    $pp = New-PencilButton { Invoke-SocialPicture } 'Change your picture'
-    $pp.Margin = '-14,30,8,0'
-    [void]$avBox.Children.Add($pp)
-    [System.Windows.Controls.DockPanel]::SetDock($avBox, 'Left')
-    [void]$me.Children.Add($avBox)
-    $mid = New-Object System.Windows.Controls.StackPanel; $mid.VerticalAlignment = 'Center'
-    # The dot tells the truth, like Discord: it is grey unless this drive's
-    # check-in really reached GitHub lately, whatever status was picked.
+    # ===== THE PROFILE CARD (rebuilt 2026-10-12) ============================
+    #  Steven: "revamp the whole tab to look really professional, similar to
+    #  Steam's profile or Discord's." One card across the top: picture, name,
+    #  status, and the three favourite games beside them. Underneath, games
+    #  on the left and friends on the right, then the settings.
     $self = Get-SocialSelfPresence $prof $players $now ($token -ne '')
+    $incog = $false
+    try { $incog = Test-SocialIncognito $Ws } catch { }
+    if ($incog) { $self = [pscustomobject]@{ Kind = 'offline'; Line = 'Incognito: friends see you as offline, this session only' } }
+
+    $card = New-Object System.Windows.Controls.Border
+    $card.Background = (New-Brush '#FF262636'); $card.Padding = '18,16'; $card.CornerRadius = '6'; $card.Margin = '0,4,0,0'
+    $cg = New-Object System.Windows.Controls.Grid
+    foreach ($w in @('Auto', '*', 'Auto')) {
+        $cd = New-Object System.Windows.Controls.ColumnDefinition
+        $cd.Width = $(if ($w -eq '*') { New-Object System.Windows.GridLength(1, 'Star') } else { [System.Windows.GridLength]::Auto })
+        [void]$cg.ColumnDefinitions.Add($cd)
+    }
+
+    # the picture: click it to change it
+    $avCol = New-Object System.Windows.Controls.StackPanel; $avCol.VerticalAlignment = 'Top'
+    $avBtn = New-Object System.Windows.Controls.Button
+    try { $avBtn.Style = $script:win.TryFindResource('IconButton') } catch { }
+    $avImg = New-SocialAvatar $prof 72 $true; $avImg.Margin = '0'
+    $avBtn.Content = $avImg; $avBtn.ToolTip = 'Change your picture'; $avBtn.Cursor = 'Hand'
+    $avBtn.Add_Click({ Invoke-SocialPicture })
+    [void]$avCol.Children.Add($avBtn)
+    $avHint = New-Text 'change' $ColDim 11; $avHint.HorizontalAlignment = 'Center'
+    [void]$avCol.Children.Add($avHint)
+    [System.Windows.Controls.Grid]::SetColumn($avCol, 0)
+    [void]$cg.Children.Add($avCol)
+
+    # name, status, the line under it
+    $mid = New-Object System.Windows.Controls.StackPanel; $mid.Margin = '16,2,16,0'; $mid.VerticalAlignment = 'Top'
     $nr = New-Object System.Windows.Controls.StackPanel; $nr.Orientation = 'Horizontal'
     $dot = New-Object System.Windows.Shapes.Ellipse
-    $dot.Width = 11; $dot.Height = 11; $dot.Margin = '0,0,7,0'; $dot.VerticalAlignment = 'Center'
+    $dot.Width = 12; $dot.Height = 12; $dot.Margin = '0,0,9,0'; $dot.VerticalAlignment = 'Center'
     $dot.Fill = (New-Brush (Get-SocialDotColour $self.Kind))
     [void]$nr.Children.Add($dot)
-    [void]$nr.Children.Add((New-Text $prof.Username $ColText 17 $true))
-    [void]$nr.Children.Add((New-PencilButton { Invoke-SocialNameRequest } 'Ask for a new name'))
+    $nm = New-Text $prof.Username $ColText 22 $true; $nm.TextWrapping = 'NoWrap'
+    [void]$nr.Children.Add($nm)
+    # v3 polish (Steven, 2026-10-14): the pencil edits the WHOLE profile
+    # - picture, name, status and the short line - in one window, and the
+    # card just shows them: the line in small type under the name, then
+    # what you are up to.
+    $pen = New-PencilButton { Show-ProfileEditWindow } 'Edit your profile'
+    $pen.Margin = '12,2,0,0'
+    [void]$nr.Children.Add($pen)
     [void]$mid.Children.Add($nr)
-    [void]$mid.Children.Add((New-Text $self.Line $ColDim 13))
+    if ([string]$prof.Text -ne '') {
+        $ln = New-Text ([string]$prof.Text) $ColText 13; $ln.FontStyle = 'Italic'; $ln.Margin = '21,3,0,0'
+        [void]$mid.Children.Add($ln)
+    }
+    # The status line ends with the same short line; it is already shown
+    # just above, so it is taken off here (Steven saw it twice, 2026-10-14).
+    $sline = [string]$self.Line
+    if ([string]$prof.Text -ne '' -and $sline.EndsWith(' - ' + [string]$prof.Text)) { $sline = $sline.Substring(0, $sline.Length - 3 - ([string]$prof.Text).Length) }
+    $sl = New-Text $sline $ColDim 12; $sl.Margin = '21,2,0,0'
+    [void]$mid.Children.Add($sl)
     if ($prof.NameReq -ne '') {
-        $rq = New-Object System.Windows.Controls.StackPanel; $rq.Orientation = 'Horizontal'; $rq.Margin = '0,4,0,0'
-        [void]$rq.Children.Add((New-Text ("New name '{0}' is waiting for an admin to approve it." -f $prof.NameReq) $ColAway 12))
+        $rq = New-Object System.Windows.Controls.StackPanel; $rq.Orientation = 'Horizontal'; $rq.Margin = '21,4,0,0'
+        [void]$rq.Children.Add((New-Text ("New name '{0}' is waiting for an admin." -f $prof.NameReq) $ColAway 12))
         $cx = New-SocialButton 'Cancel request' { $p = Read-SocialProfile $Ws; $p.NameReq = ''; [void](Save-SocialProfile $p); Render-Social }
         $cx.FontSize = 11; $cx.Padding = '6,1'
         [void]$rq.Children.Add($cx)
         [void]$mid.Children.Add($rq)
     }
-    [void]$me.Children.Add($mid)
-    [void]$panel.Children.Add($me)
+    if ($incog) {
+        $ir = New-Object System.Windows.Controls.StackPanel; $ir.Orientation = 'Horizontal'; $ir.Margin = '0,8,0,0'
+        [void]$ir.Children.Add((New-Text 'Incognito this session.' $ColAway 12))
+        $ib = New-SocialButton 'Show me online' { try { Set-SocialIncognito $Ws $false; Touch-SocialProfile } catch { }; Render-Social }
+        $ib.FontSize = 11; $ib.Padding = '6,1'
+        [void]$ir.Children.Add($ib)
+        [void]$mid.Children.Add($ir)
+    }
+    [System.Windows.Controls.Grid]::SetColumn($mid, 1)
+    [void]$cg.Children.Add($mid)
+
+    # the three favourites
+    $fc = New-Object System.Windows.Controls.StackPanel; $fc.VerticalAlignment = 'Top'
+    $fl = New-Text 'FAVORITES' $ColDim 11 $true; $fl.Margin = '2,0,0,6'
+    [void]$fc.Children.Add($fl)
+    $fr = New-Object System.Windows.Controls.StackPanel; $fr.Orientation = 'Horizontal'
+    $favs = @(Get-SocialFavs $Root $prof)
+    for ($i = 0; $i -lt 3; $i++) { [void]$fr.Children.Add((New-FavSlot $favs[$i] $i)) }
+    [void]$fc.Children.Add($fr)
+    [System.Windows.Controls.Grid]::SetColumn($fc, 2)
+    [void]$cg.Children.Add($fc)
+
+    $card.Child = $cg
+    [void]$panel.Children.Add($card)
+
     if ($prof.Pw -eq '') {
-        $pw = New-Text 'No password yet. Set one so nobody else can log in as you, and so you can log in on other drives.' $ColAway 12
-        $pw.Margin = '0,8,0,0'
+        $pw = New-Text 'No password yet. Set one (Settings, below) so nobody else can log in as you.' $ColAway 12
+        $pw.Margin = '2,8,0,0'
         [void]$panel.Children.Add($pw)
     }
-
-    # status + custom text
-    $sr = New-Object System.Windows.Controls.StackPanel; $sr.Orientation = 'Horizontal'; $sr.Margin = '0,10,0,0'
-    [void]$sr.Children.Add((New-Text 'Status' $ColDim 13))
-    $cb = New-Object System.Windows.Controls.ComboBox
-    $cb.Width = 120; $cb.Margin = '10,0,0,0'; $cb.FontSize = 13
-    foreach ($s in @('Online', 'Away', 'Busy', 'Invisible')) { [void]$cb.Items.Add($s) }
-    $script:socialStatusLoading = $true
-    $cb.SelectedItem = (Get-Culture).TextInfo.ToTitleCase($prof.Status)
-    $script:socialStatusLoading = $false
-    $cb.Add_SelectionChanged({
-        param($s2, $e2)
-        if ($script:socialStatusLoading) { return }
-        $p = Read-SocialProfile $Ws
-        $p.Status = ([string]$s2.SelectedItem).ToLower()
-        if (Save-SocialProfile $p) { Log ("profile: status {0}" -f $p.Status) }
-        Render-Social
-    })
-    [void]$sr.Children.Add($cb)
-    $tb = New-Object System.Windows.Controls.TextBox
-    $tb.Width = 220; $tb.Margin = '14,0,0,0'; $tb.FontSize = 13; $tb.Padding = '4,2'; $tb.MaxLength = 40
-    $tb.Text = $prof.Text; $tb.ToolTip = 'A short line under your name, like "down for Smash"'
-    $script:socialTextBox = $tb
-    [void]$sr.Children.Add($tb)
-    [void]$sr.Children.Add((New-SocialButton 'Set' {
-        $p = Read-SocialProfile $Ws
-        $p.Text = Get-SocialClean ([string]$script:socialTextBox.Text) 40
-        [void](Save-SocialProfile $p); Render-Social
-    }))
-    [void]$panel.Children.Add($sr)
-
-    # toggles
-    $tg = New-Object System.Windows.Controls.StackPanel; $tg.Orientation = 'Horizontal'; $tg.Margin = '0,8,0,0'
-    $c1 = New-Object System.Windows.Controls.CheckBox
-    $c1.Content = 'Show what I am playing'; $c1.IsChecked = $prof.ShowGame; $c1.Foreground = (New-Brush $ColText); $c1.FontSize = 13
-    $c1.Add_Click({ param($s2, $e2) $p = Read-SocialProfile $Ws; $p.ShowGame = [bool]$s2.IsChecked; [void](Save-SocialProfile $p) })
-    $c2 = New-Object System.Windows.Controls.CheckBox
-    $c2.Content = 'Popups when friends come online'; $c2.IsChecked = $prof.Popups; $c2.Foreground = (New-Brush $ColText); $c2.FontSize = 13
-    $c2.Margin = '18,0,0,0'
-    $c2.Add_Click({ param($s2, $e2) $p = Read-SocialProfile $Ws; $p.Popups = [bool]$s2.IsChecked; [void](Save-SocialProfile $p) })
-    [void]$tg.Children.Add($c1); [void]$tg.Children.Add($c2)
-    [void]$panel.Children.Add($tg)
-
     if ($token -eq '') {
-        $w = New-Text 'This drive has no key for the friends list (social\social-token.txt), so nothing can be sent or read.' '#FFE5B83B' 13
-        $w.TextWrapping = 'Wrap'; $w.Margin = '0,10,0,0'
+        $w = New-Text 'This drive has no key for the friends list (social\social-token.txt), so nothing can be sent or read.' $ColAway 13
+        $w.Margin = '2,8,0,0'
         [void]$panel.Children.Add($w)
     }
 
@@ -4289,88 +6492,708 @@ function Render-Social {
     try { $view = Get-SocialView $prof $players $now } catch { Log "profile view: $_" }
     if ($null -eq $view) { $view = [pscustomobject]@{ Friends = @(); Incoming = @(); Outgoing = @() } }
 
+    # invites, to me and from me
+    Add-SocialInviteStrip $panel $prof $players $now
+
+    # ===== games left, friends right =========================================
+    $cols = New-Object System.Windows.Controls.Grid; $cols.Margin = '0,6,0,0'
+    foreach ($w in @('*', '18', '*')) {
+        $cd = New-Object System.Windows.Controls.ColumnDefinition
+        $cd.Width = $(if ($w -eq '*') { New-Object System.Windows.GridLength(1, 'Star') } else { New-Object System.Windows.GridLength([double]$w) })
+        [void]$cols.ColumnDefinitions.Add($cd)
+    }
+    $left = New-Object System.Windows.Controls.StackPanel
+    $right = New-Object System.Windows.Controls.StackPanel
+    [System.Windows.Controls.Grid]::SetColumn($left, 0); [System.Windows.Controls.Grid]::SetColumn($right, 2)
+    [void]$cols.Children.Add($left); [void]$cols.Children.Add($right)
+    [void]$panel.Children.Add($cols)
+
+    Add-SocialMyGames $left $prof
+
     # --- requests ------------------------------------------------------------
     if (@($view.Incoming).Count -gt 0) {
-        [void]$panel.Children.Add((New-SectionHeader 'Friend requests'))
+        [void]$right.Children.Add((New-ProfileHeader 'FRIEND REQUESTS'))
         foreach ($p in @($view.Incoming)) {
-            $row = New-SocialPersonRow $p $now
+            $row = New-SocialPersonRow $p $now $false 170
             [void]$row.Children.Add((New-SocialButton 'Accept' { param($s2, $e2) Invoke-SocialAction 'accept' ([string]$s2.Tag) } $p.Id))
             [void]$row.Children.Add((New-SocialButton 'Decline' { param($s2, $e2) Invoke-SocialAction 'decline' ([string]$s2.Tag) } $p.Id))
-            [void]$panel.Children.Add($row)
+            [void]$right.Children.Add($row)
         }
     }
 
     # --- friends -------------------------------------------------------------
-    [void]$panel.Children.Add((New-SectionHeader ('Friends ({0} online)' -f @($view.Friends | Where-Object { (Get-SocialPresence $_ $now).Kind -ne 'offline' }).Count)))
+    $onlineN = @($view.Friends | Where-Object { (Get-SocialPresence $_ $now).Kind -ne 'offline' }).Count
+    [void]$right.Children.Add((New-ProfileHeader ('FRIENDS  -  {0} ONLINE' -f $onlineN)))
     if (@($view.Friends).Count -eq 0) {
-        [void]$panel.Children.Add((New-Text 'No friends yet. Find somebody by name below.' $ColDim 13))
+        [void]$right.Children.Add((New-Text 'No friends yet. Find somebody by name below.' $ColDim 13))
     }
-    foreach ($p in @($view.Friends)) {
-        $row = New-SocialPersonRow $p $now
-        $rm = New-SocialButton 'Remove' { param($s2, $e2) Invoke-SocialAction 'remove' ([string]$s2.Tag) } $p.Id
-        $rm.FontSize = 11; $rm.Padding = '6,1'
-        [void]$row.Children.Add($rm)
-        [void]$panel.Children.Add($row)
+    # online first, then by name
+    $sorted = @($view.Friends | Sort-Object @{ Expression = { if ((Get-SocialPresence $_ $now).Kind -eq 'offline') { 1 } else { 0 } } }, @{ Expression = { $_.Username.ToLower() } })
+    foreach ($p in $sorted) {
+        $row = New-SocialPersonRow $p $now $false 170
+        $ib = New-SocialButton 'Invite' { param($s2, $e2) Invoke-SocialInvite @([string]$s2.Tag) } $p.Id
+        $ib.FontSize = 11; $ib.Padding = '7,2'; $ib.ToolTip = 'Ask them to play netplay with you now'
+        [void]$row.Children.Add($ib)
+        $pc = New-SocialButton 'Profile' { param($s2, $e2) Show-SocialFriendCard ([string]$s2.Tag) } $p.Id
+        $pc.FontSize = 11; $pc.Padding = '7,2'
+        [void]$row.Children.Add($pc)
+        [void]$right.Children.Add($row)
+    }
+    if ($onlineN -gt 1) {
+        $all = New-SocialButton 'Invite everyone online' {
+            $ids = @(@(Get-SocialView (Read-SocialProfile $Ws) @(Get-SocialPlayersNow) (Get-SocialNowUtc)).Friends | Where-Object { (Get-SocialPresence $_ (Get-SocialNowUtc)).Kind -ne 'offline' } | ForEach-Object { $_.Id })
+            Invoke-SocialInvite $ids
+        }
+        $all.Margin = '42,8,0,0'; $all.HorizontalAlignment = 'Left'; $all.FontSize = 12
+        [void]$right.Children.Add($all)
     }
 
     if (@($view.Outgoing).Count -gt 0) {
-        [void]$panel.Children.Add((New-SectionHeader 'Waiting for them to accept'))
+        [void]$right.Children.Add((New-ProfileHeader 'WAITING FOR THEM TO ACCEPT'))
         foreach ($p in @($view.Outgoing)) {
-            $row = New-SocialPersonRow $p $now
+            $row = New-SocialPersonRow $p $now $false 170
             [void]$row.Children.Add((New-SocialButton 'Cancel' { param($s2, $e2) Invoke-SocialAction 'cancel' ([string]$s2.Tag) } $p.Id))
-            [void]$panel.Children.Add($row)
+            [void]$right.Children.Add($row)
         }
     }
 
     # --- add a friend --------------------------------------------------------
-    [void]$panel.Children.Add((New-SectionHeader 'Add a friend'))
-    $fr = New-Object System.Windows.Controls.StackPanel; $fr.Orientation = 'Horizontal'
+    [void]$right.Children.Add((New-ProfileHeader 'ADD A FRIEND'))
+    $af = New-Object System.Windows.Controls.StackPanel; $af.Orientation = 'Horizontal'
     $q = New-Object System.Windows.Controls.TextBox
-    $q.Width = 220; $q.FontSize = 13; $q.Padding = '4,2'; $q.Text = $script:socialSearch
+    $q.Width = 190; $q.FontSize = 13; $q.Padding = '4,2'; $q.Text = $script:socialSearch; $q.ToolTip = 'Their username'
     $script:socialSearchBox = $q
     $q.Add_KeyDown({ param($s2, $e2) if ($e2.Key -eq 'Return') { $script:socialSearch = [string]$script:socialSearchBox.Text; Render-Social } })
-    [void]$fr.Children.Add($q)
-    [void]$fr.Children.Add((New-SocialButton 'Search' { $script:socialSearch = [string]$script:socialSearchBox.Text; Render-Social }))
-    [void]$panel.Children.Add($fr)
+    [void]$af.Children.Add($q)
+    [void]$af.Children.Add((New-SocialButton 'Search' { $script:socialSearch = [string]$script:socialSearchBox.Text; Render-Social }))
+    [void]$right.Children.Add($af)
     if ($script:socialSearch.Trim() -ne '') {
         $hits = @(Find-SocialPlayers $prof $players $script:socialSearch)
-        if ($hits.Count -eq 0) { [void]$panel.Children.Add((New-Text 'Nobody by that name. Names come from the last list that arrived; Refresh fetches a new one.' $ColDim 13)) }
+        if ($hits.Count -eq 0) { $nh = New-Text 'Nobody by that name. Names come from the last list that arrived; Refresh fetches a new one.' $ColDim 12; $nh.Margin = '0,6,0,0'; [void]$right.Children.Add($nh) }
         foreach ($p in $hits) {
-            $row = New-SocialPersonRow $p $now
+            $row = New-SocialPersonRow $p $now $false 170
             $fIds = @($view.Friends | ForEach-Object { $_.Id }); $oIds = @($view.Outgoing | ForEach-Object { $_.Id }); $iIds = @($view.Incoming | ForEach-Object { $_.Id })
             if     ($fIds -contains $p.Id) { [void]$row.Children.Add((New-Text '   Friends' $ColDim 12)) }
             elseif ($oIds -contains $p.Id) { [void]$row.Children.Add((New-Text '   Request sent' $ColDim 12)) }
             elseif ($iIds -contains $p.Id) { [void]$row.Children.Add((New-SocialButton 'Accept' { param($s2, $e2) Invoke-SocialAction 'accept' ([string]$s2.Tag) } $p.Id)) }
             else { [void]$row.Children.Add((New-SocialButton 'Add friend' { param($s2, $e2) Invoke-SocialAction 'add' ([string]$s2.Tag) } $p.Id)) }
-            [void]$panel.Children.Add($row)
+            [void]$right.Children.Add($row)
         }
     }
 
-    # --- footer ----------------------------------------------------------------
-    $ft = New-Object System.Windows.Controls.StackPanel; $ft.Orientation = 'Horizontal'; $ft.Margin = '0,18,0,0'
-    $rf = New-SocialButton 'Refresh' { $script:socialNote = 'Checking...'; Render-Social; Start-SocialFetch }
+    # ===== settings ==========================================================
+    $set = New-Object System.Windows.Controls.Border
+    $set.Background = (New-Brush $ColPanel); $set.Padding = '16,12'; $set.CornerRadius = '6'; $set.Margin = '0,22,0,0'
+    $ss = New-Object System.Windows.Controls.StackPanel
+    $sh = New-ProfileHeader 'SETTINGS'; $sh.Margin = '0,0,0,6'
+    [void]$ss.Children.Add($sh)
+    $wp = New-Object System.Windows.Controls.WrapPanel
+    $mk = {
+        param([string]$Text, [bool]$On, [scriptblock]$Click, [string]$Tip)
+        $c = New-Object System.Windows.Controls.CheckBox
+        $c.Content = $Text; $c.IsChecked = $On; $c.Foreground = (New-Brush $ColText); $c.FontSize = 13
+        $c.Margin = '0,4,22,4'; $c.ToolTip = $Tip
+        $c.Add_Click($Click)
+        return $c
+    }
+    [void]$wp.Children.Add((& $mk 'Show what I am playing' $prof.ShowGame { param($s2, $e2) $p = Read-SocialProfile $Ws; $p.ShowGame = [bool]$s2.IsChecked; [void](Save-SocialProfile $p) } 'Friends see the game you are in'))
+    [void]$wp.Children.Add((& $mk 'Popups when friends come online' $prof.Popups { param($s2, $e2) $p = Read-SocialProfile $Ws; $p.Popups = [bool]$s2.IsChecked; [void](Save-SocialProfile $p) } 'A small note in the corner of the screen'))
+    [void]$wp.Children.Add((& $mk 'Stay reachable after closing' $prof.Reach { param($s2, $e2) $p = Read-SocialProfile $Ws; $p.Reach = [bool]$s2.IsChecked; [void](Save-SocialProfile $p); Log ("profile: stay reachable = {0}" -f $p.Reach) } 'Invites still pop up after the wizard and RetroBat are closed, until the computer restarts or the drive is unplugged'))
+    $askOn = $true
+    try { $askOn = Get-SocialAskWho $Ws } catch { }
+    [void]$wp.Children.Add((& $mk 'Ask "Who''s playing?" on PLAY' $askOn { param($s2, $e2) try { Set-SocialAskWho $Ws ([bool]$s2.IsChecked) } catch { } } 'Off: PLAY goes straight in as whoever is logged in'))
+    [void]$ss.Children.Add($wp)
+    $bt = New-Object System.Windows.Controls.StackPanel; $bt.Orientation = 'Horizontal'; $bt.Margin = '0,10,0,0'
+    $rf = New-SocialButton 'Refresh' { $script:socialNote = 'Checking...'; $script:myGameStats = $null; Render-Social; Start-SocialFetch }
     $rf.Margin = '0'
-    [void]$ft.Children.Add($rf)
-    [void]$ft.Children.Add((New-SocialButton $(if ($prof.Pw -eq '') { 'Set a password' } else { 'Change password' }) { Invoke-SocialPassword }))
-    [void]$ft.Children.Add((New-SocialButton 'Log out' { Invoke-SocialLogout }))
+    [void]$bt.Children.Add($rf)
+    [void]$bt.Children.Add((New-SocialButton $(if ($prof.Pw -eq '') { 'Set a password' } else { 'Change password' }) { Invoke-SocialPassword }))
+    [void]$bt.Children.Add((New-SocialButton 'Log out' { Invoke-SocialLogout }))
     $nt = New-Text ('  ' + $script:socialNote) $ColDim 12; $nt.VerticalAlignment = 'Center'
-    [void]$ft.Children.Add($nt)
-    [void]$panel.Children.Add($ft)
+    [void]$bt.Children.Add($nt)
+    [void]$ss.Children.Add($bt)
+    $set.Child = $ss
+    [void]$panel.Children.Add($set)
     Add-SocialDisclaimer $panel
 }
 
+# A small caps heading for the Profile tab's columns.
+function New-ProfileHeader([string]$Text) {
+    $t = New-Text $Text '#FFB4B8C8' 12 $true
+    $t.Margin = '0,16,0,4'
+    return $t
+}
+
+# One favourite slot: the game's picture, or a + to pick one.
+function New-FavSlot($Fav, [int]$Index) {
+    $b = New-Object System.Windows.Controls.Button
+    $b.Width = 76; $b.Height = 76; $b.Margin = '0,0,8,0'; $b.Cursor = 'Hand'; $b.Tag = $Index
+    $b.Background = (New-Brush '#FF1B1B26'); $b.BorderBrush = (New-Brush '#FF3A3A50'); $b.BorderThickness = '1'
+    if ($null -eq $Fav) {
+        $plus = New-Text '+' '#FF6A6A80' 30 $true
+        $plus.HorizontalAlignment = 'Center'; $plus.VerticalAlignment = 'Center'
+        $b.Content = $plus
+        $b.ToolTip = 'Pick a favorite game'
+    }
+    else {
+        $img = New-Object System.Windows.Controls.Image; $img.Width = 68; $img.Height = 68; $img.Stretch = 'Uniform'
+        $src = $null
+        if ($Fav.Image -ne '') {
+            try {
+                $bm = New-Object System.Windows.Media.Imaging.BitmapImage
+                $bm.BeginInit(); $bm.UriSource = New-Object System.Uri($Fav.Image); $bm.CacheOption = 'OnLoad'; $bm.DecodePixelHeight = 136; $bm.EndInit()
+                $src = $bm
+            } catch { $src = $null }
+        }
+        if ($null -eq $src) {
+            $src = Get-PixelBitmap (Get-ConsolePicPath $Fav.System)
+            [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+        }
+        if ($null -ne $src) { $img.Source = $src; $b.Content = $img } else { $b.Content = (New-Text $Fav.Name $ColText 11) }
+        $b.ToolTip = ('{0}  -  click to change' -f $Fav.Name)
+    }
+    $b.Add_Click({ param($s2, $e2) Invoke-FavPick ([int]$s2.Tag) })
+    return $b
+}
+
+# ---------------------------------------------------------------------------
+#  PICKING A FAVOURITE                                          (2026-10-12)
+# ---------------------------------------------------------------------------
+#  The same three choices as the shortcut maker - console, game, picture -
+#  using its own engine (scripts\ShortcutMaker.ps1), so the list is the same
+#  one. Saved as "system|rom|picture" in profile.ini, paths inside roms\.
+function Invoke-FavPick([int]$Index) {
+    $prof = Read-SocialProfile $Ws
+    if ($null -eq $prof -or $prof.Guest) { return }
+    if (-not $script:shortcutMakerOk) {
+        [void](Show-Choice $WizardName 'The game list comes from scripts\ShortcutMaker.ps1, which is missing on this drive.' @('OK'))
+        return
+    }
+    $cur = @(Get-SocialFavs $Root $prof)[$Index]
+    $r = Show-FavPicker $cur
+    if ($null -eq $r) { return }
+    $f = @($prof.Favs)
+    while ($f.Count -lt 3) { $f += '' }
+    $f[$Index] = [string]$r
+    $prof.Favs = $f
+    if (Save-SocialProfile $prof) { Log ("profile: favorite {0} = {1}" -f ($Index + 1), $(if ($r -eq '') { '(empty)' } else { $r.Split('|')[0] })) }
+    Render-Social
+}
+
+# Returns the new slot text, '' to empty the slot, or $null for Cancel.
+function Show-FavPicker($Current) {
+    $script:fpResult = $null
+    $script:fpPic = ''
+    $script:fpGames = @()
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = 'Pick a favorite'; $w.Width = 620; $w.Height = 600
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.ResizeMode = 'NoResize'
+    $script:fpWin = $w
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+
+    $foot = New-Object System.Windows.Controls.StackPanel; $foot.Orientation = 'Horizontal'; $foot.HorizontalAlignment = 'Right'; $foot.Margin = '0,12,0,0'
+    if ($null -ne $Current) {
+        $clr = New-Object System.Windows.Controls.Button; $clr.Content = 'Empty this slot'; $clr.Padding = '14,6'; $clr.FontSize = 14; $clr.Margin = '0,0,8,0'
+        $clr.Add_Click({ $script:fpResult = ''; $script:fpWin.Close() })
+        [void]$foot.Children.Add($clr)
+    }
+    $cn = New-Object System.Windows.Controls.Button; $cn.Content = 'Cancel'; $cn.Padding = '14,6'; $cn.FontSize = 14; $cn.Margin = '0,0,8,0'
+    $cn.Add_Click({ $script:fpWin.Close() })
+    [void]$foot.Children.Add($cn)
+    $script:fpSave = New-Object System.Windows.Controls.Button; $script:fpSave.Content = 'Save'; $script:fpSave.Padding = '18,6'; $script:fpSave.FontSize = 14; $script:fpSave.FontWeight = 'Bold'
+    $script:fpSave.IsEnabled = $false
+    $script:fpSave.Add_Click({ Complete-FavPick })
+    [void]$foot.Children.Add($script:fpSave)
+    [System.Windows.Controls.DockPanel]::SetDock($foot, 'Bottom'); [void]$dp.Children.Add($foot)
+
+    $body = New-Object System.Windows.Controls.StackPanel
+    $l1 = New-Text 'Console' $ColText 14 $true; [void]$body.Children.Add($l1)
+    $script:fpSys = New-Object System.Windows.Controls.ComboBox; $script:fpSys.FontSize = 14; $script:fpSys.Margin = '0,4,0,12'
+    [void]$body.Children.Add($script:fpSys)
+    $l2 = New-Text 'Game' $ColText 14 $true; [void]$body.Children.Add($l2)
+    $script:fpGame = New-Object System.Windows.Controls.ComboBox; $script:fpGame.FontSize = 14; $script:fpGame.Margin = '0,4,0,12'
+    [void]$body.Children.Add($script:fpGame)
+    $l3 = New-Text 'Picture' $ColText 14 $true; [void]$body.Children.Add($l3)
+    $l3b = New-Text 'Pick the one that looks best as a small square.' $ColDim 12; $l3b.Margin = '0,0,0,6'
+    [void]$body.Children.Add($l3b)
+    $script:fpPics = New-Object System.Windows.Controls.WrapPanel
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'; $sv.Height = 250
+    $sv.Content = $script:fpPics
+    [void]$body.Children.Add($sv)
+    [void]$dp.Children.Add($body)
+    $w.Content = $dp
+
+    $script:fpSys.Add_SelectionChanged({ Update-FavPickGames })
+    $script:fpGame.Add_SelectionChanged({ Update-FavPickPics })
+    try {
+        $systems = @(Get-ScSystems -Root $Root)
+        $pick = 0; $i = 0
+        foreach ($s in $systems) {
+            $item = New-Object System.Windows.Controls.ComboBoxItem
+            $item.Content = $s.FullName; $item.Tag = $s.Name
+            [void]$script:fpSys.Items.Add($item)
+            if ($null -ne $Current -and $s.Name -eq $Current.System) { $pick = $i }
+            $i++
+        }
+        $script:fpWant = $Current
+        if ($systems.Count -gt 0) { $script:fpSys.SelectedIndex = $pick }
+    } catch { Log ("favorite picker: {0}" -f $_.Exception.Message) }
+    [void]$w.ShowDialog()
+    return $script:fpResult
+}
+
+function Update-FavPickGames {
+    $script:fpGame.Items.Clear(); $script:fpPics.Children.Clear(); $script:fpSave.IsEnabled = $false
+    $it = $script:fpSys.SelectedItem
+    if ($null -eq $it) { return }
+    $sys = [string]$it.Tag
+    $script:fpGames = @(Get-ScGames -Root $Root -System $sys)
+    $pick = 0; $i = 0
+    foreach ($g in $script:fpGames) {
+        [void]$script:fpGame.Items.Add($g.Name)
+        if ($null -ne $script:fpWant -and $script:fpWant.System -eq $sys -and (Get-SocialRelPath $Root $sys $g.RomPath) -eq $script:fpWant.Rom) { $pick = $i }
+        $i++
+    }
+    if ($script:fpGames.Count -gt 0) { $script:fpGame.SelectedIndex = $pick }
+}
+
+function Update-FavPickPics {
+    $script:fpPics.Children.Clear(); $script:fpPic = ''; $script:fpSave.IsEnabled = $false
+    $i = $script:fpGame.SelectedIndex
+    if ($i -lt 0 -or $i -ge @($script:fpGames).Count) { return }
+    $g = $script:fpGames[$i]
+    $sys = [string]$script:fpSys.SelectedItem.Tag
+    $imgs = @(Get-ScGameImages -Root $Root -System $sys -FileBase $g.FileBase)
+    $script:fpSave.IsEnabled = $true
+    if ($imgs.Count -eq 0) {
+        [void]$script:fpPics.Children.Add((New-Text 'No pictures for this game, so the console''s picture is used.' $ColDim 13))
+        return
+    }
+    $want = ''
+    if ($null -ne $script:fpWant -and $script:fpWant.Image -ne '') { $want = $script:fpWant.Image }
+    $first = $null
+    foreach ($im in $imgs) {
+        $b = New-Object System.Windows.Controls.Button
+        $b.Width = 104; $b.Height = 104; $b.Margin = '0,0,8,8'; $b.Tag = $im.Path; $b.ToolTip = $im.Label
+        $b.Background = (New-Brush '#FF1B1B26'); $b.BorderThickness = '3'; $b.BorderBrush = (New-Brush '#FF1B1B26')
+        $pic = New-Object System.Windows.Controls.Image; $pic.Stretch = 'Uniform'; $pic.Width = 92; $pic.Height = 92
+        try {
+            $bm = New-Object System.Windows.Media.Imaging.BitmapImage
+            $bm.BeginInit(); $bm.UriSource = New-Object System.Uri($im.Path); $bm.CacheOption = 'OnLoad'; $bm.DecodePixelHeight = 184; $bm.EndInit()
+            $pic.Source = $bm
+        } catch { }
+        $b.Content = $pic
+        $b.Add_Click({ param($s2, $e2) Select-FavPickPic ([string]$s2.Tag) })
+        [void]$script:fpPics.Children.Add($b)
+        if ($null -eq $first) { $first = $im.Path }
+        if ($want -ne '' -and $im.Path -eq $want) { $first = $im.Path }
+    }
+    Select-FavPickPic $first
+}
+
+function Select-FavPickPic([string]$Path) {
+    $script:fpPic = $Path
+    foreach ($c in @($script:fpPics.Children)) {
+        if ($c -is [System.Windows.Controls.Button]) {
+            $c.BorderBrush = (New-Brush $(if ([string]$c.Tag -eq $Path) { '#FF2FA84F' } else { '#FF1B1B26' }))
+        }
+    }
+}
+
+function Complete-FavPick {
+    $i = $script:fpGame.SelectedIndex
+    if ($i -lt 0) { return }
+    $g = $script:fpGames[$i]
+    $sys = [string]$script:fpSys.SelectedItem.Tag
+    $rom = Get-SocialRelPath $Root $sys $g.RomPath
+    if ($rom -eq '') { return }
+    $pic = ''
+    if ($script:fpPic -ne '') { $pic = Get-SocialRelPath $Root $sys $script:fpPic }
+    $script:fpResult = ('{0}|{1}|{2}' -f $sys, $rom, $pic)
+    $script:fpWin.Close()
+}
+
+# ---------------------------------------------------------------------------
+#  PLAY TOGETHER                                                (2026-10-12)
+# ---------------------------------------------------------------------------
+#  Steven: "banners showing for requests to start netplay sessions
+#  together". The invite goes in this drive's own online file (the engine
+#  explains the rules), the friends' helpers show it as a banner with Join,
+#  and both tabs here show what is live.
+function Invoke-SocialInvite([string[]]$Ids) {
+    $ids = @($Ids | Where-Object { $_ })
+    if ($ids.Count -eq 0) { return }
+    $names = @()
+    foreach ($x in @(Get-SocialPlayersNow)) { if ($ids -contains $x.Id) { $names += $x.Username } }
+    $r = Show-InviteDialog ($names -join ', ')
+    if ($null -eq $r) { return }
+    try {
+        [void](Write-SocialInvite $Ws $ids $r.Game $r.System $r.Note $r.Code)
+        Touch-SocialProfile
+        Log ("profile: invited {0} friend(s) to play {1}" -f $ids.Count, $r.Game)
+        $script:socialNote = 'Invite sent. It shows up for them within a minute.'
+    }
+    catch { Log ("profile: invite failed - {0}" -f $_.Exception.Message); $script:socialNote = 'The invite could not be saved.' }
+    Render-Social
+    Render-Netplay
+}
+
+# What to play: the game running now if there is one, or one picked from the
+# list, plus an optional line and a code (a Dolphin host code, say).
+function Show-InviteDialog([string]$Who) {
+    $script:invResult = $null
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = 'Invite to play'; $w.Width = 520; $w.SizeToContent = 'Height'
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.ResizeMode = 'NoResize'
+    $script:invWin = $w
+    $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '20'
+    [void]$sp.Children.Add((New-Text ("Invite {0} to play now" -f $Who) $ColText 16 $true))
+    $h = New-Text 'They get a banner with a Join button, even with the wizard closed. It lasts 15 minutes.' $ColDim 12; $h.Margin = '0,4,0,12'
+    [void]$sp.Children.Add($h)
+    [void]$sp.Children.Add((New-Text 'Console' $ColText 13 $true))
+    $script:invSys = New-Object System.Windows.Controls.ComboBox; $script:invSys.FontSize = 13; $script:invSys.Margin = '0,4,0,10'
+    $item0 = New-Object System.Windows.Controls.ComboBoxItem; $item0.Content = 'Anything - let''s just play'; $item0.Tag = ''
+    [void]$script:invSys.Items.Add($item0)
+    try {
+        foreach ($s in @(Get-GamesSystems)) {
+            $it = New-Object System.Windows.Controls.ComboBoxItem; $it.Content = $s.FullName; $it.Tag = $s.Name
+            [void]$script:invSys.Items.Add($it)
+        }
+    } catch { }
+    $script:invSys.SelectedIndex = 0
+    [void]$sp.Children.Add($script:invSys)
+    [void]$sp.Children.Add((New-Text 'Game (optional)' $ColText 13 $true))
+    $script:invGame = New-Object System.Windows.Controls.TextBox; $script:invGame.FontSize = 13; $script:invGame.Padding = '4,2'; $script:invGame.Margin = '0,4,0,10'; $script:invGame.MaxLength = 60
+    [void]$sp.Children.Add($script:invGame)
+    [void]$sp.Children.Add((New-Text 'Note or room code (optional)' $ColText 13 $true))
+    $script:invNote = New-Object System.Windows.Controls.TextBox; $script:invNote.FontSize = 13; $script:invNote.Padding = '4,2'; $script:invNote.Margin = '0,4,0,4'; $script:invNote.MaxLength = 60
+    [void]$sp.Children.Add($script:invNote)
+    $h2 = New-Text 'For GameCube and Wii, host in Dolphin first and put its code here.' $ColDim 11
+    [void]$sp.Children.Add($h2)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,14,0,0'
+    $c = New-Object System.Windows.Controls.Button; $c.Content = 'Cancel'; $c.Padding = '14,6'; $c.FontSize = 14; $c.Margin = '0,0,8,0'
+    $c.Add_Click({ $script:invWin.Close() })
+    $ok = New-Object System.Windows.Controls.Button; $ok.Content = 'Send invite'; $ok.Padding = '18,6'; $ok.FontSize = 14; $ok.FontWeight = 'Bold'
+    $ok.Add_Click({
+        $it = $script:invSys.SelectedItem
+        $note = Get-SocialClean ([string]$script:invNote.Text) 60
+        $script:invResult = [pscustomobject]@{
+            System = $(if ($null -ne $it) { [string]$it.Tag } else { '' })
+            Game = Get-SocialClean ([string]$script:invGame.Text) 60
+            Note = $note; Code = ''
+        }
+        if ($script:invResult.Game -eq '' -and $null -ne $it -and [string]$it.Tag -ne '') { $script:invResult.Game = [string]$it.Content }
+        $script:invWin.Close()
+    })
+    [void]$row.Children.Add($c); [void]$row.Children.Add($ok)
+    [void]$sp.Children.Add($row)
+    $w.Content = $sp
+    [void]$w.ShowDialog()
+    return $script:invResult
+}
+
+# The live invites, as a strip: friends asking me (Join / No thanks), and the
+# one I sent (who said yes, Cancel). Used by the Profile and Netplay tabs.
+function Add-SocialInviteStrip($panel, $prof, $players, [DateTime]$now) {
+    try {
+        foreach ($x in @(Get-SocialInvitesFor $prof $players $now)) {
+            $b = New-Object System.Windows.Controls.Border
+            $b.Background = (New-Brush '#FF2A2440'); $b.BorderBrush = (New-Brush $ColPlaying); $b.BorderThickness = '1'
+            $b.CornerRadius = '4'; $b.Padding = '12,8'; $b.Margin = '0,10,0,0'
+            $row = New-Object System.Windows.Controls.DockPanel
+            $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
+            $tag = ('{0}|{1}' -f $x.From.Id, $x.Invite.Id)
+            $j = New-SocialButton 'Join' { param($s2, $e2) Invoke-SocialInviteAnswer ([string]$s2.Tag) $true } $tag
+            $j.FontWeight = 'Bold'
+            [void]$btns.Children.Add($j)
+            [void]$btns.Children.Add((New-SocialButton 'No thanks' { param($s2, $e2) Invoke-SocialInviteAnswer ([string]$s2.Tag) $false } $tag))
+            [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right'); [void]$row.Children.Add($btns)
+            $what = $(if ($x.Invite.Game -ne '') { $x.Invite.Game } else { 'something' })
+            $line = ("{0} wants to play {1}" -f $x.From.Username, $what)
+            if ($x.Invite.Note -ne '') { $line += ('  -  "{0}"' -f $x.Invite.Note) }
+            $mine = Read-SocialReply $Ws $now
+            if ($null -ne $mine -and $mine.Inv -eq $x.Invite.Id) { $line += $(if ($mine.Ans -eq 'yes') { '   (you said yes)' } else { '   (you said no)' }) }
+            $t = New-Text $line '#FFCFE6FF' 13 $true; $t.VerticalAlignment = 'Center'
+            [void]$row.Children.Add($t)
+            $b.Child = $row
+            [void]$panel.Children.Add($b)
+        }
+        $inv = Read-SocialInvite $Ws $now
+        if ($null -ne $inv) {
+            $b = New-Object System.Windows.Controls.Border
+            $b.Background = (New-Brush '#FF22302A'); $b.CornerRadius = '4'; $b.Padding = '12,8'; $b.Margin = '0,10,0,0'
+            $row = New-Object System.Windows.Controls.DockPanel
+            $cx = New-SocialButton 'Cancel invite' { try { Clear-SocialInvite $Ws; Touch-SocialProfile } catch { }; Render-Social; Render-Netplay }
+            [System.Windows.Controls.DockPanel]::SetDock($cx, 'Right'); [void]$row.Children.Add($cx)
+            $left = [int][math]::Max(1, $script:SocialInviteMinutes - ($now - $inv.At).TotalMinutes)
+            $names = @(); $yes = @(); $no = @()
+            foreach ($p in @($players)) { if (@($inv.To) -contains $p.Id) { $names += $p.Username } }
+            foreach ($r in @(Get-SocialRepliesFor $prof $players $inv)) { if ($r.Yes) { $yes += $r.From.Username } else { $no += $r.From.Username } }
+            $line = ('Invite sent to {0}  -  {1} min left' -f ($names -join ', '), $left)
+            if ($yes.Count -gt 0) { $line += ('.  Joining: ' + ($yes -join ', ')) }
+            if ($no.Count -gt 0) { $line += ('.  Not now: ' + ($no -join ', ')) }
+            $t = New-Text $line '#FFBFE8C8' 13; $t.VerticalAlignment = 'Center'
+            [void]$row.Children.Add($t)
+            $b.Child = $row
+            [void]$panel.Children.Add($b)
+        }
+    } catch { Log ("invites strip: {0}" -f $_.Exception.Message) }
+}
+
+function Invoke-SocialInviteAnswer([string]$Tag, [bool]$Yes) {
+    $i = $Tag.IndexOf('|')
+    if ($i -lt 1) { return }
+    try {
+        Write-SocialReply $Ws $Tag.Substring(0, $i) $Tag.Substring($i + 1) $Yes
+        Add-SocialSeen $Ws ('inv:' + $Tag.Replace('|', ':'))
+        Touch-SocialProfile
+        Log ("profile: answered an invite: {0}" -f $(if ($Yes) { 'yes' } else { 'no' }))
+    } catch { Log ("profile: could not answer - {0}" -f $_.Exception.Message) }
+    Render-Social
+    if ($Yes) {
+        Render-Netplay
+        $ti = Get-TabIndex 'netplay'
+        if ($ti -gt 0) { $script:tabs.SelectedIndex = $ti }
+    }
+}
+
+# ---------------------------------------------------------------------------
+#  PLAYED GAMES ON THE PROFILE   (Steven, 2026-10-11)
+# ---------------------------------------------------------------------------
+#  From RetroBat's own records (time played, last played, the favourite star),
+#  read by Get-SocialGameStats in SocialEngine.ps1. Cached for the session;
+#  Refresh and Hide read them again.
+$script:myGameStats = $null
+$script:localArt = @{}
+
+function Get-MyGameStats {
+    if ($null -eq $script:myGameStats) {
+        try { $script:myGameStats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) }
+        catch { Log ("profile: could not read play times - {0}" -f $_.Exception.Message); $script:myGameStats = @{ Top = @(); Recent = @(); Fav = @(); All = @() } }
+    }
+    return $script:myGameStats
+}
+
+# The console's pixel picture, for a game with no box art.
+function Get-ConsolePicPath([string]$System) {
+    $pics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'gamecube'; wii = 'wiimote'; wiiu = 'wiimote'; switch = 'switch'
+               gb = 'gameboy'; gbc = 'gameboy'; gba = 'gba'; nds = 'ds'; '3ds' = 'ds' }
+    $n = $(if ($pics.ContainsKey($System)) { $pics[$System] } else { 'pc' })
+    return (Join-Path $WizardDir ('profile-' + $n + '.png'))
+}
+
+# Box art for a game a FRIEND played: this drive's own copy of that game, if
+# it has one (same console, same name), else ''.
+function Get-LocalGameArt([string]$System, [string]$Name) {
+    if (-not $script:localArt.ContainsKey($System)) {
+        $map = @{}
+        $sd = Join-Path (Join-Path $Root 'roms') $System
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (Test-Path -LiteralPath $gl) {
+            try {
+                [xml]$x = [System.IO.File]::ReadAllText($gl)
+                foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+                    if ($null -eq $g) { continue }
+                    $nn = $g.SelectSingleNode('name'); $im = $g.SelectSingleNode('image')
+                    if ($null -eq $nn -or $null -eq $im) { continue }
+                    $rel = ([string]$im.InnerText).Trim()
+                    if ($rel.StartsWith('./')) { $rel = $rel.Substring(2) }
+                    $full = Join-Path $sd ($rel -replace '/', '\')
+                    $map[([string]$nn.InnerText).Trim().ToLower()] = $full
+                }
+            } catch { }
+        }
+        $script:localArt[$System] = $map
+    }
+    $m = $script:localArt[$System]
+    $k = $Name.ToLower()
+    if ($m.ContainsKey($k) -and (Test-Path -LiteralPath $m[$k])) { return $m[$k] }
+    return ''
+}
+
+# One game: art, name, a detail line, and an optional button.
+function New-GameTile([string]$Name, [string]$System, [string]$Detail, [string]$Image, $Button = $null, [int]$TextWidth = 300, [int]$ArtSize = 44) {
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,4,0,0'
+    $img = New-Object System.Windows.Controls.Image; $img.Height = $ArtSize; $img.Width = $ArtSize; $img.Stretch = 'Uniform'; $img.Margin = '0,0,10,0'
+    $src = $null
+    if ($Image -and (Test-Path -LiteralPath $Image)) {
+        try {
+            $b = New-Object System.Windows.Media.Imaging.BitmapImage
+            $b.BeginInit(); $b.UriSource = New-Object System.Uri($Image); $b.CacheOption = 'OnLoad'; $b.DecodePixelHeight = 88; $b.EndInit()
+            $src = $b
+        } catch { $src = $null }
+    }
+    if ($null -eq $src) {
+        $src = Get-PixelBitmap (Get-ConsolePicPath $System)
+        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+    }
+    if ($null -ne $src) { $img.Source = $src; [void]$row.Children.Add($img) }
+    $tx = New-Object System.Windows.Controls.StackPanel; $tx.VerticalAlignment = 'Center'; $tx.Width = $TextWidth
+    $t1 = New-Text $Name $ColText 13 $true; $t1.TextWrapping = 'NoWrap'; $t1.TextTrimming = 'CharacterEllipsis'; $t1.ToolTip = $Name
+    [void]$tx.Children.Add($t1)
+    $t2 = New-Text $Detail $ColDim 12; $t2.TextWrapping = 'NoWrap'; $t2.TextTrimming = 'CharacterEllipsis'
+    [void]$tx.Children.Add($t2)
+    [void]$row.Children.Add($tx)
+    if ($null -ne $Button) { [void]$row.Children.Add($Button) }
+    return $row
+}
+
+function Format-GameDetail($G, [string]$Kind) {
+    $con = @(@(Get-GamesSystems) | Where-Object Name -eq $G.System | ForEach-Object FullName)
+    $c = $(if ($con.Count -gt 0) { $con[0] } else { $G.System.ToUpper() })
+    if ($Kind -eq 'top') { return ('{0}  -  {1} played' -f $c, (Format-SocialPlaytime $G.Minutes)) }
+    if ($Kind -eq 'recent') {
+        $w = ''
+        if ($G.Last -is [DateTime]) { $w = ([DateTime]$G.Last).ToString('ddd d MMM') }
+        elseif ([string]$G.Last -ne '') { try { $w = ([DateTime]::ParseExact([string]$G.Last, 'yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture)).ToString('ddd d MMM') } catch { } }
+        return ('{0}  -  last played {1}' -f $c, $w)
+    }
+    return $c
+}
+
+# "Your games" (cleaned up 2026-10-12): recently played and most played, three
+# each, compact, with a small x to keep one off the profile. RetroBat's star
+# list is gone; the three favourites in the card at the top replaced it.
+function Add-SocialMyGames($panel, $prof) {
+    $st = Get-MyGameStats
+    [void]$panel.Children.Add((New-ProfileHeader 'RECENTLY PLAYED'))
+    if (@($st.All).Count -eq 0) {
+        [void]$panel.Children.Add((New-Text 'Nothing played yet. RetroBat keeps track by itself once you play.' $ColDim 13))
+    }
+    foreach ($sec in @(@('RECENTLY PLAYED', 'recent', $st.Recent), @('MOST PLAYED', 'top', $st.Top))) {
+        if ($sec[1] -eq 'top') {
+            if (@($sec[2]).Count -eq 0) { continue }
+            [void]$panel.Children.Add((New-ProfileHeader $sec[0]))
+        }
+        foreach ($g in @($sec[2])) {
+            $hb = New-Object System.Windows.Controls.Button
+            $hb.Content = (New-Glyph 'E711' 10 $ColDim); $hb.Padding = '6,4'; $hb.Margin = '4,0,0,0'
+            $hb.Background = (New-Brush '#00000000'); $hb.BorderThickness = '0'; $hb.Cursor = 'Hand'; $hb.VerticalAlignment = 'Center'
+            $hb.ToolTip = 'Keep this game off my profile'; $hb.Tag = ('{0}|{1}' -f $g.System, $g.Path)
+            $hb.Add_Click({ param($s2, $e2) Invoke-SocialHideGame ([string]$s2.Tag) })
+            [void]$panel.Children.Add((New-GameTile $g.Name $g.System (Format-GameDetail $g $sec[1]) $g.Image $hb 230 36))
+        }
+    }
+    $n = @(@($prof.Share) | Where-Object { @($prof.Friends) -contains $_ }).Count
+    $line = $(if ($n -eq 0) { 'Only you see these. Share them with a friend from their profile.' }
+              elseif ($n -eq 1) { 'Shared with 1 friend.' }
+              else { "Shared with $n friends." })
+    $t = New-Text $line $ColDim 11; $t.Margin = '0,8,0,0'
+    [void]$panel.Children.Add($t)
+    $hidden = @((Get-SocialHiddenGames $Ws).Keys)
+    if ($hidden.Count -gt 0) {
+        $ub = New-SocialButton ("Show the {0} hidden game{1} again" -f $hidden.Count, $(if ($hidden.Count -eq 1) { '' } else { 's' })) {
+            foreach ($k in @((Get-SocialHiddenGames $Ws).Keys)) { $i = $k.IndexOf('|'); if ($i -gt 0) { Set-SocialHiddenGame $Ws $k.Substring(0, $i) $k.Substring($i + 1) $false } }
+            $script:myGameStats = $null; Touch-SocialProfile; Render-Social
+        }
+        $ub.FontSize = 11; $ub.Padding = '6,1'; $ub.Margin = '0,6,0,0'; $ub.HorizontalAlignment = 'Left'
+        [void]$panel.Children.Add($ub)
+    }
+}
+
+# A hide or unhide changes what the helper sends: touching profile.ini is how
+# the helper hears about a change (it checks every 10 seconds).
+function Touch-SocialProfile {
+    try { $p = Read-SocialProfile $Ws; if ($null -ne $p -and -not $p.Guest) { [void](Save-SocialProfile $p) } } catch { }
+}
+
+function Invoke-SocialHideGame([string]$Key) {
+    $i = $Key.IndexOf('|')
+    if ($i -lt 1) { return }
+    try {
+        Set-SocialHiddenGame $Ws $Key.Substring(0, $i) $Key.Substring($i + 1) $true
+        Log ("profile: hid a game from the profile ({0})" -f $Key.Substring(0, $i))
+    } catch { Log ("profile: could not hide - {0}" -f $_.Exception.Message) }
+    $script:myGameStats = $null
+    Touch-SocialProfile
+    Render-Social
+}
+
+# A friend's profile card: who they are, and their games if they share them
+# with you. The checkbox shares YOUR games with THEM.
+function Show-SocialFriendCard([string]$Id) {
+    $pl = $null
+    foreach ($x in @(Get-SocialPlayersNow)) { if ($x.Id -eq $Id) { $pl = $x } }
+    $me = Read-SocialProfile $Ws
+    if ($null -eq $pl -or $null -eq $me) { return }
+    $now = Get-SocialNowUtc
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $pl.Username; $w.Width = 520; $w.Height = 600
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+    $ok = New-Object System.Windows.Controls.Button
+    $ok.Content = 'Close'; $ok.Padding = '18,6'; $ok.FontSize = 14; $ok.HorizontalAlignment = 'Right'; $ok.Margin = '0,12,0,0'
+    $script:cardWin = $w
+    $ok.Add_Click({ $script:cardWin.Close() })
+    [System.Windows.Controls.DockPanel]::SetDock($ok, 'Bottom'); [void]$dp.Children.Add($ok)
+    $sp = New-Object System.Windows.Controls.StackPanel
+    [void]$sp.Children.Add((New-SocialPersonRow $pl $now))
+    # their three favourites, by name, with this drive's art when it has the game
+    if (@($pl.Favs).Count -gt 0) {
+        $fh = New-Text 'FAVORITES' $ColDim 11 $true; $fh.Margin = '0,14,0,4'
+        [void]$sp.Children.Add($fh)
+        foreach ($g in @($pl.Favs)) {
+            $con = @(@(Get-GamesSystems) | Where-Object Name -eq $g.System | ForEach-Object FullName)
+            [void]$sp.Children.Add((New-GameTile $g.Name $g.System $(if ($con.Count -gt 0) { $con[0] } else { $g.System.ToUpper() }) (Get-LocalGameArt $g.System $g.Name)))
+        }
+    }
+    $acts = New-Object System.Windows.Controls.StackPanel; $acts.Orientation = 'Horizontal'; $acts.Margin = '0,12,0,0'
+    $script:cardFriendId = $Id
+    $ib = New-SocialButton 'Invite to play' { $script:cardWin.Close(); Invoke-SocialInvite @($script:cardFriendId) }
+    $ib.Margin = '0'
+    [void]$acts.Children.Add($ib)
+    [void]$acts.Children.Add((New-SocialButton 'Remove friend' { $script:cardWin.Close(); Invoke-SocialAction 'remove' $script:cardFriendId }))
+    [void]$sp.Children.Add($acts)
+    $cb = New-Object System.Windows.Controls.CheckBox
+    $cb.Content = "Share my games with $($pl.Username)"; $cb.IsChecked = (@($me.Share) -contains $Id)
+    $cb.Foreground = (New-Brush $ColText); $cb.FontSize = 13; $cb.Margin = '0,10,0,0'; $cb.Tag = $Id
+    $cb.Add_Click({
+        param($s2, $e2)
+        $p = Read-SocialProfile $Ws
+        $fid = [string]$s2.Tag
+        if ([bool]$s2.IsChecked) { if (@($p.Share) -notcontains $fid) { $p.Share = @(@($p.Share) + $fid) } }
+        else { $p.Share = @(@($p.Share) | Where-Object { $_ -ne $fid }) }
+        if (Save-SocialProfile $p) { Log ("profile: sharing games with a friend = {0}" -f [bool]$s2.IsChecked) }
+    })
+    [void]$sp.Children.Add($cb)
+    $G = $pl.Games
+    if ($null -eq $G -or @($G.For) -notcontains $me.Id) {
+        $nt = New-Text ("{0} has not shared their games with you." -f $pl.Username) $ColDim 13
+        $nt.Margin = '0,16,0,0'; $nt.TextWrapping = 'Wrap'
+        [void]$sp.Children.Add($nt)
+    }
+    else {
+        foreach ($sec in @(@('Recently played', 'recent', $G.Recent), @('Most played', 'top', $G.Top))) {
+            if (@($sec[2]).Count -eq 0) { continue }
+            $h = New-Text $sec[0] $ColText 13 $true; $h.Margin = '0,12,0,0'
+            [void]$sp.Children.Add($h)
+            foreach ($g in @($sec[2])) {
+                [void]$sp.Children.Add((New-GameTile $g.Name $g.System (Format-GameDetail $g $sec[1]) (Get-LocalGameArt $g.System $g.Name)))
+            }
+        }
+    }
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
+    $sv.Content = $sp; [void]$dp.Children.Add($sv)
+    $w.Content = $dp
+    [void]$w.ShowDialog()
+    Render-Social
+}
+
 function Add-SocialDisclaimer($panel) {
-    $d = New-Text 'A side project with no real online protection. Shared with other people who use this wizard: your name, picture, status, friends list and what you are playing. Nothing else leaves the drive.' '#FF777780' 11
+    $d = New-Text 'A side project with no real online protection. Shared with other people who use this wizard: your name, picture, status, friends list, what you are playing, and the games you choose to share. Nothing else leaves the drive.' '#FF777780' 11
     $d.TextWrapping = 'Wrap'; $d.Margin = '0,14,0,0'; $d.MaxWidth = 600; $d.HorizontalAlignment = 'Left'
     [void]$panel.Children.Add($d)
 }
 
 # One line in a list: picture, name, a coloured dot and what they are up to.
-function New-SocialPersonRow($Player, [DateTime]$NowUtc, [bool]$NoPresence = $false) {
+function New-SocialPersonRow($Player, [DateTime]$NowUtc, [bool]$NoPresence = $false, [int]$TextWidth = 330) {
     $row = New-Object System.Windows.Controls.StackPanel
     $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
     [void]$row.Children.Add((New-SocialAvatar $Player 32))
-    $txt = New-Object System.Windows.Controls.StackPanel; $txt.VerticalAlignment = 'Center'; $txt.Width = 330
+    $txt = New-Object System.Windows.Controls.StackPanel; $txt.VerticalAlignment = 'Center'; $txt.Width = $TextWidth
     $nameRow = New-Object System.Windows.Controls.StackPanel; $nameRow.Orientation = 'Horizontal'
     $pr = Get-SocialPresence $Player $NowUtc
     if (-not $NoPresence) {
@@ -4379,10 +7202,11 @@ function New-SocialPersonRow($Player, [DateTime]$NowUtc, [bool]$NoPresence = $fa
         $dot.Fill = (New-Brush (Get-SocialDotColour $pr.Kind))
         [void]$nameRow.Children.Add($dot)
     }
-    [void]$nameRow.Children.Add((New-Text $Player.Username $ColText 14 $true))
+    $un = New-Text $Player.Username $ColText 14 $true; $un.TextWrapping = 'NoWrap'; $un.TextTrimming = 'CharacterEllipsis'
+    [void]$nameRow.Children.Add($un)
     [void]$txt.Children.Add($nameRow)
     if (-not $NoPresence) {
-        $l = New-Text $pr.Line $ColDim 12; $l.TextTrimming = 'CharacterEllipsis'
+        $l = New-Text $pr.Line $ColDim 12; $l.TextWrapping = 'NoWrap'; $l.TextTrimming = 'CharacterEllipsis'; $l.ToolTip = $pr.Line
         [void]$txt.Children.Add($l)
     }
     [void]$row.Children.Add($txt)
@@ -4395,15 +7219,22 @@ function Invoke-SocialAction([string]$What, [string]$Id) {
     if ($null -eq $p -or $p.Guest) { return }
     $name = $Id
     foreach ($x in @(Get-SocialPlayersNow)) { if ($x.Id -eq $Id) { $name = $x.Username } }
+    $noShare = { param($pr, $i) $pr.Share = @(@($pr.Share) | Where-Object { $_ -ne $i }) }
     switch ($What) {
-        'add'     { Add-SocialFriend $p $Id }
-        'accept'  { Add-SocialFriend $p $Id }
-        'decline' { Deny-SocialRequest $p $Id }
-        'cancel'  { Remove-SocialFriend $p $Id }
+        { $_ -eq 'add' -or $_ -eq 'accept' } {
+            Add-SocialFriend $p $Id
+            # Steven, 2026-10-11: asked friend by friend.
+            $sh = Show-Choice $WizardName ("Share your recent and favorite games with $name?`n`nThey would see your most played, recently played and favorite games on your profile. You can change this any time from their profile card, and hide any one game from your own.") @('Share', 'Not now')
+            if ($sh -eq 'Share') { if (@($p.Share) -notcontains $Id) { $p.Share = @(@($p.Share) + $Id) } }
+            else { & $noShare $p $Id }
+        }
+        'decline' { Deny-SocialRequest $p $Id; & $noShare $p $Id }
+        'cancel'  { Remove-SocialFriend $p $Id; & $noShare $p $Id }
         'remove'  {
             $pick = Show-Choice $WizardName ("Remove $name from your friends?`n`nThey are not told. Either of you can send a new request later.") @('Remove', 'Keep')
             if ($pick -ne 'Remove') { return }
             Remove-SocialFriend $p $Id
+            & $noShare $p $Id
         }
     }
     if (Save-SocialProfile $p) {
@@ -4437,6 +7268,9 @@ function Invoke-SocialLogout {
         [void](Publish-SocialRecord $Ws $p $gone $WizardVersion)
     } catch { Log "profile: logout check-in - $_" }
     try { Add-SocialLogin $Ws $p } catch { Log "profile: could not remember the login - $_" }
+    # Their own switches, favourites and hidden games wait in profile\people\
+    # for the next time they log in here (2026-10-12).
+    try { [void](Save-SocialPersonCopy $Ws); Clear-SocialInvite $Ws; Set-SocialIncognito $Ws $false } catch { Log "profile: could not put the profile away - $_" }
     if (Save-SocialProfile ([pscustomobject]@{ Guest = $true })) { Log ("profile: logged out {0}" -f $p.Username) }
     $script:socialNote = ''
     Sync-AdminTab
@@ -4475,6 +7309,8 @@ function Render-SocialLogin($panel, $prof) {
         [void]$panel.Children.Add((New-SectionHeader 'Log back in'))
         foreach ($l in $logins) {
             $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,6,0,0'
+            # their own picture: from the cache, or fetched once from GitHub
+            if ([string]$l.Avatar -like 'custom:*') { try { [void](Get-SocialAvatarFile $Ws $l) } catch { } }
             [void]$row.Children.Add((New-SocialAvatar $l 32))
             $nm = New-Text $l.Username $ColText 14 $true; $nm.Width = 200; $nm.VerticalAlignment = 'Center'
             [void]$row.Children.Add($nm)
@@ -4543,15 +7379,8 @@ function Invoke-SocialLogin([string]$Id) {
         if ($null -eq $pw) { return }
         if (-not (Test-SocialPassword $rec $pw)) { [void](Show-Choice $WizardName 'That password is not right.' @('OK')); return }
     }
-    $prof = New-SocialProfileFromRecord $rec
-    if ($rec.Avatar -like 'custom:*') {
-        $f = Get-SocialAvatarFile $Ws $rec
-        $P = Get-SocialPaths $Ws
-        if ($f -ne '') { New-SocialDir $P.ProfileDir; Copy-Item -LiteralPath $f -Destination $P.Avatar -Force }
-        else { $prof.Avatar = 'icon:gameboy' }
-    }
-    if (-not (Save-SocialProfile $prof)) { return }
-    try { Add-SocialLogin $Ws $prof } catch { }
+    $prof = Enter-SocialPerson $rec.Id $rec $true
+    if ($null -eq $prof) { return }
     Log ("profile: logged in as {0} ({1})" -f $prof.Username, $prof.Id)
     $script:socialFetched = @($all.Players)
     $script:loginHits = $null; $script:socialSearch = ''; $script:loginNote = ''
@@ -4561,6 +7390,46 @@ function Invoke-SocialLogin([string]$Id) {
     Render-Social
 }
 
+# Makes $Id the person using this drive. The one who was here is put away in
+# profile\people\ first, and $Id's own copy (switches, favourites, hidden
+# games, picture) comes back if this drive has one. $Rec, the online file,
+# when there is one, wins for what lives online: name, picture, friends,
+# password. Returns the profile, or $null. Used by the login screen and by
+# "Who's playing?" (2026-10-12).
+function Enter-SocialPerson([string]$Id, $Rec, [bool]$Trusted) {
+    try {
+        $cur = Read-SocialProfile $Ws
+        if ($null -ne $cur -and -not $cur.Guest -and $cur.Id -ne $Id) {
+            [void](Save-SocialPersonCopy $Ws)
+            Clear-SocialInvite $Ws
+        }
+    } catch { Log ("profile: could not put the last person away - {0}" -f $_.Exception.Message) }
+    try { Set-SocialIncognito $Ws $false } catch { }
+    $prof = $null
+    try { if (Restore-SocialPersonCopy $Ws $Id) { $prof = Read-SocialProfile $Ws } } catch { }
+    $P = Get-SocialPaths $Ws
+    if ($null -ne $Rec) {
+        $needPic = $false
+        if ($null -eq $prof -or $prof.Guest -or $prof.Id -ne $Id) { $prof = New-SocialProfileFromRecord $Rec; $needPic = $true }
+        else {
+            $prof.Username = $Rec.Username; $prof.Friends = @($Rec.Friends)
+            $prof.Pw = $Rec.Pw; $prof.PwSet = $Rec.PwSet; $prof.NameReq = $Rec.NameReq
+            if ($Rec.Avatar -ne $prof.Avatar) { $prof.Avatar = $Rec.Avatar; $needPic = $true }
+        }
+        if ($prof.Avatar -like 'custom:*' -and ($needPic -or -not (Test-Path -LiteralPath $P.Avatar))) {
+            $f = ''
+            try { $f = Get-SocialAvatarFile $Ws $Rec } catch { }
+            if ($f -ne '') { New-SocialDir $P.ProfileDir; Copy-Item -LiteralPath $f -Destination $P.Avatar -Force }
+            else { $prof.Avatar = 'icon:gameboy' }
+        }
+    }
+    if ($null -eq $prof -or $prof.Guest -or $prof.Id -ne $Id) { return $null }
+    if (-not (Save-SocialProfile $prof)) { return $null }
+    try { Add-SocialLogin $Ws $prof $Trusted } catch { }
+    $script:myGameStats = $null
+    return $prof
+}
+
 # Making a profile: a name, a picture, a check that nobody has the name, and
 # a password (skippable; the tab keeps asking for one).
 function Invoke-SocialCreate {
@@ -4568,11 +7437,14 @@ function Invoke-SocialCreate {
     if (-not $ed.Ok) { Render-Social; return }
     if (-not (Test-SocialNameFree $ed.Name '')) { Render-Social; return }
     $prof = New-SocialProfile $ed.Name $ed.Avatar
+    # whoever was here before is put away first (with their picture), as with a login
+    try { $cur = Read-SocialProfile $Ws; if ($null -ne $cur -and -not $cur.Guest) { [void](Save-SocialPersonCopy $Ws); Clear-SocialInvite $Ws } } catch { }
+    try { $P0 = Get-SocialPaths $Ws; if (Test-Path -LiteralPath $P0.Avatar) { Remove-Item -LiteralPath $P0.Avatar -Force } } catch { }
     Complete-SocialPicture $prof $ed
     $pw = Show-PasswordDialog 'Pick a password' "A password lets you log in on other drives and stops friends logging in as you.`n`nIt is a light lock: do not use a password you use anywhere else." $true
     if ($null -ne $pw) { $prof.Pw = Get-SocialPasswordHash $prof.Id $pw; $prof.PwSet = Format-SocialTime (Get-SocialNowUtc) }
     if (Save-SocialProfile $prof) {
-        try { Add-SocialLogin $Ws $prof } catch { }
+        try { Add-SocialLogin $Ws $prof $true } catch { }
         Log ("profile: made '{0}' ({1})" -f $prof.Username, $prof.Id)
         $script:socialNote = 'Welcome! Find friends by name below.'
         Start-SocialSession
@@ -4589,6 +7461,118 @@ function Invoke-SocialPicture {
     Complete-SocialPicture $prof $ed
     [void](Save-SocialProfile $prof)
     try { Add-SocialLogin $Ws $prof } catch { }
+    Render-Social
+}
+
+# THE EDIT-PROFILE WINDOW (v3 polish, 2026-10-14). Everything about you in
+# one place. The picture saves the moment it is chosen (it has to be sent to
+# GitHub anyway); the rest saves with Save. A new name is still a REQUEST an
+# admin approves, exactly like before.
+function Show-ProfileEditWindow {
+    $prof = Read-SocialProfile $Ws
+    if ($null -eq $prof -or $prof.Guest) { return }
+    Close-Splash
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = 'Edit your profile'; $w.Width = 500; $w.SizeToContent = 'Height'
+    $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
+    $w.Background = (New-Brush $ColBg)
+    try { if ($null -ne $script:win -and $script:win.IsVisible) { $w.Owner = $script:win; $w.WindowStartupLocation = 'CenterOwner' } } catch { }
+    $script:peWin = $w
+    $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '24,20,24,20'
+
+    function Add-PeLabel([string]$t) { $l = New-Text $t $ColDim 12 $true; $l.Margin = '0,14,0,5'; [void]$sp.Children.Add($l) }
+
+    # picture
+    $pr = New-Object System.Windows.Controls.StackPanel; $pr.Orientation = 'Horizontal'
+    $script:peAvatarHost = New-Object System.Windows.Controls.Border
+    $script:peAvatarHost.Child = (New-SocialAvatar $prof 64 $true)
+    [void]$pr.Children.Add($script:peAvatarHost)
+    $pb = New-Object System.Windows.Controls.Button
+    $pb.Content = 'Change picture...'; $pb.Padding = '14,5'; $pb.FontSize = 13; $pb.VerticalAlignment = 'Center'; $pb.Margin = '8,0,0,0'
+    $pb.Add_Click({
+        $p = Read-SocialProfile $Ws
+        $ed = Show-SocialEditor 'Change picture' $p.Username $p.Avatar $true
+        if (-not $ed.Ok) { return }
+        $p.Avatar = $ed.Avatar
+        Complete-SocialPicture $p $ed
+        [void](Save-SocialProfile $p)
+        try { Add-SocialLogin $Ws $p } catch { }
+        $script:peAvatarHost.Child = (New-SocialAvatar $p 64 $true)
+    })
+    [void]$pr.Children.Add($pb)
+    [void]$sp.Children.Add($pr)
+
+    # name
+    Add-PeLabel 'NAME'
+    $script:peName = New-Object System.Windows.Controls.TextBox
+    $script:peName.FontSize = 15; $script:peName.MaxLength = 20
+    $script:peName.Text = $(if ($prof.NameReq -ne '') { $prof.NameReq } else { $prof.Username })
+    [void]$sp.Children.Add($script:peName)
+    $nh = New-Text 'A new name goes to an admin first, then it changes everywhere.' $ColDim 12; $nh.Margin = '2,4,0,0'
+    [void]$sp.Children.Add($nh)
+
+    # status
+    Add-PeLabel 'STATUS'
+    $script:peStatus = New-Object System.Windows.Controls.ComboBox
+    $script:peStatus.FontSize = 14; $script:peStatus.Width = 180; $script:peStatus.HorizontalAlignment = 'Left'
+    # Each choice wears its own dot colour, the one friends will see.
+    foreach ($o in @(@('online', 'Online'), @('away', 'Away'), @('busy', 'Busy'), @('invisible', 'Invisible'))) {
+        $it = New-Object System.Windows.Controls.ComboBoxItem
+        $it.Tag = $o[0]
+        $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'
+        $dot = New-Object System.Windows.Shapes.Ellipse
+        $dot.Width = 10; $dot.Height = 10; $dot.Margin = '0,0,8,0'; $dot.VerticalAlignment = 'Center'
+        $dot.Fill = (New-Brush (Get-SocialDotColour $(if ($o[0] -eq 'invisible') { 'offline' } else { $o[0] })))
+        [void]$row.Children.Add($dot)
+        $tx = New-Object System.Windows.Controls.TextBlock; $tx.Text = $o[1]; $tx.VerticalAlignment = 'Center'
+        [void]$row.Children.Add($tx)
+        $it.Content = $row
+        [void]$script:peStatus.Items.Add($it)
+        if ($o[0] -eq $prof.Status) { $script:peStatus.SelectedItem = $it }
+    }
+    if ($null -eq $script:peStatus.SelectedItem) { $script:peStatus.SelectedIndex = 0 }
+    [void]$sp.Children.Add($script:peStatus)
+
+    # the short line
+    Add-PeLabel 'A SHORT LINE UNDER YOUR NAME'
+    $script:peLine = New-Object System.Windows.Controls.TextBox
+    $script:peLine.FontSize = 15; $script:peLine.MaxLength = 40; $script:peLine.Text = $prof.Text
+    [void]$sp.Children.Add($script:peLine)
+    $lh = New-Text 'Like "down for Smash". Leave it empty for none.' $ColDim 12; $lh.Margin = '2,4,0,0'
+    [void]$sp.Children.Add($lh)
+
+    # Cancel / Save
+    $row = New-Object System.Windows.Controls.StackPanel
+    $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,20,0,0'
+    $cb = New-Object System.Windows.Controls.Button
+    $cb.Content = 'Cancel'; $cb.Padding = '16,7'; $cb.FontSize = 14
+    $cb.Add_Click({ $script:peWin.Close() })
+    [void]$row.Children.Add($cb)
+    $sb = New-Object System.Windows.Controls.Button
+    $sb.Content = 'Save'; $sb.Padding = '20,7'; $sb.FontSize = 14; $sb.FontWeight = 'Bold'; $sb.Margin = '8,0,0,0'; $sb.IsDefault = $true
+    $sb.Add_Click({
+        $p = Read-SocialProfile $Ws
+        if ($null -eq $p) { $script:peWin.Close(); return }
+        $p.Status = [string]$script:peStatus.SelectedItem.Tag
+        if (@('online', 'away', 'busy', 'invisible') -notcontains $p.Status) { $p.Status = 'online' }
+        $p.Text = Get-SocialClean ([string]$script:peLine.Text) 40
+        $new = ([string]$script:peName.Text).Trim()
+        if ($new -ne '' -and $new -ne $p.Username -and $new -ne $p.NameReq) {
+            if (-not (Test-SocialNameFree $new $p.Id)) { return }   # it said why; the window stays open
+            $p.NameReq = $new
+            $script:socialNote = 'Name request sent. It changes once an admin approves it.'
+            try { [void](Send-SocialNotify $Ws 'Name request' ("{0} wants to be called {1}" -f $p.Username, $new)) } catch { }
+            Log ("profile: asked for the name {0}" -f $new)
+        }
+        if (Save-SocialProfile $p) { Log 'profile: edited' }
+        $script:peWin.Close()
+    })
+    [void]$row.Children.Add($sb)
+    [void]$sp.Children.Add($row)
+
+    $w.Content = $sp
+    [void]$w.ShowDialog()
     Render-Social
 }
 
@@ -4616,7 +7600,7 @@ function Invoke-SocialPassword {
     if ($null -eq $pw) { return }
     $prof.Pw = Get-SocialPasswordHash $prof.Id $pw
     $prof.PwSet = Format-SocialTime (Get-SocialNowUtc)
-    if (Save-SocialProfile $prof) { $script:socialNote = 'Password saved.'; Log 'profile: password set' }
+    if (Save-SocialProfile $prof) { $script:socialNote = 'Password saved.'; Log 'profile: password set'; try { Add-SocialLogin $Ws $prof $true } catch { } }
     Render-Social
 }
 
@@ -4625,6 +7609,7 @@ function Invoke-SocialPassword {
 function Show-PasswordDialog([string]$Title, [string]$Message, [bool]$Confirm) {
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 440; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -4676,6 +7661,7 @@ function Show-PasswordDialog([string]$Title, [string]$Message, [bool]$Confirm) {
 #  It loads nothing until it is used: GitHub is asked when Refresh is pressed.
 # ---------------------------------------------------------------------------
 $script:adminTab = $null
+$script:adminArt = $null
 $script:adminReports = $null
 $script:adminTopic = $null
 $script:adminNote = ''
@@ -4691,20 +7677,55 @@ function Sync-AdminTab($Extras = $null) {
         if ($is -and $null -eq $script:adminTab) {
             $ti = New-Object System.Windows.Controls.TabItem
             $hdr = New-Object System.Windows.Controls.StackPanel; $hdr.Orientation = 'Horizontal'
-            $g = New-Glyph 'EA18' 14; $g.Margin = '2,0,7,0'
+            # The tab's own pixel sword (wizard\tab-admin.png) like every
+            # other tab, and the plain shield glyph only if that is missing.
+            $ib = Get-PixelBitmap (Join-Path $WizardDir 'tab-admin.png')
+            if ($null -ne $ib) {
+                $g = New-Object System.Windows.Controls.Image
+                $g.Source = $ib; $g.Stretch = 'None'; $g.VerticalAlignment = 'Center'; $g.Margin = '2,0,7,0'
+                [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($g, 'NearestNeighbor')
+            }
+            else { $g = New-Glyph 'EA18' 14; $g.Margin = '2,0,7,0' }
             [void]$hdr.Children.Add($g)
             $ht = New-Object System.Windows.Controls.TextBlock; $ht.Text = 'Admin'; $ht.VerticalAlignment = 'Center'; $ht.Margin = '0,0,4,0'
             [void]$hdr.Children.Add($ht)
             $ti.Header = $hdr
             $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '10'
+            # The corner picture, built the SAME way as the XAML tabs: behind
+            # the page, bottom right, never in the way of a click, and in
+            # $script:pageArtImages so it grows with the window like the rest.
+            # Made once per window; a tab removed and shown again reuses it.
+            $grid = New-Object System.Windows.Controls.Grid
+            if ($null -eq $script:adminArt) {
+                $art = New-Object System.Windows.Controls.Image
+                $art.Stretch = 'None'; $art.HorizontalAlignment = 'Right'; $art.VerticalAlignment = 'Bottom'
+                $art.Margin = '0,0,10,4'; $art.IsHitTestVisible = $false
+                [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($art, 'NearestNeighbor')
+                $bmp = $null   # v3 polish: no sword (Steven, 2026-10-14)
+                if ($null -ne $bmp) {
+                    $art.Source = $bmp
+                    Add-SpriteLoop $art (Join-Path $WizardDir 'page-admin-anim.png') ([int]$bmp.PixelWidth) ([int]$bmp.PixelHeight) 'page-admin'
+                }
+                $script:adminArt = $art
+            }
+            else { try { [void]([System.Windows.Controls.Panel]$script:adminArt.Parent).Children.Remove($script:adminArt) } catch { } }
+            [void]$grid.Children.Add($script:adminArt)
             $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
             $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '6,0,14,10'
-            $sv.Content = $sp; [void]$dp.Children.Add($sv)
+            $sv.Content = $sp; [void]$grid.Children.Add($sv)
+            [void]$dp.Children.Add($grid)
             $ti.Content = $dp
             $script:adminPanel = $sp
             [void]$script:tabs.Items.Add($ti)
             $script:adminTab = $ti
             if (@($script:TabOrder) -notcontains 'admin') { $script:TabOrder += 'admin' }
+            # Its slot in the picture list lines up with its slot in the tab order.
+            $ai = Get-TabIndex 'admin'
+            $list = [System.Collections.ArrayList]@($script:pageArtImages)
+            while ($list.Count -le $ai) { [void]$list.Add($null) }
+            $list[$ai] = $script:adminArt
+            $script:pageArtImages = $list.ToArray()
+            Update-PlayScale -Force
             Log 'admin: tab shown'
             Render-Admin
         }
@@ -4714,6 +7735,7 @@ function Sync-AdminTab($Extras = $null) {
             $script:adminTab = $null; $script:adminReports = $null; $script:adminTopic = $null
             Log 'admin: tab removed'
         }
+        Update-Rail
     } catch { Log "admin: tab - $_" }
 }
 
@@ -4728,6 +7750,60 @@ function Invoke-AdminRefresh {
     Render-Admin
 }
 
+# ---------------------------------------------------------------------------
+#  STABLE OR DEV                                                (2026-10-12)
+# ---------------------------------------------------------------------------
+#  Steven: "a dev branch toggle on the admin's wizard, so I can see the
+#  latest update that's active, or toggle the dev branch and see the one
+#  under development and work on it with Claude." Two buttons, the chosen
+#  one lit. Choosing writes update\update.ini and looks on GitHub at once;
+#  the usual Update now bar does the rest, so nothing installs without a
+#  press. The engine (UpdateEngine.ps1, TWO CHANNELS) explains the rules.
+function Add-AdminChannelCard($panel) {
+    if (-not $script:updateOk) { return }
+    $cfg = $null; $inst = $null
+    try { $cfg = Get-UpdConfig $Ws; $inst = Get-UpdInstalled $Ws } catch { return }
+    $card = New-Object System.Windows.Controls.Border
+    $card.Background = (New-Brush $ColPanel); $card.Padding = '14,10'; $card.Margin = '0,12,0,0'; $card.CornerRadius = '4'
+    $sp = New-Object System.Windows.Controls.StackPanel
+    $hd = New-Object System.Windows.Controls.StackPanel; $hd.Orientation = 'Horizontal'
+    [void]$hd.Children.Add((New-Text 'Which version this drive runs' $ColText 15 $true))
+    [void]$sp.Children.Add($hd)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
+    foreach ($opt in @(@('Stable', 'stable', 'what everybody has'), @('Dev', 'dev', 'the one being worked on'))) {
+        $b = New-Object System.Windows.Controls.Button
+        $b.Padding = '14,4'; $b.FontSize = 13; $b.Margin = '0,0,8,0'; $b.Tag = $opt[1]; $b.ToolTip = $opt[2]
+        $b.Content = $opt[0]
+        if ($cfg.Channel -eq $opt[1]) {
+            $b.Background = (New-Brush '#FF2A3A2E'); $b.BorderBrush = (New-Brush '#FF2FA84F'); $b.BorderThickness = '2'; $b.FontWeight = 'Bold'
+        }
+        $b.Add_Click({ param($s2, $e2) Invoke-AdminChannel ([string]$s2.Tag) })
+        [void]$row.Children.Add($b)
+    }
+    $now = ('Running {0}' -f $WizardVersion)
+    if ($inst.Tag -ne '') { $now += (', installed from {0} ({1})' -f $inst.Channel, $inst.Tag.Substring(0, [math]::Min(7, $inst.Tag.Length))) }
+    $nt = New-Text ('   ' + $now) $ColDim 12; $nt.VerticalAlignment = 'Center'
+    [void]$row.Children.Add($nt)
+    [void]$sp.Children.Add($row)
+    $why = New-Text 'Stable is what friends get. Dev is what Claude last published while working on the next version. Switching shows the Update now bar; nothing changes until it is pressed. Any changes on this drive that were never published are kept, and Help > Go back one update puts them back.' $ColDim 12
+    $why.Margin = '0,8,0,0'
+    [void]$sp.Children.Add($why)
+    $card.Child = $sp
+    [void]$panel.Children.Add($card)
+}
+
+function Invoke-AdminChannel([string]$Channel) {
+    try {
+        $cur = (Get-UpdConfig $Ws).Channel
+        if ($cur -eq $Channel) { return }
+        Set-UpdChannel $Ws $Channel
+        Log ("admin: update channel {0} -> {1}" -f $cur, $Channel)
+        $script:adminNote = $(if ($Channel -eq 'dev') { 'Dev chosen. Looking for the dev version...' } else { 'Stable chosen. Looking for the stable version...' })
+    } catch { Log ("admin: channel - {0}" -f $_.Exception.Message) }
+    Render-Admin
+    Start-UpdatePeek
+}
+
 function Render-Admin {
     $panel = $script:adminPanel
     if ($null -eq $panel) { return }
@@ -4740,6 +7816,8 @@ function Render-Admin {
     [void]$panel.Children.Add($top)
     $players = @(Get-SocialPlayersNow)
     $ex = Get-SocialCachedExtras $Ws
+
+    Add-AdminChannelCard $panel
 
     # --- reports ----------------------------------------------------------------
     [void]$panel.Children.Add((New-SectionHeader 'Reports and suggestions'))
@@ -4779,18 +7857,21 @@ function Render-Admin {
     # --- the online library ------------------------------------------------------
     [void]$panel.Children.Add((New-IconHeader 'E898' 'Online library'))
     if ((Get-AdminLibKey $Ws) -eq '') {
-        $t = New-Text 'Publishing needs a library key: a second GitHub key that can add files to the public repo. It stays on this drive only. One-time setup, about 3 minutes.' $ColDim 13
+        $t = New-Text 'Publishing needs a library key: a second GitHub key that can update the public game LIST. The game files themselves go to the private repo, so only a wizard can download them. The key stays on this drive only. One-time setup, about 3 minutes.' $ColDim 13
         [void]$panel.Children.Add($t)
         $kb = New-SocialButton 'Set up the library key...' { Invoke-AdminLibKey }; $kb.Margin = '0,8,0,0'; $kb.HorizontalAlignment = 'Left'
         [void]$panel.Children.Add($kb)
     }
     else {
-        $t = New-Text 'Pick a game file, answer a few questions, and it goes online by itself: the file is uploaded and the library list updated. Only games that may be shared: homebrew, freeware, fan-made, your own. Up to 2 GB each.' $ColDim 13
+        $t = New-Text 'Pick one or more games from your roms folder and they go online by themselves. The name, players, description and box art come from what RetroBat already knows; it only asks for a picture when a game has none. The details and art show on the public list and website; the files stay private, so only a wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own. Any size: a game over 2 GB goes up in pieces and comes back down as one.' $ColDim 13
         [void]$panel.Children.Add($t)
         $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
-        $pb = New-SocialButton 'Publish a game...' { Invoke-AdminPublish }; $pb.Margin = '0'; $pb.FontWeight = 'Bold'
+        $pb = New-SocialButton 'Publish games...' { Invoke-AdminPublish }; $pb.Margin = '0'; $pb.FontWeight = 'Bold'
         $pb.IsEnabled = ($null -eq $script:adminLibJob)
         [void]$row.Children.Add($pb)
+        $xb = New-SocialButton 'Remove games...' { Invoke-AdminRemove }
+        $xb.IsEnabled = ($null -eq $script:adminLibJob)
+        [void]$row.Children.Add($xb)
         $kb = New-SocialButton 'New key...' { Invoke-AdminLibKey }; $kb.FontSize = 11; $kb.Padding = '6,1'
         [void]$row.Children.Add($kb)
         [void]$panel.Children.Add($row)
@@ -4903,42 +7984,122 @@ function Invoke-AdminLibKey {
     Render-Admin
 }
 
+# Publish games to the online library (Steven, 2026-10-11: "upload multiple
+# games at once", "pull what is needed" from RetroBat). Pick one or more game
+# files from the roms folder. The console comes from the folder it is in, and
+# the name, players, description and box art from RetroBat's gamelist.xml.
+# Only a game with no box art asks: pick a picture or skip. One yes, then it
+# all runs in the background, one game after another.
 function Invoke-AdminPublish {
     if ($null -ne $script:adminLibJob -or -not $script:gamesOk) { return }
     try {
         Add-Type -AssemblyName PresentationFramework
         $dlg = New-Object Microsoft.Win32.OpenFileDialog
-        $dlg.Title = 'Choose a game to put in the online library'
+        $dlg.Title = 'Choose games for the online library (pick as many as you like)'
+        $dlg.Multiselect = $true
         $dlg.InitialDirectory = (Join-Path $Root 'roms')
         if (-not $dlg.ShowDialog()) { return }
     } catch { return }
-    $f = $dlg.FileName
-    $sys = Resolve-GameConsole $f
-    if ($null -eq $sys) { return }
-    $info = Get-LibGamelistInfo $sys $f
-    $title = (Show-TextInput $WizardName 'The name people see in the library:' $info.Title).Trim()
-    if ($title -eq '') { return }
-    $players = Show-TextInput $WizardName 'How many players? (like 1, 1-2, 1-4)' $info.Players
-    $desc = Show-TextInput $WizardName 'One or two lines about it:' $info.Description
-    $mb = [math]::Round((Get-Item -LiteralPath $f).Length / 1MB, 1)
-    $ok = Show-Choice $WizardName ("Publish '{0}' ({1}, {2} MB) to the online library?`n`nEveryone with the wizard can download it. Only games that may be shared: homebrew, freeware, fan-made, your own." -f $title, $sys.FullName, $mb) @('Publish', 'Cancel')
+    $systems = @(Get-GamesSystems)
+    $items = @(); $lines = @()
+    foreach ($f in @($dlg.FileNames)) {
+        # the console folder the game sits in (the longest match, so gb never takes gba's games)
+        $sys = $null; $best = 0
+        foreach ($s in $systems) {
+            $base = ([string]$s.Folder).TrimEnd('\', '/') + '\'
+            if ($base.Length -gt $best -and $f.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)) { $sys = $s; $best = $base.Length }
+        }
+        if ($null -eq $sys) { $sys = Resolve-GameConsole $f }
+        if ($null -eq $sys) { continue }
+        $info = Get-LibGamelistInfo $sys $f
+        $title = ([string]$info.Title).Trim()
+        $desc = (([string]$info.Description) -replace '\s+', ' ').Trim()
+        if ($desc.Length -gt 280) { $desc = $desc.Substring(0, 280); $cut = $desc.LastIndexOf(' '); if ($cut -gt 200) { $desc = $desc.Substring(0, $cut) }; $desc += '...' }
+        $art = [string]$info.Art
+        if ($art -eq '') {
+            $ans = Show-Choice $WizardName ("RetroBat has no box art for '{0}'.`n`nPick a picture for the library, or skip it and the console's picture shows instead." -f $title) @('Pick a picture', 'Skip')
+            if ($ans -eq 'Pick a picture') {
+                try {
+                    $pd = New-Object Microsoft.Win32.OpenFileDialog
+                    $pd.Title = "A picture for $title"
+                    $pd.Filter = 'Pictures|*.png;*.jpg;*.jpeg;*.gif;*.webp'
+                    $pd.InitialDirectory = [string]$sys.Folder
+                    if ($pd.ShowDialog()) { $art = $pd.FileName }
+                } catch { }
+            }
+        }
+        $mb = [math]::Round((Get-Item -LiteralPath $f).Length / 1MB, 1)
+        $items += @{ File = $f; System = $sys.Name; Title = $title; Players = ([string]$info.Players).Trim(); Description = $desc; Art = $art }
+        $lines += ('{0} ({1}, {2} MB{3})' -f $title, $sys.FullName, $mb, $(if ($art -eq '') { ', no art' } else { '' }))
+    }
+    if ($items.Count -eq 0) { return }
+    $shown = @($lines | Select-Object -First 12)
+    if ($lines.Count -gt 12) { $shown += ('...and {0} more' -f ($lines.Count - 12)) }
+    $what = $(if ($items.Count -eq 1) { 'this game' } else { "these $($items.Count) games" })
+    $ok = Show-Choice $WizardName ("Publish {0} to the online library?`n`n{1}`n`nEveryone with the wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own." -f $what, ($shown -join "`n")) @('Publish', 'Cancel')
     if ($ok -ne 'Publish') { return }
     try {
-        $sync = [hashtable]::Synchronized(@{ Stage = 'Starting...'; Percent = 0 })
+        $sync = [hashtable]::Synchronized(@{ Stage = 'Starting...'; Percent = 0; Prefix = '' })
         $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
         try { $iss.ExecutionPolicy = 'Bypass' } catch { }
         $rs = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace($iss); $rs.Open()
         $ps = [System.Management.Automation.PowerShell]::Create(); $ps.Runspace = $rs
-        [void]$ps.AddScript('param($s, $a, $ws, $f, $sys, $t, $pl, $d, $sync) . $s; . $a; Publish-AdminLibraryGame $ws $f $sys $t $pl $d $sync')
-        foreach ($arg in @($script:socialLib, (Join-Path $ScriptsDir 'AdminEngine.ps1'), $Ws, $f, $sys.Name, $title, [string]$players, [string]$desc, $sync)) { [void]$ps.AddArgument($arg) }
-        $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $title }
-        Log ("admin: publishing {0} ({1})" -f $title, $sys.Name)
+        [void]$ps.AddScript('param($s, $a, $ws, $items, $sync) . $s; . $a; Publish-AdminLibraryGames $ws $items $sync')
+        foreach ($arg in @($script:socialLib, (Join-Path $ScriptsDir 'AdminEngine.ps1'), $Ws)) { [void]$ps.AddArgument($arg) }
+        [void]$ps.AddArgument($items); [void]$ps.AddArgument($sync)
+        $label = $(if ($items.Count -eq 1) { $items[0].Title } else { "$($items.Count) games" })
+        $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $label }
+        Log ("admin: publishing {0}: {1}" -f $label, ((@($items | ForEach-Object { '{0} ({1})' -f $_.Title, $_.System })) -join ', '))
         $script:adminLibTimer = New-Object System.Windows.Threading.DispatcherTimer
         $script:adminLibTimer.Interval = [TimeSpan]::FromMilliseconds(800)
         $script:adminLibTimer.Add_Tick({ Invoke-AdminPublishTick })
         $script:adminLibTimer.Start()
     } catch { Log "admin: publish could not start - $_"; $script:adminLibJob = $null }
     Render-Admin
+}
+
+# Take games off the online library (Steven, 2026-10-11: "is there any way
+# to remove games from the online library? There had better be"). Shows
+# what is up there with tick boxes; an upload that never made the list
+# (a publish that stopped halfway) shows as one extra line, ticked already.
+# Asks once more, then takes them off: list, box art, private file.
+function Invoke-AdminRemove {
+    if ($null -ne $script:adminLibJob) { return }
+    $c = Invoke-EngineWork 'reading the online library' @('SocialEngine.ps1', 'AdminEngine.ps1') 'Get-AdminLibraryContents $args[0]' @($Ws)
+    if ($null -eq $c) { [void](Show-Choice $WizardName 'The library could not be read. Details are in wizard.log.' @('OK')); return }
+    if (-not $c.Ok) { [void](Show-Choice $WizardName $c.Message @('OK')); return }
+    $games = @($c.Games | Sort-Object @{ Expression = { [string]$_.system } }, @{ Expression = { ([string]$_.title).ToLower() } })
+    $left = @($c.Leftovers)
+    if ($games.Count -eq 0 -and $left.Count -eq 0) { [void](Show-Choice $WizardName 'The online library is empty, and there are no leftover uploads.' @('OK')); return }
+    $labels = @(); $ticks = @()
+    foreach ($g in $games) {
+        $con = [string]$g.system
+        try { $s = @(Get-GamesSystems | Where-Object { $_.Name -eq $con }) | Select-Object -First 1; if ($null -ne $s) { $con = $s.FullName } } catch { }
+        $labels += ('{0}   ({1})' -f $g.title, $con); $ticks += $false
+    }
+    if ($left.Count -gt 0) {
+        $mb = 0; foreach ($l in $left) { $mb += [double]$l.size / 1MB }
+        $labels += ('Leftover uploads not on the list: {0} file(s), {1:N0} MB' -f $left.Count, $mb); $ticks += $true
+    }
+    $picked = Show-CheckPick $WizardName 'Tick what to take off the online library.' $labels ([bool[]]$ticks) 'Remove'
+    if ($null -eq $picked -or @($picked).Count -eq 0) { return }
+    $ids = @(); $names = @(); $clear = @()
+    foreach ($k in @($picked)) {
+        if ($k -lt $games.Count) { $ids += [string]$games[$k].id; $names += [string]$games[$k].title }
+        else { $clear = $left }
+    }
+    $what = @()
+    if ($names.Count -gt 0) { $what += ($names -join "`n") }
+    if ($clear.Count -gt 0) { $what += ('{0} leftover upload(s)' -f $clear.Count) }
+    $ok = Show-Choice $WizardName ("Remove these from the online library?`n`n{0}`n`nThey leave the website and the wizard's list, and the private files are deleted. Anyone who already downloaded a game keeps their copy." -f ($what -join "`n")) @('Remove', 'Cancel')
+    if ($ok -ne 'Remove') { return }
+    $r = Invoke-EngineWork 'removing games from the online library' @('SocialEngine.ps1', 'AdminEngine.ps1') 'Remove-AdminLibraryGames $args[0] $args[1] $args[2]' @($Ws, [string[]]$ids, $clear)
+    if ($null -eq $r) { $r = @{ Ok = $false; Cleared = 0; Message = 'That did not finish. Details are in wizard.log.' } }
+    Log ("admin: remove {0} game(s), {1} leftover(s) - ok {2}" -f $ids.Count, $r.Cleared, $r.Ok)
+    $script:adminNote = $r.Message
+    $script:libCatalog = $null
+    Render-Admin
+    [void](Show-Choice $WizardName $r.Message @('OK'))
 }
 
 function Invoke-AdminPublishTick {
@@ -4949,7 +8110,7 @@ function Invoke-AdminPublishTick {
             if ($null -ne $script:adminLibText) {
                 $txt = [string]$j.Sync.Stage
                 if ($txt -eq 'Uploading...') { $txt = 'Uploading... {0}%' -f $j.Sync.Percent }
-                $script:adminLibText.Text = $txt
+                $script:adminLibText.Text = ([string]$j.Sync.Prefix) + $txt
             }
             return
         }
@@ -5032,6 +8193,7 @@ function Complete-SocialPicture($Prof, $Ed) {
 function Show-SocialEditor([string]$Title, [string]$Name, [string]$Avatar, [bool]$PictureOnly = $false) {
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 560; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -5203,9 +8365,11 @@ function Show-UpdateState {
     switch ($state) {
         { $_ -eq 'available' -or $_ -eq 'ready' } {
             if ($null -ne $script:updateBar) {
-                $script:updateBarText.Text = ("Version {0} is out. This drive has {1}." -f $ver, $WizardVersion)
+                $script:updateBarText.Text = $(if ($msg -ne '') { ("{0} Version {1} is ready to install. This drive has {2}." -f $msg, $ver, $WizardVersion) }
+                                               else { ("Version {0} is out. This drive has {1}." -f $ver, $WizardVersion) })
                 $script:updateBar.Visibility = 'Visible'
             }
+            Set-FootAlert ("Update: v{0}" -f $ver) 'help'
             Set-UpdateNote ("Version {0} is out. Press Update now at the top." -f $ver)
         }
         'uptodate' {
@@ -5339,6 +8503,7 @@ function Update-BugKind {
 function Show-BugDialog([string]$Kind = 'bug') {
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = 'Report a bug or suggest something'; $w.Width = 560; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -5401,6 +8566,7 @@ function Show-BugDialog([string]$Kind = 'bug') {
 
 function Show-BugPreview([string]$Body) {
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = 'Exactly what is sent'; $w.Width = 720; $w.Height = 520
     $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
     $tb = New-Object System.Windows.Controls.TextBox
@@ -5442,42 +8608,123 @@ function Add-UpdateActions {
 
 
 function Render-Help {
+    # v3 polish (Steven, 2026-10-14): "make it look awesome". The book and the
+    # name at the top with the website and the change list; what RetroBat is
+    # and what the wizard is, side by side; ONE obvious way to send feedback;
+    # then the tools; and the old how-it-works text folded away at the end.
     if ($null -eq $script:helpPanel) { return }
-    $script:helpPanel.Children.Clear()
+    $p = $script:helpPanel
+    $p.Children.Clear()
 
-    if (-not $script:helpOk) {
-        [void]$script:helpPanel.Children.Add(
-            (New-Text 'HelpText.ps1 is missing from the scripts folder.' $ColText 14 $true))
-        [void]$script:helpPanel.Children.Add(
-            (New-Text 'Everything is explained in _ClaudeWorkspace\docs\CUSTOMIZATION-RECORD.md.' $ColDim 13))
-        Add-HelpActions
-        return
+    function New-HelpCard([string]$Edge = '#FF2E2B38') {
+        $c = New-Object System.Windows.Controls.Border
+        $c.Background = (New-Brush '#FF201E28'); $c.BorderBrush = (New-Brush $Edge); $c.BorderThickness = '2'
+        $c.CornerRadius = '6'; $c.Padding = '20,16'; $c.Margin = '0,0,0,14'
+        return $c
+    }
+    function New-HelpLink([string]$Text, [scriptblock]$OnClick, [double]$Size = 14) {
+        $tb = New-Object System.Windows.Controls.TextBlock
+        $tb.FontSize = $Size; $tb.FontWeight = 'Bold'
+        $hl = New-Object System.Windows.Documents.Hyperlink
+        $hl.Foreground = (New-Brush '#FFE5B83B')
+        [void]$hl.Inlines.Add($Text)
+        $hl.Add_Click($OnClick)
+        [void]$tb.Inlines.Add($hl)
+        return $tb
     }
 
-    $sections = @()
-    try { $sections = @(Get-HelpSections -WizardName $WizardName -Version $WizardVersion) }
-    catch { Log ("help: {0}" -f $_.Exception.Message); Add-HelpActions; return }
+    # --- the top ------------------------------------------------------------
+    $hero = New-HelpCard '#FF6B5526'
+    $hg = New-Object System.Windows.Controls.Grid
+    foreach ($wd in @('Auto', '*')) {
+        $cd = New-Object System.Windows.Controls.ColumnDefinition
+        $cd.Width = $(if ($wd -eq '*') { New-Object System.Windows.GridLength(1, 'Star') } else { [System.Windows.GridLength]::Auto })
+        [void]$hg.ColumnDefinitions.Add($cd)
+    }
+    # The book is made once per window and reused, so redrawing the page
+    # never piles up animations.
+    if ($null -eq $script:helpBook) {
+        $script:helpBook = New-Object System.Windows.Controls.Image
+        $script:helpBook.Stretch = 'None'; $script:helpBook.VerticalAlignment = 'Center'; $script:helpBook.Margin = '0,0,22,0'
+        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($script:helpBook, 'NearestNeighbor')
+        Add-IconArt $script:helpBook 'icon-book' 3 'always'
+        Update-PlayScale -Force
+    }
+    else { try { [void]([System.Windows.Controls.Panel]$script:helpBook.Parent).Children.Remove($script:helpBook) } catch { } }
+    [System.Windows.Controls.Grid]::SetColumn($script:helpBook, 0)
+    [void]$hg.Children.Add($script:helpBook)
+    $ht = New-Object System.Windows.Controls.StackPanel; $ht.VerticalAlignment = 'Center'
+    [void]$ht.Children.Add((New-Text 'The RetroBat Wizard' $ColText 28 $true))
+    $vt = New-Text ("Version {0}" -f $WizardVersion) $ColDim 13; $vt.Margin = '0,2,0,12'
+    [void]$ht.Children.Add($vt)
+    $lr = New-Object System.Windows.Controls.StackPanel; $lr.Orientation = 'Horizontal'
+    $site = New-Object System.Windows.Controls.Button
+    $site.Content = 'Visit the website'; $site.FontSize = 15; $site.FontWeight = 'Bold'; $site.Padding = '18,8'
+    $site.Background = (New-Brush '#FFE5B83B'); $site.Foreground = (New-Brush '#FF1B1B22'); $site.BorderBrush = (New-Brush '#FF7A5F18')
+    $site.Add_Click({ try { Start-Process $script:SiteUrl } catch { Log ('help: website - ' + $_.Exception.Message) } })
+    [void]$lr.Children.Add($site)
+    $cl = New-HelpLink "What's new in each version" { try { Start-Process $script:ChangelogUrl } catch { } } 14
+    $cl.Margin = '18,0,0,0'; $cl.VerticalAlignment = 'Center'
+    [void]$lr.Children.Add($cl)
+    [void]$ht.Children.Add($lr)
+    [System.Windows.Controls.Grid]::SetColumn($ht, 1)
+    [void]$hg.Children.Add($ht)
+    $hero.Child = $hg
+    [void]$p.Children.Add($hero)
 
-    $first = $true
-    foreach ($sec in $sections) {
-        $heading = [string]$sec.heading
-        if ($heading -ne '') {
-            $h = New-Text $heading $ColText 14 $true
-            # Tight on purpose. The page has to fit the window without
-            # scrolling, and the spacing between sections is most of its
-            # height. HelpText.ps1's own test enforces the budget.
-            $h.Margin = $(if ($first) { '0,0,0,3' } else { '0,10,0,3' })
-            [void]$script:helpPanel.Children.Add($h)
-        }
-        foreach ($line in @($sec.lines)) {
-            $t = New-Text ([string]$line) $ColDim 13
-            $t.Margin = '14,0,0,1'
-            [void]$script:helpPanel.Children.Add($t)
-        }
-        $first = $false
+    # --- what it is ------------------------------------------------------------
+    $two = New-Object System.Windows.Controls.Primitives.UniformGrid; $two.Columns = 2
+    foreach ($pair in @(
+            @('What RetroBat is', 'RetroBat is the front end: the menus you scroll through on the TV. Behind it, emulators do the real work. They are programs that act like the old consoles, and they are what actually run the games. RetroBat ties them all together, so one menu and one controller reach every console.'),
+            @('What the Wizard is', 'The Wizard turns RetroBat into a plug-and-play machine. Steven built it with Claude to live on one hard drive: plug it into a Windows computer, press Play, and everything is already set up, from the controllers to the saves. Nothing gets installed and it works on its own. Most of all it is made for getting people together, with the co-op and party games of the past, on one couch or online with friends.')
+        )) {
+        $c = New-HelpCard
+        $c.Margin = $(if ($two.Children.Count -eq 0) { '0,0,7,14' } else { '7,0,0,14' })
+        $st = New-Object System.Windows.Controls.StackPanel
+        $h = New-Text $pair[0] '#FFE5B83B' 17 $true; $h.Margin = '0,0,0,8'
+        [void]$st.Children.Add($h)
+        $t = New-Text $pair[1] $ColText 14; $t.LineHeight = 21
+        [void]$st.Children.Add($t)
+        $c.Child = $st
+        [void]$two.Children.Add($c)
+    }
+    [void]$p.Children.Add($two)
+
+    # --- feedback ------------------------------------------------------------
+    if ($script:bugOk) {
+        $fc = New-HelpCard '#FF6B5526'
+        $fs = New-Object System.Windows.Controls.StackPanel
+        [void]$fs.Children.Add((New-HelpLink 'Send feedback' { Show-BugDialog 'bug' } 20))
+        $ft = New-Text 'Something broken, an idea, or a game you wish was on here? Say it and it goes straight to whoever looks after this wizard. You see exactly what gets sent before it goes.' $ColDim 14
+        $ft.Margin = '0,6,0,0'
+        [void]$fs.Children.Add($ft)
+        $fc.Child = $fs
+        [void]$p.Children.Add($fc)
     }
 
+    # --- the tools -----------------------------------------------------------
+    $th = New-Text 'TOOLS' $ColDim 12 $true; $th.Margin = '2,6,0,0'
+    [void]$p.Children.Add($th)
     Add-HelpActions
+
+    # --- the old how-it-works text, folded ------------------------------------
+    if ($script:helpOk) {
+        $sections = @()
+        try { $sections = @(Get-HelpSections -WizardName $WizardName -Version $WizardVersion) } catch { Log ("help: {0}" -f $_.Exception.Message) }
+        if ($sections.Count -gt 0) {
+            $exp = New-Object System.Windows.Controls.Expander
+            $exp.Header = (New-Text 'How this drive works' $ColText 15 $true)
+            $exp.Margin = '0,20,0,0'; $exp.IsExpanded = $false
+            $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,6,0,0'
+            foreach ($sec in $sections) {
+                $heading = [string]$sec.heading
+                if ($heading -ne '') { $hh = New-Text $heading $ColText 13 $true; $hh.Margin = '0,8,0,2'; [void]$body.Children.Add($hh) }
+                foreach ($line in @($sec.lines)) { $tl = New-Text ([string]$line) $ColDim 13; $tl.Margin = '12,0,0,1'; [void]$body.Children.Add($tl) }
+            }
+            $exp.Content = $body
+            [void]$p.Children.Add($exp)
+        }
+    }
 }
 
 
@@ -5538,6 +8785,7 @@ function Render-Status {
     if ($s.tier)    { $foot += "  |  $(([string]$s.tier).ToUpper()) tier" }
     $foot += "  |  overall: $(([string]$s.overall).ToUpper())  |  checked $($s.generated)"
     $script:footer.Text = $foot
+    Update-FootChips $s
 }
 
 
@@ -5984,7 +9232,7 @@ function Add-SteamSection($panel) {
         $s1.Margin = '0,0,0,4'
         [void]$panel.Children.Add($s1)
 
-        $s2 = New-Text 'Remembered per computer. A friend can set it up with their own Steam account to show their own couch games while the drive is at their place. Plug the drive into a different computer and Steam games stay hidden there until Steam setup is run on it.' $ColDim 13
+        $s2 = New-Text 'Shows the Steam games already on this computer inside RetroBat, under whoever is signed in to Steam. Nothing has to be on this drive. Remembered per computer: on a different computer Steam games stay hidden until Steam is set up there too.' $ColDim 13
         $s2.Margin = '0,0,0,12'
         $s2.MaxWidth = 560
         [void]$panel.Children.Add($s2)
@@ -6000,7 +9248,7 @@ function Add-SteamSection($panel) {
 
         if ($state.Connected) {
             $db = New-Object System.Windows.Controls.Button
-            $db.Content = 'Disconnect Steam from this hard drive'
+            $db.Content = 'Turn off Steam here'
             $db.Padding = '14,6'; $db.FontSize = 14
             $db.Add_Click({ Invoke-DisconnectSteamFromWizard })
             [void]$row.Children.Add($db)
@@ -6180,6 +9428,7 @@ function Show-ProfileEditor([string]$Title, [string]$Name, [string]$Icon) {
     Close-Splash
 
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 560; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -7626,6 +10875,7 @@ $script:saveFound    = @{}
 function Show-TextInput([string]$Title, [string]$Message, [string]$Default = '') {
     Close-Splash
     $w = New-Object System.Windows.Window
+    Start-PadForDialogs   # a controller works in this box even with no main window open
     $w.Title = $Title; $w.Width = 460; $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
@@ -7683,7 +10933,8 @@ function Initialize-Saves {
         $nms = Read-GameNames $script:saveNamesPath
         $script:saveGames = @(Get-SaveGames -Index $idx -Names $nms -Found $script:saveFound)
 
-        # The mid-game autosaves Quarantine-Savestates.ps1 has put aside. They
+        # The save states Quarantine-Savestates.ps1 has put aside (every
+        # emulator since 2026-10-11, Dolphin before that). They
         # are attached to the games they belong to rather than being given a
         # section of their own, because a section at the bottom is a section
         # nobody opens.
@@ -7729,7 +10980,7 @@ function Render-SaveGames {
         if ($g.Category -eq 'system') { $tag = '   (system files)' }
         # Marked right here in the main list, on purpose.
         if ($g.Savestates -and $g.Savestates.Count -gt 0) {
-            $tag += ('   * {0} MID-GAME AUTOSAVE{1}' -f $g.Savestates.Count,
+            $tag += ('   * {0} SAVE STATE{1}' -f $g.Savestates.Count,
                      $(if ($g.Savestates.Count -eq 1) { '' } else { 'S' }))
         }
         [void]$lb.Items.Add(('{0}   [{1}]   {2}{3}' -f $g.DisplayName, $g.System, $when, $tag))
@@ -7894,28 +11145,52 @@ function Render-SaveDetail {
 function Add-SavestateSection($p, $g) {
     if (-not $g.Savestates -or $g.Savestates.Count -eq 0) { return }
 
-    [void]$p.Children.Add((New-SectionHeader 'Mid-game autosaves'))
-    $w = New-Text 'Snapshots the emulator took mid-play, not ordinary saves. Held aside so one cannot load by accident.' $ColDim 12
-    $w.Margin = '0,0,0,8'
+    [void]$p.Children.Add((New-SectionHeader 'Save states'))
+    $w = New-Text 'Snapshots from the middle of a game. They wait here so none can load by accident. "Jump in here" starts the game right at that moment, one time.' $ColDim 12
+    $w.TextWrapping = 'Wrap'; $w.Margin = '0,0,0,8'
     [void]$p.Children.Add($w)
+
+    # One jump in waiting, for whichever game (2026-10-12): say so, with a way out.
+    $js = $null
+    if ($script:saveStatesOk) { try { $js = Get-SavestateJumpInState $Root } catch { $js = $null } }
+    if ($null -ne $js -and $js.Ready) {
+        $jr = New-Object System.Windows.Controls.StackPanel
+        $jr.Orientation = 'Horizontal'; $jr.Margin = '0,0,0,8'
+        $jt = New-Text $(if ($js.Name) { "Ready to jump in: $($js.Name). It waits until you play that game." } else { 'A jump in is ready. It waits until you play that game.' }) $ColAway 12
+        $jt.VerticalAlignment = 'Center'; $jt.Margin = '0,0,10,0'
+        [void]$jr.Children.Add($jt)
+        $jb = New-Object System.Windows.Controls.Button
+        $jb.Content = 'Cancel it'; $jb.Padding = '10,2'; $jb.FontSize = 12
+        $jb.Add_Click({ Invoke-SavestateJumpInCancel })
+        [void]$jr.Children.Add($jb)
+        [void]$p.Children.Add($jr)
+    }
 
     $shownS = 0
     foreach ($st in @($g.Savestates)) {
         $shownS++
-        if ($shownS -gt 8) {
-            [void]$p.Children.Add((New-Text ('... and {0} older ones.' -f ($g.Savestates.Count - 8)) $ColDim 12))
+        if ($shownS -gt 12) {
+            [void]$p.Children.Add((New-Text ('... and {0} older ones.' -f ($g.Savestates.Count - 12)) $ColDim 12))
             break
         }
         $row = New-Object System.Windows.Controls.StackPanel
         $row.Orientation = 'Horizontal'; $row.Margin = '0,4'
 
-        $b = New-Object System.Windows.Controls.Button
-        $b.Content = 'Put back'; $b.Padding = '10,3'; $b.FontSize = 12; $b.Width = 80
-        $b.Margin = '0,10,10,0'
-        # The identity, not an index: the list is rebuilt after every action.
-        $b.Tag = '{0}|{1}' -f $st.When.ToString('yyyy-MM-dd_HHmmss'), $st.Slot
-        $b.Add_Click({ param($s2, $e2) Invoke-SavestateRestore ([string]$s2.Tag) })
-        [void]$row.Children.Add($b)
+        $can = $false
+        if ($script:saveStatesOk) { try { $can = Test-SavestateJumpIn $st ([string]$g.System) } catch { $can = $false } }
+        if ($can) {
+            $b = New-Object System.Windows.Controls.Button
+            $b.Content = 'Jump in here'; $b.Padding = '10,3'; $b.FontSize = 12; $b.Width = 100
+            $b.Margin = '0,10,10,0'
+            # The identity, not an index: the list is rebuilt after every action.
+            $b.Tag = '{0}|{1}|{2}' -f $st.When.ToString('yyyy-MM-dd_HHmmss'), $st.Slot, $st.Key
+            $b.Add_Click({ param($s2, $e2) Invoke-SavestateJumpIn ([string]$s2.Tag) })
+            [void]$row.Children.Add($b)
+        }
+        else {
+            $sp = New-Object System.Windows.Controls.Border; $sp.Width = 110
+            [void]$row.Children.Add($sp)
+        }
 
         # The .png beside a savestate is a screenshot of that exact moment.
         if ($st.Thumb) {
@@ -7929,11 +11204,12 @@ function Add-SavestateSection($p, $g) {
                 $im2.Source = $bmp2; $im2.MaxHeight = 46; $im2.Margin = '0,0,10,0'
                 [void]$row.Children.Add($im2)
             }
-            catch { Log ("saves tab: could not show an autosave screenshot - {0}" -f $_.Exception.Message) }
+            catch { Log ("saves tab: could not show a save state screenshot - {0}" -f $_.Exception.Message) }
         }
 
-        $t = New-Text ('{0}   slot {1}   ({2})' -f `
-             $st.When.ToString('ddd  yyyy-MM-dd  HH:mm'), $st.Slot, (Format-SaveSize $st.Size)) $ColText 13
+        $label = '{0}   ({1})' -f $st.When.ToString('ddd  yyyy-MM-dd  HH:mm'), (Format-SaveSize $st.Size)
+        if (-not $can) { $label += '   - this console cannot start at a save state' }
+        $t = New-Text $label $ColText 13
         $t.Margin = '0,12,0,0'
         [void]$row.Children.Add($t)
         [void]$p.Children.Add($row)
@@ -7990,51 +11266,84 @@ function Invoke-SaveNameGame([string]$Code) {
     }
 }
 
-# Putting a mid-game autosave back. Deliberately noisier than an ordinary
-# restore: this one hands a loaded weapon back to the user, so it says what it
-# is, what it will do, and that it does not last.
-function Invoke-SavestateRestore([string]$Ident) {
+# "Jump in here" (2026-10-11). Puts the save state back exactly where
+# RetroBat's own launch menu looks and holds it for one game; the menu then
+# lists it next to "Launch game?". Picking it is what loads it, so nothing
+# ever loads by itself. When that game closes, the copy goes away again.
+function Invoke-SavestateJumpIn([string]$Ident) {
     $g = $script:saveSelected
-    if ($null -eq $g -or -not $Ident) { return }
+    if ($null -eq $g -or -not $Ident -or -not $script:saveStatesOk) { return }
 
     $st = $null
     foreach ($x in @($g.Savestates)) {
-        if (('{0}|{1}' -f $x.When.ToString('yyyy-MM-dd_HHmmss'), $x.Slot) -eq $Ident) { $st = $x; break }
+        if (('{0}|{1}|{2}' -f $x.When.ToString('yyyy-MM-dd_HHmmss'), $x.Slot, $x.Key) -eq $Ident) { $st = $x; break }
     }
     if ($null -eq $st) { return }
 
-    if (Test-RetroBatRunning) {
-        [void](Show-Choice 'Setup Wizard' "RetroBat is open. Close it first." @('OK'))
+    $rg = $null
+    try { $rg = Get-SsRunningGame } catch { $rg = $null }
+    if ($null -ne $rg -and $rg.Running) {
+        [void](Show-Choice 'Setup Wizard' "A game is running. Close it first, then try again." @('OK'))
         return
     }
 
-    $msg = "PUT BACK A MID-GAME AUTOSAVE?`n`n" +
-           "{0}, slot {1}, from {2}.`n`n" +
-           "This is NOT an ordinary save. It drops you back into the middle of that moment, and if you save on top of it afterwards you overwrite whatever you have done since.`n`n" +
-           "It also does not last: savestates are moved aside again when the next game exits, so load it before then.`n`n" +
-           "The archived copy is kept either way."
-    $msg = $msg -f $g.DisplayName, $st.Slot, $st.When.ToString('ddd d MMM yyyy, HH:mm')
-
-    $answer = Show-Choice 'Put back a mid-game autosave' $msg @('Cancel', 'Put it back')
-    if ($answer -ne 'Put it back') { Log 'saves tab: autosave restore cancelled'; return }
+    $msg = "JUMP IN HERE?`n`n{0}, {1}.`n`n" +
+           "1. Start {0} in RetroBat.`n" +
+           "2. In the menu that opens, pick this save (it is under ""Launch game?"").`n`n" +
+           "It waits until you play {0}, even if you play other games first. " +
+           "One time only: when you quit {0}, it leaves that menu by itself. " +
+           "This copy stays here, so you can jump in again later."
+    $msg = $msg -f $g.DisplayName, $st.When.ToString('ddd d MMM yyyy, h:mm tt')
+    $answer = Show-Choice 'Jump in here' $msg @('Cancel', 'Get it ready')
+    if ($answer -ne 'Get it ready') { Log 'saves tab: jump in cancelled'; return }
 
     $res = $null
-    try { $res = Restore-Savestate -Root $Root -Savestate $st -System ([string]$g.System) }
+    try { $res = Set-SavestateJumpIn -Root $Root -Savestate $st -System ([string]$g.System) -Display ([string]$g.DisplayName) }
     catch {
-        Log ("saves tab: autosave restore threw - {0}" -f $_.Exception.Message)
+        Log ("saves tab: jump in threw - {0}" -f $_.Exception.Message)
         [void](Show-Choice 'Setup Wizard' ("That did not work:`n`n{0}" -f $_.Exception.Message) @('OK'))
         return
     }
-
-    Log ("saves tab: autosave restore, {0} put back, {1} skipped" -f $res.Restored, $res.Skipped)
-    foreach ($m in @($res.Messages)) { Log ('   ' + $m) }
-
-    if ($res.Restored -eq 0) {
-        [void](Show-Choice 'Setup Wizard' "Nothing was put back. See wizard.log." @('OK'))
+    Log ("saves tab: jump in {0} {1} - ok={2} placed={3} {4}" -f $g.DisplayName, $st.When.ToString('yyyy-MM-dd HH:mm:ss'), $res.Ok, $res.Placed, $res.Message)
+    if (-not $res.Ok) {
+        [void](Show-Choice 'Setup Wizard' $res.Message @('OK'))
     }
     else {
-        [void](Show-Choice 'Setup Wizard' ("Done. It is back in Dolphin's savestate slot {0}.`n`nLoad it before the next game exits." -f $st.Slot) @('OK'))
+        [void](Show-Choice 'Setup Wizard' ("Ready. Start {0} in RetroBat and pick the save in the menu." -f $g.DisplayName) @('OK'))
     }
+    Render-SaveGames
+}
+
+# Takes back a "Jump in here" that has not been used (2026-10-12).
+function Invoke-SavestateJumpInCancel {
+    if (-not $script:saveStatesOk) { return }
+    $rg = $null
+    try { $rg = Get-SsRunningGame } catch { $rg = $null }
+    if ($null -ne $rg -and $rg.Running) { [void](Show-Choice 'Setup Wizard' 'A game is running. Close it first, then try again.' @('OK')); return }
+    try { [void](Clear-SavestateJumpIn $Root); Log 'saves tab: jump in cancelled' }
+    catch { Log ("saves tab: jump in cancel threw - {0}" -f $_.Exception.Message) }
+    Render-SaveGames
+}
+
+# How much the backups keep (2026-10-11, Steven: friends with smaller drives).
+# Writes SaveBackups\storage.ini through SaveStates.ps1. Default: everything.
+function Invoke-SaveStorage {
+    if (-not $script:saveStatesOk) { return }
+    $cur = Get-SsStorage $Root
+    $vNow = $(if ($cur.Versions -gt 0) { "the newest $($cur.Versions)" } else { 'all of them' })
+    $sNow = $(if ($cur.States -gt 0) { "the newest $($cur.States) per game" } else { 'all of them' })
+    $v = Show-Choice 'Storage' ("BACKED-UP VERSIONS OF EACH SAVE`n`nEvery time a save changes, the old one is kept. Keeping: {0}.`n`nKeeping fewer saves space. The older ones are deleted for good." -f $vNow) @('Keep all', 'Newest 50', 'Newest 10', 'Cancel')
+    if ($v -eq 'Cancel' -or -not $v) { return }
+    $s2 = Show-Choice 'Storage' ("SAVE STATES`n`nThe snapshots on this tab (auto-save timer and in-game). Keeping: {0}.`n`nKeeping fewer saves space. The older ones are deleted for good." -f $sNow) @('Keep all', 'Newest 20 per game', 'Newest 5 per game', 'Cancel')
+    if ($s2 -eq 'Cancel' -or -not $s2) { return }
+    $vn = @{ 'Keep all' = 0; 'Newest 50' = 50; 'Newest 10' = 10 }[$v]
+    $sn = @{ 'Keep all' = 0; 'Newest 20 per game' = 20; 'Newest 5 per game' = 5 }[$s2]
+    try {
+        Set-SsStorage $Root $vn $sn
+        Log ("saves tab: storage set, versions={0} states={1}" -f $vn, $sn)
+        $script:saveNote.Text = 'Storage setting saved. It applies after the next game.'
+    }
+    catch { [void](Show-Choice 'Setup Wizard' ("Could not save that:`n`n{0}" -f $_.Exception.Message) @('OK')) }
 }
 
 function Invoke-SaveBackupNow {
@@ -8144,7 +11453,7 @@ if ($script:shortcutsOk -and -not $Play) {
 
 if     ($Setup) { Start-SetupFlow }
 elseif ($Play)  { Start-PlayFlow }
-else            { Show-MainWindow $null 'play' }
+else            { Show-MainWindow $null $(if ($Tab -match '^[a-z]{2,12}$') { $Tab } else { 'play' }) }
 # Belt and braces: whatever path was taken, the splash is gone by now.
 Close-Splash
 Log 'done'
@@ -8156,28 +11465,33 @@ catch {
     Log ($_.ScriptStackTrace)
     $crashMsg = $_.Exception.Message
     $crashStack = [string]$_.ScriptStackTrace
+    # The wizard's own box (a controller can answer it), and Windows' plain
+    # message box only if even that fails - this is the crash path, after all.
+    function Ask-Crash([string]$Text, [string[]]$Buttons, [string]$Icon) {
+        try { $a = Show-Choice 'Setup Wizard' $Text $Buttons; if ($a -ne '') { return $a } } catch { }
+        $kind = $(if ($Buttons.Count -gt 1) { 'YesNo' } else { 'OK' })
+        $r = [string][System.Windows.MessageBox]::Show($Text, 'Setup Wizard', $kind, $Icon)
+        if ($Buttons.Count -gt 1) { if ($r -eq 'Yes') { return $Buttons[0] } else { return $Buttons[1] } }
+        return $Buttons[0]
+    }
     try {
         if ($script:bugOk) {
             # The one place a report is offered without being asked for: the
             # wizard itself just fell over. Still a question, never automatic.
-            $ans = [System.Windows.MessageBox]::Show(
-                "The Setup Wizard hit an error:`n`n$crashMsg`n`nSend a bug report so it can be fixed? It holds the error and the wizard's recent logs, with your Windows name taken out.",
-                'Setup Wizard', 'YesNo', 'Error')
-            if ([string]$ans -eq 'Yes') {
+            $ans = Ask-Crash "The Setup Wizard hit an error:`n`n$crashMsg`n`nSend a bug report so it can be fixed? It holds the error and the wizard's recent logs, with your Windows name taken out." @('Send a report', 'No thanks') 'Error'
+            if ($ans -eq 'Send a report') {
                 $body = New-BugReport $Ws 'The wizard crashed (sent from the crash message).' $true ($crashMsg + "`n" + $crashStack)
                 $r = Send-BugReport $Ws (Get-BugTitle '' $crashMsg) $body
                 Log ("crash report: {0}" -f $r.Message)
-                [void][System.Windows.MessageBox]::Show($r.Message, 'Setup Wizard', 'OK', 'Information')
+                [void](Ask-Crash $r.Message @('OK') 'Information')
             }
-            $again = [System.Windows.MessageBox]::Show('Open the wizard again?', 'Setup Wizard', 'YesNo', 'Question')
-            if ([string]$again -eq 'Yes') {
+            $again = Ask-Crash 'Open the wizard again?' @('Open it again', 'Close') 'Question'
+            if ($again -eq 'Open it again') {
                 Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\wscript.exe') -ArgumentList @('//nologo', ('"' + (Join-Path $WizardDir 'Launch-Wizard.vbs') + '"'))
             }
         }
         else {
-            [void][System.Windows.MessageBox]::Show(
-                "The Setup Wizard hit an error:`n`n$crashMsg`n`nDetails: _ClaudeWorkspace\wizard\wizard.log",
-                'Setup Wizard', 'OK', 'Error')
+            [void](Ask-Crash "The Setup Wizard hit an error:`n`n$crashMsg`n`nDetails: _ClaudeWorkspace\wizard\wizard.log" @('OK') 'Error')
         }
     } catch { }
     exit 1

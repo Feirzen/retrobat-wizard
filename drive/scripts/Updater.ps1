@@ -33,6 +33,11 @@ param(
 $ErrorActionPreference = 'Stop'
 $Ws = Split-Path $PSScriptRoot -Parent
 . (Join-Path $PSScriptRoot 'UpdateEngine.ps1')
+# Light / dark / follow Windows, shared by every window (scripts\Theme.ps1,
+# 2026-10-13). Missing file = the original dark colours, untouched.
+try { . (Join-Path $PSScriptRoot 'Theme.ps1') } catch { }
+if (-not (Get-Command Convert-ThemeHex -ErrorAction SilentlyContinue)) { function Convert-ThemeHex([string]$hex) { return $hex } }
+
 
 Write-UpdLog $Ws ("updater: started, mode {0}{1}" -f $Mode, $(if ($Console) { ', console' } else { '' }))
 
@@ -55,15 +60,15 @@ function Show-UpdWindow([string]$Title) {
         $w.WindowStyle = 'None'; $w.ResizeMode = 'NoResize'
         $w.Width = 440; $w.Height = 150
         $w.WindowStartupLocation = 'CenterScreen'; $w.Topmost = $true
-        $w.Background = (New-Object System.Windows.Media.BrushConverter).ConvertFromString('#FF1B1B22')
+        $w.Background = (New-Object System.Windows.Media.BrushConverter).ConvertFromString((Convert-ThemeHex '#FF1B1B22'))
         $sp = New-Object System.Windows.Controls.StackPanel
         $sp.Margin = '24,20,24,20'
         $t1 = New-Object System.Windows.Controls.TextBlock
         $t1.Text = $Title; $t1.FontSize = 18; $t1.FontWeight = 'Bold'
-        $t1.Foreground = (New-Object System.Windows.Media.BrushConverter).ConvertFromString('#FFE8E8EC')
+        $t1.Foreground = (New-Object System.Windows.Media.BrushConverter).ConvertFromString((Convert-ThemeHex '#FFE8E8EC'))
         $t2 = New-Object System.Windows.Controls.TextBlock
         $t2.Text = 'Starting'; $t2.FontSize = 13; $t2.Margin = '0,10,0,12'; $t2.TextWrapping = 'Wrap'
-        $t2.Foreground = (New-Object System.Windows.Media.BrushConverter).ConvertFromString('#FF9AA0AA')
+        $t2.Foreground = (New-Object System.Windows.Media.BrushConverter).ConvertFromString((Convert-ThemeHex '#FF9AA0AA'))
         $pb = New-Object System.Windows.Controls.ProgressBar
         $pb.IsIndeterminate = $true; $pb.Height = 8
         [void]$sp.Children.Add($t1); [void]$sp.Children.Add($t2); [void]$sp.Children.Add($pb)

@@ -346,8 +346,21 @@ function Get-SteamLibraryFoldersFile {
 }
 
 # Is this drive's SteamLibrary already in Steam's list on this computer?
+#
+# FIXED 2026-10-13 (Steven, on the ZBook: "it said it was already connected"
+# when Steam was NOT using the drive). Steam keeps an entry in its list even
+# for a library it is not actually using - a drive it could not read, or an
+# entry written by hand that it never accepted. Just finding the path was
+# taken as "connected", so setup skipped the one step that mattered.
+#
+# Now the entry has to show Steam really using the folder: Steam fills in the
+# entry's "apps" list with every game it has found there. An empty list on a
+# drive that holds games means the entry is stale, so this answers no and
+# setup offers to add the drive properly.
+#   -PathOnly  the old question (is the path in the file at all?), still
+#              used before adding so a second copy of the entry is never made.
 function Test-SteamLibraryRegistered {
-    param([string]$SteamRoot, [string]$LibraryPath)
+    param([string]$SteamRoot, [string]$LibraryPath, [switch]$PathOnly)
     try {
         if ([string]::IsNullOrWhiteSpace($LibraryPath)) { return $false }
         $f = Get-SteamLibraryFoldersFile -SteamRoot $SteamRoot
@@ -356,7 +369,22 @@ function Test-SteamLibraryRegistered {
         # Paths in the file are escaped:  "R:\\SteamLibrary"
         $plain  = ($text -replace '\\\\', '\')
         $wanted = $LibraryPath.TrimEnd('\')
-        return ($plain -match ('(?i)"path"\s+"' + [regex]::Escape($wanted) + '\\?"'))
+        $m = [regex]::Match($plain, ('(?i)"path"\s+"' + [regex]::Escape($wanted) + '\\?"'))
+        if (-not $m.Success) { return $false }
+        if ($PathOnly) { return $true }
+
+        # The drive has no downloaded games? Then there is nothing for Steam
+        # to list, and the path being there is all that can be checked.
+        $manifests = @(Get-ChildItem -LiteralPath (Join-Path $LibraryPath 'steamapps') -Filter 'appmanifest_*.acf' -File -ErrorAction SilentlyContinue)
+        if ($manifests.Count -eq 0) { return $true }
+
+        # This entry's own "apps" block: after its path, before the next path.
+        $rest = $plain.Substring($m.Index + $m.Length)
+        $next = [regex]::Match($rest, '(?i)"path"\s+"')
+        if ($next.Success) { $rest = $rest.Substring(0, $next.Index) }
+        $apps = [regex]::Match($rest, '(?is)"apps"\s*\{(.*?)\}')
+        if (-not $apps.Success) { return $false }
+        return ([regex]::IsMatch($apps.Groups[1].Value, '"\d+"\s+"\d+"'))
     }
     catch { return $false }
 }
@@ -412,9 +440,12 @@ function Add-SteamLibraryFolder {
             return $result
         }
 
-        if (Test-SteamLibraryRegistered -SteamRoot $SteamRoot -LibraryPath $LibraryPath) {
-            $result.Ok = $true
-            $result.Message = 'This drive was already in the list. Nothing was changed.'
+        if (Test-SteamLibraryRegistered -SteamRoot $SteamRoot -LibraryPath $LibraryPath -PathOnly) {
+            # In the list but not being used (see Test-SteamLibraryRegistered).
+            # Writing a second entry would not help; Steam's own Add Drive is
+            # what makes it take the folder properly.
+            $result.Ok = $false
+            $result.Message = 'This drive is already in Steam''s list, but Steam is not using it. Use the Manual way: Steam''s own Add Drive sorts it out.'
             return $result
         }
 
@@ -510,11 +541,11 @@ function Move-SteamLibraryLetter {
     try {
         $steamRoot = Get-SteamRootOnComputer -Root $Root
         if ($steamRoot -eq '') { $result.Message = 'Steam is not installed here, nothing to fix.'; return $result }
-        if (-not (Test-SteamLibraryRegistered -SteamRoot $steamRoot -LibraryPath $OldLibraryPath)) {
+        if (-not (Test-SteamLibraryRegistered -SteamRoot $steamRoot -LibraryPath $OldLibraryPath -PathOnly)) {
             $result.Message = 'Steam was not connected to this drive here, nothing to fix.'
             return $result
         }
-        if (Test-SteamLibraryRegistered -SteamRoot $steamRoot -LibraryPath $NewLibraryPath) {
+        if (Test-SteamLibraryRegistered -SteamRoot $steamRoot -LibraryPath $NewLibraryPath -PathOnly) {
             $result.Message = 'Steam already knows the new letter.'
             return $result
         }
@@ -572,7 +603,7 @@ function Remove-SteamLibraryFolder {
             return $result
         }
 
-        if (-not (Test-SteamLibraryRegistered -SteamRoot $SteamRoot -LibraryPath $LibraryPath)) {
+        if (-not (Test-SteamLibraryRegistered -SteamRoot $SteamRoot -LibraryPath $LibraryPath -PathOnly)) {
             $result.Ok = $true
             $result.Message = 'This drive was not in the list. Nothing was changed.'
             return $result

@@ -96,12 +96,28 @@ function Resolve-VersionPath {
 # Where one save file's version history lives. Must match the folder naming
 # in Backup-RetroBatSaves.ps1 exactly: every dot in the file name becomes an
 # underscore, so "00000000.app" is stored under "00000000_app".
+# A save file whose NAME is very long (Paper Mario Color Splash keeps one of
+# about 190 letters) made its backup path longer than Windows allows, so it
+# was never backed up and Health said "could not copy 1 file" (2026-10-14).
+# Long names are shortened, the same way everywhere, for the history folder
+# and the copies in it. The original name lives on in the index, and a
+# restore always puts the file back under its real name.
+function Get-ShortSaveLeaf([string]$Leaf) {
+    if ($Leaf.Length -le 60) { return $Leaf }
+    $sha = [System.Security.Cryptography.SHA1]::Create()
+    try { $h = -join ($sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($Leaf)) | Select-Object -First 4 | ForEach-Object { $_.ToString('x2') }) }
+    finally { $sha.Dispose() }
+    $ext = [System.IO.Path]::GetExtension($Leaf)
+    if ($ext.Length -gt 8) { $ext = '' }
+    return ($Leaf.Substring(0, 24) + '~' + $h + $ext)
+}
+
 function Get-SaveHistoryDir {
     param([string] $VersionRoot, [string] $Rel)
 
     $relDir = Split-Path $Rel -Parent
     $leaf   = Split-Path $Rel -Leaf
-    $safe   = $leaf -replace '\.', '_'
+    $safe   = (Get-ShortSaveLeaf $leaf) -replace '\.', '_'
     if ($relDir) { return (Join-Path (Join-Path $VersionRoot $relDir) $safe) }
     return (Join-Path $VersionRoot $safe)
 }
@@ -175,6 +191,36 @@ $script:SaveDataExtensions = @(
     'srm','sav','dsv','eep','fla','mpk','sra','rtc','bsv','sram','mcr','mcd','gme','nvm'
 )
 
+# ---------------------------------------------------------------------------
+#  Saves that live OUTSIDE saves\   (2026-10-11)
+# ---------------------------------------------------------------------------
+#  The PC ports keep their saves next to their own program, not in saves\.
+#  Backup-RetroBatSaves.ps1 copies these too, filed as '<system>\_port\<file>'
+#  in the index and in Versions\, and putting one back goes to its real
+#  folder (Resolve-SaveTarget). A folder that does not exist is skipped.
+$script:SaveExtraRoots = @(
+    @{ System = 'soh';       Dir = 'emulators\soh\Save';        Name = 'Ship of Harkinian' }
+    @{ System = '2ship';     Dir = 'emulators\2ship\Save';      Name = '2 Ship 2 Harkinian' }
+    @{ System = '2ship';     Dir = 'emulators\2ship\saves';     Name = '2 Ship 2 Harkinian' }
+    @{ System = 'starship';  Dir = 'emulators\starship\Save';   Name = 'Starship' }
+    @{ System = 'ghostship'; Dir = 'emulators\ghostship\Save';  Name = 'Ghostship' }
+)
+
+# Where a backed-up file really lives: saves\<rel>, or the port's own folder.
+function Resolve-SaveTarget([string]$SavesRoot, [string]$Rel) {
+    if ($Rel -match '^([^\\]+)\\_port\\(.+)$') {
+        $sys = $Matches[1]; $rest = $Matches[2]
+        $rb = Split-Path $SavesRoot -Parent
+        foreach ($x in $script:SaveExtraRoots) {
+            if ($x.System -ne $sys) { continue }
+            $d = Join-Path $rb $x.Dir
+            if (Test-Path -LiteralPath $d) { return (Join-Path $d $rest) }
+        }
+        foreach ($x in $script:SaveExtraRoots) { if ($x.System -eq $sys) { return (Join-Path (Join-Path $rb $x.Dir) $rest) } }
+    }
+    return (Join-Path $SavesRoot $Rel)
+}
+
 function Get-SaveGroupInfo {
     param([string] $Rel)
 
@@ -184,6 +230,13 @@ function Get-SaveGroupInfo {
 
     $r = [ordered]@{
         System = $system; GameId = ''; Kind = 'code'; Category = 'system'; Why = ''
+    }
+
+    # a PC port's own save folder: one game per port
+    if ($parts.Count -ge 3 -and $parts[1] -eq '_port') {
+        $nm = @($script:SaveExtraRoots | Where-Object { $_.System -eq $system } | ForEach-Object { $_.Name })
+        $r.GameId = $(if ($nm.Count -gt 0) { $nm[0] } else { $system }); $r.Kind = 'name'; $r.Category = 'game'
+        return $r
     }
 
     switch ($system) {
@@ -477,14 +530,14 @@ function Restore-SaveSnapshot {
             $messages += ('Left alone (did not exist yet): {0}' -f (Split-Path $item.Rel -Leaf))
             continue
         }
-        $target = Join-Path $SavesRoot $item.Rel
+        $target = Resolve-SaveTarget $SavesRoot $item.Rel
         try {
             if (Test-Path -LiteralPath $target) {
                 $histDir = Get-SaveHistoryDir $VersionRoot $item.Rel
                 if (-not (Test-Path -LiteralPath $histDir)) {
                     New-Item -ItemType Directory -Path $histDir -Force -ErrorAction Stop | Out-Null
                 }
-                $leaf   = Split-Path $item.Rel -Leaf
+                $leaf   = Get-ShortSaveLeaf (Split-Path $item.Rel -Leaf)
                 $safety = Join-Path $histDir ('{0}_prerestore__{1}' -f $now, $leaf)
                 Copy-Item -LiteralPath $target -Destination $safety -Force -ErrorAction Stop
             }
@@ -571,57 +624,104 @@ function Add-GameName {
 #     game id like G8ME01, or the rom's file name. Both are keys the game name
 #     lookup already understands.
 #
-#  These are deliberately READ ONLY here. Putting a savestate back is exactly
-#  what quarantining exists to prevent, so it stays a manual act, and the
-#  screen says where the file is.
+#  Reading only, here. Putting one back for "Jump in here" is in SaveStates.ps1
+#  (Set-SavestateJumpIn), since 2026-10-11.
 # ---------------------------------------------------------------------------
 function Get-QuarantinedSavestates {
     param([string] $QuarantineRoot)
 
+    # Since 2026-10-11 every emulator's states are swept here (SaveStates.ps1),
+    # and each day folder has an origins.txt saying where each file came from:
+    #   <name in this folder> <TAB> <where it was, relative to RetroBat> <TAB> <kind>
+    # Older days have no origins.txt and hold only Dolphin states.
     $out = @()
     if (-not $QuarantineRoot -or -not (Test-Path -LiteralPath $QuarantineRoot)) { return $out }
+
+    # name shape -> where the game name and slot are. First match wins.
+    $shapes = @(
+        @('^(.+)\.s(\d{2})$',              'dolphin'),
+        @('^(.+)\.state(\d*)$',            'retroarch'),
+        @('^(.+)\.state\.(auto)$',         'retroarch'),
+        @('^(.+)\.ml(\d+)$',               'melonds'),
+        @('^([0-9A-Fa-f]{16})\.(\d+)\.cst$','azahar'),
+        @('^(.+)\.(\d{2})\.p2s$',          'pcsx2'),
+        @('^(.+)\.(resume)\.p2s$',         'pcsx2'),
+        @('^(.+)_(resume)\.sav$',          'duckstation'),
+        @('^(.+)_(\d{2})\.sav$',           'duckstation'),
+        @('^(.+)\.QuickSave(\d)\.State$',  'bizhawk'),
+        @('^(.+)\.st(\d)$',                'mupen64'),
+        @('^(.+)\.ds(\d)$',                'desmume'),
+        @('^(.+?)[._](\d{1,3})\.[A-Za-z0-9]+$', '')
+    )
 
     foreach ($dayDir in @(Get-ChildItem -LiteralPath $QuarantineRoot -Directory -ErrorAction SilentlyContinue)) {
         if ($dayDir.Name -notmatch '^(\d{4})-(\d{2})-(\d{2})$') { continue }
         $y = [int]$Matches[1]; $mo = [int]$Matches[2]; $d = [int]$Matches[3]
 
+        $origin = @{}
+        $op = Join-Path $dayDir.FullName 'origins.txt'
+        if (Test-Path -LiteralPath $op) {
+            foreach ($line in @([System.IO.File]::ReadAllLines($op))) {
+                $f3 = $line -split "`t"
+                if ($f3.Count -ge 2) { $origin[$f3[0]] = @{ Rel = $f3[1]; Kind = $(if ($f3.Count -ge 3) { $f3[2] } else { '' }) } }
+            }
+        }
+
         foreach ($f in @(Get-ChildItem -LiteralPath $dayDir.FullName -File -ErrorAction SilentlyContinue)) {
             # the screenshots are picked up through their state file, not listed
-            if ($f.Name -match '\.png$') { continue }
-            if ($f.Name -notmatch '^(\d{2})(\d{2})(\d{2})__(.+)$') { continue }
+            if ($f.Name -match '\.png$' -or $f.Name -eq 'origins.txt') { continue }
+            if ($f.Name -notmatch '^(\d{2})(\d{2})(\d{2})__(\d+-)?(.+)$') { continue }
             $hh = [int]$Matches[1]; $mi = [int]$Matches[2]; $ss = [int]$Matches[3]
-            $rest = $Matches[4]
+            $rest = $Matches[5]
 
             # an older quarantine build put the source folder in the name
             $rest = $rest -replace '^(StateSaves|dolphin)__', ''
 
-            if ($rest -notmatch '^(.+)\.s(\d{2})$') { continue }
-            $base = $Matches[1]
-            $slot = $Matches[2]
+            $base = ''; $slot = ''; $shape = ''
+            foreach ($sh in $shapes) {
+                if ($rest -match $sh[0]) { $base = $Matches[1]; $slot = $Matches[2]; $shape = $sh[1]; break }
+            }
+            if (-not $base) { continue }
 
             $when = $null
             try { $when = New-Object DateTime($y, $mo, $d, $hh, $mi, $ss) } catch { continue }
 
+            $o = $origin[$f.Name]
+            $rel = $(if ($o) { [string]$o.Rel } else { '' })
+            $kind = $(if ($o) { [string]$o.Kind } elseif ($shape -eq 'dolphin') { 'dolphin-legacy' } else { $shape })
+            $system = ''
+            if ($rel -match '^saves\\([^\\]+)\\') { $system = $Matches[1] }
+
             # ".nkit" is a packaging suffix, not part of the game's name
             $key = ($base -replace '\.nkit$', '')
-            if ($key -match '^[A-Za-z0-9]{6}$') { $key = $key.Substring(0, 4) }
+            # Dolphin's own copy is named by game id (G8ME01): the save groups
+            # use its first four characters. Only for Dolphin's id-named files.
+            if ($shape -eq 'dolphin' -and $key -match '^[A-Za-z0-9]{6}$' -and ($kind -eq 'dolphin-own' -or $kind -eq 'dolphin-legacy')) { $key = $key.Substring(0, 4) }
+            # Azahar names states by the 16-digit title id; the 3DS save groups
+            # use its last eight digits.
+            if ($shape -eq 'azahar') { $key = $key.Substring(8) }
 
             $thumb = ''
-            $png = $f.FullName + '.png'
-            if (Test-Path -LiteralPath $png) { $thumb = $png }
+            foreach ($cand in @(($f.FullName + '.png'), ([System.IO.Path]::ChangeExtension($f.FullName, '.png')))) {
+                if (Test-Path -LiteralPath $cand) { $thumb = $cand; break }
+            }
 
+            $copy = [pscustomobject]@{ Path = $f.FullName; File = $f.Name; Thumb = $thumb; Origin = $rel; Kind = $kind
+                                       Menu = ($kind -eq 'retroarch' -or $kind -eq 'dolphin' -or ($kind -ne '' -and $kind -notmatch '^(retroarch-loose|dolphin-own|dolphin-legacy|melonds|azahar)$' -and $rel -ne '')) }
             $out += [pscustomobject]@{
-                Key   = $key.ToUpper()
-                Slot  = $slot
-                When  = $when
-                Size  = $f.Length
-                Path  = $f.FullName
-                Thumb = $thumb
-                File  = $f.Name
-                # BOTH copies of this moment are kept, not just the one shown.
-                # Putting one back means putting each copy in the folder it
-                # came from, and those are different folders.
-                Copies = @([pscustomobject]@{ Path = $f.FullName; File = $f.Name; Thumb = $thumb })
+                Key    = $key.ToUpper()
+                Slot   = $slot
+                When   = $when
+                Size   = $f.Length
+                Path   = $f.FullName
+                Thumb  = $thumb
+                File   = $f.Name
+                System = $system
+                Kind   = $kind
+                # Every copy of this moment is kept, not just the one shown:
+                # Dolphin saves one moment twice (by game id and by rom name),
+                # and putting one back means putting each copy where it came from.
+                Copies = @($copy)
             }
         }
     }
@@ -712,6 +812,7 @@ function Add-SavestatesToGames {
         $seen[$ident] = [pscustomobject]@{
             Key = $s.Key; Slot = $s.Slot; When = $s.When; Size = $s.Size
             Path = $s.Path; Thumb = $s.Thumb; File = $s.File
+            System = [string]$s.System; Kind = [string]$s.Kind
             Copies = @($s.Copies)
         }
         $s = $seen[$ident]
