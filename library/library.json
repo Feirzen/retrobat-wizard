@@ -1532,6 +1532,21 @@
         { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso.part02", "url": "private:disney-epic-mickey-2-the-power-of-two__Disney.Epic.Mickey.2.-.The.Power.of.Two.USA.En.Fr.Es.Pt.iso.part02", "size": 1992294400, "sha256": "d7e76f4209fb08dc3dd3eb4721a0db91be0eb20a8601d23d639743475563a245" },
         { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso.part03", "url": "private:disney-epic-mickey-2-the-power-of-two__Disney.Epic.Mickey.2.-.The.Power.of.Two.USA.En.Fr.Es.Pt.iso.part03", "size": 715390976, "sha256": "7a92972bd4b16442a18e6aa337ebcce734331672146eeffe50132345eb51163e" }
       ] }
+    },
+    {
+      "id": "donkey-kong-country-returns",
+      "title": "Donkey Kong Country Returns",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Or hold the Wii Remote sideways. Under the influence of a group of evil Tikis, the animals of Donkey Kong Island have raided Donkey Kong's banana hoard and stolen his stash of bananas - and being an ape of large appetites he understandably...",
+      "added": "2026-10-14",
+      "art": "library/art/donkey-kong-country-returns.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Donkey Kong Country Returns (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 3579838464, "sha256": "d6252be627a8af79c2a4c0471a3d85aeeda2925c647e9415565e1e873284a454", "pieces": [
+        { "name": "Donkey Kong Country Returns (USA) (En,Fr,Es) (Rev 1).wbfs.part01", "url": "private:donkey-kong-country-returns__Donkey.Kong.Country.Returns.USA.En.Fr.Es.Rev.1.wbfs.part01", "size": 1992294400, "sha256": "a74d70f04a176d9e8bd49d34e761635d8c55dceec7ec02fcdc9f3e149b354163" },
+        { "name": "Donkey Kong Country Returns (USA) (En,Fr,Es) (Rev 1).wbfs.part02", "url": "private:donkey-kong-country-returns__Donkey.Kong.Country.Returns.USA.En.Fr.Es.Rev.1.wbfs.part02", "size": 1587544064, "sha256": "1fb17b2d7bda25309c938e15a9a2184a6a12d8e274ca4612353242f1f277fe52" }
+      ] }
     }
   ]
 }
