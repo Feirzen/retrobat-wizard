@@ -1549,6 +1549,22 @@
       ] }
     },
     {
+      "id": "just-dance-2014",
+      "title": "Just Dance 2014",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, held in your right hand. World Dance Floor: Dance with anyone anywhere in the world in Just Dance's first-ever online multiplayer mode! Players join a virtual crew--made up of real-life friends or other Just Dance fans--and compete based on different...",
+      "added": "2026-10-14",
+      "art": "library/art/just-dance-2014.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Just Dance 2014 (USA) (En,Fr,Es).wbfs", "size": 4404019200, "sha256": "b375aef9664b4db8194a325e6956fc733649acc048a33e36d7e104f7cc426a9f", "pieces": [
+        { "name": "Just Dance 2014 (USA) (En,Fr,Es).wbfs.part01", "url": "private:just-dance-2014__Just.Dance.2014.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "9284b377f8783ec2a9b970dcce778b456f3cb2ee6018a80030b9fac62a3a61ec" },
+        { "name": "Just Dance 2014 (USA) (En,Fr,Es).wbfs.part02", "url": "private:just-dance-2014__Just.Dance.2014.USA.En.Fr.Es.wbfs.part02", "size": 1992294400, "sha256": "6f09ca7fc9a408633416f6ca06946e17b1c76afc99eaf2b8b0bc92bb969350b3" },
+        { "name": "Just Dance 2014 (USA) (En,Fr,Es).wbfs.part03", "url": "private:just-dance-2014__Just.Dance.2014.USA.En.Fr.Es.wbfs.part03", "size": 419430400, "sha256": "115abc00cf776c7b7459530c5891aff01dcd6e3b018a0b5c1bce50e5b95aea81" }
+      ] }
+    },
+    {
       "id": "just-dance-3",
       "title": "Just Dance 3",
       "system": "wii",
