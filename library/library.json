@@ -1504,6 +1504,18 @@
         { "name": "Bakugan - Battle Brawlers (USA) (En,Fr).wbfs.part01", "url": "private:bakugan-battle-brawlers__Bakugan.-.Battle.Brawlers.USA.En.Fr.wbfs.part01", "size": 1992294400, "sha256": "6b1327969412b9b6b81ae6ba6dd55dbabc42be2a77e5d4cfdc1578c60cd2a348" },
         { "name": "Bakugan - Battle Brawlers (USA) (En,Fr).wbfs.part02", "url": "private:bakugan-battle-brawlers__Bakugan.-.Battle.Brawlers.USA.En.Fr.wbfs.part02", "size": 1740636160, "sha256": "19f6c5bc941903b16b8b6394879a3b8553994fb8d5f9ac89a7a89120018be5e4" }
       ] }
+    },
+    {
+      "id": "bit-trip-complete",
+      "title": "BIT.TRIP COMPLETE",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. Some of the six games want it sideways, one wants a Nunchuk. Retro-classic meets modern-cool in this collection of games built on a creative combination of 8-bit graphics and addictive, quick-hit, arcade-style play that dares you to escape its...",
+      "added": "2026-10-14",
+      "art": "library/art/bit-trip-complete.jpg",
+      "files": [
+        { "name": "Bit.Trip Complete (USA).wbfs", "url": "private:bit-trip-complete__Bit.Trip.Complete.USA.wbfs", "size": 924844032, "sha256": "1e59c571d356e537821362b3f931a4c78979c4b05cc01cfbfe09dbdd3c18c315" }
+      ]
     }
   ]
 }
