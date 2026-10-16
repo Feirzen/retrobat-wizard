@@ -2083,6 +2083,21 @@
       "files": [
         { "name": "Trivial Pursuit (USA) (En,Fr).wbfs", "url": "private:trivial-pursuit__Trivial.Pursuit.USA.En.Fr.wbfs", "size": 379584512, "sha256": "2425b8d64c5445c9c583545a6eea61243abf5f51ecd04bc3a597cb732e8f5cbe" }
       ]
+    },
+    {
+      "id": "wario-ware-smooth-moves",
+      "title": "Wario Ware : Smooth Moves",
+      "system": "wii",
+      "players": "1-12",
+      "description": "Controllers: Wii Remote. Wario and his pals learn fun, wacky moves after discovering a strange book and a mystical device called the Form Baton. Familiar characters from the WarioWare universe will return to this installment and some new ones will appear. Players must clear...",
+      "added": "2026-10-16",
+      "art": "library/art/wario-ware-smooth-moves.jpg",
+      "files": [
+      ],
+      "parts": { "name": "WarioWare - Smooth Moves (USA) (En,Fr,Es).wbfs", "size": 3502243840, "sha256": "9c9e3c27b40279a21a98a97bfd68f2f2d732fbea54b605ce5bed965b8ded0c12", "pieces": [
+        { "name": "WarioWare - Smooth Moves (USA) (En,Fr,Es).wbfs.part01", "url": "private:wario-ware-smooth-moves__WarioWare.-.Smooth.Moves.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "6b0fce67708d592bf80474edb3000c68d14beca0daf865410108d063cd0b2087" },
+        { "name": "WarioWare - Smooth Moves (USA) (En,Fr,Es).wbfs.part02", "url": "private:wario-ware-smooth-moves__WarioWare.-.Smooth.Moves.USA.En.Fr.Es.wbfs.part02", "size": 1509949440, "sha256": "d55f37840bf240be3f8d78d83ea28d17495b3a49d704584d7baf5d73c3365714" }
+      ] }
     }
   ]
 }
