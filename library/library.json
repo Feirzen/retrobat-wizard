@@ -1649,6 +1649,22 @@
       "files": [
         { "name": "Kirby's Return to Dream Land (USA) (En,Fr,Es).wbfs", "url": "private:kirby-s-return-to-dream-land__Kirby.s.Return.to.Dream.Land.USA.En.Fr.Es.wbfs", "size": 1254096896, "sha256": "14d569f17b454f9d09eb00af6c535e44b844308f63e8e96b66eca47ac1931be6" }
       ]
+    },
+    {
+      "id": "the-legend-of-zelda-skyward-sword",
+      "title": "The Legend of Zelda : Skyward Sword",
+      "system": "wii",
+      "players": "1",
+      "description": "Controllers: Wii Remote Plus (with MotionPlus) + Nunchuk. The Legend of Zelda: Skyward Sword once again places the player in control of Link, a Hylian boy who this time around lives in the floating nation of Skyloft. Link is in love with a local girl called Zelda but one day...",
+      "added": "2026-10-16",
+      "art": "library/art/the-legend-of-zelda-skyward-sword.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz", "size": 3991419996, "sha256": "ef37bc836dee4138f2aa90767063a5ccd7340b1264f4ab0c17a0e8a56dd4600b", "pieces": [
+        { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz.part01", "url": "private:the-legend-of-zelda-skyward-sword__Legend.of.Zelda.The.-.Skyward.Sword.USA.En.Fr.Es.Rev.2.rvz.part01", "size": 1992294400, "sha256": "a2eee3b17e42a5325511d39fe888e55bf057031da21ebf467385cc122f5afa97" },
+        { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz.part02", "url": "private:the-legend-of-zelda-skyward-sword__Legend.of.Zelda.The.-.Skyward.Sword.USA.En.Fr.Es.Rev.2.rvz.part02", "size": 1992294400, "sha256": "a315438d24145e7183aa2b324d2ea32b09fdeb09c5c0c9756ce19226308ea9ec" },
+        { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz.part03", "url": "private:the-legend-of-zelda-skyward-sword__Legend.of.Zelda.The.-.Skyward.Sword.USA.En.Fr.Es.Rev.2.rvz.part03", "size": 6831196, "sha256": "17c1356f081d4a322f3821d95af197dcfdb248870d669e7968607d7b409fbd97" }
+      ] }
     }
   ]
 }
