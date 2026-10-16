@@ -1711,6 +1711,21 @@
       ] }
     },
     {
+      "id": "lego-pirates-of-the-caribbean-the-video",
+      "title": "LEGO Pirates of the Caribbean :The Video Game",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Players collect Lego studs, which have been the Lego games currency used in every Lego game. Like other titles, these studs can be used to unlock characters, extras, and different Pirate ships.",
+      "added": "2026-10-16",
+      "art": "library/art/lego-pirates-of-the-caribbean-the-video.png",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Pirates of the Caribbean - The Video Game (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 2061500416, "sha256": "86bb64708af48f93e91e4b3b781a6328297138377ae8dee94d50d386e0797e72", "pieces": [
+        { "name": "LEGO Pirates of the Caribbean - The Video Game (USA) (En,Fr,Es) (Rev 1).wbfs.part01", "url": "private:lego-pirates-of-the-caribbean-the-video__LEGO.Pirates.of.the.Caribbean.-.The.Video.Game.USA.En.Fr.Es.Rev.1.wbfs.part01", "size": 1992294400, "sha256": "869a3c0b3f7b1bf0456b8c74f5db35395deb2fbc219db10b4c08feb06ac6b6b5" },
+        { "name": "LEGO Pirates of the Caribbean - The Video Game (USA) (En,Fr,Es) (Rev 1).wbfs.part02", "url": "private:lego-pirates-of-the-caribbean-the-video__LEGO.Pirates.of.the.Caribbean.-.The.Video.Game.USA.En.Fr.Es.Rev.1.wbfs.part02", "size": 69206016, "sha256": "119024bc2a856c83caaa8739a846726d451a79ee5664b4cab9f97de3303cff06" }
+      ] }
+    },
+    {
       "id": "lego-the-lord-of-the-rings",
       "title": "LEGO The Lord of the Rings",
       "system": "wii",
