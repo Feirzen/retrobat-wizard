@@ -1929,6 +1929,21 @@
       ] }
     },
     {
+      "id": "scene-it-bright-lights-big-screen",
+      "title": "Scene It? Bright Lights! Big Screen!",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. Scene It? Bright Lights! Big Screen! is a trivia video game developed by Artificial Mind and Movement and published by Warner Bros. Interactive Entertainment (WBIE), and part of the Scene It? series of games. It was released for Xbox 360, PlayStation 3...",
+      "added": "2026-10-16",
+      "art": "library/art/scene-it-bright-lights-big-screen.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Scene It Bright Lights! Big Screen! (USA).wbfs", "size": 2858418176, "sha256": "b2ad863f0c2e191ff6907ac89f7b6fc064dd1647e303530576b5fe8087823577", "pieces": [
+        { "name": "Scene It Bright Lights! Big Screen! (USA).wbfs.part01", "url": "private:scene-it-bright-lights-big-screen__Scene.It.Bright.Lights.Big.Screen.USA.wbfs.part01", "size": 1992294400, "sha256": "e4f252314af601a4e1902c2748841fe9f6c60ba3bb9e88320f41710bf46b22e0" },
+        { "name": "Scene It Bright Lights! Big Screen! (USA).wbfs.part02", "url": "private:scene-it-bright-lights-big-screen__Scene.It.Bright.Lights.Big.Screen.USA.wbfs.part02", "size": 866123776, "sha256": "58388d846a76715c118e6c17b35f09a3224c60f8d48fd4046ae9c8de282d93a6" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
