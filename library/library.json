@@ -2013,6 +2013,22 @@
       ] }
     },
     {
+      "id": "super-mario-galaxy",
+      "title": "Super Mario Galaxy",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Mario takes to the skies and beyond in another outing to save the Princess. As the Mushroom Kingdom prepares to celebrate the arrival of a comet that appears in the skies every hundred years, Princess Peach sends Mario an invitation to attend....",
+      "added": "2026-10-16",
+      "art": "library/art/super-mario-galaxy.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Super Mario Galaxy (USA) (En,Fr,Es).iso", "size": 4699979776, "sha256": "b47683440931bcf1a604c20fbad22b918977e20db4965df108050342f4857b8e", "pieces": [
+        { "name": "Super Mario Galaxy (USA) (En,Fr,Es).iso.part01", "url": "private:super-mario-galaxy__Super.Mario.Galaxy.USA.En.Fr.Es.iso.part01", "size": 1992294400, "sha256": "b4c2f3ab0859298aba69b7c2232ba6fe762eedc282218c9228ade322f09f8187" },
+        { "name": "Super Mario Galaxy (USA) (En,Fr,Es).iso.part02", "url": "private:super-mario-galaxy__Super.Mario.Galaxy.USA.En.Fr.Es.iso.part02", "size": 1992294400, "sha256": "0dbe0aa9a12f4627a11638d5c61b59abe7b7870f587f7827317527b842f8dd51" },
+        { "name": "Super Mario Galaxy (USA) (En,Fr,Es).iso.part03", "url": "private:super-mario-galaxy__Super.Mario.Galaxy.USA.En.Fr.Es.iso.part03", "size": 715390976, "sha256": "303ecc343e880be2f43c42eb7f00742a744d1a5b5eb42ee81281125ef21d9333" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
