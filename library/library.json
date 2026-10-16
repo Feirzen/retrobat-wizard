@@ -1859,6 +1859,22 @@
       ]
     },
     {
+      "id": "pikmin-2",
+      "title": "Pikmin 2",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Pikmin 2 sees Captain Olimar, now joined by his assistant Louie, return to the planet of Pikmin, motivated by that noblest of goals . treasure! Additional species of Pikmin, randomly generated dungeons and an exciting two-player battle mode...",
+      "added": "2026-10-16",
+      "art": "library/art/pikmin-2.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Pikmin 2 (USA) (En,Fr,Es).iso", "size": 4699979776, "sha256": "31880d666ab82f2882836c88a1fade0282b01993043970d37a69958fe806cddd", "pieces": [
+        { "name": "Pikmin 2 (USA) (En,Fr,Es).iso.part01", "url": "private:pikmin-2__Pikmin.2.USA.En.Fr.Es.iso.part01", "size": 1992294400, "sha256": "af44bc40d53a13fecbe11b0240d786884e3e677f3dbeda4376301d21ee452741" },
+        { "name": "Pikmin 2 (USA) (En,Fr,Es).iso.part02", "url": "private:pikmin-2__Pikmin.2.USA.En.Fr.Es.iso.part02", "size": 1992294400, "sha256": "eb974b22f2b598c35db3d2a8f87eca1be2e372918b5582569dce2dfe3e76cf71" },
+        { "name": "Pikmin 2 (USA) (En,Fr,Es).iso.part03", "url": "private:pikmin-2__Pikmin.2.USA.En.Fr.Es.iso.part03", "size": 715390976, "sha256": "563175bfc37f15a4cb4f634b798e69c173f5ddbea9c6043d2fda1b1eaccbc5e2" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
