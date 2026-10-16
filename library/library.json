@@ -1637,6 +1637,18 @@
         { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso.part02", "url": "private:kirby-s-epic-yarn__Kirby.s.Epic.Yarn.USA.En.Fr.Es.iso.part02", "size": 1992294400, "sha256": "9b10a71aaab5359e9aa6c097ffdc8c097bf5d26acfae81c3569631691fd671e2" },
         { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso.part03", "url": "private:kirby-s-epic-yarn__Kirby.s.Epic.Yarn.USA.En.Fr.Es.iso.part03", "size": 715390976, "sha256": "4d9c42c60774fde064dfdf185f4daad0afe7fa6fb1e3c40e4708ec14a9347752" }
       ] }
+    },
+    {
+      "id": "kirby-s-return-to-dream-land",
+      "title": "Kirby's Return to Dream Land",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, held sideways. Kirby and his friends are back in an adventure designed to satisfy longtime Kirby fans and beginners alike. When an alien spaceship crashes in the otherwise peaceful realm of Pop Star, its pieces are scattered throughout the land. Players...",
+      "added": "2026-10-16",
+      "art": "library/art/kirby-s-return-to-dream-land.jpg",
+      "files": [
+        { "name": "Kirby's Return to Dream Land (USA) (En,Fr,Es).wbfs", "url": "private:kirby-s-return-to-dream-land__Kirby.s.Return.to.Dream.Land.USA.En.Fr.Es.wbfs", "size": 1254096896, "sha256": "14d569f17b454f9d09eb00af6c535e44b844308f63e8e96b66eca47ac1931be6" }
+      ]
     }
   ]
 }
