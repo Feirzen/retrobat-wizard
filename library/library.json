@@ -2071,6 +2071,18 @@
         { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz.part02", "url": "private:the-legend-of-zelda-skyward-sword__Legend.of.Zelda.The.-.Skyward.Sword.USA.En.Fr.Es.Rev.2.rvz.part02", "size": 1992294400, "sha256": "a315438d24145e7183aa2b324d2ea32b09fdeb09c5c0c9756ce19226308ea9ec" },
         { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz.part03", "url": "private:the-legend-of-zelda-skyward-sword__Legend.of.Zelda.The.-.Skyward.Sword.USA.En.Fr.Es.Rev.2.rvz.part03", "size": 6831196, "sha256": "17c1356f081d4a322f3821d95af197dcfdb248870d669e7968607d7b409fbd97" }
       ] }
+    },
+    {
+      "id": "trivial-pursuit",
+      "title": "Trivial Pursuit",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. The Trivial Pursuit video game from EA builds on the original gameplay with stunning visual presentation, new question types and all-new questions, and the innovative Facts & Friends game mode. The quick-playing Facts & Friends mode adds a whole new...",
+      "added": "2026-10-16",
+      "art": "library/art/trivial-pursuit.jpg",
+      "files": [
+        { "name": "Trivial Pursuit (USA) (En,Fr).wbfs", "url": "private:trivial-pursuit__Trivial.Pursuit.USA.En.Fr.wbfs", "size": 379584512, "sha256": "2425b8d64c5445c9c583545a6eea61243abf5f51ecd04bc3a597cb732e8f5cbe" }
+      ]
     }
   ]
 }
