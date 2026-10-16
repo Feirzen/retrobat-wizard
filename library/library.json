@@ -1681,6 +1681,21 @@
       ] }
     },
     {
+      "id": "lego-indiana-jones-2-the-adventure-conti",
+      "title": "LEGO Indiana Jones 2 : The Adventure Continues",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Lego Indiana Jones 2 lets the player control a Lego figure in areas related to movie scenes and situations, with an emphasis on exploration and problem-solving. It can be played solo or by two people simultaneously, with the same drop in/out...",
+      "added": "2026-10-16",
+      "art": "library/art/lego-indiana-jones-2-the-adventure-conti.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Indiana Jones 2 - The Adventure Continues (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 3646947328, "sha256": "b1340d500fb9e87a8fd893b8288382df3c53da1d30e4073cf57ec4c84f8c8681", "pieces": [
+        { "name": "LEGO Indiana Jones 2 - The Adventure Continues (USA) (En,Fr,Es) (Rev 1).wbfs.part01", "url": "private:lego-indiana-jones-2-the-adventure-conti__LEGO.Indiana.Jones.2.-.The.Adventure.Continues.USA.En.Fr.Es.Rev.1.wbfs.part01", "size": 1992294400, "sha256": "a84dc1d61f08be62f955771f77e1e279adf0935dbb83eed67f7956ace7a59bd1" },
+        { "name": "LEGO Indiana Jones 2 - The Adventure Continues (USA) (En,Fr,Es) (Rev 1).wbfs.part02", "url": "private:lego-indiana-jones-2-the-adventure-conti__LEGO.Indiana.Jones.2.-.The.Adventure.Continues.USA.En.Fr.Es.Rev.1.wbfs.part02", "size": 1654652928, "sha256": "a094289c32aba85e13cd5c74001456728b4fce28ff41465a58534c30281ccdb3" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
