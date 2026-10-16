@@ -1998,6 +1998,21 @@
       ]
     },
     {
+      "id": "sonic-unleashed",
+      "title": "Sonic Unleashed",
+      "system": "wii",
+      "players": "1",
+      "description": "Controllers: Wii Remote, or a controller (Xbox, PlayStation, Switch Pro, etc.) which acts as a GameCube controller. On a Wii Remote, add a Nunchuk. Sonic the Hedgehog is on an adventure unlike any other! When Dr. Eggman unleashed a slumbering beast from the center of the Earth,...",
+      "added": "2026-10-16",
+      "art": "library/art/sonic-unleashed.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Sonic Unleashed (USA) (En,Ja,Fr,De,Es,It).wbfs", "size": 3909091328, "sha256": "e1d892f923e5630423dd70d927ed0063911091e0a5a7c693dc177c59e8a25895", "pieces": [
+        { "name": "Sonic Unleashed (USA) (En,Ja,Fr,De,Es,It).wbfs.part01", "url": "private:sonic-unleashed__Sonic.Unleashed.USA.En.Ja.Fr.De.Es.It.wbfs.part01", "size": 1992294400, "sha256": "9b397cfc77185a2812230ffe84256a32ad3929f2c24887d5ca301f4d93459666" },
+        { "name": "Sonic Unleashed (USA) (En,Ja,Fr,De,Es,It).wbfs.part02", "url": "private:sonic-unleashed__Sonic.Unleashed.USA.En.Ja.Fr.De.Es.It.wbfs.part02", "size": 1916796928, "sha256": "1ab244be9291371d964c203840b9f6654ede35f0d8998286f2464868d5856f0a" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
