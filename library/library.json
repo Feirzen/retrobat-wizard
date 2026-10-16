@@ -1944,6 +1944,18 @@
       ] }
     },
     {
+      "id": "scene-it-twilight",
+      "title": "Scene It? Twilight",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. Scene It? Twilight players will be completely submerged into the chilling universe of the Twilight novels and movies as they interact with some of the most iconic locations, characters and scenes from the first film. Fans will put their knowledge to the...",
+      "added": "2026-10-16",
+      "art": "library/art/scene-it-twilight.jpg",
+      "files": [
+        { "name": "Scene It Twilight (USA) (En,Fr,Es).wbfs", "url": "private:scene-it-twilight__Scene.It.Twilight.USA.En.Fr.Es.wbfs", "size": 1937768448, "sha256": "cc735e3895e195dd0d629759f94187701e85872df26443269f4b5a8192ab0996" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
