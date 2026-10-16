@@ -1986,6 +1986,18 @@
       ] }
     },
     {
+      "id": "sonic-the-hedgehog-4-episode-i",
+      "title": "Sonic the Hedgehog 4 : Episode I",
+      "system": "wii",
+      "players": "1",
+      "description": "Controllers: Wii Remote, held sideways. Sonic the Hedgehog 4is an episodic platform video game as part of the Sonic the Hedgehog series. The game was developed by Dimps alongside members of Sonic Team[7] and is intended to be a return to the roots of the Sonic the Hedgehog...",
+      "added": "2026-10-16",
+      "art": "library/art/sonic-the-hedgehog-4-episode-i.jpg",
+      "files": [
+        { "name": "Sonic the Hedgehog 4 - Episode I (USA) (WiiWare).wad", "url": "private:sonic-the-hedgehog-4-episode-i__Sonic.the.Hedgehog.4.-.Episode.I.USA.WiiWare.wad", "size": 48782656, "sha256": "b946c0c03801266f98f07dcfdcd62db9969f0942855128a34cdffafb3f70e00a" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
