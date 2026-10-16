@@ -1726,6 +1726,21 @@
       ] }
     },
     {
+      "id": "lego-rock-band",
+      "title": "LEGO Rock Band",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote for the menus. Made for Rock Band guitar and drum controllers. LEGO Rock Band is a blending of Rock Band and LEGO series. Players get to start a band and hire band members who will play with them. Just like with real Lego, players can mix and match...",
+      "added": "2026-10-16",
+      "art": "library/art/lego-rock-band.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Rock Band (USA) (En,Fr,Es).wbfs", "size": 3911188480, "sha256": "ddf8d014d45ac4764e4adde90c8cca329e1fe2cbbb2ac60fa7ee7c0506239d9a", "pieces": [
+        { "name": "LEGO Rock Band (USA) (En,Fr,Es).wbfs.part01", "url": "private:lego-rock-band__LEGO.Rock.Band.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "10930fb01098cc56dc908de4d7015be7296bf1694c6232e566ee0aff5e8f7374" },
+        { "name": "LEGO Rock Band (USA) (En,Fr,Es).wbfs.part02", "url": "private:lego-rock-band__LEGO.Rock.Band.USA.En.Fr.Es.wbfs.part02", "size": 1918894080, "sha256": "8962519e3044d79812fc99f7df8be8d2f18dcaeacceaa6e124620874b29cf6f4" }
+      ] }
+    },
+    {
       "id": "lego-the-lord-of-the-rings",
       "title": "LEGO The Lord of the Rings",
       "system": "wii",
