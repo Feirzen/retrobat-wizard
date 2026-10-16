@@ -1666,6 +1666,21 @@
       ] }
     },
     {
+      "id": "lego-harry-potter-years-5-7",
+      "title": "Lego Harry Potter : Years 57",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. Lego Harry Potter s gameplay is similar to that of most previous Lego games, with an emphasis on collecting and exploring. Casting spells is an integral part of the gameplay, with a wide range of spells available for unlocking as the player...",
+      "added": "2026-10-16",
+      "art": "library/art/lego-harry-potter-years-5-7.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Harry Potter - Years 5-7 (USA) (En,Fr,Es,Pt) (Rev 1).wbfs", "size": 3323985920, "sha256": "c68f39af74ead7357c9b8b5709d96d40db177bd5346f5e5021e596da9fa97e90", "pieces": [
+        { "name": "LEGO Harry Potter - Years 5-7 (USA) (En,Fr,Es,Pt) (Rev 1).wbfs.part01", "url": "private:lego-harry-potter-years-5-7__LEGO.Harry.Potter.-.Years.5-7.USA.En.Fr.Es.Pt.Rev.1.wbfs.part01", "size": 1992294400, "sha256": "1386033385770ecb96ea9d1437006766c5f0e756a4df1ab11c3e161c75402a57" },
+        { "name": "LEGO Harry Potter - Years 5-7 (USA) (En,Fr,Es,Pt) (Rev 1).wbfs.part02", "url": "private:lego-harry-potter-years-5-7__LEGO.Harry.Potter.-.Years.5-7.USA.En.Fr.Es.Pt.Rev.1.wbfs.part02", "size": 1331691520, "sha256": "6aec7ff3f06ef392e99718ae15f59ac19280dbd4645f41705933a771a96a2930" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
