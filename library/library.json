@@ -1798,6 +1798,22 @@
       ] }
     },
     {
+      "id": "mario-party-8",
+      "title": "Mario Party 8",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. Hold it sideways for most minigames. Mario and friends are invited to the Star Carnival. Of course, they are thrilled to join. Whoever wins the main event, the Star Battle, receives a year's supply of candy. To win they must play through board games...",
+      "added": "2026-10-16",
+      "art": "library/art/mario-party-8.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Mario Party 8 (USA) (Rev 1).iso", "size": 4699979776, "sha256": "b85039810f4bf4a63fc7b9690580eb07adb01bb7412e284c5bc577244b062d97", "pieces": [
+        { "name": "Mario Party 8 (USA) (Rev 1).iso.part01", "url": "private:mario-party-8__Mario.Party.8.USA.Rev.1.iso.part01", "size": 1992294400, "sha256": "2b8551dc68824cc596c597c648edd3f265b27f52bb481543173f9a8cdafffc6b" },
+        { "name": "Mario Party 8 (USA) (Rev 1).iso.part02", "url": "private:mario-party-8__Mario.Party.8.USA.Rev.1.iso.part02", "size": 1992294400, "sha256": "c746b605e7394d8ba1edbc6f70f2314af85be8a1d16662f0addeef85e2bc792d" },
+        { "name": "Mario Party 8 (USA) (Rev 1).iso.part03", "url": "private:mario-party-8__Mario.Party.8.USA.Rev.1.iso.part03", "size": 715390976, "sha256": "2b2afe02cdd4253ae27d282dad2ac50b55129352515d7472c1c1bf6d8e732a15" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
