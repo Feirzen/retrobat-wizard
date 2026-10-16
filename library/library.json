@@ -1814,6 +1814,22 @@
       ] }
     },
     {
+      "id": "mario-strikers-charged",
+      "title": "Mario Strikers Charged",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote + Nunchuk. Supercharged Characters! - The captains from Super Mario Strikers are back, joined by four new ones, and now you can create your own original team by mixing and matching your captain with an all-new cast of sidekicks. All characters have their...",
+      "added": "2026-10-16",
+      "art": "library/art/mario-strikers-charged.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Mario Strikers Charged (USA) (En,Fr,Es) (Rev 1).iso", "size": 4699979776, "sha256": "4c764211f11aa18e3fb9ba42978f3196985fa4b9d136ed54b74d5156020688fe", "pieces": [
+        { "name": "Mario Strikers Charged (USA) (En,Fr,Es) (Rev 1).iso.part01", "url": "private:mario-strikers-charged__Mario.Strikers.Charged.USA.En.Fr.Es.Rev.1.iso.part01", "size": 1992294400, "sha256": "83e61e66738f34922f5b58696af86375c3906bfca1d2b650f64a9b38a559a8e0" },
+        { "name": "Mario Strikers Charged (USA) (En,Fr,Es) (Rev 1).iso.part02", "url": "private:mario-strikers-charged__Mario.Strikers.Charged.USA.En.Fr.Es.Rev.1.iso.part02", "size": 1992294400, "sha256": "420b7ac15bf776894fbd0364966f2ef843429ec82ead5b62a5abac4408c854be" },
+        { "name": "Mario Strikers Charged (USA) (En,Fr,Es) (Rev 1).iso.part03", "url": "private:mario-strikers-charged__Mario.Strikers.Charged.USA.En.Fr.Es.Rev.1.iso.part03", "size": 715390976, "sha256": "6cb8479f50e59c6c7c5f0632aacc1f7da7384e8606bdb11447cad4f6e3376ccc" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
