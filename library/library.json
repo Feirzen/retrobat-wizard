@@ -1681,6 +1681,21 @@
       ] }
     },
     {
+      "id": "lego-indiana-jones-the-original-adventur",
+      "title": "LEGO Indiana Jones : The Original Adventures",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. The game allows players to recreate moments (albeit more humorously) from the first three Indiana Jones films: Indiana Jones and the Raiders of the Lost Ark, Indiana Jones and the Temple of Doom, and Indiana Jones and the Last Crusade. However,...",
+      "added": "2026-10-16",
+      "art": "library/art/lego-indiana-jones-the-original-adventur.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Indiana Jones The Original Adventures [RLIE64].wbfs", "size": 2120220672, "sha256": "deec32d9d52891df883c090b661b182c3fea49ad721ac908895d80cdc1f01375", "pieces": [
+        { "name": "LEGO Indiana Jones The Original Adventures [RLIE64].wbfs.part01", "url": "private:lego-indiana-jones-the-original-adventur__LEGO.Indiana.Jones.The.Original.Adventures.RLIE64.wbfs.part01", "size": 1992294400, "sha256": "50452e0c897a66a95bdfac62344f5f733fa491036e12e20fb5172657e8e9be49" },
+        { "name": "LEGO Indiana Jones The Original Adventures [RLIE64].wbfs.part02", "url": "private:lego-indiana-jones-the-original-adventur__LEGO.Indiana.Jones.The.Original.Adventures.RLIE64.wbfs.part02", "size": 127926272, "sha256": "5539bb9885e89d1c5ffedff3d778544e0a50fd7dd77764d55abff91a0d4eb9c3" }
+      ] }
+    },
+    {
       "id": "lego-indiana-jones-2-the-adventure-conti",
       "title": "LEGO Indiana Jones 2 : The Adventure Continues",
       "system": "wii",
