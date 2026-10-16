@@ -2098,6 +2098,18 @@
         { "name": "WarioWare - Smooth Moves (USA) (En,Fr,Es).wbfs.part01", "url": "private:wario-ware-smooth-moves__WarioWare.-.Smooth.Moves.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "6b0fce67708d592bf80474edb3000c68d14beca0daf865410108d063cd0b2087" },
         { "name": "WarioWare - Smooth Moves (USA) (En,Fr,Es).wbfs.part02", "url": "private:wario-ware-smooth-moves__WarioWare.-.Smooth.Moves.USA.En.Fr.Es.wbfs.part02", "size": 1509949440, "sha256": "d55f37840bf240be3f8d78d83ea28d17495b3a49d704584d7baf5d73c3365714" }
       ] }
+    },
+    {
+      "id": "the-elder-scrolls-iii-morrowind",
+      "title": "The Elder Scrolls III : Morrowind",
+      "system": "xbox",
+      "players": "1",
+      "description": "The Elder Scrolls III: Morrowind is an Xbox role-playing game that offers the player a lot of freedom. At the beginning you have to create a character by choosing among 10 races. Then you can decide whether to embark on the main quest or one of the many side quests offered....",
+      "added": "2026-10-16",
+      "art": "library/art/the-elder-scrolls-iii-morrowind.png",
+      "files": [
+        { "name": "Elder Scrolls III, The - Morrowind - Game of the Year Edition (USA).xiso.iso", "url": "private:the-elder-scrolls-iii-morrowind__Elder.Scrolls.III.The.-.Morrowind.-.Game.of.the.Year.Edition.USA.xiso.iso", "size": 1015808000, "sha256": "d719c4d89eb7145b5aa8230b27598254b0ae95a73b36a9d51bd84edfdc1941bd" }
+      ]
     }
   ]
 }
