@@ -2041,6 +2041,22 @@
       ]
     },
     {
+      "id": "super-smash-bros-brawl",
+      "title": "Super Smash Bros. Brawl",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, or a controller (Xbox, PlayStation, Switch Pro, etc.) which acts as a GameCube controller. On a Wii Remote, hold it sideways or add a Nunchuk. Welcome to a brawl for the ages, where anything can happen, anyone can show up and all bets are off.Game...",
+      "added": "2026-10-16",
+      "art": "library/art/super-smash-bros-brawl.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Super Smash Bros. Brawl (USA) (Rev 2).rvz", "size": 5952572196, "sha256": "f25c2ae49c1a35de91e0f4a44715d2c1a92ecbb5acd3240d5d036b749d202028", "pieces": [
+        { "name": "Super Smash Bros. Brawl (USA) (Rev 2).rvz.part01", "url": "private:super-smash-bros-brawl__Super.Smash.Bros.Brawl.USA.Rev.2.rvz.part01", "size": 1992294400, "sha256": "d767ffe15c0b6c92db9f4ebbb1f4f1d1e398fce49c80a5cfb77ea937e328562a" },
+        { "name": "Super Smash Bros. Brawl (USA) (Rev 2).rvz.part02", "url": "private:super-smash-bros-brawl__Super.Smash.Bros.Brawl.USA.Rev.2.rvz.part02", "size": 1992294400, "sha256": "baa964c42af9a065407d3ab741f70251e530d5fa2a61113e114d9bf2f0ac7027" },
+        { "name": "Super Smash Bros. Brawl (USA) (Rev 2).rvz.part03", "url": "private:super-smash-bros-brawl__Super.Smash.Bros.Brawl.USA.Rev.2.rvz.part03", "size": 1967983396, "sha256": "e0213dce77ee06d26db495877b6a6768f0054ee4706c2a26f7a69b00f11d3b18" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
