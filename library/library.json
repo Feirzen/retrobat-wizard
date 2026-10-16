@@ -1741,6 +1741,21 @@
       ] }
     },
     {
+      "id": "lego-star-wars-the-complete-saga",
+      "title": "LEGO Star Wars: The Complete Saga",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote + Nunchuk. The aim of the game is to collect the gold bricks scattered through out the game. In the Wii, PS3 and Xbox 360 versions there are 160 to collect; 120 of these are for the main levels. There are three for each of the levels. One is for...",
+      "added": "2026-10-16",
+      "art": "library/art/lego-star-wars-the-complete-saga.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Star Wars The Complete Saga [RLGE64].wbfs", "size": 3187671040, "sha256": "994b294117d0c00d5f1863ce177ef49596980fefc531a5c40402fdc733bff7e7", "pieces": [
+        { "name": "LEGO Star Wars The Complete Saga [RLGE64].wbfs.part01", "url": "private:lego-star-wars-the-complete-saga__LEGO.Star.Wars.The.Complete.Saga.RLGE64.wbfs.part01", "size": 1992294400, "sha256": "fb206d2df68e8c49fb93ea565167e80945437fd1d47289ed14d06d8652cdc98b" },
+        { "name": "LEGO Star Wars The Complete Saga [RLGE64].wbfs.part02", "url": "private:lego-star-wars-the-complete-saga__LEGO.Star.Wars.The.Complete.Saga.RLGE64.wbfs.part02", "size": 1195376640, "sha256": "fa293bc9b97ce6e5a388d9da930f48915608fea69709f13ddda539377d48aecf" }
+      ] }
+    },
+    {
       "id": "lego-the-lord-of-the-rings",
       "title": "LEGO The Lord of the Rings",
       "system": "wii",
