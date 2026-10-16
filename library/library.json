@@ -1902,6 +1902,18 @@
       ] }
     },
     {
+      "id": "rhythm-heaven-fever",
+      "title": "Rhythm Heaven Fever",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote. Rhythm Heaven is a game that both teaches and tests rhythm with fun and quirky music challenges. Through various visual and audio cues, players feel the rhythm and complete musical patterns on the fly.",
+      "added": "2026-10-16",
+      "art": "library/art/rhythm-heaven-fever.jpg",
+      "files": [
+        { "name": "Rhythm Heaven Fever (USA).wbfs", "url": "private:rhythm-heaven-fever__Rhythm.Heaven.Fever.USA.wbfs", "size": 463470592, "sha256": "3f029fc1064d2c29d573ef53c0e6b5e19a7d11e8d23f141109010e2d159adc36" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
