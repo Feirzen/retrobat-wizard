@@ -1783,6 +1783,21 @@
       ]
     },
     {
+      "id": "mario-kart-wii",
+      "title": "Mario Kart Wii",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, or a controller (Xbox, PlayStation, Switch Pro, etc.) which acts as a GameCube controller. On a Wii Remote, hold it sideways like a steering wheel. Mario Kart Wii is an installment of the long-running Mario Kart series, but here for the Nintendo Wii,...",
+      "added": "2026-10-16",
+      "art": "library/art/mario-kart-wii.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Mario Kart Wii [RMCE01].wbfs", "size": 2805989376, "sha256": "b1946359591ed49ac5f0865c17421a3d9d6a8e417378b3216d96e2fd4afaccd5", "pieces": [
+        { "name": "Mario Kart Wii [RMCE01].wbfs.part01", "url": "private:mario-kart-wii__Mario.Kart.Wii.RMCE01.wbfs.part01", "size": 1992294400, "sha256": "bdb6f8b742b22f7a7e3d72770b7ba33bbf3ff5486b04168414a28335c9af22cd" },
+        { "name": "Mario Kart Wii [RMCE01].wbfs.part02", "url": "private:mario-kart-wii__Mario.Kart.Wii.RMCE01.wbfs.part02", "size": 813694976, "sha256": "2d091f5f16c5e64e3bca65a42bb7cc96c51612fe60a02dc04498c8f9666a9c56" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
