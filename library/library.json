@@ -1830,6 +1830,23 @@
       ] }
     },
     {
+      "id": "metroid-prime-trilogy",
+      "title": "Metroid Prime: Trilogy",
+      "system": "wii",
+      "players": "1",
+      "description": "Controllers: Wii Remote + Nunchuk. Metroid Prime 3: Corruption set a new standard for first-person motion controls in video games. Now it's bringing those controls to the rest of the celebrated series, allowing players to experience the entire Metroid Prime story arc with the...",
+      "added": "2026-10-16",
+      "art": "library/art/metroid-prime-trilogy.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Metroid Prime Trilogy (USA).rvz", "size": 7142274304, "sha256": "9e12e697a1b6613b1307d4e7801d005d60d91def6997a0e622f119907b997c77", "pieces": [
+        { "name": "Metroid Prime Trilogy (USA).rvz.part01", "url": "private:metroid-prime-trilogy__Metroid.Prime.Trilogy.USA.rvz.part01", "size": 1992294400, "sha256": "313e2f73bdb51a513157cf2eda01fb569d68abc6ff5d16f08c37f7656460a325" },
+        { "name": "Metroid Prime Trilogy (USA).rvz.part02", "url": "private:metroid-prime-trilogy__Metroid.Prime.Trilogy.USA.rvz.part02", "size": 1992294400, "sha256": "b6dfccf8138ef543a69d29eb075c4a11ac5ba48746b5edf56ec9030c8384e77f" },
+        { "name": "Metroid Prime Trilogy (USA).rvz.part03", "url": "private:metroid-prime-trilogy__Metroid.Prime.Trilogy.USA.rvz.part03", "size": 1992294400, "sha256": "0dd1b39f634601a38cf353bbfb7cca1a677abacc5f4ea8b97b12b130262a6adf" },
+        { "name": "Metroid Prime Trilogy (USA).rvz.part04", "url": "private:metroid-prime-trilogy__Metroid.Prime.Trilogy.USA.rvz.part04", "size": 1165391104, "sha256": "d5fe72670149460c9ded486b8e1a57f1919d412ca20f265794b268d1c2778b4d" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
