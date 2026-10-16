@@ -1971,6 +1971,21 @@
       ] }
     },
     {
+      "id": "sonic-and-the-secret-rings",
+      "title": "Sonic and the Secret Rings",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, held sideways. Sonic brings his trademark speed and attitude to the Wii? in his first solo adventure since 1991. In Sonic and the Secret Rings, Sonic finds himself in the colorful and vibrant world of the Arabian Nights tales. There he embarks on his...",
+      "added": "2026-10-16",
+      "art": "library/art/sonic-and-the-secret-rings.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Sonic and the Secret Rings (USA) (En,Ja,Fr,De,Es,It).wbfs", "size": 3841982464, "sha256": "4df1c9954c8d2ecfdfeacc52b5013d7c00f7358c3aaa46216c7ab66e8480c904", "pieces": [
+        { "name": "Sonic and the Secret Rings (USA) (En,Ja,Fr,De,Es,It).wbfs.part01", "url": "private:sonic-and-the-secret-rings__Sonic.and.the.Secret.Rings.USA.En.Ja.Fr.De.Es.It.wbfs.part01", "size": 1992294400, "sha256": "28851f66805f8d4058db6ab33a5aef31644228fbece7be2be6ae849dac599734" },
+        { "name": "Sonic and the Secret Rings (USA) (En,Ja,Fr,De,Es,It).wbfs.part02", "url": "private:sonic-and-the-secret-rings__Sonic.and.the.Secret.Rings.USA.En.Ja.Fr.De.Es.It.wbfs.part02", "size": 1849688064, "sha256": "321712b83de2711e9f09e1794011168854c91d278f516330a5a393a28ba37e8d" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
