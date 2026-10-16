@@ -1887,6 +1887,21 @@
       ]
     },
     {
+      "id": "rayman-origins",
+      "title": "Rayman Origins",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, held sideways. Ever wondered what lies at the root of the Rayman madness? Find out in Rayman Origins! Romp through a gigantic new Rayman universe that covers 12 worlds and 60 levels, and shows you the roots of Rayman. It comes stuffed with over 100...",
+      "added": "2026-10-16",
+      "art": "library/art/rayman-origins.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Rayman Origins (USA) (En,Fr,Es).nkit.iso", "size": 3574956032, "sha256": "d852a1d7f461a62dc41134850d18733d2a3727680af5d41900b96e8ffca70fc8", "pieces": [
+        { "name": "Rayman Origins (USA) (En,Fr,Es).nkit.iso.part01", "url": "private:rayman-origins__Rayman.Origins.USA.En.Fr.Es.nkit.iso.part01", "size": 1992294400, "sha256": "77b59080e1993d0af72783883fbbe6bc21646d8d8a13d87e1c7bacfad226ae00" },
+        { "name": "Rayman Origins (USA) (En,Fr,Es).nkit.iso.part02", "url": "private:rayman-origins__Rayman.Origins.USA.En.Fr.Es.nkit.iso.part02", "size": 1582661632, "sha256": "303a4c124c827eeb7ab68bdf2617aedf79477bf06bab010dc5e7f6ce1838e608" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
