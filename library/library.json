@@ -1914,6 +1914,21 @@
       ]
     },
     {
+      "id": "rock-band-2",
+      "title": "Rock Band 2",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote for the menus. Made for Rock Band guitar and drum controllers. Rock Band 2 is the sequel to the 2007 musical simulation game Rock Band and offers similar gameplay. Directly competing with Guitar Hero: World Tour, the game allows different people to play...",
+      "added": "2026-10-16",
+      "art": "library/art/rock-band-2.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Rock Band 2 (USA).wbfs", "size": 3611295744, "sha256": "34c19c35d1e0cbbaaf6a5a4bce2874bb5e3646415e62808bce61340c7dba8fb6", "pieces": [
+        { "name": "Rock Band 2 (USA).wbfs.part01", "url": "private:rock-band-2__Rock.Band.2.USA.wbfs.part01", "size": 1992294400, "sha256": "701e0349e937647dbbf01bebfa5f946b7a44e37bd3eb84e518fc384468fd725c" },
+        { "name": "Rock Band 2 (USA).wbfs.part02", "url": "private:rock-band-2__Rock.Band.2.USA.wbfs.part02", "size": 1619001344, "sha256": "f7b083b9dd4b54d52f5ec6891f68d0b64a2eed43f6c84be7bc3021f063307a08" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
