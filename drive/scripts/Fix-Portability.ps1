@@ -212,6 +212,58 @@ try {
 }
 catch { Say ("    Wii U check failed, nothing changed: " + $_.Exception.Message) 'Yellow' }
 
+# ---------------------------------------------------------------------------
+#  JOB 1c - "How to play" before keyboard-and-mouse games (2026-10-17)
+#  Flash, ScummVM and PC games go through system\scripts\game-launch.vbs,
+#  which shows a short "how this game plays" screen first (the same screen
+#  as Wii U, scripts\ControllerChooser.ps1): made for mouse and keyboard,
+#  how the controller works in it, PLAY or Back. Switched by 'howtoplay' in
+#  features.ini - only a clear "off" turns it off. Off, or the script
+#  missing, puts RetroBat's own command back. Only the start of the line
+#  changes (emulatorLauncher.exe <-> the wrapper), so whatever RetroBat puts
+#  after it is kept as it is.
+# ---------------------------------------------------------------------------
+Say "[1c] Checking the launch commands for keyboard-and-mouse games" 'White'
+try {
+    $glVbs = Join-Path $Root 'system\scripts\game-launch.vbs'
+    $glOn = $true
+    $featIni = Join-Path $Root '_ClaudeWorkspace\features.ini'
+    if (Test-Path -LiteralPath $featIni) {
+        foreach ($fl in [System.IO.File]::ReadAllLines($featIni)) { if ($fl -match '^\s*howtoplay\s*=\s*off\b') { $glOn = $false } }
+    }
+    if (-not (Test-Path -LiteralPath $glVbs)) { $glOn = $false }
+    $stockStart = '"%HOME%\emulatorLauncher.exe"'
+    $wrapStart  = 'wscript.exe //nologo "%HOME%\..\system\scripts\game-launch.vbs"'
+    if (Test-Path -LiteralPath $esSystems) {
+        $f    = Read-TextFile $esSystems
+        $text = $f.Text
+        $changed = @()
+        foreach ($sysName in @('flash', 'scummvm', 'windows')) {
+            $m = [regex]::Match($text, ('(?s)(<system>(?:(?!</system>).)*?<name>{0}</name>.*?</system>)' -f $sysName))
+            if (-not $m.Success) { continue }
+            $block = $m.Groups[1].Value
+            $cm = [regex]::Match($block, '(?s)<command>(.*?)</command>')
+            if (-not $cm.Success) { continue }
+            $cmd = $cm.Groups[1].Value.Trim()
+            $new = $cmd
+            if ($glOn -and $cmd.StartsWith($stockStart)) { $new = $wrapStart + $cmd.Substring($stockStart.Length) }
+            elseif (-not $glOn -and $cmd.StartsWith($wrapStart)) { $new = $stockStart + $cmd.Substring($wrapStart.Length) }
+            if ($new -eq $cmd) { continue }
+            $newBlock = $block.Remove($cm.Groups[1].Index, $cm.Groups[1].Length).Insert($cm.Groups[1].Index, $new)
+            $text = $text.Remove($m.Groups[1].Index, $m.Groups[1].Length).Insert($m.Groups[1].Index, $newBlock)
+            $changed += $sysName
+        }
+        if ($changed.Count -gt 0) {
+            Backup-Once $esSystems
+            Write-TextFile $esSystems $text $f.HasBom
+            if ($glOn) { Say ("    Done. These now show how to play first: " + ($changed -join ', ')) 'Green' }
+            else { Say ("    Done. Back to RetroBat's own launch: " + ($changed -join ', ')) 'Green' }
+        }
+        else { Say "    Already correct." 'Green' }
+    }
+}
+catch { Say ("    How-to-play check failed, nothing changed: " + $_.Exception.Message) 'Yellow' }
+
 Say ""
 
 # ===========================================================================

@@ -71,6 +71,9 @@ public static class RBPad
     [DllImport(L, CallingConvention = CallingConvention.Cdecl)] static extern void SDL_GameControllerUpdate();
     [DllImport(L, CallingConvention = CallingConvention.Cdecl)] static extern byte SDL_GameControllerGetButton(IntPtr pad, int button);
     [DllImport(L, CallingConvention = CallingConvention.Cdecl)] static extern short SDL_GameControllerGetAxis(IntPtr pad, int axis);
+    [DllImport(L, CallingConvention = CallingConvention.Cdecl)] static extern IntPtr SDL_GameControllerName(IntPtr pad);
+    [DllImport(L, CallingConvention = CallingConvention.Cdecl)] static extern int SDL_GameControllerGetPlayerIndex(IntPtr pad);
+    [DllImport(L, CallingConvention = CallingConvention.Cdecl)] static extern int SDL_GameControllerRumble(IntPtr pad, ushort low, ushort high, uint ms);
 
     static bool ok = false;
     static int polls = 0;
@@ -165,6 +168,52 @@ public static class RBPad
             return s;
         }
         catch { return 0; }
+    }
+
+    // ---- one controller at a time (2026-10-17, the wizard's Controllers
+    // page): which pads there are, what each one is pressing, and a buzz
+    // to find one. The player slot is Windows' own number for Xbox-style
+    // pads (the light on the pad); -1 when Windows does not give one.
+    public static string[] List()
+    {
+        List<string> o = new List<string>();
+        if (!ok) return o.ToArray();
+        try
+        {
+            SDL_PumpEvents(); Rescan();
+            List<int> ids = new List<int>(pads.Keys); ids.Sort();
+            foreach (int id in ids)
+            {
+                string name = "Controller";
+                try { IntPtr np = SDL_GameControllerName(pads[id]); if (np != IntPtr.Zero) name = Marshal.PtrToStringAnsi(np); } catch { }
+                int slot = -1;
+                try { slot = SDL_GameControllerGetPlayerIndex(pads[id]); } catch { slot = -1; }
+                o.Add(id + "|" + slot + "|" + name.Replace("|", " "));
+            }
+        }
+        catch { }
+        return o.ToArray();
+    }
+    public static int PadState(int id)
+    {
+        if (!ok || !pads.ContainsKey(id)) return 0;
+        try
+        {
+            IntPtr p = pads[id]; int s = 0;
+            for (int b = 0; b <= 14; b++) if (SDL_GameControllerGetButton(p, b) != 0) s |= (1 << b);
+            const int dz = 16000;
+            int lx = SDL_GameControllerGetAxis(p, 0), ly = SDL_GameControllerGetAxis(p, 1);
+            int ry = SDL_GameControllerGetAxis(p, 3), lt = SDL_GameControllerGetAxis(p, 4), rt = SDL_GameControllerGetAxis(p, 5);
+            if (lx < -dz) s |= 1 << 16; if (lx > dz) s |= 1 << 17; if (ly < -dz) s |= 1 << 18; if (ly > dz) s |= 1 << 19;
+            if (ry < -dz) s |= 1 << 20; if (ry > dz) s |= 1 << 21; if (lt > dz) s |= 1 << 22; if (rt > dz) s |= 1 << 23;
+            return s;
+        }
+        catch { return 0; }
+    }
+    public static bool Rumble(int id, int ms)
+    {
+        if (!ok || !pads.ContainsKey(id)) return false;
+        try { return SDL_GameControllerRumble(pads[id], 0xC000, 0xC000, (uint)ms) == 0; } catch { return false; }
     }
 
     public static void Quit()

@@ -143,7 +143,7 @@ function Get-AvatarSource($Player) {
         $path = ''
         if ([string]$Player.Avatar -like 'custom:*') { $path = Get-SocialAvatarFile $Ws $Player }
         else {
-            $name = ([string]$Player.Avatar) -replace '^icon:', ''
+            $name = (([string]$Player.Avatar) -replace '^icon:', '') -replace '^wiimote$', 'wiiremote'
             $path = Join-Path $Ws ('wizard\profile-' + $name + '.png')
         }
         if ($path -eq '' -or -not (Test-Path -LiteralPath $path)) { return $null }

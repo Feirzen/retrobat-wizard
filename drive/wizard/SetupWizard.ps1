@@ -338,6 +338,15 @@ if (Test-Path -LiteralPath $gamesLib) {
 }
 else { Log 'GameLibrary.ps1 not found - the Games tab will be empty' }
 
+#  FirstRunDefaults.ps1: the RetroBat settings a new setup starts with
+#  (2026-10-17). Only the first-run setup uses it.
+$script:frdOk = $false
+$frdLib = Join-Path $ScriptsDir 'FirstRunDefaults.ps1'
+if (Test-Path -LiteralPath $frdLib) {
+    try { . $frdLib; $script:frdOk = $true }
+    catch { Log "could not load FirstRunDefaults.ps1: $_" }
+}
+
 #  NetplayEngine.ps1 is the Netplay tab.
 $script:netplayOk = $false
 $netplayLib = Join-Path $ScriptsDir 'NetplayEngine.ps1'
@@ -724,7 +733,8 @@ function Show-Choice([string]$Title, [string]$Message, [string[]]$Buttons) {
 #  Returns a hashtable: Ok ($false if cancelled) and Places, an array of
 #  'start' and/or 'desktop'.
 # ---------------------------------------------------------------------------
-function Show-PlaceToggles([string]$Title, [string]$Message, [string[]]$Current) {
+function Show-PlaceToggles([string]$Title, [string]$Message, [string[]]$Current, [switch]$AllowBack) {
+    $script:placeBack = $false
     Close-Splash
 
     $w = New-Object System.Windows.Window
@@ -778,6 +788,12 @@ function Show-PlaceToggles([string]$Title, [string]$Message, [string[]]$Current)
     $save = New-Object System.Windows.Controls.Button
     $save.Content = 'Save'; $save.Padding = '16,7'; $save.FontSize = 14; $save.Margin = '8,0,0,0'
     $save.Add_Click({ $script:placeOk = $true; $script:placeWin.Close() })
+    if ($AllowBack) {
+        $bk = New-Object System.Windows.Controls.Button
+        $bk.Content = '< Back'; $bk.Padding = '16,7'; $bk.FontSize = 14; $bk.Margin = '0,0,8,0'
+        $bk.Add_Click({ $script:placeOk = $false; $script:placeBack = $true; $script:placeWin.Close() })
+        [void]$row.Children.Add($bk)
+    }
     [void]$row.Children.Add($cancel)
     [void]$row.Children.Add($save)
     [void]$sp.Children.Add($row)
@@ -788,7 +804,7 @@ function Show-PlaceToggles([string]$Title, [string]$Message, [string[]]$Current)
     $places = @()
     if ($script:placeStart.IsChecked) { $places += 'start' }
     if ($script:placeDesk.IsChecked)  { $places += 'desktop' }
-    return @{ Ok = $script:placeOk; Places = $places }
+    return @{ Ok = $script:placeOk; Places = $places; Back = [bool]$script:placeBack }
 }
 
 # Says out loud what Save is about to do. Top level, not a closure, because
@@ -1082,7 +1098,7 @@ function Resolve-ProfileQuestions {
         if ($pick -eq 'Skip for now' -or $pick -eq '') { Log 'new computer: skipped'; return $false }
         $tier = $mp.Tier
         if ($pick -eq 'Pick another') {
-            $t2 = Show-Choice $WizardName 'Pick a tier for this computer. Low favours smoothness, High favours picture quality. The Machine tab changes it later.' @('Low', 'Medium', 'High')
+            $t2 = Show-Choice $WizardName 'Pick a tier for this computer. Low favours smoothness, High favours picture quality. Settings > This computer changes it later.' @('Low', 'Medium', 'High')
             if ($t2 -eq '') { return $false }
             $tier = $t2.ToLower()
         }
@@ -1108,7 +1124,7 @@ function Resolve-ProfileQuestions {
         if ($activeText -match 'machine\s*=\s*(.+)') {
             $activeMachine = $Matches[1].Trim()
             if ($activeMachine -and ($activeMachine -ine $mp.Machine)) {
-                $pick = Show-Choice $WizardName ("You are on {0}, but the settings on the drive were applied for {1}." -f $mp.Machine, $activeMachine) @("Switch to $($mp.ProfileName)", "Keep $activeMachine's settings")
+                $pick = Show-Choice $WizardName ("You are on {0}, but the settings in this setup were applied for {1}." -f $mp.Machine, $activeMachine) @("Switch to $($mp.ProfileName)", "Keep $activeMachine's settings")
                 if ($pick -like 'Switch*') {
                     [void](Invoke-Step 'Apply-Settings.ps1' 'switching machine')
                     return $true
@@ -1215,7 +1231,7 @@ function Show-WhoIsPlaying {
     $g = New-Object System.Windows.Controls.Button; $g.Content = 'Continue without logging in'; $g.Padding = '14,7'; $g.FontSize = 14; $g.Margin = '0,0,10,0'
     $g.Add_Click({ Invoke-WhoGuest })
     $o = New-Object System.Windows.Controls.Button; $o.Content = 'Someone else...'; $o.Padding = '14,7'; $o.FontSize = 14
-    $o.ToolTip = 'Log in or make a profile on the wizard''s Profile tab'
+    $o.ToolTip = 'Log in or make a profile on the wizard''s Social page'
     $o.Add_Click({ $script:whoAnswer = 'wizard'; $script:whoWin.Close() })
     [void]$row.Children.Add($g); [void]$row.Children.Add($o)
     [void]$sp.Children.Add($row)
@@ -1223,7 +1239,7 @@ function Show-WhoIsPlaying {
     $ask = New-Object System.Windows.Controls.CheckBox
     $ask.Content = 'Ask every time I press PLAY'; $ask.IsChecked = $true
     $ask.Foreground = (New-Brush $ColDim); $ask.FontSize = 12; $ask.HorizontalAlignment = 'Center'; $ask.Margin = '0,16,0,0'
-    $ask.ToolTip = 'Off: PLAY goes straight in as whoever is logged in. Turn it back on from the Profile tab.'
+    $ask.ToolTip = 'Off: PLAY goes straight in as whoever is logged in. Turn it back on from the Social page.'
     $ask.Add_Click({ param($s2, $e2) try { Set-SocialAskWho $Ws ([bool]$s2.IsChecked); Log ("who's playing: ask = {0}" -f [bool]$s2.IsChecked) } catch { } })
     [void]$sp.Children.Add($ask)
 
@@ -1254,14 +1270,14 @@ function Invoke-WhoPick([string]$Id) {
     } catch { }
     finally { [System.Windows.Input.Mouse]::OverrideCursor = $old }
     if ($null -eq $saved -and $null -eq $rec) {
-        [void](Show-Choice "Who's playing?" "That profile has not been used on this drive since this switcher arrived, so it needs the internet once to log in, and GitHub could not be reached.`n`nTry again when you are online, or pick someone else." @('OK'))
+        [void](Show-Choice "Who's playing?" "That profile has not been used on this setup since this switcher arrived, so it needs the internet once to log in, and GitHub could not be reached.`n`nTry again when you are online, or pick someone else." @('OK'))
         return
     }
     $hash = $(if ($null -ne $rec) { [string]$rec.Pw } else { [string]$saved.Pw })
     $name = $(if ($null -ne $rec) { $rec.Username } else { $saved.Username })
     $typed = $false
     if ($hash -ne '' -and -not (Test-SocialLoginTrusted $Ws $Id)) {
-        $pw = Show-PasswordDialog "Who's playing?" ("Password for {0}:`n`nAsked every 60 days on this drive." -f $name) $false
+        $pw = Show-PasswordDialog "Who's playing?" ("Password for {0}:`n`nAsked every 60 days on this setup." -f $name) $false
         if ($null -eq $pw) { return }
         if ((Get-SocialPasswordHash $Id $pw) -ne $hash) { [void](Show-Choice "Who's playing?" 'That password is not right.' @('OK')); return }
         $typed = $true
@@ -1489,6 +1505,37 @@ function Start-PlayFlow {
     }
     catch { Log ('wiiu chooser: could not check - ' + $_.Exception.Message) }
 
+    # --- "how to play" before keyboard games (2026-10-17), same idea -------
+    try {
+        $glVbs = Join-Path $Root 'system\scripts\game-launch.vbs'
+        $glMaster = Join-Path $Ws 'update-restore\system\scripts\game-launch.vbs'
+        if (-not (Test-Path -LiteralPath $glVbs) -and (Test-Path -LiteralPath $glMaster)) {
+            Copy-Item -LiteralPath $glMaster -Destination $glVbs -Force
+            Log 'how to play: launcher put back from update-restore'
+        }
+        $glOn = $true
+        $featIni = Join-Path $Ws 'features.ini'
+        if (Test-Path -LiteralPath $featIni) { foreach ($fl in [System.IO.File]::ReadAllLines($featIni)) { if ($fl -match '^\s*howtoplay\s*=\s*off\b') { $glOn = $false } } }
+        $glOn = ($glOn -and (Test-Path -LiteralPath $glVbs))
+        $esSys = Join-Path $Root 'emulationstation\.emulationstation\es_systems.cfg'
+        if (Test-Path -LiteralPath $esSys) {
+            $esText = [System.IO.File]::ReadAllText($esSys)
+            $wrong = $false
+            foreach ($gs in @('flash', 'scummvm', 'windows')) {
+                $gm = [regex]::Match($esText, ('(?s)<system>(?:(?!</system>).)*?<name>{0}</name>.*?<command>(.*?)</command>' -f $gs))
+                if (-not $gm.Success) { continue }
+                $has = ($gm.Groups[1].Value -match 'game-launch\.vbs')
+                $stock = ($gm.Groups[1].Value.Trim().StartsWith('"%HOME%\emulatorLauncher.exe"'))
+                if (($glOn -and -not $has -and $stock) -or (-not $glOn -and $has)) { $wrong = $true }
+            }
+            if ($wrong) {
+                $fp = Join-Path $ScriptsDir 'Fix-Portability.ps1'
+                if (Test-Path -LiteralPath $fp) { $null = & $fp -Quiet *>&1; Log 'how to play: launch lines brought in step' }
+            }
+        }
+    }
+    catch { Log ('how to play: could not check - ' + $_.Exception.Message) }
+
     Log 'launching RetroBat'
     Close-Splash
     Start-Process -FilePath (Join-Path $Root 'RetroBat.exe') -WorkingDirectory $Root
@@ -1556,6 +1603,53 @@ function Restart-WizardFrom([string]$NewRoot, [string]$Mode = '') {
     catch { Log ('could not restart the wizard - ' + $_.Exception.Message) }
 }
 
+# ---------------------------------------------------------------------------
+#  A CARRY-ABOUT DRIVE, OR THIS COMPUTER?                       (2026-10-17)
+# ---------------------------------------------------------------------------
+#  Steven: "the majority won't be using a hard drive ... if it is not on an
+#  external drive, don't ask to rename the drive R:". The answer lives in
+#  wizard\wizard.ini as "portable = yes" or "no". With no answer yet, a guess:
+#  a USB or SD disk, or a removable one, is a carry-about drive; the drive
+#  Windows runs from never is.
+function Get-SetupPortable {
+    $v = ''
+    try { $v = [string](Read-KeyValues (Join-Path $WizardDir 'wizard.ini'))['portable'] } catch { }
+    if ($v -eq 'yes') { return $true }
+    if ($v -eq 'no') { return $false }
+    return (Test-SetupOnCarryDrive)
+}
+function Test-SetupOnCarryDrive {
+    try {
+        $q = (Split-Path -Qualifier $Root).TrimEnd(':')
+        if ($q -ieq ($env:SystemDrive.TrimEnd(':'))) { return $false }
+        try {
+            $disk = Get-Partition -DriveLetter $q -ErrorAction Stop | Get-Disk -ErrorAction Stop
+            if (@('USB', 'SD', 'MMC') -contains [string]$disk.BusType) { return $true }
+        } catch { }
+        $ld = Get-CimInstance Win32_LogicalDisk -Filter ("DeviceID='{0}:'" -f $q) -ErrorAction Stop
+        if ([int]$ld.DriveType -eq 2) { return $true }
+    } catch { }
+    return $false
+}
+function Set-SetupPortable([bool]$On) {
+    try {
+        $f = Join-Path $WizardDir 'wizard.ini'
+        $lines = @()
+        if (Test-Path -LiteralPath $f) { $lines = @([System.IO.File]::ReadAllLines($f) | Where-Object { $_ -notmatch '^\s*portable\s*=' -and $_ -notmatch '^; portable: ' }) }
+        $lines += '; portable: yes = this setup lives on a drive carried between computers'
+        $lines += ('portable = ' + $(if ($On) { 'yes' } else { 'no' }))
+        [System.IO.File]::WriteAllLines($f, [string[]]$lines)
+    } catch { Log ('setup: could not save portable - ' + $_.Exception.Message) }
+}
+function Save-FirstRunMemory([string]$File, [string]$Mode, [bool]$Portable) {
+    try {
+        $keep = @()
+        if (Test-Path -LiteralPath $File) { $keep = @([System.IO.File]::ReadAllLines($File) | Where-Object { $_ -notmatch '^\s*(mode|portable)\s*=' }) }
+        $keep += ('mode = ' + $Mode); $keep += ('portable = ' + $(if ($Portable) { 'yes' } else { 'no' }))
+        [System.IO.File]::WriteAllLines($File, [string[]]$keep)
+    } catch { }
+}
+
 function Start-SetupFlow {
     Log '--- Setup flow ---'
 
@@ -1574,119 +1668,185 @@ function Start-SetupFlow {
     #  message says which.
     $firstRun = Test-Path -LiteralPath (Join-Path $Ws 'first-run.txt')
     $setupMode = 'normal'
-    if ($firstRun) {
-        Close-Splash
-        $pick = Show-Choice $WizardName ("Welcome! The wizard is installed.`n`nQuick setup asks two things and picks good defaults for everything else. Advanced setup asks about each part. Either way, it can all be changed later in the wizard.") @('Quick setup', 'Advanced setup')
-        $setupMode = $(if ($pick -eq 'Advanced setup') { 'advanced' } else { 'quick' })
-        Log ("setup: first run, {0}" -f $setupMode)
-        if ($script:socialOk) {
-            $sp = $null
-            try { $sp = Read-SocialProfile $Ws } catch { }
-            if ($null -eq $sp) {
-                $p2 = Show-Choice $WizardName ("Make a profile?`n`nWith a profile you can add friends, see who is online and what they are playing, and they can see you. As a guest, nothing about you is ever sent.`n`nAlready have one from another drive? Pick 'I have one' and log in on the Profile tab.") @('Make my profile', 'I have one', 'Play as a guest')
-                if ($p2 -eq 'Make my profile') { Invoke-SocialCreate }
+    # (2026-10-17) The questions are STEPS with a Back button on each
+    # (Steven: "I forgot to add a profile name and clicked forward and
+    # couldn't go back"). Answers wait in variables; nothing is done until
+    # the last question is answered, so going back changes nothing.
+    # A first run remembers its mode and the portable answer in
+    # first-run.txt, so a restart from a new drive letter does not ask again.
+    $frFile = Join-Path $Ws 'first-run.txt'
+    $frMem = @{}
+    if ($firstRun) { try { $frMem = Read-KeyValues $frFile } catch { } }
+    if ($frMem['mode']) { $setupMode = [string]$frMem['mode'] }
+    $portable = Get-SetupPortable
+    if ($frMem['portable']) { $portable = ([string]$frMem['portable'] -eq 'yes') }
+
+    $mp = $null
+    try { $mp = Resolve-MachineProfile -Root $Root -NoWrite } catch { Log "setup: profile resolve failed: $_" }
+    $wantTier = ''
+    $places = @(); $doPlaces = $false
+    $padChoice = ''
+    $featureVals = $null
+
+    $steps = @('mode', 'where', 'profile', 'features', 'letter', 'tier', 'places', 'pad')
+    $i = 0; $dir = 1
+    while ($i -ge 0 -and $i -lt $steps.Count) {
+        $canBack = ($i -gt 0)
+        $r = 'skip'
+        switch ($steps[$i]) {
+            'mode' {
+                if (-not $firstRun -or $frMem['mode']) { break }
+                Close-Splash
+                $pick = Show-Choice $WizardName ("Welcome! The wizard is installed.`n`nQuick setup asks a few things and picks good defaults for everything else. Advanced setup asks about each part. Either way, it can all be changed later in the wizard.") @('Quick setup', 'Advanced setup')
+                if ($pick -eq '') { Log 'setup: closed at the first question'; Close-Splash; return }
+                $setupMode = $(if ($pick -eq 'Advanced setup') { 'advanced' } else { 'quick' })
+                Log ("setup: first run, {0}" -f $setupMode)
+                $r = 'next'
+            }
+            'where' {
+                # (2026-10-17) Most people install RetroBat on their computer,
+                # not a drive they carry about. Only a portable drive gets the
+                # drive letter and the several-computers parts.
+                if (-not $firstRun -or $frMem['portable']) { break }
+                $btn = @('On a drive I carry between computers', 'On this computer')
+                if (-not $portable) { $btn = @('On this computer', 'On a drive I carry between computers') }
+                if ($canBack) { $btn = @('< Back') + $btn }
+                $guess = $(if ($portable) { 'It looks like a drive you plug in.' } else { 'It looks like it is on this computer.' })
+                $pick = Show-Choice $WizardName ("Where does this setup live?`n`n$guess`n`nOn a carry-about drive, the wizard also keeps the drive working on every computer it is plugged into (its own drive letter, a settings profile per computer). On this computer, none of that is needed. It can be changed later in Settings.") $btn
+                if ($pick -eq '< Back') { $r = 'back'; break }
+                if ($pick -eq '') { $r = 'next'; break }
+                $portable = ($pick -eq 'On a drive I carry between computers')
+                $r = 'next'
+            }
+            'profile' {
+                if (-not $firstRun -or -not $script:socialOk) { break }
+                $sp = $null
+                try { $sp = Read-SocialProfile $Ws } catch { }
+                if ($null -ne $sp -and -not $sp.Guest) { break }
+                $btn = @('Make my profile', 'I have one', 'Play as a guest')
+                if ($canBack) { $btn = @('< Back') + $btn }
+                $p2 = Show-Choice $WizardName ("Make a profile?`n`nWith a profile you can add friends, see who is online and what they are playing, and they can see you. As a guest, nothing about you is ever sent.`n`nAlready have one from another setup? Pick 'I have one' and log in on the Social page.") $btn
+                if ($p2 -eq '< Back') { $r = 'back'; break }
+                if ($p2 -eq 'Make my profile') {
+                    Invoke-SocialCreate
+                    $made = $null; try { $made = Read-SocialProfile $Ws } catch { }
+                    # Closed, or no name: ask again rather than carry on as a guest.
+                    if ($null -eq $made -or $made.Guest) { $r = 'again'; break }
+                }
                 if ($null -eq (Read-SocialProfile $Ws)) { Invoke-SocialGuest }
+                $r = 'next'
+            }
+            'features' {
+                if (-not $firstRun -or $setupMode -ne 'advanced' -or -not $script:featuresOk) { break }
+                try {
+                    $fv = Show-FeaturePicker -AllowBack:$canBack
+                    if ($script:fpBack) { $r = 'back'; break }
+                    $featureVals = $fv
+                } catch { Log "setup: feature picker failed: $_" }
+                $r = 'next'
+            }
+            'letter' {
+                # The drive letter, FIRST of everything that does work. Moved to
+                # the start on 2026-09-25: icons and shortcuts made before a
+                # letter change all pointed at the OLD letter. Now the letter
+                # moves before anything is built, Steam's library list is
+                # corrected on the spot, and setup restarts itself from the
+                # new letter and carries on. Only on a carry-about drive
+                # (2026-10-17), and only asked when it can actually be done.
+                if (-not $script:driveLetterOk -or $setupMode -eq 'quick' -or -not $portable) { break }
+                try {
+                    $dl = Get-DriveLetterStatus -Root $Root
+                    Log ('drive letter: ' + $dl.Line)
+                    if ($dl.State -ne 'canchange' -and $dl.State -ne 'needsadmin') { break }
+                    $btn = @('Yes, use R:', 'Leave it')
+                    if ($canBack) { $btn = @('< Back') + $btn }
+                    $pick = Show-Choice $WizardName ("Give this drive the letter R: on this computer?`n`nNothing on the drive needs it - everything here works out where it is by itself, and will keep working as {0}:. R: is a safety net for the odd setting inside an emulator that insists on a letter, and it is free because nothing else ever uses R:.`n`nWindows remembers this for this computer only, and will ask for permission first - say Yes. If Steam is open it closes for a moment so its link to the drive can be updated. Setup then restarts itself from R: and carries on." -f $dl.Current) $btn
+                    if ($pick -eq '< Back') { $r = 'back'; break }
+                    if ($pick -eq 'Yes, use R:') {
+                        Save-FirstRunMemory $frFile $setupMode $portable
+                        $dlr = Invoke-DriveLetterMove
+                        if ($dlr.Changed) {
+                            if ($null -ne $featureVals) { try { [void](Set-Features -Root $Root -Values $featureVals) } catch { } }
+                            [void](Show-Choice $WizardName ($dlr.Message + $dlr.Extra + "`n`nSetup will now start again from " + $dlr.To + ": and carry on from here.") @('OK'))
+                            Restart-WizardFrom -NewRoot $dlr.NewRoot -Mode '-Setup'
+                            Close-Splash
+                            return
+                        }
+                        [void](Show-Choice $WizardName $dlr.Message @('OK'))
+                    }
+                }
+                catch { Log "setup: drive letter step failed: $_" }
+                $r = 'next'
+            }
+            'tier' {
+                if ($null -eq $mp -or -not $mp.Ok -or -not $mp.Created) {
+                    if ($null -ne $mp -and $mp.Ok -and $dir -gt 0) { Log ("setup: {0} already has a profile ({1} tier), leaving it alone" -f $mp.Machine, $mp.Tier) }
+                    break
+                }
+                if ($setupMode -eq 'quick') { $wantTier = [string]$mp.Tier; Log ("setup: quick, using the suggested {0} tier" -f $wantTier); break }
+                $btn = @("Use $($mp.Tier)", 'Pick another')
+                if ($canBack) { $btn = @('< Back') + $btn }
+                $pick = Show-Choice $WizardName ("New computer: {0}`nGraphics card: {1}`n`nSuggesting the {2} tier. Low favours smoothness, High favours picture quality." -f $mp.Machine, $mp.Gpu, ([string]$mp.Tier).ToUpper()) $btn
+                if ($pick -eq '< Back') { $r = 'back'; break }
+                $wantTier = [string]$mp.Tier
+                if ($pick -eq 'Pick another') {
+                    $t2 = Show-Choice $WizardName 'Pick a tier for this computer. Settings > This computer changes it later.' @('Low', 'Medium', 'High')
+                    if ($t2 -ne '') { $wantTier = $t2.ToLower() }
+                }
+                $r = 'next'
+            }
+            'places' {
+                if (-not $script:localSetupOk) { break }
+                $current = @()
+                try { $current = @(Get-LocalSetupPlaces -WizardName $WizardName) } catch { }
+                $msg = $(if ($portable) { "Where should this computer's buttons go?`n`nPlay, this wizard and a Controllers button, with icons copied onto the computer so they stay put when the drive is unplugged. Nothing is written to the drive." }
+                         else { "Where should the buttons go?`n`nPlay, this wizard and a Controllers button." })
+                $ans = Show-PlaceToggles $WizardName $msg $current -AllowBack:$canBack
+                if ($ans.Back) { $r = 'back'; break }
+                if ($ans.Ok) { $places = @($ans.Places); $doPlaces = $true }
+                $r = 'next'
+            }
+            'pad' {
+                if (-not $script:padShortcutOk -or $setupMode -eq 'quick') { break }
+                $padOn = $false
+                try { $padOn = Test-PadShortcutOn } catch { }
+                if ($padOn) {
+                    # Already on here: no question (2026-09-25). Installing again
+                    # just refreshes this computer's copy of the helper.
+                    $padChoice = 'on'
+                    Log 'setup: controller shortcut already on - not asking'
+                    break
+                }
+                $btn = @('Yes, turn it on', 'No thanks')
+                if ($canBack) { $btn = @('< Back') + $btn }
+                $pick = Show-Choice $WizardName "Open this wizard with a controller?`n`nWith this on, pressing SELECT + START together on any controller opens this wizard full screen, and you can use it with the controller. It only works when no game and no RetroBat menu is open, so it never gets in the way of quitting a game.`n`nIt only affects this computer, and it can be switched on or off any time in Settings." $btn
+                if ($pick -eq '< Back') { $r = 'back'; break }
+                $padChoice = $(if ($pick -eq 'Yes, turn it on') { 'on' } else { '' })
+                $r = 'next'
             }
         }
-        if ($setupMode -eq 'advanced' -and $script:featuresOk) {
-            try {
-                $fv = Show-FeaturePicker
-                if ($null -ne $fv) { [void](Set-Features -Root $Root -Values $fv); Log 'setup: features chosen' }
-            } catch { Log "setup: feature picker failed: $_" }
-        }
+        if ($r -eq 'again') { continue }
+        if ($r -eq 'back') { $dir = -1 }
+        elseif ($r -eq 'next') { $dir = 1 }
+        # 'skip' keeps going the same way, so Back passes over steps that
+        # had nothing to ask.
+        $i += $dir
+        if ($i -lt 0) { $i = 0; $dir = 1 }
+    }
+
+    # --- the answers, now that all of them are in ------------------------------
+    if ($firstRun) {
+        Set-SetupPortable $portable
+        Log ("setup: this setup is {0}" -f $(if ($portable) { 'on a carry-about drive' } else { 'on this computer' }))
+        if ($null -ne $featureVals) { try { [void](Set-Features -Root $Root -Values $featureVals); Log 'setup: features chosen' } catch { Log "setup: features: $_" } }
         # Video levelling needs ffmpeg, which is too big to ship through
         # GitHub. Without it the switch goes OFF, so setup does not fail a
-        # step and the Health tab does not warn forever. Putting ffmpeg.exe in
-        # _ClaudeWorkspace\tools and switching it back on is all it takes.
+        # step and the Health page does not warn forever.
         if ($script:featuresOk -and -not (Test-Path -LiteralPath (Join-Path $Ws 'tools\ffmpeg.exe')) -and $null -eq (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
             try { [void](Set-Features -Root $Root -Values @{ videovolume = $false }); $script:noFfmpeg = $true; Log 'setup: no ffmpeg, video levelling switched off' } catch { }
         }
     }
 
-    # --- 1b. the drive letter, FIRST of everything --------------------------
-    #  Moved here from the very end on 2026-09-25. At the end, every icon and
-    #  shortcut the setup had just made pointed at the OLD letter and broke
-    #  the moment the letter moved, and so did Steam's link to the drive, so
-    #  the first R: on a computer meant running setup twice and reconnecting
-    #  Steam by hand. Now the letter moves before anything is built, Steam's
-    #  library list is corrected on the spot, and setup restarts itself from
-    #  the new letter and carries on - one run, nothing to redo.
-    #
-    #  Only asked when it can actually be done. If R: is already ours, or
-    #  something else holds it, there is nothing to offer. Not being an
-    #  administrator does not count: Windows is asked for permission.
-    if ($script:driveLetterOk -and $setupMode -ne 'quick') {
-        try {
-            $dl = Get-DriveLetterStatus -Root $Root
-            Log ('drive letter: ' + $dl.Line)
-            if ($dl.State -eq 'canchange' -or $dl.State -eq 'needsadmin') {
-                $pick = Show-Choice $WizardName ("Give this drive the letter R: on this computer?`n`nNothing on the drive needs it - everything here works out where it is by itself, and will keep working as {0}:. R: is a safety net for the odd setting inside an emulator that insists on a letter, and it is free because nothing else ever uses R:.`n`nWindows remembers this for this computer only, and will ask for permission first - say Yes. If Steam is open it closes for a moment so its link to the drive can be updated. Setup then restarts itself from R: and carries on." -f $dl.Current) @('Yes, use R:', 'Leave it')
-                if ($pick -eq 'Yes, use R:') {
-                    $dlr = Invoke-DriveLetterMove
-                    if ($dlr.Changed) {
-                        [void](Show-Choice $WizardName ($dlr.Message + $dlr.Extra + "`n`nSetup will now start again from " + $dlr.To + ": and carry on from here.") @('OK'))
-                        Restart-WizardFrom -NewRoot $dlr.NewRoot -Mode '-Setup'
-                        Close-Splash
-                        return
-                    }
-                    [void](Show-Choice $WizardName $dlr.Message @('OK'))
-                }
-            }
-        }
-        catch { Log "setup: drive letter step failed: $_" }
-    }
-
-    # --- 2. the tier, but only for a computer with no profile yet ----------
-    $mp = $null
-    try { $mp = Resolve-MachineProfile -Root $Root -NoWrite } catch { Log "setup: profile resolve failed: $_" }
-
-    $wantTier = ''
-    if ($null -ne $mp -and $mp.Ok -and $mp.Created -and $setupMode -eq 'quick') {
-        $wantTier = [string]$mp.Tier
-        Log ("setup: quick, using the suggested {0} tier" -f $wantTier)
-    }
-    elseif ($null -ne $mp -and $mp.Ok -and $mp.Created) {
-        $pick = Show-Choice $WizardName ("New computer: {0}`nGraphics card: {1}`n`nSuggesting the {2} tier. Low favours smoothness, High favours picture quality." -f $mp.Machine, $mp.Gpu, ([string]$mp.Tier).ToUpper()) @("Use $($mp.Tier)", 'Pick another')
-        $wantTier = [string]$mp.Tier
-        if ($pick -eq 'Pick another') {
-            $t2 = Show-Choice $WizardName 'Pick a tier for this computer. The Machine tab changes it later.' @('Low', 'Medium', 'High')
-            if ($t2 -ne '') { $wantTier = $t2.ToLower() }
-        }
-    }
-    elseif ($null -ne $mp -and $mp.Ok) {
-        Log ("setup: {0} already has a profile ({1} tier), leaving it alone" -f $mp.Machine, $mp.Tier)
-    }
-
-    # --- 3. the buttons on this computer, asked every time -----------------
-    $places = @()
-    $doPlaces = $false
-    if ($script:localSetupOk) {
-        $current = @()
-        try { $current = @(Get-LocalSetupPlaces -WizardName $WizardName) } catch { }
-        $ans = Show-PlaceToggles $WizardName "Where should this computer's buttons go?`n`nPlay, this wizard and a Controllers button, with icons copied onto the computer so they stay put when the drive is unplugged. Nothing is written to the drive." $current
-        if ($ans.Ok) { $places = @($ans.Places); $doPlaces = $true }
-    }
-
-    # --- 3c. the controller shortcut, asked only while it is off ------------
-    #  Per computer, like the buttons above. The answer is applied with the
-    #  rest of the work below.
-    $padChoice = ''
-    if ($script:padShortcutOk -and $setupMode -ne 'quick') {
-        $padOn = $false
-        try { $padOn = Test-PadShortcutOn } catch { }
-        if ($padOn) {
-            # Already on here: no question (2026-09-25 - asking again read as if
-            # the first Yes had not stuck). Installing again just refreshes this
-            # computer's copy of the helper, which is harmless and keeps it current.
-            $padChoice = 'on'
-            Log 'setup: controller shortcut already on - not asking'
-        }
-        else {
-            $msg = "Open this wizard with a controller?`n`nWith this on, pressing SELECT + START together on any controller opens this wizard full screen, and you can use it with the controller. It only works when no game and no RetroBat menu is open, so it never gets in the way of quitting a game.`n`nIt only affects this computer, and it can be switched on or off any time on the Features tab."
-            $pick = Show-Choice $WizardName $msg @('Yes, turn it on', 'No thanks')
-            if ($pick -eq 'Yes, turn it on') { $padChoice = 'on' }
-        }
-    }
     # --- 3d. first run: the theme and netplay defaults ------------------------
     #  RetroBat is closed here, which is the only time es_settings.cfg can be
     #  written. ckau-book is the look this drive's extras are built for; it is
@@ -1700,6 +1860,13 @@ function Start-SetupFlow {
                 if (Set-EsStringSetting $Root 'ThemeSet' 'ckau-book') { Log 'setup: theme set to ckau-book' }
             }
             else { $themeMissing = $true }
+            # Steven's RetroBat choices as the starting point (music off, only
+            # the All games / 2 / 4 player collections, grid views, the
+            # scraper login). Once, here, never on updates.
+            if ($script:frdOk) {
+                $fr = Set-FirstRunDefaults $Root $Ws
+                Log ('setup: first-run defaults - ' + $fr.Message)
+            }
             $np = @{ Private = $true }
             $nn = Get-NetplayWantedName
             if ($nn -ne '') { $np.Nickname = $nn }
@@ -1725,7 +1892,7 @@ function Start-SetupFlow {
     if ($script:shortcutsOk) {
         [void]$work.Add(@('roots',  '', 'rebuilding the icons at the top of the drive'))
     }
-    [void]$work.Add(@('health', '', 'checking the drive over'))
+    [void]$work.Add(@('health', '', 'checking everything over'))
 
     $status = Invoke-SetupWork $work $places
     Log 'setup: work finished'
@@ -1748,9 +1915,9 @@ function Start-SetupFlow {
 # The end of a fresh install: say where everything lives, set the first-run
 # note aside, and tidy the installer's files out of the RetroBat folder.
 function Complete-FirstRun([bool]$ThemeMissing) {
-    $msg = "All set!`n`nYou can change any of this later:`n  Profile tab - your name, picture and friends`n  Games tab - add games, and the free library`n  Netplay tab - playing online`n  Machine tab - picture quality on this computer`n  Features tab - the extras this wizard adds`n  Help tab - updates, bug reports, suggestions"
+    $msg = "All set!`n`nYou can change any of this later in the wizard:`n  Social - your name, picture and friends`n  Games - add games, and the free online library`n  Online - playing with friends over the internet`n  Settings - this computer's picture quality, the extras, health checks`n  Help - updates, bug reports, ideas"
     if ($script:noFfmpeg) {
-        $msg += "`n`nVideo volume levelling is off for now: it needs a free tool called ffmpeg, which is not on this drive yet."
+        $msg += "`n`nVideo volume levelling is off for now: it needs a free tool called ffmpeg, which is not in this setup yet."
     }
     if ($ThemeMissing) {
         $msg += "`n`nOne optional thing: for the full look, open RetroBat, press START, go to UPDATES & DOWNLOADS > THEMES and install ckau-book (a big download, about 2 GB). Then press Play in the wizard and it switches to it for you. Everything else already works without it."
@@ -1770,7 +1937,8 @@ function Complete-FirstRun([bool]$ThemeMissing) {
 
 # Advanced setup: every switch on the Features tab, as checkboxes. Returns the
 # chosen values, or $null on Cancel.
-function Show-FeaturePicker {
+function Show-FeaturePicker([switch]$AllowBack) {
+    $script:fpBack = $false
     $cat = Get-FeatureCatalogue
     $cur = @{}
     try { $cur = Get-Features $Root } catch { }
@@ -1779,7 +1947,7 @@ function Show-FeaturePicker {
     $w.Title = $WizardName; $w.Width = 600; $w.Height = 560
     $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
     $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
-    $hd = New-Text 'The extras this wizard adds. All of them are on unless you untick them. The Features tab changes them later.' $ColText 14
+    $hd = New-Text 'The extras this wizard adds. All of them are on unless you untick them. Settings > This setup changes them later.' $ColText 14
     $hd.TextWrapping = 'Wrap'; $hd.Margin = '0,0,0,10'
     [System.Windows.Controls.DockPanel]::SetDock($hd, 'Top'); [void]$dp.Children.Add($hd)
     $row = New-Object System.Windows.Controls.StackPanel
@@ -1801,6 +1969,12 @@ function Show-FeaturePicker {
     }
     $sv.Content = $list
     $script:fpWin = $w; $script:fpOk = $false
+    if ($AllowBack) {
+        $bb = New-Object System.Windows.Controls.Button
+        $bb.Content = '< Back'; $bb.Padding = '14,6'; $bb.FontSize = 14
+        $bb.Add_Click({ $script:fpBack = $true; $script:fpWin.Close() })
+        [void]$row.Children.Add($bb)
+    }
     foreach ($pair in @(@('Skip', $false), @('Use these', $true))) {
         $b = New-Object System.Windows.Controls.Button
         $b.Content = $pair[0]; $b.Tag = $pair[1]; $b.Padding = '14,6'; $b.FontSize = 14; $b.Margin = '8,0,0,0'
@@ -3568,9 +3742,130 @@ function Switch-WizardTheme([string]$Mode = '') {
 }
 
 # Windows' own controller list - the same as the controller picture on Home.
-function Open-ControllerList {
+# ---------------------------------------------------------------------------
+#  THE CONTROLLERS WINDOW                                       (2026-10-17)
+# ---------------------------------------------------------------------------
+#  Steven: "a custom window for controllers - matches what Windows shows, but
+#  easier to read and is in the wizard. Ping controllers, tell what
+#  controller Windows assigned to what, and explain how RetroBat uses them."
+#  Every connected pad, its name, Windows' player light for Xbox-style pads,
+#  what it is pressing right now, and a Buzz button to find which one is
+#  which. Windows' own list is one button away. Read through RetroBat's own
+#  SDL2 (scripts\PadInput.ps1), like the rest of the wizard's pad support.
+function Open-WindowsControllerList {
     try { Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\control.exe') -ArgumentList 'joy.cpl' }
     catch { Log ("controllers: could not open joy.cpl - {0}" -f $_.Exception.Message) }
+}
+function Open-ControllerList {
+    $ready = $false
+    try {
+        if (-not ([System.Management.Automation.PSTypeName]'RBPad').Type) { . (Join-Path $ScriptsDir 'PadInput.ps1') }
+        $ready = [RBPad]::IsReady
+        if (-not $ready) { $ready = [RBPad]::Init((Join-Path $Root 'emulationstation\SDL2.dll')) }
+    } catch { $ready = $false }
+    if (-not $ready) { Log 'controllers: SDL not available, Windows'' list instead'; Open-WindowsControllerList; return }
+    $w = New-Object System.Windows.Window
+    $w.Title = $WizardName + '  -  Controllers'; $w.Width = 640; $w.SizeToContent = 'Height'; $w.MaxHeight = 760
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $outer = New-Object System.Windows.Controls.StackPanel; $outer.Margin = '22'
+    [void]$outer.Children.Add((New-Text 'Controllers' $ColText 20 $true))
+    $sub = New-Text 'Press any button on a controller and its row lights up. Buzz makes one shake, so you can tell which is which.' $ColDim 13
+    $sub.Margin = '0,4,0,12'
+    [void]$outer.Children.Add($sub)
+    $script:ctlList = New-Object System.Windows.Controls.StackPanel
+    [void]$outer.Children.Add($script:ctlList)
+    $exp = New-Object System.Windows.Controls.Expander; $exp.Margin = '0,14,0,0'; $exp.Foreground = (New-Brush $ColText); $exp.FontSize = 14
+    $exp.Header = 'How games use them'
+    $how = New-Object System.Windows.Controls.StackPanel; $how.Margin = '0,6,0,0'
+    foreach ($t in @(
+        'Player 1, 2, 3... In RetroBat, the order is set in its menu: START, CONTROLLER SETTINGS, then pick a controller for each player. Unless you change it, the first one connected is player 1.',
+        'The number next to an Xbox-style controller is the player light Windows gave it (the lit quarter on the pad). It usually matches RetroBat''s order, but RetroBat''s menu is the one that counts.',
+        'Wii games with real Wii Remotes ignore all of this: the remotes pair to Dolphin through the Wii sensor bar or DolphinBar, in the order they are switched on.',
+        'PC and Steam games read controllers themselves, usually the first one connected.',
+        'A controller missing here is not plugged in, asleep, or not seen by Windows. Try another USB port, or press its home button to wake it.')) {
+        $tt = New-Text ([string][char]0x2022 + '  ' + $t) $ColDim 13; $tt.Margin = '0,4,0,0'
+        [void]$how.Children.Add($tt)
+    }
+    $exp.Content = $how
+    [void]$outer.Children.Add($exp)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,16,0,0'
+    $wb = New-Object System.Windows.Controls.Button; $wb.Content = 'Windows'' own list'; $wb.Padding = '14,6'; $wb.FontSize = 13
+    $wb.Add_Click({ Open-WindowsControllerList })
+    $cb = New-Object System.Windows.Controls.Button; $cb.Content = 'Close'; $cb.Padding = '14,6'; $cb.FontSize = 13; $cb.Margin = '8,0,0,0'
+    $script:ctlWin = $w
+    $cb.Add_Click({ $script:ctlWin.Close() })
+    [void]$row.Children.Add($wb); [void]$row.Children.Add($cb)
+    [void]$outer.Children.Add($row)
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'; $sv.Content = $outer
+    $w.Content = $sv
+    $script:ctlRows = @{}; $script:ctlSig = ''
+    Update-ControllerRows
+    $script:ctlTimer = New-Object System.Windows.Threading.DispatcherTimer
+    $script:ctlTimer.Interval = [TimeSpan]::FromMilliseconds(120)
+    $script:ctlTimer.Add_Tick({ Update-ControllerRows })
+    $script:ctlTimer.Start()
+    $w.Add_Closed({ try { $script:ctlTimer.Stop() } catch { } })
+    [void]$w.ShowDialog()
+}
+
+# What the pressed bits say, in words.
+function Get-PadWords([int]$Bits) {
+    $names = @('A', 'B', 'X', 'Y', 'Back', 'Guide', 'Start', 'Left stick in', 'Right stick in', 'LB', 'RB', 'Up', 'Down', 'Left', 'Right')
+    $o = @()
+    for ($i = 0; $i -le 14; $i++) { if ($Bits -band (1 -shl $i)) { $o += $names[$i] } }
+    if ($Bits -band (15 -shl 16)) { $o += 'left stick' }
+    if ($Bits -band (3 -shl 20)) { $o += 'right stick' }
+    if ($Bits -band (1 -shl 22)) { $o += 'LT' }
+    if ($Bits -band (1 -shl 23)) { $o += 'RT' }
+    return ($o -join ', ')
+}
+
+function Update-ControllerRows {
+    try {
+        [void][RBPad]::Poll()
+        $list = @([RBPad]::List())
+        $sig = ($list -join ';')
+        if ($sig -ne $script:ctlSig) {
+            $script:ctlSig = $sig; $script:ctlRows = @{}
+            $script:ctlList.Children.Clear()
+            if ($list.Count -eq 0) { [void]$script:ctlList.Children.Add((New-Text 'No controllers found. Plug one in or switch it on; it shows up here by itself.' $ColAway 14)) }
+            $n = 0
+            foreach ($ln in $list) {
+                $n++
+                $pp = $ln.Split('|'); $id = [int]$pp[0]; $slot = [int]$pp[1]; $name = $pp[2]
+                $bd = New-Object System.Windows.Controls.Border; $bd.Background = (New-Brush $ColPanel); $bd.CornerRadius = '6'; $bd.Padding = '14,10'; $bd.Margin = '0,0,0,8'
+                $bd.BorderThickness = '2'; $bd.BorderBrush = (New-Brush $ColPanel)
+                $dp = New-Object System.Windows.Controls.DockPanel
+                $buzz = New-Object System.Windows.Controls.Button; $buzz.Content = 'Buzz'; $buzz.Padding = '12,4'; $buzz.FontSize = 13; $buzz.Tag = $id; $buzz.VerticalAlignment = 'Center'
+                $buzz.Add_Click({ param($s2, $e2) if (-not [RBPad]::Rumble([int]$s2.Tag, 600)) { $s2.Content = 'No buzz on this one' } })
+                [System.Windows.Controls.DockPanel]::SetDock($buzz, 'Right'); [void]$dp.Children.Add($buzz)
+                $ic = New-Object System.Windows.Controls.Image; $ic.Margin = '0,0,14,0'; $ic.VerticalAlignment = 'Center'
+                $pic = 'pad'
+                if ($name -match '(?i)xbox|x-box|xinput') { $pic = $(if ($name -match '(?i)series') { 'xboxseries' } else { 'xboxone' }) }
+                elseif ($name -match '(?i)dualsense|ps5') { $pic = 'ps5' }
+                elseif ($name -match '(?i)ps4|dualshock|playstation|ps3') { $pic = 'playstation' }
+                $bmp = Get-PixelBitmap (Join-Path $WizardDir ('profile-' + $pic + '.png'))
+                if ($null -ne $bmp) { Set-FitPicture $ic $bmp 64 44; [System.Windows.Controls.DockPanel]::SetDock($ic, 'Left'); [void]$dp.Children.Add($ic) }
+                $info = New-Object System.Windows.Controls.StackPanel; $info.VerticalAlignment = 'Center'
+                $head = ('{0}. {1}' -f $n, $name)
+                [void]$info.Children.Add((New-Text $head $ColText 15 $true))
+                $slotTxt = $(if ($slot -ge 0) { ('Windows player light: {0}' -f ($slot + 1)) } else { 'Windows gives this one no player light' })
+                [void]$info.Children.Add((New-Text $slotTxt $ColDim 12))
+                $live = New-Text 'Not pressing anything' $ColDim 12
+                [void]$info.Children.Add($live)
+                [void]$dp.Children.Add($info)
+                $bd.Child = $dp
+                [void]$script:ctlList.Children.Add($bd)
+                $script:ctlRows[$id] = @{ Border = $bd; Live = $live }
+            }
+        }
+        foreach ($id in @($script:ctlRows.Keys)) {
+            $b = [RBPad]::PadState([int]$id)
+            $r = $script:ctlRows[$id]
+            if ($b -ne 0) { $r.Live.Text = 'Pressing: ' + (Get-PadWords $b); $r.Border.BorderBrush = (New-Brush '#FFE5B83B') }
+            else { $r.Live.Text = 'Not pressing anything'; $r.Border.BorderBrush = (New-Brush $ColPanel) }
+        }
+    } catch { }
 }
 
 # The bottom ribbon. Fed by Render-Status (health, machine) and Show-UpdateState
@@ -3579,7 +3874,7 @@ function Update-FootChips($s) {
     try {
         if ($null -ne $s) {
             $ov = ([string]$s.overall).ToLower()
-            $txt = 'Drive healthy'; $col = '#FF2FA84F'
+            $txt = 'All healthy'; $col = '#FF2FA84F'
             if ($ov -eq 'warn') { $txt = 'Needs a look'; $col = '#FFE5B83B' }
             elseif ($ov -eq 'bad') { $txt = 'Problem found'; $col = '#FFE0524D' }
             elseif ($ov -ne 'ok') { $txt = 'Not checked yet'; $col = '#FF777777' }
@@ -3589,7 +3884,9 @@ function Update-FootChips($s) {
             if ($s.tier) { $m += '  -  ' + (Get-Culture).TextInfo.ToTitleCase(([string]$s.tier).ToLower()) }
             $script:footMachineText.Text = $m
         }
-        $script:footVersionText.Text = 'v' + $WizardVersion
+        $vt = 'v' + $WizardVersion
+        if ($script:updateOk) { try { if ((Get-UpdInstalled $Ws).Channel -eq 'dev') { $vt += '  (Dev)' } } catch { } }
+        $script:footVersionText.Text = $vt
         $who = ''
         if ($script:socialOk) {
             try { $p = Read-SocialProfile $Ws; if ($null -ne $p -and -not $p.Guest) { $who = [string]$p.Username } } catch { }
@@ -3607,6 +3904,81 @@ function Set-FootAlert([string]$Text, [string]$Area = 'help') {
         $script:footAlert.Tag = $Area
         $script:footAlert.Visibility = 'Visible'
     } catch { }
+}
+
+# ---------------------------------------------------------------------------
+#  OUR OWN TITLE BAR                                            (2026-10-17)
+# ---------------------------------------------------------------------------
+#  Steven: "replace the normal window banner across the top with my own
+#  minimize, full / small screen, and X buttons". Windows' WindowChrome keeps
+#  everything Windows does for a window (dragging, double-click to fill the
+#  screen, snapping to a side, resizing from the edges) and lets the wizard
+#  draw the bar itself. Anything going wrong leaves the normal Windows bar.
+#  Not used when the wizard was opened from a controller (that is full
+#  screen with no bar at all).
+function Initialize-TitleBar {
+    try {
+        $root = $script:win.Content
+        if ($null -eq $root) { return }
+        $barH = 34
+        $shell = New-Object System.Windows.Controls.DockPanel
+        $script:win.Content = $null
+        $bar = New-Object System.Windows.Controls.Border
+        $bar.Height = $barH; $bar.Background = (New-Brush '#FF14141A'); $bar.BorderBrush = (New-Brush '#FF2A2A34'); $bar.BorderThickness = '0,0,0,1'
+        [System.Windows.Controls.DockPanel]::SetDock($bar, 'Top')
+        $dp = New-Object System.Windows.Controls.DockPanel
+        $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
+        [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right')
+        $script:tbMax = $null
+        foreach ($b0 in @(@('min', [string][char]0x2014, 'Minimise'), @('max', [string][char]0x25A1, 'Full screen / window'), @('close', [string][char]0x2715, 'Close'))) {
+            $b = New-Object System.Windows.Controls.Button
+            $b.Content = $b0[1]; $b.Tag = $b0[0]; $b.ToolTip = $b0[2]
+            $b.Width = 46; $b.Height = $barH; $b.FontSize = 14; $b.BorderThickness = '0'; $b.Padding = '0'
+            $b.Background = [System.Windows.Media.Brushes]::Transparent; $b.Foreground = (New-Brush $ColText); $b.Focusable = $false
+            $b.Template = [System.Windows.Markup.XamlReader]::Parse('<ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="Button"><Border x:Name="Bd" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="{TemplateBinding Background}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="' + $(if ($b0[0] -eq 'close') { '#FFC42B1C' } else { (Convert-ThemeHex '#FF2A2A34') }) + '"/></Trigger></ControlTemplate.Triggers></ControlTemplate>')
+            [System.Windows.Shell.WindowChrome]::SetIsHitTestVisibleInChrome($b, $true)
+            $b.Add_Click({ param($s2, $e2)
+                switch ([string]$s2.Tag) {
+                    'min'   { $script:win.WindowState = 'Minimized' }
+                    'max'   { $script:win.WindowState = $(if ($script:win.WindowState -eq 'Maximized') { 'Normal' } else { 'Maximized' }) }
+                    'close' { $script:win.Close() }
+                }
+            })
+            if ($b0[0] -eq 'max') { $script:tbMax = $b }
+            [void]$btns.Children.Add($b)
+        }
+        [void]$dp.Children.Add($btns)
+        $ttl = New-Object System.Windows.Controls.TextBlock
+        $ttl.Text = $script:win.Title; $ttl.Foreground = (New-Brush $ColDim); $ttl.FontSize = 13; $ttl.VerticalAlignment = 'Center'; $ttl.Margin = '14,0,0,0'
+        $script:tbTitle = $ttl
+        [void]$dp.Children.Add($ttl)
+        $bar.Child = $dp
+        [void]$shell.Children.Add($bar)
+        [void]$shell.Children.Add($root)
+        $script:win.Content = $shell
+        $script:tbShell = $shell
+        $ch = New-Object System.Windows.Shell.WindowChrome
+        $ch.CaptionHeight = $barH; $ch.ResizeBorderThickness = New-Object System.Windows.Thickness(6)
+        $ch.GlassFrameThickness = New-Object System.Windows.Thickness(0); $ch.CornerRadius = New-Object System.Windows.CornerRadius(0)
+        $ch.UseAeroCaptionButtons = $false
+        [System.Windows.Shell.WindowChrome]::SetWindowChrome($script:win, $ch)
+        # Filling the screen, Windows lets a window hang a few pixels past
+        # every edge; this pulls the inside back in, and swaps the button.
+        $script:win.Add_StateChanged({
+            try {
+                if ($script:win.WindowState -eq 'Maximized') { $script:tbShell.Margin = New-Object System.Windows.Thickness(7); $script:tbMax.Content = [string][char]0x2750 }
+                else { $script:tbShell.Margin = New-Object System.Windows.Thickness(0); $script:tbMax.Content = [string][char]0x25A1 }
+            } catch { }
+        })
+        Log 'title bar: our own'
+    }
+    catch {
+        Log ('title bar: kept Windows'' own - ' + $_.Exception.Message)
+        try {
+            if ($null -ne $root -and $null -ne $root.Parent -and $root.Parent -ne $script:win) { $root.Parent.Children.Remove($root) }
+            if ($null -eq $script:win.Content -and $null -ne $root) { $script:win.Content = $root }
+        } catch { }
+    }
 }
 
 function Initialize-NewLook {
@@ -3937,7 +4309,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
           <Button x:Name="FootHealth" Style="{StaticResource FootChip}" ToolTip="Health and repair">
             <StackPanel Orientation="Horizontal">
               <Ellipse x:Name="FootHealthDot" Width="9" Height="9" Margin="0,0,7,0" VerticalAlignment="Center" Fill="#FF777777"/>
-              <TextBlock x:Name="FootHealthText" Text="Checking the drive"/>
+              <TextBlock x:Name="FootHealthText" Text="Checking"/>
             </StackPanel>
           </Button>
           <Button x:Name="FootWho" Style="{StaticResource FootChip}" ToolTip="Your profile" Visibility="Collapsed">
@@ -4197,7 +4569,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                   <Image x:Name="TileSettingsIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-gears"/>
                   <TextBlock Grid.Column="1" Text="Settings" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="This computer, this drive, health checks." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="This computer, this setup, health checks." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
             </UniformGrid>
@@ -4216,7 +4588,9 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             <Image x:Name="PadImage" Stretch="None"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
           </Button>
-          <StackPanel x:Name="LightsPanel" Grid.Row="2" Margin="110,0,160,20"/>
+          <!-- The health light, hidden since 2026-10-17: the bottom ribbon's
+               health chip says the same thing on every page (Steven). -->
+          <StackPanel x:Name="LightsPanel" Grid.Row="2" Margin="110,0,160,20" Visibility="Collapsed"/>
           <!-- One way to say something (Steven, 2026-10-14): bugs, ideas and
                game requests all start here. -->
           <TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,28,18" FontSize="14">
@@ -4481,7 +4855,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         <ScrollViewer VerticalScrollBarVisibility="Auto">
           <StackPanel Margin="22,14,22,16" MaxWidth="860" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="Settings" Foreground="#FFE8E8EC" FontSize="28" FontWeight="Bold"/>
-            <TextBlock Text="This computer, this drive, and keeping it all healthy." Foreground="#FFA8A8B4" FontSize="13" Margin="0,4,0,18"/>
+            <TextBlock Text="This computer, this setup, and keeping it all healthy." Foreground="#FFA8A8B4" FontSize="13" Margin="0,4,0,18"/>
             <UniformGrid Columns="2">
               <Button x:Name="HubMachine" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
                 <Grid>
@@ -4497,8 +4871,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                   <Image x:Name="HubFeaturesIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-floppy"/>
-                  <TextBlock Grid.Column="1" Text="This drive" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="The extras this drive adds on top of RetroBat." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                  <TextBlock Grid.Column="1" Text="This setup" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="The extras this setup adds on top of RetroBat." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
               <Button x:Name="HubHealth" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
@@ -4555,6 +4929,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $script:win.Title   = "$WizardName  -  v$WizardVersion"
     try { if ($script:updateOk -and (Get-UpdConfig $Ws).Channel -eq 'dev') { $script:win.Title += '  (dev channel)' } } catch { }
     $script:tabs        = $script:win.FindName('Tabs')
+    if (-not $script:padLaunch) { Initialize-TitleBar }
     Initialize-NewLook
     $script:playButton  = $script:win.FindName('PlayButton')
     $script:lightsPanel = $script:win.FindName('LightsPanel')
@@ -4693,12 +5068,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     # for the same reason PowerShell always is here: whatever launched the
     # wizard may not have handed down a normal PATH.
     if ($null -ne $script:padButton) {
-        $script:padButton.Add_Click({
-            try {
-                Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\control.exe') -ArgumentList 'joy.cpl'
-            }
-            catch { Log ("controllers: could not open joy.cpl - {0}" -f $_.Exception.Message) }
-        })
+        $script:padButton.Add_Click({ Open-ControllerList })
     }
 
     $script:refreshBtn.Add_Click({
@@ -5283,6 +5653,16 @@ function Update-PlayScale {
 # grey box that still opens the controller list.
 function Initialize-PadIcon {
     if ($null -eq $script:padImage) { return }
+    # 2026-10-17 (Steven): the same moving controller as the side bar's
+    # Controllers button, so the two read as one thing. The old picture is
+    # the fallback.
+    if (Test-Path -LiteralPath (Join-Path $WizardDir 'icon-controller.png')) {
+        try {
+            Add-IconArt $script:padImage 'icon-controller' 2 'paused'
+            if ($null -ne $script:homeIcons) { [void]$script:homeIcons.Add($script:padImage) }
+            return
+        } catch { Log ('art: pad button icon - ' + $_.Exception.Message) }
+    }
     $bmp = Get-PixelBitmap (Join-Path $WizardDir 'controllers.png')
     if ($null -eq $bmp) { Log 'art: controllers.png not found, the pad button keeps its box'; return }
     $script:padImage.Source = $bmp
@@ -5562,6 +5942,8 @@ $script:libCatalog   = $null
 $script:libFold      = $null   # console sections folded up on the Games tab (name -> $false)
 $script:libNote      = ''
 $script:libBusy      = @{}       # game id -> 'Downloading...'
+$script:libBusyText  = @{}       # game id -> the words on its row, kept up to date while it downloads
+$script:libDone      = @{}       # game id -> @{ Ok; Message }, the last download's result
 $script:libJobs      = @()       # running downloads
 $script:libTimer     = $null
 $script:gamesSystems = $null
@@ -5703,6 +6085,7 @@ function Start-LibraryJob([string]$Kind, $Game = $null) {
 function Invoke-LibraryTick {
     try {
         $still = @()
+        $failNote = ''
         $redraw = $false
         foreach ($j in @($script:libJobs)) {
             if (-not $j.Handle.IsCompleted) { $still += $j; continue }
@@ -5718,22 +6101,106 @@ function Invoke-LibraryTick {
                 $script:libBusy.Remove($j.Game.Id)
                 Log ("library: {0} - {1}" -f $j.Game.Title, $r.Message)
                 $script:libNote = $r.Message
+                # (2026-10-17) The result stays on the game's own row, and a
+                # failure says so in a box: it used to go back to "Add to my
+                # drive" with the reason only at the top of the page, which
+                # looked like nothing had happened.
+                $script:libDone[$j.Game.Id] = @{ Ok = [bool]$r.Ok; Message = [string]$r.Message }
+                if (-not $r.Ok) { $failNote = ("{0} was not added.`n`n{1}" -f $j.Game.Title, $r.Message) }
             }
             $redraw = $true
         }
         $script:libJobs = $still
+        foreach ($j in $still) {
+            if ($j.Kind -ne 'install') { continue }
+            $tb = $script:libBusyText[$j.Game.Id]
+            if ($null -ne $tb) { try { $tb.Text = Get-LibJobProgress $j.Game } catch { } }
+        }
         if ($still.Count -eq 0) { $script:libTimer.Stop() }
         if ($redraw) { Render-Games }
+        if ($failNote) { [void](Show-Choice $WizardName $failNote @('OK')) }
     }
     catch { Log ("library tick: {0}" -f $_.Exception.Message) }
+}
+
+# Who made a console, for the library's groups. Same groups as the website.
+function Get-ConsoleCompany([string]$System) {
+    if (@('nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gb', 'gbc', 'gba', 'nds', '3ds', 'virtualboy', 'fds') -contains $System) { return 'Nintendo' }
+    if (@('xbox', 'xbox360') -contains $System) { return 'Xbox' }
+    if (@('psx', 'ps2', 'ps3', 'psp', 'psvita') -contains $System) { return 'PlayStation' }
+    if (@('megadrive', 'genesis', 'mastersystem', 'gamegear', 'saturn', 'dreamcast', 'segacd', 'sega32x') -contains $System) { return 'Sega' }
+    return 'PC and more'
+}
+
+# A bigger look at one library game: its picture, everything known about it,
+# and the same Add button.
+function Show-LibGameDetails($Game) {
+    if ($null -eq $Game) { return }
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $Game.Title; $w.Width = 620; $w.SizeToContent = 'Height'; $w.MaxHeight = 720
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $g = New-Object System.Windows.Controls.Grid; $g.Margin = '22'
+    foreach ($cw in @('Auto', '*')) { $cd = New-Object System.Windows.Controls.ColumnDefinition; $cd.Width = $cw; [void]$g.ColumnDefinitions.Add($cd) }
+    $img = New-Object System.Windows.Controls.Image; $img.MaxWidth = 220; $img.MaxHeight = 300; $img.Stretch = 'Uniform'; $img.VerticalAlignment = 'Top'; $img.Margin = '0,0,18,0'
+    $ok = $false
+    if ([string]$Game.Art -ne '') {
+        try { $ab = New-Object System.Windows.Media.Imaging.BitmapImage; $ab.BeginInit(); $ab.UriSource = New-Object System.Uri([string]$Game.Art); $ab.CacheOption = 'OnLoad'; $ab.DecodePixelHeight = 600; $ab.EndInit(); $img.Source = $ab; $ok = $true } catch { }
+    }
+    if (-not $ok) { $cb = Get-PixelBitmap (Get-ConsolePicPath ([string]$Game.System)); if ($null -ne $cb) { Set-FitPicture $img $cb 160 120; $img.Margin = '0,0,18,0' } }
+    [System.Windows.Controls.Grid]::SetColumn($img, 0); [void]$g.Children.Add($img)
+    $sp = New-Object System.Windows.Controls.StackPanel
+    [System.Windows.Controls.Grid]::SetColumn($sp, 1)
+    [void]$sp.Children.Add((New-Text ([string]$Game.Title) $ColText 20 $true))
+    $con = [string]$Game.System
+    try { $sx = @(Get-GamesSystems | Where-Object { $_.Name -eq $con }) | Select-Object -First 1; if ($null -ne $sx) { $con = $sx.FullName } } catch { }
+    $meta = @($con)
+    if ([string]$Game.Players -ne '') { $meta += ('{0} players' -f $Game.Players) }
+    $meta += ('{0} MB' -f [math]::Round($Game.Size / 1MB, 1))
+    $m = New-Text ($meta -join '  -  ') $ColDim 13; $m.Margin = '0,4,0,12'
+    [void]$sp.Children.Add($m)
+    if ([string]$Game.Description -ne '') { [void]$sp.Children.Add((New-Text ([string]$Game.Description) $ColText 14)) }
+    else { [void]$sp.Children.Add((New-Text 'No description yet.' $ColDim 13)) }
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,18,0,0'
+    $script:gdWin = $w
+    $installed = $false; try { $installed = Test-LibGameInstalled $Game @(Get-GamesSystems) } catch { }
+    if ($script:libBusy.ContainsKey($Game.Id)) { [void]$row.Children.Add((New-Text 'Downloading...' $ColAway 13)) }
+    elseif ($installed) { [void]$row.Children.Add((New-Text 'In your games' $ColOnline 13)) }
+    else {
+        $ab2 = New-Object System.Windows.Controls.Button; $ab2.Content = 'Add to my games'; $ab2.Padding = '14,5'; $ab2.FontSize = 14; $ab2.Tag = $Game
+        $ab2.Add_Click({ param($s2, $e2) $script:gdWin.Close(); Invoke-LibraryAdd $s2.Tag })
+        [void]$row.Children.Add($ab2)
+    }
+    $cl = New-Object System.Windows.Controls.Button; $cl.Content = 'Close'; $cl.Padding = '14,5'; $cl.FontSize = 14; $cl.Margin = '8,0,0,0'
+    $cl.Add_Click({ $script:gdWin.Close() })
+    [void]$row.Children.Add($cl)
+    [void]$sp.Children.Add($row)
+    [void]$g.Children.Add($sp)
+    $w.Content = $g
+    [void]$w.ShowDialog()
+}
+
+# How far a library download has got, from the size of what has landed in
+# library\downloads so far (the pieces of a big game, then the joined file).
+function Get-LibJobProgress($Game) {
+    $dl = Join-Path $Ws 'library\downloads'
+    $have = [long]0
+    foreach ($f in @($Game.Files)) {
+        foreach ($p in @(Get-ChildItem -LiteralPath $dl -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq ($f.Name + '.part') -or $_.Name -like ($f.Name + '.piece*') })) { $have += $p.Length }
+    }
+    $total = [math]::Max([long]1, [long]$Game.Size)
+    if ($have -ge $total) { return 'Checking it matches the library...' }
+    $pc = [int](100 * $have / $total)
+    return ('Downloading... {0}% ({1:N0} of {2:N0} MB)' -f $pc, ($have / 1MB), ($total / 1MB))
 }
 
 function Invoke-LibraryAdd($Game) {
     if ($script:libBusy.ContainsKey($Game.Id)) { return }
     $mb = [math]::Round($Game.Size / 1MB, 1)
-    $pick = Show-Choice $WizardName ("Add {0} to your drive?`n`n{1} MB download. It goes into the {2} folder and shows up the next time RetroBat starts." -f $Game.Title, $mb, $Game.System) @('Add it', 'Cancel')
+    $pick = Show-Choice $WizardName ("Add {0} to your games?`n`n{1} MB download. It goes into the {2} folder and shows up the next time RetroBat starts." -f $Game.Title, $mb, $Game.System) @('Add it', 'Cancel')
     if ($pick -ne 'Add it') { return }
     $script:libBusy[$Game.Id] = 'Downloading...'
+    $script:libDone.Remove($Game.Id)
     Start-LibraryJob 'install' $Game
     Render-Games
 }
@@ -5782,12 +6249,31 @@ function Render-Games {
         # folded while the tab redraws (downloads redraw it often).
         $systems = Get-GamesSystems
         if ($null -eq $script:libFold) { $script:libFold = @{} }
-        $order = @('nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gb', 'gbc', 'gba', 'nds', '3ds', 'flash', 'scummvm', 'windows')
-        $pics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'gamecube'; wii = 'wiimote'; wiiu = 'wiimote'; switch = 'switch'
-                   gb = 'gameboy'; gbc = 'gameboy'; gba = 'gba'; nds = 'ds'; '3ds' = 'ds' }
+        $order = @('nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gb', 'gbc', 'gba', 'nds', '3ds', 'xbox', 'xbox360', 'psx', 'ps2', 'ps3', 'flash', 'scummvm', 'windows')
+        $pics = $script:ConsolePics
         $sysNames = @(@($cat.Games) | ForEach-Object { [string]$_.System } | Select-Object -Unique)
-        $sysNames = @($sysNames | Sort-Object @{ Expression = { $i = [array]::IndexOf($order, $_); if ($i -lt 0) { 99 } else { $i } } }, @{ Expression = { $_ } })
+        $coOrder = @('Nintendo', 'Xbox', 'PlayStation', 'Sega', 'PC and more')
+        $sysNames = @($sysNames | Sort-Object @{ Expression = { [array]::IndexOf($coOrder, (Get-ConsoleCompany $_)) } }, @{ Expression = { $i = [array]::IndexOf($order, $_); if ($i -lt 0) { 99 } else { $i } } }, @{ Expression = { $_ } })
+        # (2026-10-17) Consoles grouped by who made them, like the website.
+        $coName = ''; $coBody = $null
         foreach ($sn in $sysNames) {
+            $co = Get-ConsoleCompany $sn
+            if ($co -ne $coName) {
+                $coName = $co
+                $coCount = @(@($cat.Games) | Where-Object { (Get-ConsoleCompany ([string]$_.System)) -eq $co }).Count
+                $coExp = New-Object System.Windows.Controls.Expander
+                $coExp.Margin = '0,16,0,0'; $coExp.Tag = ('co:' + $co)
+                $coHead = New-Text ('{0}   ' -f $co) $ColText 17 $true
+                $coHead.Inlines.Add((New-Object System.Windows.Documents.Run(('{0} game{1}' -f $coCount, $(if ($coCount -eq 1) { '' } else { 's' })))))
+                $coHead.Inlines.LastInline.FontSize = 12; $coHead.Inlines.LastInline.FontWeight = 'Normal'; $coHead.Inlines.LastInline.Foreground = (New-Brush $ColDim)
+                $coExp.Header = $coHead
+                $coExp.IsExpanded = -not ($script:libFold.ContainsKey('co:' + $co) -and -not $script:libFold['co:' + $co])
+                $coExp.Add_Expanded({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $true } })
+                $coExp.Add_Collapsed({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $false } })
+                $coBody = New-Object System.Windows.Controls.StackPanel; $coBody.Margin = '14,0,0,0'
+                $coExp.Content = $coBody
+                [void]$panel.Children.Add($coExp)
+            }
             $list = @(@($cat.Games) | Where-Object { [string]$_.System -eq $sn } | Sort-Object @{ Expression = { ([string]$_.Title).ToLower() } })
             $full = @($systems | Where-Object Name -eq $sn | ForEach-Object FullName)
             $head = New-Object System.Windows.Controls.StackPanel; $head.Orientation = 'Horizontal'
@@ -5795,8 +6281,8 @@ function Render-Games {
             $bmp = Get-PixelBitmap (Join-Path $WizardDir ('profile-' + $pn + '.png'))
             if ($null -ne $bmp) {
                 $img = New-Object System.Windows.Controls.Image
-                $img.Source = $bmp; $img.Height = 30; $img.Width = 44; $img.Stretch = 'Uniform'; $img.Margin = '0,0,10,0'
-                [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+                $img.Height = 30; $img.Width = 44; $img.Stretch = 'Uniform'; $img.Margin = '0,0,10,0'
+                Set-FitPicture $img $bmp 44 30
                 [void]$head.Children.Add($img)
             }
             $hn = New-Text $(if ($full.Count -gt 0) { $full[0] } else { $sn.ToUpper() }) $ColText 14 $true; $hn.VerticalAlignment = 'Center'
@@ -5807,18 +6293,31 @@ function Render-Games {
             $exp.Header = $head; $exp.Margin = '0,12,0,0'; $exp.Tag = $sn
             # Folded until opened (Steven, 2026-10-14); one you open stays open.
             $exp.IsExpanded = ($script:libFold.ContainsKey($sn) -and $script:libFold[$sn])
-            $exp.Add_Expanded({ param($s2, $e2) $script:libFold[[string]$s2.Tag] = $true })
-            $exp.Add_Collapsed({ param($s2, $e2) $script:libFold[[string]$s2.Tag] = $false })
+            $exp.Add_Expanded({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $true } })
+            $exp.Add_Collapsed({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $false } })
             $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,2,0,4'
             foreach ($g in $list) {
                 $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,6,0,0'
                 $right = New-Object System.Windows.Controls.StackPanel; $right.Orientation = 'Horizontal'; $right.VerticalAlignment = 'Top'
                 [System.Windows.Controls.DockPanel]::SetDock($right, 'Right')
-                if ($script:libBusy.ContainsKey($g.Id)) { [void]$right.Children.Add((New-Text $script:libBusy[$g.Id] $ColAway 12)) }
-                elseif (Test-LibGameInstalled $g $systems) { [void]$right.Children.Add((New-Text 'On your drive' $ColOnline 12)) }
+                $done = $script:libDone[$g.Id]
+                if ($script:libBusy.ContainsKey($g.Id)) {
+                    $bt = New-Text $script:libBusy[$g.Id] $ColAway 12
+                    try { $bt.Text = Get-LibJobProgress $g } catch { }
+                    $script:libBusyText[$g.Id] = $bt
+                    [void]$right.Children.Add($bt)
+                }
+                elseif (Test-LibGameInstalled $g $systems) {
+                    $okTxt = $(if ($null -ne $done -and $done.Ok) { 'Added - checked, it matches the library' } else { 'In your games' })
+                    [void]$right.Children.Add((New-Text $okTxt $ColOnline 12))
+                }
                 else {
+                    if ($null -ne $done -and -not $done.Ok) {
+                        $ft = New-Text 'Did not work: ' $ColBusy 12; $ft.ToolTip = $done.Message; $ft.VerticalAlignment = 'Center'; $ft.Margin = '0,0,6,0'
+                        [void]$right.Children.Add($ft)
+                    }
                     $b = New-Object System.Windows.Controls.Button
-                    $b.Content = 'Add to my drive'; $b.Padding = '10,3'; $b.FontSize = 13; $b.Tag = $g
+                    $b.Content = $(if ($null -ne $done -and -not $done.Ok) { 'Try again' } else { 'Add to my games' }); $b.Padding = '10,3'; $b.FontSize = 13; $b.Tag = $g
                     $b.Add_Click({ param($s2, $e2) Invoke-LibraryAdd $s2.Tag })
                     [void]$right.Children.Add($b)
                 }
@@ -5845,14 +6344,20 @@ function Render-Games {
                 $meta = @()
                 if ($g.Players -ne '') { $meta += ('{0} players' -f $g.Players) }
                 $meta += ('{0} MB' -f [math]::Round($g.Size / 1MB, 1))
-                [void]$info.Children.Add((New-Text ($g.Title + '   ') $ColText 14 $true))
+                # The name opens a bigger look at the game (2026-10-17).
+                $tl = New-Object System.Windows.Controls.TextBlock; $tl.FontSize = 14; $tl.FontWeight = 'Bold'
+                $hl = New-Object System.Windows.Documents.Hyperlink; $hl.Foreground = (New-Brush $ColText); $hl.TextDecorations = $null
+                [void]$hl.Inlines.Add($g.Title); $hl.Tag = $g; $hl.ToolTip = 'More about this game'
+                $hl.Add_Click({ param($s2, $e2) Show-LibGameDetails $s2.Tag })
+                [void]$tl.Inlines.Add($hl)
+                [void]$info.Children.Add($tl)
                 [void]$info.Children.Add((New-Text ($meta -join '  -  ') $ColDim 12))
                 if ($g.Description -ne '') { $d = New-Text $g.Description $ColDim 12; $d.TextWrapping = 'Wrap'; [void]$info.Children.Add($d) }
                 [void]$row.Children.Add($info)
                 [void]$body.Children.Add($row)
             }
             $exp.Content = $body
-            [void]$panel.Children.Add($exp)
+            [void]$coBody.Children.Add($exp)
         }
     }
     $fr = New-Object System.Windows.Controls.StackPanel; $fr.Orientation = 'Horizontal'; $fr.Margin = '0,12,0,0'
@@ -5860,6 +6365,13 @@ function Render-Games {
     $rb.Content = 'Refresh'; $rb.Padding = '10,3'; $rb.FontSize = 13
     $rb.Add_Click({ $script:libCatalog = $null; $script:libNote = ''; Render-Games })
     [void]$fr.Children.Add($rb)
+    # (2026-10-17) Ask for a game, straight from the library.
+    if ($script:bugOk) {
+        $rq = New-Object System.Windows.Controls.Button
+        $rq.Content = 'Request a game'; $rq.Padding = '10,3'; $rq.FontSize = 13; $rq.Margin = '8,0,0,0'
+        $rq.Add_Click({ Show-BugDialog 'game' })
+        [void]$fr.Children.Add($rq)
+    }
     $nt = New-Text ('   ' + $script:libNote) $ColDim 12; $nt.VerticalAlignment = 'Center'
     [void]$fr.Children.Add($nt)
     [void]$panel.Children.Add($fr)
@@ -6021,7 +6533,7 @@ function Render-Netplay {
             [void]$nameRow.Children.Add($ub)
         }
         elseif ($want -eq '') {
-            [void]$nameRow.Children.Add((New-Text '   (make a profile on the Profile tab and this follows it)' $ColDim 12))
+            [void]$nameRow.Children.Add((New-Text '   (make a profile on the Social page and this follows it)' $ColDim 12))
         }
         [void]$panel.Children.Add($nameRow)
 
@@ -6081,7 +6593,7 @@ function Render-Netplay {
 
     [void]$panel.Children.Add((New-NetCard 'Steam games' 'GREAT for Jackbox' $ColOnline @(
         'Steam Remote Play Together: start the game in Steam, press Shift+Tab, right-click a friend, Remote Play Together.',
-        'Friends do not need to own the game. Works for games with local multiplayer. Steam setup is on the Machine tab.') @()))
+        'Friends do not need to own the game. Works for games with local multiplayer. Steam setup is in Settings > This computer.') @()))
 
     $pex = ''
     try { $pex = Get-ParsecExe } catch { }
@@ -6094,7 +6606,7 @@ function Render-Netplay {
     $pr = New-NetButton 'About Pretendo' { Open-NetplayLink 'https://pretendo.network' }
     [void]$panel.Children.Add((New-NetCard 'Wii U online' 'EXPERIMENTAL' $ColAway @(
         'Mario Kart 8, Splatoon and a few others can go online again through Pretendo, a fan-made stand-in for Nintendo''s old servers.',
-        'It needs files from a real Wii U and a Pretendo account, so it is not set up on this drive yet. Parsec works today.') @($pr)))
+        'It needs files from a real Wii U and a Pretendo account, so it is not set up here yet. Parsec works today.') @($pr)))
 }
 
 # ===========================================================================
@@ -6124,7 +6636,8 @@ $script:socialTimer  = $null
 $script:socialFetched = $null
 $script:socialNote   = ''
 $script:socialSearch = ''
-$script:AvatarIcons  = @('nes', 'snes', 'n64', 'gamecube', 'wiimote', 'gameboy', 'gba', 'ds', 'switch')
+$script:AvatarIcons  = @('nes', 'snes', 'n64', 'gamecube', 'wiiremote', 'gamepad', 'switch', 'gameboy', 'gba', 'ds',
+                         'xbox', 'xboxone', 'xboxseries', 'playstation', 'ps4', 'ps5', 'pad', 'mouse')
 $ColOnline = '#FF2FA84F'; $ColAway = '#FFE5B83B'; $ColBusy = '#FFE0524D'; $ColPlaying = '#FF6C8CFF'
 
 function Get-SocialDotColour([string]$Kind) {
@@ -6199,7 +6712,9 @@ function New-SocialAvatar($Player, [int]$Size, [bool]$Mine = $false) {
             }
         }
         else {
-            $path = Join-Path $WizardDir ('profile-' + ($av -replace '^icon:', '') + '.png')
+            # 'wiimote' was the old, broken Wii Remote (gone 2026-10-14); the
+            # new one is 'wiiremote'.
+            $path = Join-Path $WizardDir ('profile-' + (($av -replace '^icon:', '') -replace '^wiimote$', 'wiiremote') + '.png')
             [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
         }
         $bmp = Get-PixelBitmap $path
@@ -6369,7 +6884,7 @@ function Render-Social {
     $panel.Children.Clear()
 
     if (-not $script:socialOk) {
-        [void]$panel.Children.Add((New-Text 'scripts\SocialEngine.ps1 is missing, so there is no Profile tab on this drive.' $ColDim 14))
+        [void]$panel.Children.Add((New-Text 'scripts\SocialEngine.ps1 is missing, so there is no Social page in this setup.' $ColDim 14))
         return
     }
     $prof = $null
@@ -6483,7 +6998,7 @@ function Render-Social {
         [void]$panel.Children.Add($pw)
     }
     if ($token -eq '') {
-        $w = New-Text 'This drive has no key for the friends list (social\social-token.txt), so nothing can be sent or read.' $ColAway 13
+        $w = New-Text 'This setup has no key for the friends list (social\social-token.txt), so nothing can be sent or read.' $ColAway 13
         $w.Margin = '2,8,0,0'
         [void]$panel.Children.Add($w)
     }
@@ -6666,7 +7181,7 @@ function Invoke-FavPick([int]$Index) {
     $prof = Read-SocialProfile $Ws
     if ($null -eq $prof -or $prof.Guest) { return }
     if (-not $script:shortcutMakerOk) {
-        [void](Show-Choice $WizardName 'The game list comes from scripts\ShortcutMaker.ps1, which is missing on this drive.' @('OK'))
+        [void](Show-Choice $WizardName 'The game list comes from scripts\ShortcutMaker.ps1, which is missing in this setup.' @('OK'))
         return
     }
     $cur = @(Get-SocialFavs $Root $prof)[$Index]
@@ -6977,11 +7492,32 @@ function Get-MyGameStats {
 }
 
 # The console's pixel picture, for a game with no box art.
+# One list for every place that shows a console's picture (2026-10-17: the
+# Wii Remote and GamePad split in two, and Xbox and PlayStation added).
+$script:ConsolePics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'gamecube'; wii = 'wiiremote'; wiiu = 'gamepad'; switch = 'switch'
+                         gb = 'gameboy'; gbc = 'gameboy'; gba = 'gba'; nds = 'ds'; '3ds' = 'ds'
+                         xbox = 'xbox'; xbox360 = 'xboxone'; psx = 'playstation'; ps2 = 'playstation'; ps3 = 'playstation' }
 function Get-ConsolePicPath([string]$System) {
-    $pics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'gamecube'; wii = 'wiimote'; wiiu = 'wiimote'; switch = 'switch'
-               gb = 'gameboy'; gbc = 'gameboy'; gba = 'gba'; nds = 'ds'; '3ds' = 'ds' }
-    $n = $(if ($pics.ContainsKey($System)) { $pics[$System] } else { 'pc' })
+    $n = $(if ($script:ConsolePics.ContainsKey($System)) { $script:ConsolePics[$System] } else { 'pc' })
     return (Join-Path $WizardDir ('profile-' + $n + '.png'))
+}
+
+# Puts a pixel picture into an Image that has to fit a box. Small enough:
+# its real size, pixels kept square. Bigger (the 2026-10-17 controller
+# pictures are drawn larger than the old ones): shrunk smoothly to fit.
+function Set-FitPicture($Img, $Bmp, [int]$MaxW, [int]$MaxH) {
+    if ($null -eq $Img -or $null -eq $Bmp) { return }
+    $Img.Source = $Bmp
+    $pw = [int]$Bmp.PixelWidth; $ph = [int]$Bmp.PixelHeight
+    if ($pw -le $MaxW -and $ph -le $MaxH) {
+        $Img.Stretch = 'None'
+        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($Img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+    }
+    else {
+        $f = [math]::Min($MaxW / [double]$pw, $MaxH / [double]$ph)
+        $Img.Stretch = 'Uniform'; $Img.Width = [math]::Floor($pw * $f); $Img.Height = [math]::Floor($ph * $f)
+        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($Img, [System.Windows.Media.BitmapScalingMode]::HighQuality)
+    }
 }
 
 # Box art for a game a FRIEND played: this drive's own copy of that game, if
@@ -7260,7 +7796,7 @@ function Invoke-SocialGuest {
 function Invoke-SocialLogout {
     $p = Read-SocialProfile $Ws
     if ($null -eq $p -or $p.Guest) { return }
-    $msg = "Log out?`n`nYou go offline and this drive goes back to the login screen. Your profile stays online, so you can log back in here or on any drive with the wizard."
+    $msg = "Log out?`n`nYou go offline and this setup goes back to the login screen. Your profile stays online, so you can log back in here or on any setup with the wizard."
     if ($p.Pw -eq '') { $msg += "`n`nYou have no password yet, so anybody could log in as you. Set one first if that matters." }
     if ((Show-Choice $WizardName $msg @('Log out', 'Cancel')) -ne 'Log out') { return }
     try {
@@ -7286,7 +7822,7 @@ function Get-SocialSelfPresence($Prof, $Players, [DateTime]$NowUtc, [bool]$HasKe
     $extra = $(if ($Prof.Text -ne '') { ' - ' + $Prof.Text } else { '' })
     if ($Prof.Status -eq 'invisible') { return [pscustomobject]@{ Kind = 'offline'; Line = 'Invisible: friends see you as offline' } }
     if (-not $live) {
-        $why = $(if (-not $HasKey) { 'no key on this drive' } else { 'not connected yet (no internet, or it is still starting)' })
+        $why = $(if (-not $HasKey) { 'no key in this setup' } else { 'not connected yet (no internet, or it is still starting)' })
         return [pscustomobject]@{ Kind = 'offline'; Line = "Offline - $why" }
     }
     if ($mine.InGame) { return [pscustomobject]@{ Kind = 'playing'; Line = (Get-SocialPresence $mine $NowUtc).Line } }
@@ -7363,7 +7899,7 @@ function Invoke-SocialLoginSearch {
     if ($script:socialSearch.Trim() -eq '') { Render-Social; return }
     $all = Get-SocialPlayers $Ws
     $list = $(if ($all.Ok) { @($all.Players) } else { @(Get-SocialCachedPlayers $Ws) })
-    if (-not $all.Ok) { $script:loginNote = 'Could not reach GitHub; searched the last list this drive saw.' }
+    if (-not $all.Ok) { $script:loginNote = 'Could not reach GitHub; searched the last list this setup saw.' }
     $script:loginHits = @(Find-SocialPlayers ([pscustomobject]@{ Id = '' }) $list $script:socialSearch)
     if ($script:loginHits.Count -eq 0 -and $script:loginNote -eq '') { $script:loginNote = 'Nobody by that name.' }
     Render-Social
@@ -7761,33 +8297,112 @@ function Invoke-AdminRefresh {
 #  press. The engine (UpdateEngine.ps1, TWO CHANNELS) explains the rules.
 function Add-AdminChannelCard($panel) {
     if (-not $script:updateOk) { return }
+    #  Rebuilt 2026-10-17. Steven: "I'm never sure which I'm looking at,
+    #  because one's green and the other is gold", and switching then needed a
+    #  second press on the Update now bar. Now: one badge that SAYS which one
+    #  this drive runs, what each channel holds on GitHub, and one press to
+    #  switch, which asks once and then shows the download and install.
     $cfg = $null; $inst = $null
     try { $cfg = Get-UpdConfig $Ws; $inst = Get-UpdInstalled $Ws } catch { return }
+    $ci = $null; try { $ci = Read-UpdChannelInfo $Ws } catch { }
+    $workshop = $false; try { $workshop = Test-UpdWorkshop $Ws } catch { }
+    $gold = '#FFE5B83B'; $violet = '#FF9B7BFF'
     $card = New-Object System.Windows.Controls.Border
-    $card.Background = (New-Brush $ColPanel); $card.Padding = '14,10'; $card.Margin = '0,12,0,0'; $card.CornerRadius = '4'
+    $card.Background = (New-Brush $ColPanel); $card.Padding = '16,12'; $card.Margin = '0,12,0,0'; $card.CornerRadius = '6'
     $sp = New-Object System.Windows.Controls.StackPanel
+
+    # --- what this drive runs, said in words, in one badge ------------------
     $hd = New-Object System.Windows.Controls.StackPanel; $hd.Orientation = 'Horizontal'
-    [void]$hd.Children.Add((New-Text 'Which version this drive runs' $ColText 15 $true))
-    [void]$sp.Children.Add($hd)
-    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
-    foreach ($opt in @(@('Stable', 'stable', 'what everybody has'), @('Dev', 'dev', 'the one being worked on'))) {
-        $b = New-Object System.Windows.Controls.Button
-        $b.Padding = '14,4'; $b.FontSize = 13; $b.Margin = '0,0,8,0'; $b.Tag = $opt[1]; $b.ToolTip = $opt[2]
-        $b.Content = $opt[0]
-        if ($cfg.Channel -eq $opt[1]) {
-            $b.Background = (New-Brush '#FF2A3A2E'); $b.BorderBrush = (New-Brush '#FF2FA84F'); $b.BorderThickness = '2'; $b.FontWeight = 'Bold'
-        }
-        $b.Add_Click({ param($s2, $e2) Invoke-AdminChannel ([string]$s2.Tag) })
-        [void]$row.Children.Add($b)
+    $t = New-Text 'This setup runs' $ColText 15 $true; $t.VerticalAlignment = 'Center'
+    [void]$hd.Children.Add($t)
+    $runDev = $(if ($inst.Tag -ne '') { $inst.Channel -eq 'dev' } else { $cfg.Channel -eq 'dev' })
+    $bd = New-Object System.Windows.Controls.Border
+    $bd.CornerRadius = '4'; $bd.Padding = '10,3'; $bd.Margin = '10,0,0,0'; $bd.VerticalAlignment = 'Center'
+    $bd.Background = (New-Brush $(if ($runDev) { $violet } else { $gold }))
+    $bt = New-Text $(if ($runDev) { ('DEV  ' + $WizardVersion) } else { ('STABLE  ' + $WizardVersion) }) '#FF1B1B22' 13 $true
+    $bd.Child = $bt
+    [void]$hd.Children.Add($bd)
+    if ($workshop) {
+        $wb = New-Object System.Windows.Controls.Border
+        $wb.CornerRadius = '4'; $wb.Padding = '10,3'; $wb.Margin = '8,0,0,0'; $wb.VerticalAlignment = 'Center'
+        $wb.BorderBrush = (New-Brush $gold); $wb.BorderThickness = '1'
+        $wb.Child = (New-Text 'WORKSHOP DRIVE' $gold 12 $true)
+        [void]$hd.Children.Add($wb)
     }
-    $now = ('Running {0}' -f $WizardVersion)
-    if ($inst.Tag -ne '') { $now += (', installed from {0} ({1})' -f $inst.Channel, $inst.Tag.Substring(0, [math]::Min(7, $inst.Tag.Length))) }
-    $nt = New-Text ('   ' + $now) $ColDim 12; $nt.VerticalAlignment = 'Center'
-    [void]$row.Children.Add($nt)
-    [void]$sp.Children.Add($row)
-    $why = New-Text 'Stable is what friends get. Dev is what Claude last published while working on the next version. Switching shows the Update now bar; nothing changes until it is pressed. Any changes on this drive that were never published are kept, and Help > Go back one update puts them back.' $ColDim 12
-    $why.Margin = '0,8,0,0'
-    [void]$sp.Children.Add($why)
+    [void]$sp.Children.Add($hd)
+
+    # --- what each channel holds right now ----------------------------------
+    $sv = $(if ($null -ne $ci -and $ci.StableVersion -ne '') { $ci.StableVersion } else { '...' })
+    $dv = $(if ($null -ne $ci -and $ci.DevVersion -ne '') { $ci.DevVersion } else { '...' })
+    $grid = New-Object System.Windows.Controls.Grid; $grid.Margin = '0,10,0,0'
+    foreach ($w0 in @('Auto', '*')) { $cd = New-Object System.Windows.Controls.ColumnDefinition; $cd.Width = $w0; [void]$grid.ColumnDefinitions.Add($cd) }
+    $rowN = 0
+    foreach ($opt in @(@('Stable', 'stable', $sv, 'what everybody has', $gold), @('Dev', 'dev', $dv, 'what Claude is working on next', $violet))) {
+        $rd = New-Object System.Windows.Controls.RowDefinition; $rd.Height = 'Auto'; [void]$grid.RowDefinitions.Add($rd)
+        $isOn = ($cfg.Channel -eq $opt[1])
+        $b = New-Object System.Windows.Controls.Button
+        $b.Padding = '12,5'; $b.FontSize = 13; $b.Margin = '0,4,12,4'; $b.Tag = $opt[1]; $b.MinWidth = 150
+        if ($isOn) {
+            $b.Content = ([char]0x2714 + '  ' + $opt[0] + ' - in use')
+            $b.FontWeight = 'Bold'; $b.BorderBrush = (New-Brush $opt[4]); $b.BorderThickness = '2'; $b.IsHitTestVisible = $false
+        }
+        elseif ($workshop) { $b.Content = ($opt[0] + ' - off here'); $b.IsEnabled = $false }
+        else {
+            $b.Content = ('Switch to ' + $opt[0])
+            $b.Add_Click({ param($s2, $e2) Invoke-AdminChannel ([string]$s2.Tag) })
+        }
+        [System.Windows.Controls.Grid]::SetRow($b, $rowN); [System.Windows.Controls.Grid]::SetColumn($b, 0)
+        [void]$grid.Children.Add($b)
+        $lt = New-Text ('{0} on GitHub: {1}  -  {2}' -f $opt[0], $opt[2], $opt[3]) $ColDim 13
+        $lt.VerticalAlignment = 'Center'
+        [System.Windows.Controls.Grid]::SetRow($lt, $rowN); [System.Windows.Controls.Grid]::SetColumn($lt, 1)
+        [void]$grid.Children.Add($lt)
+        $rowN++
+    }
+    [void]$sp.Children.Add($grid)
+
+    # --- what it means ---------------------------------------------------
+    if ($workshop) {
+        $why = 'This is the workshop drive: Claude puts new work straight onto it, so it already has the newest of everything, and updates never install here (that keeps an older copy from GitHub from landing on top of new work). Stable and Dev only matter on other drives and fresh installs.'
+    }
+    else {
+        $why = 'Switching downloads the other version and installs it straight away, with a progress window (usually under a minute). Saves, games and settings stay. Switch back the same way any time.'
+        try {
+            $st = Read-UpdStatus $Ws
+            if ([string]$st['state'] -eq 'available' -or [string]$st['state'] -eq 'ready') {
+                $why = ('A newer {0} version ({1}) is waiting: press Update now at the top. ' -f $(if ($cfg.Channel -eq 'dev') { 'Dev' } else { 'Stable' }), [string]$st['version']) + $why
+            }
+        } catch { }
+    }
+    $wt = New-Text $why $ColDim 12; $wt.Margin = '0,8,0,0'
+    [void]$sp.Children.Add($wt)
+    $card.Child = $sp
+    [void]$panel.Children.Add($card)
+}
+
+# New setups scrape box art by themselves with a shared ScreenScraper login
+# (Steven's choice, 2026-10-17). This copies the login saved in RetroBat on
+# THIS setup into defaults\scraper.txt, which ships with the next update.
+function Add-AdminScraperCard($panel) {
+    if (-not $script:frdOk) { return }
+    $card = New-Object System.Windows.Controls.Border
+    $card.Background = (New-Brush $ColPanel); $card.Padding = '16,12'; $card.Margin = '0,12,0,0'; $card.CornerRadius = '6'
+    $sp = New-Object System.Windows.Controls.StackPanel
+    [void]$sp.Children.Add((New-Text 'Box art for new setups' $ColText 15 $true))
+    $has = Test-Path -LiteralPath (Join-Path $Ws 'defaults\scraper.txt')
+    $t = New-Text $(if ($has) { 'New setups start signed in to ScreenScraper with the shared login, so they find box art and videos by themselves.' } else { 'New setups are not signed in to ScreenScraper yet. Share the login saved in RetroBat here, and they find box art and videos by themselves.' }) $ColDim 13
+    $t.Margin = '0,4,0,8'
+    [void]$sp.Children.Add($t)
+    $b = New-SocialButton $(if ($has) { 'Share my login again' } else { 'Share my ScreenScraper login' }) {
+        $pick = Show-Choice $WizardName "Share the ScreenScraper login saved in RetroBat on this setup with every new setup?`n`nIt goes out with the next published update, in a file anyone could read (scrambled, not locked). ScreenScraper may slow down an account many people use at once." @('Share it', 'Cancel')
+        if ($pick -ne 'Share it') { return }
+        $r = Save-FrdScraperFromThisSetup $Root $Ws
+        Log ('admin: scraper login - ' + $r.Message)
+        [void](Show-Choice $WizardName $r.Message @('OK'))
+        Render-Admin
+    }
+    $b.HorizontalAlignment = 'Left'; $b.Margin = '0'
+    [void]$sp.Children.Add($b)
     $card.Child = $sp
     [void]$panel.Children.Add($card)
 }
@@ -7796,12 +8411,22 @@ function Invoke-AdminChannel([string]$Channel) {
     try {
         $cur = (Get-UpdConfig $Ws).Channel
         if ($cur -eq $Channel) { return }
+        if (Test-UpdWorkshop $Ws) {
+            [void](Show-Choice $WizardName 'This is the workshop drive, so updates never install here. It already has the newest work. Try Stable or Dev on another drive or a fresh install.' @('OK'))
+            return
+        }
+        $name = $(if ($Channel -eq 'dev') { 'Dev' } else { 'Stable' })
+        $ci = Read-UpdChannelInfo $Ws
+        $ver = $(if ($Channel -eq 'dev') { $ci.DevVersion } else { $ci.StableVersion })
+        $verTxt = $(if ($ver -ne '') { (' (version ' + $ver + ')') } else { '' })
+        $more = $(if ($Channel -eq 'dev') { 'Dev is the version being worked on: newer, but it may have rough edges.' } else { 'Stable is what everybody has.' })
+        $pick = Show-Choice $WizardName ("Switch this setup to {0}{1}?`n`n{2}`n`nThe wizard closes, downloads it, installs it and opens again, with a progress window the whole way. Saves, games and settings stay. You can switch back the same way." -f $name, $verTxt, $more) @("Switch to $name", 'Cancel')
+        if ($pick -ne "Switch to $name") { return }
+        if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it completely first, then switch.' @('OK')); return }
         Set-UpdChannel $Ws $Channel
-        Log ("admin: update channel {0} -> {1}" -f $cur, $Channel)
-        $script:adminNote = $(if ($Channel -eq 'dev') { 'Dev chosen. Looking for the dev version...' } else { 'Stable chosen. Looking for the stable version...' })
+        Log ("admin: update channel {0} -> {1}, installing now" -f $cur, $Channel)
+        Invoke-WizardUpdate 'Update' -NoAsk -Title ("Switching to " + $name) -RevertChannel $cur
     } catch { Log ("admin: channel - {0}" -f $_.Exception.Message) }
-    Render-Admin
-    Start-UpdatePeek
 }
 
 function Render-Admin {
@@ -7818,6 +8443,7 @@ function Render-Admin {
     $ex = Get-SocialCachedExtras $Ws
 
     Add-AdminChannelCard $panel
+    Add-AdminScraperCard $panel
 
     # --- reports ----------------------------------------------------------------
     [void]$panel.Children.Add((New-SectionHeader 'Reports and suggestions'))
@@ -7878,6 +8504,11 @@ function Render-Admin {
         $script:adminLibText = New-Text $(if ($null -ne $script:adminLibJob) { 'Working...' } else { '' }) $ColAway 13
         $script:adminLibText.Margin = '0,6,0,0'
         [void]$panel.Children.Add($script:adminLibText)
+        # (2026-10-17) The queue while it runs: what is done, what is going
+        # up, and a cross for anything still waiting.
+        $script:adminQueuePanel = New-Object System.Windows.Controls.StackPanel; $script:adminQueuePanel.Margin = '0,4,0,0'
+        [void]$panel.Children.Add($script:adminQueuePanel)
+        Update-AdminQueueList
     }
 
     # --- phone alerts ----------------------------------------------------------
@@ -7952,7 +8583,7 @@ function Invoke-AdminSetAdmin([string]$Id, [bool]$Add) {
 }
 
 function Invoke-AdminAdd {
-    $name = (Show-TextInput $WizardName 'Their username, exactly as it shows on the Profile tab:' '').Trim()
+    $name = (Show-TextInput $WizardName 'Their username, exactly as it shows on the Social page:' '').Trim()
     if ($name -eq '') { return }
     $who = @(Get-SocialPlayersNow | Where-Object { $null -ne $_ -and $_.Username -eq $name }) | Select-Object -First 1
     if ($null -eq $who) { [void](Show-Choice $WizardName "Nobody called '$name'. Press Refresh first if they are new." @('OK')); return }
@@ -7990,6 +8621,99 @@ function Invoke-AdminLibKey {
 # the name, players, description and box art from RetroBat's gamelist.xml.
 # Only a game with no box art asks: pick a picture or skip. One yes, then it
 # all runs in the background, one game after another.
+# The games about to be published, in order, to rearrange or cross off
+# before anything is sent (Steven, 2026-10-17). Returns the list, or $null.
+function Show-QueueEditor($Items, [string[]]$Lines) {
+    Close-Splash
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 640; $w.Height = 520
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+    $hd = New-Text 'Publish these to the online library? They go up in this order, one at a time. Move them with the arrows, or cross one off. Only games that may be shared: homebrew, freeware, fan-made, your own.' $ColText 14
+    $hd.Margin = '0,0,0,10'
+    [System.Windows.Controls.DockPanel]::SetDock($hd, 'Top'); [void]$dp.Children.Add($hd)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($row, 'Bottom')
+    $script:qeOrder = New-Object System.Collections.ArrayList
+    for ($k = 0; $k -lt @($Items).Count; $k++) { [void]$script:qeOrder.Add($k) }
+    $script:qeLines = $Lines; $script:qeWin = $w; $script:qeOk = $false
+    $script:qeList = New-Object System.Windows.Controls.StackPanel
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'; $sv.Content = $script:qeList
+    $script:qeGo = New-Object System.Windows.Controls.Button
+    $script:qeGo.Content = 'Publish'; $script:qeGo.Padding = '16,7'; $script:qeGo.FontSize = 14; $script:qeGo.Margin = '8,0,0,0'
+    $script:qeGo.Add_Click({ $script:qeOk = $true; $script:qeWin.Close() })
+    $cn = New-Object System.Windows.Controls.Button
+    $cn.Content = 'Cancel'; $cn.Padding = '16,7'; $cn.FontSize = 14
+    $cn.Add_Click({ $script:qeWin.Close() })
+    [void]$row.Children.Add($cn); [void]$row.Children.Add($script:qeGo)
+    [void]$dp.Children.Add($row); [void]$dp.Children.Add($sv)
+    $w.Content = $dp
+    Update-QueueEditor
+    [void]$w.ShowDialog()
+    if (-not $script:qeOk -or $script:qeOrder.Count -eq 0) { return $null }
+    $out = @(); foreach ($k in $script:qeOrder) { $out += $Items[$k] }
+    return ,$out
+}
+function Update-QueueEditor {
+    $script:qeList.Children.Clear()
+    $pos = 0
+    foreach ($k in @($script:qeOrder)) {
+        $pos++
+        $r = New-Object System.Windows.Controls.DockPanel; $r.Margin = '0,4,0,0'
+        $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
+        [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right')
+        foreach ($b0 in @(@([string][char]0x25B2, -1, 'Earlier'), @([string][char]0x25BC, 1, 'Later'), @([string][char]0x2715, 0, 'Cross off'))) {
+            $b = New-Object System.Windows.Controls.Button
+            $b.Content = $b0[0]; $b.Padding = '9,2'; $b.Margin = '4,0,0,0'; $b.ToolTip = $b0[2]
+            $b.Tag = @($k, $b0[1])
+            $b.Add_Click({ param($s2, $e2)
+                $kk = [int]$s2.Tag[0]; $mv = [int]$s2.Tag[1]
+                $at = $script:qeOrder.IndexOf($kk)
+                if ($mv -eq 0) { $script:qeOrder.RemoveAt($at) }
+                else {
+                    $to = $at + $mv
+                    if ($to -ge 0 -and $to -lt $script:qeOrder.Count) { $script:qeOrder.RemoveAt($at); $script:qeOrder.Insert($to, $kk) }
+                }
+                Update-QueueEditor
+            })
+            [void]$btns.Children.Add($b)
+        }
+        [void]$r.Children.Add($btns)
+        $t = New-Text ('{0}.  {1}' -f $pos, $script:qeLines[$k]) $ColText 14; $t.VerticalAlignment = 'Center'
+        [void]$r.Children.Add($t)
+        [void]$script:qeList.Children.Add($r)
+    }
+    if ($script:qeOrder.Count -eq 0) { [void]$script:qeList.Children.Add((New-Text 'Everything is crossed off.' $ColDim 13)) }
+    $script:qeGo.IsEnabled = ($script:qeOrder.Count -gt 0)
+    $script:qeGo.Content = $(if ($script:qeOrder.Count -eq 1) { 'Publish 1 game' } else { ('Publish {0} games' -f $script:qeOrder.Count) })
+}
+
+# The running queue on the Admin page. Redrawn when the game being sent
+# changes, not every tick.
+function Update-AdminQueueList {
+    $qp = $script:adminQueuePanel
+    if ($null -eq $qp) { return }
+    $qp.Children.Clear()
+    $j = $script:adminLibJob
+    if ($null -eq $j -or $null -eq $j.Items -or @($j.Items).Count -lt 2) { return }
+    $cur = [int]$j.Sync.Current
+    $i = 0
+    foreach ($it in @($j.Items)) {
+        $i++
+        $r = New-Object System.Windows.Controls.StackPanel; $r.Orientation = 'Horizontal'; $r.Margin = '0,2,0,0'
+        $state = $(if ($j.Sync.Skip.ContainsKey([string]$i)) { 'crossed off' } elseif ($i -lt $cur) { 'done' } elseif ($i -eq $cur) { 'going up now' } else { 'waiting' })
+        $col = $(switch ($state) { 'done' { $ColOnline } 'going up now' { '#FFE5B83B' } default { $ColDim } })
+        [void]$r.Children.Add((New-Text ('{0}. {1}  -  {2}' -f $i, $it.Title, $state) $col 13))
+        if ($state -eq 'waiting') {
+            $x = New-SocialButton 'Cross off' { param($s2, $e2) $script:adminLibJob.Sync.Skip[[string]$s2.Tag] = $true; Update-AdminQueueList } ([string]$i)
+            $x.FontSize = 11; $x.Padding = '6,0'
+            [void]$r.Children.Add($x)
+        }
+        [void]$qp.Children.Add($r)
+    }
+}
+
 function Invoke-AdminPublish {
     if ($null -ne $script:adminLibJob -or -not $script:gamesOk) { return }
     try {
@@ -8033,13 +8757,11 @@ function Invoke-AdminPublish {
         $lines += ('{0} ({1}, {2} MB{3})' -f $title, $sys.FullName, $mb, $(if ($art -eq '') { ', no art' } else { '' }))
     }
     if ($items.Count -eq 0) { return }
-    $shown = @($lines | Select-Object -First 12)
-    if ($lines.Count -gt 12) { $shown += ('...and {0} more' -f ($lines.Count - 12)) }
-    $what = $(if ($items.Count -eq 1) { 'this game' } else { "these $($items.Count) games" })
-    $ok = Show-Choice $WizardName ("Publish {0} to the online library?`n`n{1}`n`nEveryone with the wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own." -f $what, ($shown -join "`n")) @('Publish', 'Cancel')
-    if ($ok -ne 'Publish') { return }
+    $picked = Show-QueueEditor $items ([string[]]$lines)
+    if ($null -eq $picked) { return }
+    $items = @($picked)
     try {
-        $sync = [hashtable]::Synchronized(@{ Stage = 'Starting...'; Percent = 0; Prefix = '' })
+        $sync = [hashtable]::Synchronized(@{ Stage = 'Starting...'; Percent = 0; Prefix = ''; Current = 0; Skip = [hashtable]::Synchronized(@{}) })
         $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
         try { $iss.ExecutionPolicy = 'Bypass' } catch { }
         $rs = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace($iss); $rs.Open()
@@ -8048,7 +8770,7 @@ function Invoke-AdminPublish {
         foreach ($arg in @($script:socialLib, (Join-Path $ScriptsDir 'AdminEngine.ps1'), $Ws)) { [void]$ps.AddArgument($arg) }
         [void]$ps.AddArgument($items); [void]$ps.AddArgument($sync)
         $label = $(if ($items.Count -eq 1) { $items[0].Title } else { "$($items.Count) games" })
-        $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $label }
+        $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $label; Items = $items; Shown = -1 }
         Log ("admin: publishing {0}: {1}" -f $label, ((@($items | ForEach-Object { '{0} ({1})' -f $_.Title, $_.System })) -join ', '))
         $script:adminLibTimer = New-Object System.Windows.Threading.DispatcherTimer
         $script:adminLibTimer.Interval = [TimeSpan]::FromMilliseconds(800)
@@ -8112,6 +8834,7 @@ function Invoke-AdminPublishTick {
                 if ($txt -eq 'Uploading...') { $txt = 'Uploading... {0}%' -f $j.Sync.Percent }
                 $script:adminLibText.Text = ([string]$j.Sync.Prefix) + $txt
             }
+            if ([int]$j.Sync.Current -ne [int]$j.Shown) { $j.Shown = [int]$j.Sync.Current; Update-AdminQueueList }
             return
         }
         $script:adminLibTimer.Stop()
@@ -8146,6 +8869,80 @@ function Test-SocialNameFree([string]$Name, [string]$MyId) {
 # A custom picture: square it, shrink it to 64 x 64, save it in profile\ and
 # send it. Pixel art that is already small is scaled with hard edges, a photo
 # smoothly.
+# Where the picture sits in its square (Steven, 2026-10-17: "allow me to
+# adjust how it shows the image (zoom, where the edges will be)"). Drag to
+# move, the slider or the mouse wheel to zoom. Returns @{ X; Y; Side } in
+# the picture's own pixels, or $null for Cancel.
+function Show-PictureCrop([string]$File, [int]$SrcW, [int]$SrcH) {
+    $V = 300.0
+    $bi = New-Object System.Windows.Media.Imaging.BitmapImage
+    $bi.BeginInit(); $bi.UriSource = New-Object System.Uri($File); $bi.CacheOption = 'OnLoad'; $bi.EndInit()
+    $w = New-Object System.Windows.Window
+    $w.Title = $WizardName; $w.SizeToContent = 'WidthAndHeight'; $w.ResizeMode = 'NoResize'
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '22'
+    [void]$sp.Children.Add((New-Text 'Fit your picture' $ColText 17 $true))
+    $h = New-Text 'Drag it to move it. Zoom with the slider or the mouse wheel. The square is what friends see.' $ColDim 13
+    $h.Margin = '0,4,0,12'; $h.MaxWidth = 320
+    [void]$sp.Children.Add($h)
+    $frame = New-Object System.Windows.Controls.Border; $frame.BorderBrush = (New-Brush '#FFE5B83B'); $frame.BorderThickness = '2'; $frame.HorizontalAlignment = 'Center'
+    $cv = New-Object System.Windows.Controls.Canvas; $cv.Width = $V; $cv.Height = $V; $cv.ClipToBounds = $true; $cv.Background = (New-Brush '#FF101014'); $cv.Cursor = 'SizeAll'
+    $img = New-Object System.Windows.Controls.Image; $img.Source = $bi; $img.Stretch = 'Fill'
+    if ([math]::Min($SrcW, $SrcH) -le 256) { [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor) }
+    [void]$cv.Children.Add($img)
+    $frame.Child = $cv
+    [void]$sp.Children.Add($frame)
+    $sl = New-Object System.Windows.Controls.Slider; $sl.Minimum = 1; $sl.Maximum = 6; $sl.Value = 1; $sl.Margin = '0,12,0,0'; $sl.Width = $V
+    [void]$sp.Children.Add($sl)
+    $script:cr = @{ Img = $img; Cv = $cv; Sl = $sl; V = $V; W = $SrcW; H = $SrcH; Min = [double][math]::Min($SrcW, $SrcH); Ox = 0.0; Oy = 0.0; Drag = $false; Px = 0.0; Py = 0.0; Ok = $false; Win = $w }
+    $script:cr.Place = {
+        $c = $script:cr
+        $S = $c.Sl.Value * $c.V / $c.Min
+        $iw = $c.W * $S; $ih = $c.H * $S
+        $c.Ox = [math]::Min(0.0, [math]::Max($c.V - $iw, $c.Ox)); $c.Oy = [math]::Min(0.0, [math]::Max($c.V - $ih, $c.Oy))
+        $c.Img.Width = $iw; $c.Img.Height = $ih
+        [System.Windows.Controls.Canvas]::SetLeft($c.Img, $c.Ox); [System.Windows.Controls.Canvas]::SetTop($c.Img, $c.Oy)
+    }
+    # start centred
+    $S0 = $V / $script:cr.Min
+    $script:cr.Ox = ($V - $SrcW * $S0) / 2; $script:cr.Oy = ($V - $SrcH * $S0) / 2
+    & $script:cr.Place
+    $sl.Add_ValueChanged({ param($s2, $e2)
+        # zoom about the middle of the square
+        $c = $script:cr
+        $old = [double]$e2.OldValue; $new = [double]$e2.NewValue
+        if ($old -le 0) { & $c.Place; return }
+        $k = $new / $old; $m = $c.V / 2
+        $c.Ox = $m - ($m - $c.Ox) * $k; $c.Oy = $m - ($m - $c.Oy) * $k
+        & $c.Place
+    })
+    $cv.Add_MouseWheel({ param($s2, $e2) $script:cr.Sl.Value = [math]::Max(1, [math]::Min(6, $script:cr.Sl.Value + $(if ($e2.Delta -gt 0) { 0.25 } else { -0.25 }))) })
+    $cv.Add_MouseLeftButtonDown({ param($s2, $e2) $p = $e2.GetPosition($script:cr.Cv); $script:cr.Drag = $true; $script:cr.Px = $p.X; $script:cr.Py = $p.Y; [void]$script:cr.Cv.CaptureMouse() })
+    $cv.Add_MouseMove({ param($s2, $e2)
+        if (-not $script:cr.Drag) { return }
+        $p = $e2.GetPosition($script:cr.Cv)
+        $script:cr.Ox += $p.X - $script:cr.Px; $script:cr.Oy += $p.Y - $script:cr.Py
+        $script:cr.Px = $p.X; $script:cr.Py = $p.Y
+        & $script:cr.Place
+    })
+    $cv.Add_MouseLeftButtonUp({ $script:cr.Drag = $false; $script:cr.Cv.ReleaseMouseCapture() })
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,14,0,0'
+    foreach ($pair in @(@('Cancel', $false), @('Use this', $true))) {
+        $b = New-Object System.Windows.Controls.Button; $b.Content = $pair[0]; $b.Tag = $pair[1]; $b.Padding = '16,7'; $b.FontSize = 14; $b.Margin = '8,0,0,0'
+        $b.Add_Click({ param($s2, $e2) $script:cr.Ok = [bool]$s2.Tag; $script:cr.Win.Close() })
+        [void]$row.Children.Add($b)
+    }
+    [void]$sp.Children.Add($row)
+    $w.Content = $sp
+    [void]$w.ShowDialog()
+    if (-not $script:cr.Ok) { return $null }
+    $S = $script:cr.Sl.Value * $V / $script:cr.Min
+    $side = $V / $S
+    $x = [math]::Max(0, [math]::Min($SrcW - $side, -$script:cr.Ox / $S))
+    $y = [math]::Max(0, [math]::Min($SrcH - $side, -$script:cr.Oy / $S))
+    return @{ X = [math]::Round($x); Y = [math]::Round($y); Side = [math]::Round($side) }
+}
+
 function Complete-SocialPicture($Prof, $Ed) {
     if ($Ed.Avatar -ne 'custom:new') { return }
     $P = Get-SocialPaths $Ws
@@ -8157,6 +8954,11 @@ function Complete-SocialPicture($Prof, $Ed) {
         try {
             $side = [math]::Min($src.Width, $src.Height)
             $sx = [int](($src.Width - $side) / 2); $sy = [int](($src.Height - $side) / 2)
+            # (2026-10-17) Zoom in and move it about first; Cancel there
+            # keeps the plain middle square, as before.
+            $crop = $null
+            try { $crop = Show-PictureCrop $Ed.File ([int]$src.Width) ([int]$src.Height) } catch { Log ('profile: crop window - ' + $_.Exception.Message) }
+            if ($null -ne $crop) { $sx = [int]$crop.X; $sy = [int]$crop.Y; $side = [math]::Max(1, [int]$crop.Side) }
             $bmp = New-Object System.Drawing.Bitmap 64, 64
             $g = [System.Drawing.Graphics]::FromImage($bmp)
             # Pixel art (anything up to 256 across) keeps hard edges; a photo
@@ -8213,8 +9015,7 @@ function Show-SocialEditor([string]$Title, [string]$Name, [string]$Avatar, [bool
         $b = New-Object System.Windows.Controls.Button
         $b.Tag = 'icon:' + $n; $b.Margin = '0,0,8,8'; $b.Cursor = 'Hand'; $b.Width = 68; $b.Height = 60; $b.ToolTip = $n
         $img = New-Object System.Windows.Controls.Image
-        $img.Source = $bmp; $img.Stretch = 'None'
-        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+        Set-FitPicture $img $bmp 58 50
         $b.Content = $img
         $b.Add_Click({ param($s2, $e2) Select-ProfileIconButton ([string]$s2.Tag) })
         $script:iconButtons += $b
@@ -8309,11 +9110,12 @@ function Start-UpdatePeek {
         $ps.Runspace = $rs
         # Bug reports saved while there was no internet go out on the same
         # trip. Guarded on its own: a problem there never touches the check.
-        [void]$ps.AddScript('param($lib, $ws, $soc, $bug) . $lib; [void](Invoke-UpdateCheck -Ws $ws -NoDownload); if ($bug -ne '''') { try { . $soc; . $bug; [void](Send-BugOutbox $ws) } catch { } }')
+        [void]$ps.AddScript('param($lib, $ws, $soc, $bug, $both) . $lib; [void](Invoke-UpdateCheck -Ws $ws -NoDownload); if ($both) { try { Update-UpdChannelInfo $ws } catch { } }; if ($bug -ne '''') { try { . $soc; . $bug; [void](Send-BugOutbox $ws) } catch { } }')
         [void]$ps.AddArgument($script:updLib)
         [void]$ps.AddArgument($Ws)
         [void]$ps.AddArgument($script:socialLib)
         [void]$ps.AddArgument($(if ($script:bugOk) { $script:bugLib } else { '' }))
+        [void]$ps.AddArgument([bool]$script:adminOk)
         $script:updPs = $ps
         $script:updHandle = $ps.BeginInvoke()
         $script:updTicks = 0
@@ -8349,6 +9151,9 @@ function Invoke-UpdatePeekTick {
         $script:updPs = $null
         $script:updHandle = $null
         Show-UpdateState
+        # The Admin page's Stable / Dev card shows what each channel holds,
+        # which this same trip just looked up.
+        if ($script:adminOk -and $null -ne $script:adminPanel) { try { Render-Admin } catch { } }
     }
     catch { Log ("update check tick: {0}" -f $_.Exception.Message) }
 }
@@ -8365,8 +9170,8 @@ function Show-UpdateState {
     switch ($state) {
         { $_ -eq 'available' -or $_ -eq 'ready' } {
             if ($null -ne $script:updateBar) {
-                $script:updateBarText.Text = $(if ($msg -ne '') { ("{0} Version {1} is ready to install. This drive has {2}." -f $msg, $ver, $WizardVersion) }
-                                               else { ("Version {0} is out. This drive has {1}." -f $ver, $WizardVersion) })
+                $script:updateBarText.Text = $(if ($msg -ne '') { ("{0} Version {1} is ready to install. This setup has {2}." -f $msg, $ver, $WizardVersion) }
+                                               else { ("Version {0} is out. This setup has {1}." -f $ver, $WizardVersion) })
                 $script:updateBar.Visibility = 'Visible'
             }
             Set-FootAlert ("Update: v{0}" -f $ver) 'help'
@@ -8400,7 +9205,7 @@ function Show-UpdateNotes {
 # The two buttons that change files: Update now, and Go back one update. Both
 # hand over to scripts\Updater.ps1 in its own process and close the wizard,
 # because nothing should be replaced while this window holds it open.
-function Invoke-WizardUpdate([string]$Mode) {
+function Invoke-WizardUpdate([string]$Mode, [switch]$NoAsk, [string]$Title = '', [string]$RevertChannel = '') {
     if (Test-RetroBatRunning) {
         [void](Show-Choice $WizardName 'RetroBat is open. Close it completely first, then try again.' @('OK'))
         return
@@ -8417,7 +9222,7 @@ function Invoke-WizardUpdate([string]$Mode) {
         $pick = Show-Choice $WizardName ("Go back from version {0} to {1}?`n`nThe wizard closes, puts the old files back and opens again. That version will not be offered again, but a newer one will." -f $info.To, $info.From) @('Go back', 'Cancel')
         if ($pick -ne 'Go back') { return }
     }
-    else {
+    elseif (-not $NoAsk) {
         $st = @{}
         try { $st = Read-UpdStatus $Ws } catch { }
         $pick = Show-Choice $WizardName ("Update to version {0} now?`n`nThe wizard closes, downloads what changed, installs it and opens again. Usually under a minute. Saves, games and settings are not touched, and the Help tab can go back one update." -f [string]$st['version']) @('Update now', 'Not now')
@@ -8426,6 +9231,8 @@ function Invoke-WizardUpdate([string]$Mode) {
     try {
         $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
         $argLine = '-NoProfile -ExecutionPolicy Bypass -Command "& ''{0}'' -Mode {1} -WaitPid {2} -Relaunch"' -f ($updater -replace "'", "''"), $Mode, $PID
+        if ($Title -ne '') { $argLine = $argLine.TrimEnd('"') + (" -Title '{0}'" -f ($Title -replace "'", "")) + '"' }
+        if ($RevertChannel -ne '') { $argLine = $argLine.TrimEnd('"') + (' -RevertChannel ' + $RevertChannel) + '"' }
         Start-Process -FilePath $ps -ArgumentList $argLine -WindowStyle Hidden
         Log ("update: handed over to Updater.ps1, mode {0}" -f $Mode)
         $script:win.Close()
@@ -8488,7 +9295,7 @@ function Add-BugAction {
 
 $script:BugKinds = @(
     @{ Key = 'bug';  Label = 'Bug - something is broken';     Head = 'What happened?';   Hint = 'What you were doing, and what went wrong. One line is fine.' },
-    @{ Key = 'idea'; Label = 'Feature or idea';               Head = 'Your idea';        Hint = 'What would make the wizard or the drive better?' },
+    @{ Key = 'idea'; Label = 'Feature or idea';               Head = 'Your idea';        Hint = 'What would make the wizard or RetroBat better?' },
     @{ Key = 'game'; Label = 'Game request';                  Head = 'Which game?';      Hint = 'The game and its console. A reason helps, like "great 4-player party game".' }
 )
 
@@ -8713,7 +9520,7 @@ function Render-Help {
         try { $sections = @(Get-HelpSections -WizardName $WizardName -Version $WizardVersion) } catch { Log ("help: {0}" -f $_.Exception.Message) }
         if ($sections.Count -gt 0) {
             $exp = New-Object System.Windows.Controls.Expander
-            $exp.Header = (New-Text 'How this drive works' $ColText 15 $true)
+            $exp.Header = (New-Text 'How this setup works' $ColText 15 $true)
             $exp.Margin = '0,20,0,0'; $exp.IsExpanded = $false
             $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,6,0,0'
             foreach ($sec in $sections) {
@@ -9059,7 +9866,21 @@ function Render-Profiles {
     #  files ARE rather than what they are FOR. A profile is a set of settings
     #  with a name on it, and the useful things to do with one are: use it,
     #  rename it, throw it away, or start a new one.
-    Render-ProfileList $panel
+    # (2026-10-17) On a setup that lives on this computer, other computers
+    # do not come into it, so the list folds away under Advanced.
+    $isPortable = $true
+    try { $isPortable = Get-SetupPortable } catch { }
+    if ($isPortable) { Render-ProfileList $panel; Add-PortableSwitch $panel $true }
+    else {
+        $ex2 = New-Object System.Windows.Controls.Expander
+        $ex2.Margin = '0,22,0,0'; $ex2.FontSize = 15; $ex2.Foreground = (New-Brush $ColText)
+        $ex2.Header = 'Advanced: using this setup on more than one computer'
+        $in2 = New-Object System.Windows.Controls.StackPanel; $in2.Margin = '0,8,0,0'
+        Add-PortableSwitch $in2 $false
+        Render-ProfileList $in2
+        $ex2.Content = $in2
+        [void]$panel.Children.Add($ex2)
+    }
 
     Update-ProfileDirty
     $script:profileLoading = $false
@@ -9087,8 +9908,20 @@ function Render-Profiles {
 #  matching the computer, exactly as it always has. The pin is a deliberate
 #  override and says so, on screen and in machine\pinned.txt.
 # ---------------------------------------------------------------------------
+# The one switch for "is this a carry-about drive" after setup.
+function Add-PortableSwitch($panel, [bool]$On) {
+    $cb = New-Object System.Windows.Controls.CheckBox
+    $cb.Content = 'This setup lives on a drive I carry between computers'
+    $cb.FontSize = 14; $cb.Foreground = (New-Brush $ColText); $cb.Margin = '0,14,0,0'; $cb.IsChecked = $On
+    $cb.Add_Click({ param($s2, $e2) Set-SetupPortable ([bool]$s2.IsChecked); Log ('settings: portable ' + [bool]$s2.IsChecked); Render-Profiles })
+    [void]$panel.Children.Add($cb)
+    $t = New-Text 'On: the drive keeps a settings profile for each computer it meets, and offers the drive letter R:. Off: none of that is needed.' $ColDim 12
+    $t.Margin = '22,0,0,0'
+    [void]$panel.Children.Add($t)
+}
+
 function Render-ProfileList($panel) {
-    [void]$panel.Children.Add((New-SectionHeader 'Machines on this drive'))
+    [void]$panel.Children.Add((New-SectionHeader 'Machines this setup knows'))
 
     $pinned = ''
     try { $pinned = Get-PinnedProfile -Root $Root } catch { }
@@ -9106,7 +9939,7 @@ function Render-ProfileList($panel) {
     try { $list = @(Get-ProfileList -Root $Root) } catch { Log "machine tab: could not list profiles - $_" }
 
     if ($list.Count -eq 0) {
-        [void]$panel.Children.Add((New-Text 'No machines saved yet. One is made automatically the first time the drive is used on a computer.' $ColDim 13))
+        [void]$panel.Children.Add((New-Text 'No machines saved yet. One is made automatically the first time this setup is used on a computer.' $ColDim 13))
     }
 
     foreach ($p in $list) {
@@ -9117,11 +9950,9 @@ function Render-ProfileList($panel) {
         # wizard\profile-*.png and the row simply has no picture.
         $img = New-Object System.Windows.Controls.Image
         $bmp = Get-PixelBitmap (Join-Path $WizardDir ('profile-' + [string]$p.Icon + '.png'))
-        if ($null -ne $bmp) { $img.Source = $bmp }
-        $img.Stretch = 'None'
         $img.Width = 50; $img.Height = 42
+        if ($null -ne $bmp) { Set-FitPicture $img $bmp 50 42; $img.Width = 50; $img.Height = 42 }
         $img.Margin = '0,0,12,0'; $img.VerticalAlignment = 'Center'
-        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
         [void]$row.Children.Add($img)
 
         $col = New-Object System.Windows.Controls.StackPanel
@@ -9221,7 +10052,7 @@ function Add-SteamSection($panel) {
             if ([string]$state.Account -ne '') { $who = ' as ' + [string]$state.Account }
             $whose = ''
             if ($state.Mode -eq 'guest')     { $whose = ' Showing games downloaded on this computer.' }
-            elseif ($state.Mode -eq 'owner') { $whose = ' Showing games from the drive and this computer.' }
+            elseif ($state.Mode -eq 'owner') { $whose = ' Showing games from this setup and this computer.' }
             $line = ('Connected' + $who + '.' + $whose + ' ' + $games.Count + ' Steam game(s) in RetroBat here.')
             $s1 = New-Text $line $ColText 14
             $s1.MaxWidth = 560
@@ -9232,7 +10063,7 @@ function Add-SteamSection($panel) {
         $s1.Margin = '0,0,0,4'
         [void]$panel.Children.Add($s1)
 
-        $s2 = New-Text 'Shows the Steam games already on this computer inside RetroBat, under whoever is signed in to Steam. Nothing has to be on this drive. Remembered per computer: on a different computer Steam games stay hidden until Steam is set up there too.' $ColDim 13
+        $s2 = New-Text 'Shows the Steam games already on this computer inside RetroBat, under whoever is signed in to Steam. Nothing has to be in this setup. Remembered per computer: on a different computer Steam games stay hidden until Steam is set up there too.' $ColDim 13
         $s2.Margin = '0,0,0,12'
         $s2.MaxWidth = 560
         [void]$panel.Children.Add($s2)
@@ -9347,7 +10178,7 @@ function Invoke-ProfileUse([string]$Name) {
     Log ("machine tab: pinned profile set to '{0}'" -f $(if ($Name -eq '') { '(automatic)' } else { $Name }))
 
     $what = if ($Name -eq '') { 'this computer''s own settings' } else { "the '$Name' machine" }
-    $pick = Show-Choice $WizardName ("Saved. The drive will use $what.`n`nApply it now? That rewrites the emulator settings and needs RetroBat closed. Choosing Later changes nothing today - it is applied the next time settings are applied.") @('Apply now', 'Later')
+    $pick = Show-Choice $WizardName ("Saved. This setup will use $what.`n`nApply it now? That rewrites the emulator settings and needs RetroBat closed. Choosing Later changes nothing today - it is applied the next time settings are applied.") @('Apply now', 'Later')
 
     if ($pick -eq 'Apply now') {
         if (Test-RetroBatRunning) {
@@ -9444,7 +10275,7 @@ function Show-ProfileEditor([string]$Title, [string]$Name, [string]$Icon) {
     $h = New-Text 'Picture' $ColText 15 $true
     $h.Margin = '0,18,0,0'
     [void]$sp.Children.Add($h)
-    [void]$sp.Children.Add((New-Text 'Only how it looks in the list. It changes nothing about how the drive runs.' $ColDim 12))
+    [void]$sp.Children.Add((New-Text 'Only how it looks in the list. It changes nothing about how it runs.' $ColDim 12))
 
     $wrap = New-Object System.Windows.Controls.WrapPanel
     $wrap.Margin = '0,10,0,0'
@@ -9467,8 +10298,7 @@ function Show-ProfileEditor([string]$Title, [string]$Name, [string]$Icon) {
         $bmp = Get-PixelBitmap (Join-Path $WizardDir ('profile-' + $n + '.png'))
         if ($null -eq $bmp) { continue }
         $img = New-Object System.Windows.Controls.Image
-        $img.Source = $bmp; $img.Stretch = 'None'
-        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($img, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+        Set-FitPicture $img $bmp 58 50
         $b.Content = $img
         $b.Add_Click({ param($s2, $e2) Select-ProfileIconButton ([string]$s2.Tag) })
         $script:iconButtons += $b
@@ -9531,7 +10361,7 @@ function Invoke-ProfileDelete([string]$File) {
     $extra = ''
     try {
         if ((Get-PinnedProfile -Root $Root) -ieq $name) {
-            $extra = "`n`nThis is the machine the drive is set to use, so it will go back to picking the one that matches the computer."
+            $extra = "`n`nThis is the machine this setup is set to use, so it will go back to picking the one that matches the computer."
         }
     } catch { }
 
@@ -9568,7 +10398,7 @@ function Invoke-ProfileNew {
         return
     }
     Log "machine tab: made a new profile '$name' ($tier)"
-    [void](Show-Choice $WizardName ("'$name' is ready.`n`nIt is not in use yet - press 'Use this one' next to it when you want the drive to run as it.") @('OK'))
+    [void](Show-Choice $WizardName ("'$name' is ready.`n`nIt is not in use yet - press 'Use this one' next to it when you want this setup to run as it.") @('OK'))
     Initialize-Profiles
     Render-Profiles
 }
@@ -9822,6 +10652,161 @@ function Update-PadDesc([bool]$on) {
     }
 }
 
+# ===========================================================================
+#  CONTROLLER KEYS FOR KEYBOARD GAMES                            (2026-10-17)
+# ===========================================================================
+#  Steven: "a per game way to keybind keyboard controls to my controller.
+#  Fancy Pants and others need the keyboard, but I want to play with a
+#  controller." The couch mouse (scripts\CouchMouse.ps1) already reads
+#  "keys = A:S, X:D" and "stick = arrows" from the game's section in
+#  flash-games.ini (Flash) or browser-games.ini (PC games). This is the
+#  window that writes them, so nobody has to edit a file.
+# ---------------------------------------------------------------------------
+$script:KeyButtons = @('A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Up', 'Down', 'Left', 'Right')
+$script:KeyNames = @('(nothing)', 'Space', 'Enter', 'Shift', 'Ctrl', 'Tab', 'Esc', 'Backspace', 'Up', 'Down', 'Left', 'Right') +
+                   @([char[]](65..90) | ForEach-Object { [string]$_ }) + @(0..9 | ForEach-Object { [string]$_ }) + @(1..12 | ForEach-Object { 'F' + $_ })
+
+# The keyboard games on this setup: @{ Label; Leaf; Ini; Name }.
+function Get-KeyboardGames {
+    $out = @()
+    $fl = Join-Path $Root 'roms\flash'
+    foreach ($f in @(Get-ChildItem -LiteralPath $fl -File -Filter '*.swf' -ErrorAction SilentlyContinue)) {
+        $nm = Get-IniSectionValue (Join-Path $Ws 'flash-games.ini') $f.Name 'name'
+        $out += [pscustomobject]@{ Label = $(if ($nm) { $nm } else { $f.BaseName }) + '   (Flash)'; Leaf = $f.Name; Ini = 'flash-games.ini'; Name = $(if ($nm) { $nm } else { $f.BaseName }) }
+    }
+    $wl = Join-Path $Root 'roms\windows'
+    foreach ($f in @(Get-ChildItem -LiteralPath $wl -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -match '^\.(bat|url|lnk)$' })) {
+        $nm = Get-IniSectionValue (Join-Path $Ws 'browser-games.ini') $f.Name 'name'
+        $out += [pscustomobject]@{ Label = $(if ($nm) { $nm } else { $f.BaseName }) + '   (PC)'; Leaf = $f.Name; Ini = 'browser-games.ini'; Name = $(if ($nm) { $nm } else { $f.BaseName }) }
+    }
+    return @($out | Sort-Object Label)
+}
+
+# One value from one [section] of an ini file ('' when absent).
+function Get-IniSectionValue([string]$Path, [string]$Section, [string]$Key) {
+    if (-not (Test-Path -LiteralPath $Path)) { return '' }
+    $in = $false
+    foreach ($raw in [System.IO.File]::ReadAllLines($Path)) {
+        $t = $raw.Trim()
+        if ($t -match '^\[(.+)\]$') { if ($in) { break }; $in = ($Matches[1].Trim() -ieq $Section); continue }
+        if ($in -and $t -match ('^' + [regex]::Escape($Key) + '\s*=\s*(.*)$')) { return $Matches[1].Trim() }
+    }
+    return ''
+}
+
+# Writes (or clears, with '' and '') a game's keys and stick lines. The rest
+# of its section, and the rest of the file, stay exactly as they were.
+function Set-GameKeyLayout([string]$IniName, [string]$Leaf, [string]$Name, [string]$Keys, [string]$Stick) {
+    $p = Join-Path $Ws $IniName
+    $lines = New-Object System.Collections.ArrayList
+    if (Test-Path -LiteralPath $p) { foreach ($l in [System.IO.File]::ReadAllLines($p)) { [void]$lines.Add($l) } }
+    $start = -1; $end = $lines.Count
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        $t = ([string]$lines[$i]).Trim()
+        if ($t -match '^\[(.+)\]$') {
+            if ($start -ge 0) { $end = $i; break }
+            if ($Matches[1].Trim() -ieq $Leaf) { $start = $i }
+        }
+    }
+    $add = @()
+    if ($Keys -ne '') { $add += ('keys      = ' + $Keys) }
+    if ($Stick -ne '') { $add += ('stick     = ' + $Stick) }
+    if ($start -lt 0) {
+        if ($add.Count -eq 0) { return }
+        if ($lines.Count -gt 0 -and ([string]$lines[$lines.Count - 1]).Trim() -ne '') { [void]$lines.Add('') }
+        [void]$lines.Add('[' + $Leaf + ']'); [void]$lines.Add('name      = ' + $Name)
+        foreach ($a in $add) { [void]$lines.Add($a) }
+    }
+    else {
+        for ($i = $end - 1; $i -gt $start; $i--) { if (([string]$lines[$i]).Trim() -match '^(keys|stick)\s*=') { $lines.RemoveAt($i) } }
+        $at = $start + 1
+        while ($at -lt $lines.Count -and ([string]$lines[$at]).Trim() -ne '' -and ([string]$lines[$at]).Trim() -notmatch '^\[') { $at++ }
+        foreach ($a in $add) { $lines.Insert($at, $a); $at++ }
+    }
+    [System.IO.File]::WriteAllLines($p, [string[]]$lines.ToArray())
+}
+
+function Show-KeyLayoutPicker {
+    $games = @(Get-KeyboardGames)
+    if ($games.Count -eq 0) { [void](Show-Choice $WizardName 'No Flash or PC games on this setup yet.' @('OK')); return }
+    $pick = Show-ListPick $WizardName 'Which game?' ([string[]]@($games | ForEach-Object { $_.Label }))
+    if ($pick -eq '' -or $pick -eq '?') { return }
+    $g = @($games | Where-Object { $_.Label -eq $pick }) | Select-Object -First 1
+    if ($null -ne $g) { Show-KeyLayoutEditor $g }
+}
+
+function Show-KeyLayoutEditor($Game) {
+    $iniPath = Join-Path $Ws $Game.Ini
+    $cur = @{}
+    foreach ($pr in (Get-IniSectionValue $iniPath $Game.Leaf 'keys').Split(',')) {
+        $kv = $pr.Split(':'); if ($kv.Count -eq 2) { $cur[$kv[0].Trim().ToLower()] = $kv[1].Trim() }
+    }
+    $stickNow = ((Get-IniSectionValue $iniPath $Game.Leaf 'stick') -ieq 'arrows')
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 560; $w.SizeToContent = 'Height'
+    $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $sp = New-Object System.Windows.Controls.StackPanel; $sp.Margin = '22'
+    [void]$sp.Children.Add((New-Text ($Game.Name) $ColText 18 $true))
+    $h = New-Text 'Which key each controller button presses in this game. Leave a button on (nothing) to keep it free.' $ColDim 13; $h.Margin = '0,4,0,12'
+    [void]$sp.Children.Add($h)
+    $grid = New-Object System.Windows.Controls.Grid
+    foreach ($cw in @('Auto', '*', 'Auto', '*')) { $cd = New-Object System.Windows.Controls.ColumnDefinition; $cd.Width = $cw; [void]$grid.ColumnDefinitions.Add($cd) }
+    $script:keyBoxes = @{}
+    $n = 0
+    foreach ($b in $script:KeyButtons) {
+        $r = [math]::Floor($n / 2); $c = ($n % 2) * 2
+        if ($n % 2 -eq 0) { $rd = New-Object System.Windows.Controls.RowDefinition; $rd.Height = 'Auto'; [void]$grid.RowDefinitions.Add($rd) }
+        $lab = New-Text $(if (@('Up', 'Down', 'Left', 'Right') -contains $b) { 'D-pad ' + $b } else { $b }) $ColText 14 $true
+        $lab.VerticalAlignment = 'Center'; $lab.Margin = $(if ($c -eq 0) { '0,4,10,4' } else { '22,4,10,4' })
+        [System.Windows.Controls.Grid]::SetRow($lab, $r); [System.Windows.Controls.Grid]::SetColumn($lab, $c); [void]$grid.Children.Add($lab)
+        $cb = New-Object System.Windows.Controls.ComboBox; $cb.FontSize = 13; $cb.Margin = '0,4,0,4'
+        foreach ($k in $script:KeyNames) { [void]$cb.Items.Add($k) }
+        $want = [string]$cur[$b.ToLower()]
+        $ix = 0
+        if ($want -ne '') { for ($q = 0; $q -lt $script:KeyNames.Count; $q++) { if ($script:KeyNames[$q] -ieq $want) { $ix = $q } } }
+        elseif (@('Up', 'Down', 'Left', 'Right') -contains $b) { $ix = [array]::IndexOf($script:KeyNames, $b) }   # the d-pad presses the arrows unless told otherwise
+        $cb.SelectedIndex = $ix
+        [System.Windows.Controls.Grid]::SetRow($cb, $r); [System.Windows.Controls.Grid]::SetColumn($cb, $c + 1); [void]$grid.Children.Add($cb)
+        $script:keyBoxes[$b] = $cb
+        $n++
+    }
+    [void]$sp.Children.Add($grid)
+    $script:keyStick = New-Object System.Windows.Controls.CheckBox
+    $script:keyStick.Content = 'The left stick presses the arrow keys too'; $script:keyStick.FontSize = 14; $script:keyStick.Foreground = (New-Brush $ColText)
+    $script:keyStick.Margin = '0,12,0,0'; $script:keyStick.IsChecked = $stickNow
+    [void]$sp.Children.Add($script:keyStick)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,18,0,0'
+    $script:keyWin = $w; $script:keyResult = ''
+    foreach ($pair in @(@('Clear all', 'clear'), @('Cancel', ''), @('Save', 'save'))) {
+        $bt = New-Object System.Windows.Controls.Button; $bt.Content = $pair[0]; $bt.Tag = $pair[1]; $bt.Padding = '16,7'; $bt.FontSize = 14; $bt.Margin = '8,0,0,0'
+        $bt.Add_Click({ param($s2, $e2) $script:keyResult = [string]$s2.Tag; $script:keyWin.Close() })
+        [void]$row.Children.Add($bt)
+    }
+    [void]$sp.Children.Add($row)
+    $w.Content = $sp
+    [void]$w.ShowDialog()
+    if ($script:keyResult -eq '') { return }
+    try {
+        if ($script:keyResult -eq 'clear') { Set-GameKeyLayout $Game.Ini $Game.Leaf $Game.Name '' ''; $msg = 'Cleared. The game goes back to the mouse only.' }
+        else {
+            $parts = @()
+            foreach ($b in $script:KeyButtons) {
+                $k = [string]$script:keyBoxes[$b].SelectedItem
+                if ($k -eq '(nothing)') { continue }
+                if (@('Up', 'Down', 'Left', 'Right') -contains $b -and $k -eq $b) { continue }   # the arrows on the d-pad are the default anyway
+                $parts += ($b + ':' + $k)
+            }
+            $stick = $(if ($script:keyStick.IsChecked) { 'arrows' } else { '' })
+            Set-GameKeyLayout $Game.Ini $Game.Leaf $Game.Name ($parts -join ', ') $stick
+            $msg = $(if ($parts.Count -eq 0 -and $stick -eq '') { 'Saved with no keys, so the game uses the mouse only.' } else { 'Saved. The next time the game starts, the controller presses these keys.' })
+        }
+        Log ("keys: {0} -> {1}" -f $Game.Leaf, $script:keyResult)
+        [void](Show-Choice $WizardName $msg @('OK'))
+    }
+    catch { Log ('keys: could not save - ' + $_.Exception.Message); [void](Show-Choice $WizardName ('That could not be saved: ' + $_.Exception.Message) @('OK')) }
+}
+
 function Render-Features {
     $panel = $script:featurePanel
     $panel.Children.Clear()
@@ -9835,7 +10820,7 @@ function Render-Features {
         return
     }
 
-    [void]$panel.Children.Add((New-SectionHeader 'What this drive does for you'))
+    [void]$panel.Children.Add((New-SectionHeader 'What this setup does for you'))
     $intro = New-Text 'Untick one to switch it off. Nothing changes until Apply.' $ColDim 13
     $intro.Margin = '0,0,0,6'
     [void]$panel.Children.Add($intro)
@@ -9916,6 +10901,15 @@ function Render-Features {
             Update-PadDesc $on
         })
     }
+
+    # --- controller keys for keyboard games (2026-10-17) --------------------
+    [void]$panel.Children.Add((New-SectionHeader 'Controller keys for keyboard games'))
+    $kt = New-Text 'Some Flash and browser games only use the keyboard. Pick one and choose which key each controller button presses; the game then starts with those keys, and pushing in the left stick swaps to the mouse and back.' $ColDim 13
+    [void]$panel.Children.Add($kt)
+    $kb2 = New-Object System.Windows.Controls.Button
+    $kb2.Content = 'Set up a game''s keys...'; $kb2.Padding = '12,4'; $kb2.FontSize = 13; $kb2.Margin = '0,8,0,0'; $kb2.HorizontalAlignment = 'Left'
+    $kb2.Add_Click({ Show-KeyLayoutPicker })
+    [void]$panel.Children.Add($kb2)
 
     $foot = New-Text 'The same switches live in _ClaudeWorkspace\features.ini, and Show My Features.bat lists them without this window.' $ColDim 12
     $foot.Margin = '0,22,0,0'
@@ -10147,7 +11141,7 @@ function Build-AdvancedEditor {
         $bh = New-Text 'Breath of the Wild, on a slower computer' $ColText 15 $true
         $bh.Margin = '0,0,0,4'
         [void]$panel.Children.Add($bh)
-        [void]$panel.Children.Add((New-Text 'Switches on the graphic packs that are already on the drive for it: 720p, lighter shadows, and the two Nvidia smoke and cloud fixes. It only ever adds packs, it backs up Cemu''s settings first, and it is safe to press twice. Close RetroBat first.' $ColDim 13))
+        [void]$panel.Children.Add((New-Text 'Switches on the graphic packs that are already in this setup for it: 720p, lighter shadows, and the two Nvidia smoke and cloud fixes. It only ever adds packs, it backs up Cemu''s settings first, and it is safe to press twice. Close RetroBat first.' $ColDim 13))
         $bwhy = New-Text 'This is NOT the same thing as "One game at a time" further down, and it cannot be folded into it. Everything down there is a RetroBat setting. These are Cemu''s own graphic packs, which RetroBat has no setting for at all - including the resolution, which is the one that actually matters on a Wii U game. So this button has to stay.' $ColDim 12
         $bwhy.Margin = '0,6,0,0'; $bwhy.TextWrapping = 'Wrap'; $bwhy.MaxWidth = 560
         [void]$panel.Children.Add($bwhy)
@@ -10174,7 +11168,7 @@ function Build-AdvancedEditor {
     $ph = New-Text 'Pin an individual setting' $ColText 15 $true
     $ph.Margin = '0,0,0,4'
     [void]$panel.Children.Add($ph)
-    [void]$panel.Children.Add((New-Text 'Every setting the Machine tab manages, with the choices RetroBat itself offers. Leave a row on "leave it to the tier" unless you have a reason: a pinned setting stops improving when the tiers improve, forever, on this computer only.' $ColDim 13))
+    [void]$panel.Children.Add((New-Text 'Every setting this page manages, with the choices RetroBat itself offers. Leave a row on "leave it to the tier" unless you have a reason: a pinned setting stops improving when the tiers improve, forever, on this computer only.' $ColDim 13))
 
     $labels = @{ 'tier' = 'tier'; 'console-tier' = 'console'; 'vendor' = 'brand'; 'override' = 'PINNED' }
 
@@ -11045,7 +12039,7 @@ function Render-SaveDetail {
         # were written into game-name-shortcuts.txt during the build, not by
         # Steven, so saves he had never touched claimed he had named them.
         # What is actually true is which FILE the name came from.
-        $src = if ($g.NameSource -eq 'yours') { 'set by hand, in game-name-shortcuts.txt' } else { 'found on this drive' }
+        $src = if ($g.NameSource -eq 'yours') { 'set by hand, in game-name-shortcuts.txt' } else { 'found in this setup' }
         [void]$p.Children.Add((New-LabelledRow 'Code' ('{0}   ({1})' -f $g.GameId, $src)))
     }
     if ($g.Files.Count -gt 0) {
@@ -11244,7 +12238,7 @@ function Invoke-SaveNameGame([string]$Code) {
     }
 
     if ($choices.Count -gt 0) {
-        $pick = Show-ListPick 'Name this save' ("What game is {0}?`n`nThese are the {1} games on this drive that no save has been matched to yet." -f $Code, $system) $choices
+        $pick = Show-ListPick 'Name this save' ("What game is {0}?`n`nThese are the {1} games in this setup that no save has been matched to yet." -f $Code, $system) $choices
         if ($pick -eq '')  { return }
         if ($pick -ne '?') { $name = $pick }
     }

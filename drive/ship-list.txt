@@ -42,8 +42,14 @@ skip  wizard/SetupWizard-legacy*.ps1
 skip  wizard/icon-potions.png
 skip  wizard/icon-potions-anim.png
 skip  wizard/profile-wiimote.png
+; The couch mouse pop-up pictures (2026-10-17) come from two watermarked
+; stock previews (Shutterstock), so they stay on Steven's drive until he has
+; the right to share them. Other drives keep the old pop-up pictures.
+skip  wizard/cm-*.png
 seed  wizard/wizard.ini  <-  defaults/wizard.ini
 code  defaults/Setup Wizard.bat
+code  defaults/retrobat-defaults.ini
+code  defaults/scraper.txt
 
 code  Maintenance Steps/*.bat
 code  SaveBackups/*.bat
@@ -63,6 +69,7 @@ seed  machine/maximize-windows.txt
 
 code  docs/PER-GAME-SETTINGS.md
 code  docs/art/**
+skip  docs/art/sources/**
 code  theme-assets/steam.mp4
 
 seed  features.ini

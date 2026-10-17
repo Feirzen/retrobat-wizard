@@ -412,7 +412,7 @@ function Install-LibGame([string]$Ws, $Game, $Systems) {
         Move-Item -LiteralPath $r[0] -Destination $dest
     }
     $res.Ok = $true
-    $res.Message = "$($Game.Title) is on your drive. It shows up the next time RetroBat starts."
+    $res.Message = "$($Game.Title) is in your games, checked: every file matches the online library. It shows up the next time RetroBat starts."
     return $res
 }
 

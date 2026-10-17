@@ -83,6 +83,34 @@ If useWiiMenu Then
     If Not fso.FileExists(SYSMENU_TMD) Then useWiiMenu = False
 End If
 
+' --- Wii Remotes or a controller? (Claude, 2026-10-17) ------
+'     Steven: "if it can play with pro maybe we skip the NAND
+'     launch so that I don't have to connect Wii controllers just
+'     to launch the game". Only for games that play either way
+'     (controllers.ini kind remote-or-pad), only when the Wii
+'     Menu would be used. The chooser answers 20 for a controller
+'     (straight into the game), 40 for Back. Anything missing or
+'     going wrong: the Wii Menu as always.
+Dim CHOOSER, PSEXE, code, romArg
+If useWiiMenu Then
+    Set sh = CreateObject("WScript.Shell")
+    CHOOSER = fso.BuildPath(ROOT, "_ClaudeWorkspace\scripts\ControllerChooser.ps1")
+    PSEXE = sh.ExpandEnvironmentStrings("%SystemRoot%") & "\System32\WindowsPowerShell\v1.0\powershell.exe"
+    romArg = ""
+    For i = 0 To args.Count - 2
+        If LCase(args(i)) = "-rom" Then romArg = args(i + 1)
+    Next
+    If fso.FileExists(CHOOSER) And fso.FileExists(PSEXE) And romArg <> "" Then
+        On Error Resume Next
+        code = sh.Run("""" & PSEXE & """ -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & _
+                      CHOOSER & """ -Root """ & ROOT & """ -System wii -Rom """ & romArg & """", 0, True)
+        If Err.Number <> 0 Then code = 30
+        On Error GoTo 0
+        If code = 40 Then WScript.Quit 0
+        If code = 20 Then useWiiMenu = False
+    End If
+End If
+
 ' --- rebuild the command line -------------------------------
 cmd = """" & LAUNCHER & """"
 

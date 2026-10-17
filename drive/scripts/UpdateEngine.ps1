@@ -390,6 +390,42 @@ function Get-UpdRawUrl($Cfg, [string]$Ref, [string]$Rel) {
 }
 
 # ---------------------------------------------------------------------------
+#  BOTH CHANNELS AT A GLANCE (2026-10-17)
+#  Steven: "I'm never sure which I'm looking at." The Admin page shows what
+#  Stable and Dev each hold right now, next to what this drive runs. Two tiny
+#  files (latest.ini and latest-dev.ini), read in the background with the
+#  usual check, written to update\channels.ini for the window to read.
+# ---------------------------------------------------------------------------
+function Update-UpdChannelInfo([string]$Ws) {
+    $cfg = Get-UpdConfig $Ws
+    $P = Get-UpdPaths $Ws
+    New-UpdDir $P.Dir
+    $out = @('; Written by scripts\UpdateEngine.ps1. What each channel holds on GitHub. Safe to delete.',
+             ('time = ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
+    foreach ($pair in @(@('stable', 'latest.ini'), @('dev', 'latest-dev.ini'))) {
+        $tmp = Join-UpdPath $P.Dir ($pair[0] + '-peek.tmp')
+        try {
+            Invoke-UpdFetch ((Get-UpdRawUrl $cfg $cfg.Branch $pair[1]) + '?t=' + [DateTime]::UtcNow.Ticks) $tmp
+            $ini = Read-UpdIni $tmp
+            $out += ($pair[0] + '_version = ' + [string]$ini['version'])
+            $out += ($pair[0] + '_tag = ' + [string]$ini['tag'])
+        }
+        catch { $out += ($pair[0] + '_version = ') }
+        finally { try { if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force } } catch { } }
+    }
+    try { [System.IO.File]::WriteAllLines((Join-UpdPath $P.Dir 'channels.ini'), [string[]]$out) } catch { }
+}
+
+# @{ StableVersion; StableTag; DevVersion; DevTag; Time } from the last look,
+# all '' when there has not been one.
+function Read-UpdChannelInfo([string]$Ws) {
+    $ini = @{}
+    try { $ini = Read-UpdIni (Join-UpdPath (Get-UpdPaths $Ws).Dir 'channels.ini') } catch { }
+    return @{ StableVersion = [string]$ini['stable_version']; StableTag = [string]$ini['stable_tag']
+              DevVersion = [string]$ini['dev_version']; DevTag = [string]$ini['dev_tag']; Time = [string]$ini['time'] }
+}
+
+# ---------------------------------------------------------------------------
 #  The lock. Two wizards open at once must not download into the same folder.
 # ---------------------------------------------------------------------------
 function Enter-UpdLock([string]$Ws) {
