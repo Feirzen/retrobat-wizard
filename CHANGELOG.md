@@ -2,6 +2,35 @@
 
 Newest first. Written for players: what you will notice.
 
+## 3.1.0 (2026-10-17) - the polish round
+
+**Setting up**
+- The installer finds RetroBat by itself, names each step as it goes, and closes when it is done.
+- Every setup question has a Back button.
+- Setup asks where RetroBat lives: on a drive you carry about, or on this computer. On this computer, the drive-letter and several-computers parts stay out of the way.
+- A new setup starts with good RetroBat settings: no menu music, only the All games, 2-player and 4-player collections, grid views, and box art found by itself.
+
+**Playing**
+- Flash, point-and-click and browser games show how the controller works in them first, with PLAY or Back.
+- Set which key each controller button presses in a keyboard game: Settings, This setup.
+- Wii games that also work with a normal controller ask first; a controller skips the Wii Menu.
+- The couch mouse pop-up has new pictures.
+- Bring your own Wii Menu: Settings, This setup, Wii Menu.
+- A Controllers window: every controller, what it is pressing, and a Buzz button to find it.
+
+**The wizard**
+- Its own title bar, with minimise, full screen and close.
+- New pictures for profiles and machines: Wii Remote, Wii U GamePad, Xbox, PlayStation and more.
+- Zoom and move your own profile picture.
+- Play time follows the person who is playing, not the drive.
+- The online library is grouped by company, each game opens for a closer look, there is a Request a game button, and downloads show how far they have got.
+- Stable or Dev: the page says which one this setup runs, and one press switches.
+
+**For admins**
+- Uploads try again by themselves when the connection drops, show speed and time left, and are checked against the file on your drive.
+- Rearrange or cross off games before and during publishing.
+- Share a ScreenScraper login with new setups.
+
 ## 3.0.0 (2026-10-14) - the new look
 
 **The wizard**

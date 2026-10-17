@@ -18,3 +18,6 @@ es_systems.cfg, Dolphin.ini).
 | test-netplay.ps1 | NetplayEngine on real settings files | 20 |
 | test-games.ps1 | GameLibrary on the real es_systems.cfg (+ private library files) | 31 |
 | test-flash.ps1 | FlashArtwork (Flash shelf names and pictures) | 21 |
+| test-firstrun.ps1 | FirstRunDefaults (new setup RetroBat settings, shared scraper login) | 20 |
+| test-wiimenu.ps1 | WiiMenu (bring your own Wii Menu, never overwriting saves) | 10 |
+| test-playtime.ps1 | Play time per person (SocialEngine ledgers) | 12 |

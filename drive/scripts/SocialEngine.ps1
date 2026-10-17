@@ -908,7 +908,114 @@ function Set-SocialHiddenGame([string]$Ws, [string]$System, [string]$Path, [bool
 # Every played or starred game on this drive. Returns @{ Top; Recent; Fav; All }
 # of @{ Name; System; Path; Minutes; Last; Image; Favorite }. $Hidden is the
 # table Get-SocialHiddenGames returns.
-function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6) {
+# ---------------------------------------------------------------------------
+#  PLAY TIME PER PERSON                                          (2026-10-17)
+# ---------------------------------------------------------------------------
+#  Steven: play data "tracked per logged-in profile rather than per drive, so
+#  a friend streaming to his device shows as themselves". RetroBat keeps ONE
+#  play time per game (gametime and lastplayed in each gamelist.xml), for
+#  the whole drive. So the wizard keeps a small ledger per person:
+#      profile\play\<person id>.txt    sys|path|seconds|lastplayed
+#      profile\play\open.txt           who is playing now, and RetroBat's
+#                                      totals at the moment they started
+#  Settling (Update-SocialPlayLedger) gives everything RetroBat counted since
+#  that moment to the person in open.txt, then starts a new moment for
+#  whoever is playing now. It runs when PLAY is pressed (after "Who's
+#  playing?"), when the wizard shows play times, and when the background
+#  helper checks in. The very first settle on a drive gives the times
+#  already there to whoever is logged in then (the owner, normally).
+#  Favourites stay the drive's own: RetroBat has one star per game.
+function Get-SocialPlayDir([string]$Ws) { return (Join-SocialPath $Ws 'profile\play') }
+
+# RetroBat's own totals now: key "sys|path" -> @{ Secs; Last } ("yyyyMMddTHHmmss").
+function Read-SocialRetroBatTimes([string]$Root) {
+    $out = @{}
+    $roms = Join-SocialPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return $out }
+    foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+        $txt = ''
+        try { $txt = [System.IO.File]::ReadAllText($gl) } catch { continue }
+        if ($txt -notmatch '<gametime>|<lastplayed>') { continue }
+        $x = $null
+        try { [xml]$x = $txt } catch { continue }
+        foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+            if ($null -eq $g) { continue }
+            $secs = 0; $last = ''
+            $n1 = $g.SelectSingleNode('gametime'); if ($null -ne $n1) { [int]::TryParse([string]$n1.InnerText, [ref]$secs) | Out-Null }
+            $n2 = $g.SelectSingleNode('lastplayed'); if ($null -ne $n2) { $last = ([string]$n2.InnerText).Trim() }
+            if ($secs -le 0 -and $last -eq '') { continue }
+            $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+            $out[('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim())] = @{ Secs = $secs; Last = $last }
+        }
+    }
+    return $out
+}
+
+function Read-SocialTimesFile([string]$Path) {
+    $out = @{}
+    if (-not (Test-Path -LiteralPath $Path)) { return $out }
+    foreach ($l in [System.IO.File]::ReadAllLines($Path)) {
+        if ($l.StartsWith(';') -or $l.StartsWith('id =')) { continue }
+        $p = $l.Split('|')
+        if ($p.Count -lt 4) { continue }
+        $secs = 0; [int]::TryParse($p[$p.Count - 2], [ref]$secs) | Out-Null
+        $key = (($p[0..($p.Count - 3)]) -join '|')
+        $out[$key] = @{ Secs = $secs; Last = $p[$p.Count - 1] }
+    }
+    return $out
+}
+
+function Write-SocialTimesFile([string]$Path, $Map, [string]$Head) {
+    $lines = New-Object System.Collections.ArrayList
+    [void]$lines.Add('; Play time, written by the wizard (SocialEngine.ps1, PLAY TIME PER PERSON). sys|path|seconds|last played')
+    if ($Head -ne '') { [void]$lines.Add($Head) }
+    foreach ($k in @($Map.Keys | Sort-Object)) { [void]$lines.Add(('{0}|{1}|{2}' -f $k, [int]$Map[$k].Secs, [string]$Map[$k].Last)) }
+    $tmp = $Path + '.tmp'
+    [System.IO.File]::WriteAllLines($tmp, [string[]]$lines.ToArray())
+    Move-Item -LiteralPath $tmp -Destination $Path -Force
+}
+
+# Settles the open moment and opens a new one for $PersonId ('' = keep
+# whoever is open). Returns that person's ledger (key -> @{ Secs; Last }).
+function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId = '') {
+    $dir = Get-SocialPlayDir $Ws
+    New-SocialDir $dir
+    $openF = Join-SocialPath $dir 'open.txt'
+    $now = Read-SocialRetroBatTimes $Root
+    $openId = ''
+    if (Test-Path -LiteralPath $openF) { foreach ($l in [System.IO.File]::ReadAllLines($openF)) { if ($l -match '^id = (.+)$') { $openId = $Matches[1].Trim() } } }
+    if ($openId -ne '' -and $openId -match '^[A-Za-z0-9_\-]{1,40}$') {
+        $snap = Read-SocialTimesFile $openF
+        $ledF = Join-SocialPath $dir ($openId + '.txt')
+        $led = Read-SocialTimesFile $ledF
+        $changed = $false
+        foreach ($k in $now.Keys) {
+            $before = $(if ($snap.ContainsKey($k)) { [int]$snap[$k].Secs } else { 0 })
+            $lastBefore = $(if ($snap.ContainsKey($k)) { [string]$snap[$k].Last } else { '' })
+            $add = [int]$now[$k].Secs - $before
+            $newLast = ([string]$now[$k].Last -ne '' -and [string]$now[$k].Last -ne $lastBefore)
+            if ($add -le 0 -and -not $newLast) { continue }
+            if (-not $led.ContainsKey($k)) { $led[$k] = @{ Secs = 0; Last = '' } }
+            if ($add -gt 0) { $led[$k].Secs = [int]$led[$k].Secs + $add }
+            if ($newLast) { $led[$k].Last = [string]$now[$k].Last }
+            $changed = $true
+        }
+        if ($changed) { Write-SocialTimesFile $ledF $led '' }
+    }
+    elseif ($PersonId -ne '' -and $PersonId -ne 'guest' -and @(Get-ChildItem -LiteralPath $dir -Filter '*.txt' -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'open.txt' }).Count -eq 0) {
+        # the first time on this drive: the times already here are the owner's
+        Write-SocialTimesFile (Join-SocialPath $dir ($PersonId + '.txt')) $now ''
+    }
+    $who = $(if ($PersonId -ne '') { $PersonId } elseif ($openId -ne '') { $openId } else { 'guest' })
+    Write-SocialTimesFile $openF $now ('id = ' + $who)
+    if ($who -match '^[A-Za-z0-9_\-]{1,40}$') { return (Read-SocialTimesFile (Join-SocialPath $dir ($who + '.txt'))) }
+    return @{}
+}
+
+function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6, $Ledger = $null) {
     $all = New-Object System.Collections.ArrayList
     $roms = Join-SocialPath $Root 'roms'
     if (Test-Path -LiteralPath $roms) {
@@ -928,8 +1035,19 @@ function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]
                     if ([DateTime]::TryParseExact(([string]$n2.InnerText).Trim(), 'yyyyMMddTHHmmss', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { $last = $d }
                 }
                 $n3 = $g.SelectSingleNode('favorite');   if ($null -ne $n3 -and ([string]$n3.InnerText).Trim() -eq 'true') { $fav = $true }
-                if ($secs -le 0 -and $null -eq $last -and -not $fav) { continue }
                 $path = ''; $pn = $g.SelectSingleNode('path'); if ($null -ne $pn) { $path = ([string]$pn.InnerText).Trim() }
+                # (2026-10-17) With a person's ledger, their own time and last
+                # play replace the drive's.
+                if ($null -ne $Ledger) {
+                    $lk = '{0}|{1}' -f $sys, $path
+                    $secs = 0; $last = $null
+                    if ($Ledger.ContainsKey($lk)) {
+                        $secs = [int]$Ledger[$lk].Secs
+                        $d = [DateTime]::MinValue
+                        if ([DateTime]::TryParseExact([string]$Ledger[$lk].Last, 'yyyyMMddTHHmmss', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { $last = $d }
+                    }
+                }
+                if ($secs -le 0 -and $null -eq $last -and -not $fav) { continue }
                 if ($Hidden.ContainsKey(('{0}|{1}' -f $sys, $path).ToLower())) { continue }
                 $name = ''; $nn = $g.SelectSingleNode('name'); if ($null -ne $nn) { $name = ([string]$nn.InnerText).Trim() }
                 if ($name -eq '') { $name = [System.IO.Path]::GetFileNameWithoutExtension($path) }

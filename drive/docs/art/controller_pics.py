@@ -90,8 +90,9 @@ def shrink(px, maxw, maxh):
     return out
 
 # ---------------------------------------------------------------------------
-#  HOW THE 2026-10-17 CONTROLLER PICTURES WERE MADE (Steven's own finds,
-#  kept in docs/art/sources/, which never ships). Each source is pixel art
+#  HOW THE 2026-10-17 CONTROLLER PICTURES WERE MADE (Steven's own pictures;
+#  the wave mouse and pad are his own Shutterstock uploads). The sources are
+#  kept in docs/art/sources/ on his drive, which never ships. Each source is pixel art
 #  blown up N times; sample() reads one colour per real pixel, remove_bg()
 #  clears the background from the edges inwards, crop() trims.
 #    wii-remote-and-gamepad.png  s=5    split into wiiremote + gamepad

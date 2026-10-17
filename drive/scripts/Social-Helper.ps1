@@ -349,7 +349,12 @@ function Send-CheckIn([string]$State) {
     # played games for the profile (only sent when shared with someone)
     $stats = $null
     if (@($p.Share).Count -gt 0) {
-        try { $stats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) } catch { Write-SocialLog $Ws ("stats: " + $_.Exception.Message) }
+        try {
+            # (2026-10-17) this person's own play time, not the whole drive's
+            $led = $null
+            try { $led = Update-SocialPlayLedger $Root $Ws ([string]$p.Id) } catch { Write-SocialLog $Ws ("play ledger: " + $_.Exception.Message) }
+            $stats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) 3 3 6 $led
+        } catch { Write-SocialLog $Ws ("stats: " + $_.Exception.Message) }
     }
     $live = Get-HelperLive $p
     $r = Publish-SocialRecord $Ws $p $pres $script:version '' $stats $live

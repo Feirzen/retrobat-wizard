@@ -1322,6 +1322,10 @@ function Start-PlayFlow {
     try { $who = Show-WhoIsPlaying } catch { Log ("who's playing: {0}" -f $_.Exception.Message); $who = 'play' }
     if ($who -eq 'cancel') { Log 'PLAY cancelled at Who''s playing'; return }
     if ($who -eq 'wizard') { Show-MainWindow $null 'profile'; return }
+    # Play time from here on belongs to whoever just picked (2026-10-17).
+    if ($script:socialOk) {
+        try { $me = Read-SocialProfile $Ws; [void](Update-SocialPlayLedger $Root $Ws $(if ($null -ne $me -and -not $me.Guest) { [string]$me.Id } else { 'guest' })) } catch { Log ('play time: ' + $_.Exception.Message) }
+    }
 
     # RetroBat update detection
     $cur = Get-RetroBatVersion
@@ -7485,7 +7489,12 @@ $script:localArt = @{}
 
 function Get-MyGameStats {
     if ($null -eq $script:myGameStats) {
-        try { $script:myGameStats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) }
+        try {
+            # (2026-10-17) the logged-in person's own play time, not the drive's
+            $led = $null
+            try { $me = Read-SocialProfile $Ws; $pid0 = $(if ($null -ne $me -and -not $me.Guest) { [string]$me.Id } else { 'guest' }); $led = Update-SocialPlayLedger $Root $Ws $pid0 } catch { Log ('profile: play ledger - ' + $_.Exception.Message) }
+            $script:myGameStats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) 3 3 6 $led
+        }
         catch { Log ("profile: could not read play times - {0}" -f $_.Exception.Message); $script:myGameStats = @{ Top = @(); Recent = @(); Fav = @(); All = @() } }
     }
     return $script:myGameStats
@@ -10807,6 +10816,78 @@ function Show-KeyLayoutEditor($Game) {
     catch { Log ('keys: could not save - ' + $_.Exception.Message); [void](Show-Choice $WizardName ('That could not be saved: ' + $_.Exception.Message) @('OK')) }
 }
 
+# ---------------------------------------------------------------------------
+#  THE WII MENU                                                  (2026-10-17)
+# ---------------------------------------------------------------------------
+#  The Wii Menu is Nintendo's own software, so it cannot come with the
+#  wizard. Steven: "an easy spot where someone can click and it will ask them
+#  for a NAND file". The engine is scripts\WiiMenu.ps1.
+function Add-WiiMenuCard($panel) {
+    $lib = Join-Path $ScriptsDir 'WiiMenu.ps1'
+    if (-not (Test-Path -LiteralPath $lib)) { return }
+    try { . $lib } catch { return }
+    [void]$panel.Children.Add((New-SectionHeader 'Wii Menu'))
+    $have = $false; try { $have = Test-WiiMenuInstalled $Root } catch { }
+    if ($have) {
+        $t = New-Text 'The Wii Menu is on this setup: Wii games start at it, like a real Wii. (The switch for it is in the list above.)' $ColOnline 13
+        [void]$panel.Children.Add($t); return
+    }
+    $t = New-Text 'Optional. Wii games can start at the real Wii Menu, like a real Wii. It is Nintendo''s own software, so it cannot come with the wizard, but you can bring the copy from your own Wii or your own Dolphin. Without it, Wii games simply start straight away.' $ColDim 13
+    [void]$panel.Children.Add($t)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
+    $b1 = New-Object System.Windows.Controls.Button; $b1.Content = 'Add my Wii files (a folder)...'; $b1.Padding = '12,4'; $b1.FontSize = 13
+    $b1.ToolTip = 'The Wii folder from your own Dolphin, or a folder with it inside'
+    $b1.Add_Click({ Invoke-WiiMenuImport })
+    [void]$row.Children.Add($b1)
+    $b2 = New-Object System.Windows.Controls.Button; $b2.Content = 'I have a nand.bin...'; $b2.Padding = '12,4'; $b2.FontSize = 13; $b2.Margin = '8,0,0,0'
+    $b2.ToolTip = 'A backup made on a real Wii with BootMii'
+    $b2.Add_Click({ Invoke-WiiMenuNandBin })
+    [void]$row.Children.Add($b2)
+    [void]$panel.Children.Add($row)
+}
+
+function Invoke-WiiMenuImport([string]$Folder = '') {
+    if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it first, then try again.' @('OK')); return }
+    if ($Folder -eq '') {
+        try {
+            Add-Type -AssemblyName System.Windows.Forms
+            $dlg = New-Object System.Windows.Forms.FolderBrowserDialog
+            $dlg.Description = 'Pick the Wii folder from your own Dolphin (Dolphin: File > Open User Folder), or a folder with it inside'
+            if ($dlg.ShowDialog() -ne 'OK') { return }
+            $Folder = $dlg.SelectedPath
+        } catch { return }
+    }
+    $r = Invoke-EngineWork 'copying your Wii files' @('WiiMenu.ps1') 'Import-WiiNand $args[0] $args[1]' @($Root, $Folder)
+    if ($null -eq $r) { $r = @{ Ok = $false; Message = 'That did not finish. Details are in wizard.log.' } }
+    Log ('wii menu: ' + $r.Message)
+    if ($r.Ok -and $script:featuresOk) {
+        # make sure the Wii Menu switch is on, so the files are used
+        try { if (-not (Test-Feature $Root 'wiisystemmenu')) { [void](Set-Features -Root $Root -Values @{ wiisystemmenu = $true }); $fp = Join-Path $ScriptsDir 'Fix-Portability.ps1'; if (Test-Path -LiteralPath $fp) { $null = & $fp -Quiet *>&1 } } } catch { }
+    }
+    [void](Show-Choice $WizardName $r.Message @('OK'))
+    Render-Features
+}
+
+# A BootMii nand.bin is read by Dolphin itself (it needs the keys.bin that
+# BootMii saved beside it). This opens RetroBat's Dolphin and says where to
+# click; afterwards the wizard picks the files up from Dolphin's own folder.
+function Invoke-WiiMenuNandBin {
+    if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it first, then try again.' @('OK')); return }
+    $exe = Join-Path $Root 'emulators\dolphin-emu\Dolphin.exe'
+    if (-not (Test-Path -LiteralPath $exe)) { [void](Show-Choice $WizardName 'RetroBat''s Dolphin is not on this setup yet. Open a Wii or GameCube game once in RetroBat, then try again.' @('OK')); return }
+    $pick = Show-Choice $WizardName "Dolphin reads nand.bin itself.`n`n1. Dolphin opens now.`n2. In Dolphin: Tools > Manage NAND > Import BootMii NAND Backup.`n3. Pick your nand.bin (keys.bin must be in the same folder).`n4. When it says it is done, close Dolphin and press Check here." @('Open Dolphin', 'Cancel')
+    if ($pick -ne 'Open Dolphin') { return }
+    try { $p = Start-Process -FilePath $exe -WorkingDirectory (Split-Path $exe -Parent) -PassThru } catch { [void](Show-Choice $WizardName ('Dolphin would not open: ' + $_.Exception.Message) @('OK')); return }
+    $pick = Show-Choice $WizardName 'When Dolphin has finished importing and is closed, press Check.' @('Check', 'Cancel')
+    if ($pick -ne 'Check') { return }
+    try { . (Join-Path $ScriptsDir 'WiiMenu.ps1') } catch { }
+    if (Test-WiiMenuInstalled $Root) { [void](Show-Choice $WizardName 'Found it: the Wii Menu is on this setup now.' @('OK')); Render-Features; return }
+    # Dolphin may have put it in its own folder instead of RetroBat's.
+    $own = Join-Path $Root 'emulators\dolphin-emu\User'
+    if ((Find-WiiNandRoot $own) -ne '') { Invoke-WiiMenuImport $own; return }
+    [void](Show-Choice $WizardName "The Wii Menu is not there yet. Make sure Dolphin said the import finished, then try again." @('OK'))
+}
+
 function Render-Features {
     $panel = $script:featurePanel
     $panel.Children.Clear()
@@ -10901,6 +10982,9 @@ function Render-Features {
             Update-PadDesc $on
         })
     }
+
+    # --- the Wii Menu, from the person's own Wii (2026-10-17) ---------------
+    Add-WiiMenuCard $panel
 
     # --- controller keys for keyboard games (2026-10-17) --------------------
     [void]$panel.Children.Add((New-SectionHeader 'Controller keys for keyboard games'))
