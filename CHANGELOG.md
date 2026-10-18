@@ -22,13 +22,14 @@ Newest first. Written for players: what you will notice.
 - Its own title bar, with minimise, full screen and close.
 - New pictures for profiles and machines: Wii Remote, Wii U GamePad, Xbox, PlayStation and more.
 - Zoom and move your own profile picture.
-- Play time and favourite stars follow the person who is playing, not the drive.
+- Play time, favourite stars and saves follow the person who is playing, not the drive. (Saves for 3DS, Switch and PC games stay shared. Turn it off under Features: Separate saves.)
 - Pick an accent colour (gold, blue, violet or rose) under Theme.
 - Saves: Export saves packs every save into one file; Import saves brings them back (with a safety copy first).
 - The online library is grouped by company, each game opens for a closer look, there is a Request a game button, and downloads show how far they have got.
 - Stable or Dev: the page says which one this setup runs, and one press switches.
 
 **For admins**
+- The admin tools are their own download now: ordinary setups never get them, and an admin gets them with one button on the Admin page.
 - Uploads try again by themselves when the connection drops, show speed and time left, and are checked against the file on your drive.
 - Rearrange or cross off games before and during publishing.
 - Share a ScreenScraper login with new setups.
@@ -61,4 +62,5 @@ Newest first. Written for players: what you will notice.
 - The rename button also renames the icons on the computer.
 
 **For admins**
+- The admin tools are their own download now: ordinary setups never get them, and an admin gets them with one button on the Admin page.
 - The Admin page refreshes itself when opened.

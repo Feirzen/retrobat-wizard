@@ -22,3 +22,5 @@ es_systems.cfg, Dolphin.ini).
 | test-wiimenu.ps1 | WiiMenu (bring your own Wii Menu, never overwriting saves) | 10 |
 | test-playtime.ps1 | Play time and favourites per person (SocialEngine ledgers) | 19 |
 | test-savetransfer.ps1 | Export / import every save in one file | 11 |
+| test-separatesaves.ps1 | Separate saves per person (moves, journal, shared systems left alone) | 23 |
+| test-adminpack.ps1 | Admin tools as their own download (admin-manifest.txt, checksums, refresh after an update, workshop guard) | 32 |

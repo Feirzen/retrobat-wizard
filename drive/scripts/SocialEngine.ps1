@@ -1061,6 +1061,114 @@ function Switch-SocialFavorites([string]$Root, [string]$Ws, [string]$FromId, [st
     [void](Set-SocialFavorites $Root $want)
 }
 
+# ---- separate saves per person (2026-10-17, "streaming profiles") --------
+#  Steven: "his profile keeps the drive's current saves, every other profile
+#  gets its own separate saves". When a DIFFERENT person with a profile picks
+#  PLAY, the save places below are MOVED (a rename on the same drive: instant,
+#  nothing copied) into profile\saves-of\<who was playing>\, and the new
+#  person's own are moved back in (empty folders the first time). Guests use
+#  whatever saves are in place, as before. Only while RetroBat is closed.
+#  Switched by 'separatesaves' in features.ini (on unless it says off).
+#
+#  WHAT MOVES. Every console folder in saves\ that holds only saves (NES,
+#  SNES, N64, GB/GBC/GBA, DS, PlayStation 1 and so on) moves whole. Consoles
+#  whose folder also holds system files keep that folder, and only their
+#  save folder moves:
+#      Wii        wii\dolphin-emu\User\Wii\title\00010000   (disc game saves)
+#      GameCube   gamecube\dolphin-emu\User\GC, dolphin\User\GC (memory cards)
+#      Wii U      wiiu\cemu\mlc01\usr\save\00050000
+#      PS2        ps2\pcsx2\memcards, ps2\pcsx2-16\memcards
+#      PS3        ps3\rpcs3\dev_hdd0\home
+#      PS Vita    psvita\vita3k\ux0\user
+#  Left shared on purpose (the save sits among installed content, accounts or
+#  system files, so moving it could break the console): 3DS, Switch, Xbox,
+#  Xbox 360, PSP, Flash, PC, Steam, arcade (mame and friends) and the ports.
+#
+#  A JOURNAL (profile\saves-of\switch.txt) lists every move before it starts
+#  and is deleted when all are done, so a switch cut short (power, unplugged
+#  drive) is finished the next time, never half-done for good.
+$script:SwapShared = @('3ds', 'switch', 'xbox', 'xbox360', 'psp', 'flash', 'windows', 'steam', 'ports', 'mame', 'hbmame', 'psxmame',
+                       'wii', 'wiiu', 'gamecube', 'dolphin', 'ps2', 'ps3', 'ps4', 'psvita', 'teknoparrot', 'epic', 'gog', 'eagames', 'amazon')
+$script:SwapInner = @('wii\dolphin-emu\User\Wii\title\00010000', 'gamecube\dolphin-emu\User\GC', 'dolphin\User\GC',
+                      'wiiu\cemu\mlc01\usr\save\00050000', 'ps2\pcsx2\memcards', 'ps2\pcsx2-16\memcards',
+                      'ps3\rpcs3\dev_hdd0\home', 'psvita\vita3k\ux0\user')
+
+function Test-SocialSeparateSaves([string]$Ws) {
+    $f = Join-SocialPath $Ws 'features.ini'
+    if (-not (Test-Path -LiteralPath $f)) { return $true }
+    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*separatesaves\s*=\s*(off|false|no|0)\b') { return $false } }
+    return $true
+}
+
+function Get-SocialSavePlaces([string]$Root, [string]$Ws, [string]$Ids) {
+    $places = New-Object System.Collections.ArrayList
+    $saves = Join-SocialPath $Root 'saves'
+    $tops = @{}
+    if (Test-Path -LiteralPath $saves) { foreach ($d in [System.IO.Directory]::GetDirectories($saves)) { $tops[[System.IO.Path]::GetFileName($d).ToLower()] = [System.IO.Path]::GetFileName($d) } }
+    foreach ($id in ($Ids -split ',')) {
+        $st = Join-SocialPath $Ws ('profile\saves-of\' + $id)
+        if (Test-Path -LiteralPath $st) { foreach ($d in [System.IO.Directory]::GetDirectories($st)) { $n = [System.IO.Path]::GetFileName($d); if (-not $tops.ContainsKey($n.ToLower())) { $tops[$n.ToLower()] = $n } } }
+    }
+    foreach ($k in @($tops.Keys | Sort-Object)) { if ($script:SwapShared -notcontains $k) { [void]$places.Add($tops[$k]) } }
+    foreach ($p in $script:SwapInner) { [void]$places.Add($p) }
+    return @($places)
+}
+
+function Move-SocialPlace([string]$From, [string]$To) {
+    if (-not (Test-Path -LiteralPath $From)) { return }
+    if (Test-Path -LiteralPath $To) {
+        # never overwrite: anything already there is put aside, kept
+        $aside = $To + '.kept-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+        Move-Item -LiteralPath $To -Destination $aside
+    }
+    $parent = Split-Path $To -Parent
+    if (-not (Test-Path -LiteralPath $parent)) { [void](New-Item -ItemType Directory -Path $parent -Force) }
+    Move-Item -LiteralPath $From -Destination $To
+}
+
+# Runs (or finishes) the moves in the journal. Each line: from|to|mkdir
+function Invoke-SocialSwapJournal([string]$Ws) {
+    $j = Join-SocialPath $Ws 'profile\saves-of\switch.txt'
+    if (-not (Test-Path -LiteralPath $j)) { return }
+    foreach ($l in [System.IO.File]::ReadAllLines($j)) {
+        if ($l -eq '' -or $l.StartsWith(';')) { continue }
+        $p = $l.Split('|')
+        if ($p.Count -lt 2) { continue }
+        if ($p[0] -eq 'mkdir') { if (-not (Test-Path -LiteralPath $p[1])) { [void](New-Item -ItemType Directory -Path $p[1] -Force) }; continue }
+        if (Test-Path -LiteralPath $p[0]) { Move-SocialPlace $p[0] $p[1] }   # already moved (a resumed switch): nothing to do
+    }
+    Remove-Item -LiteralPath $j -Force
+}
+
+function Switch-SocialSaves([string]$Root, [string]$Ws, [string]$FromId, [string]$ToId) {
+    Invoke-SocialSwapJournal $Ws     # a switch cut short last time is finished first
+    if ($FromId -eq $ToId -or $FromId -eq 'guest' -or $ToId -eq 'guest' -or $FromId -eq '' -or $ToId -eq '') { return $false }
+    if ($FromId -notmatch '^[A-Za-z0-9_\-]{1,40}$' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return $false }
+    if (-not (Test-SocialSeparateSaves $Ws)) { return $false }
+    if (Test-SocialRetroBatOpen) { return $false }
+    $saves = Join-SocialPath $Root 'saves'
+    if (-not (Test-Path -LiteralPath $saves)) { return $false }
+    $out = Join-SocialPath $Ws ('profile\saves-of\' + $FromId)
+    $in  = Join-SocialPath $Ws ('profile\saves-of\' + $ToId)
+    $places = Get-SocialSavePlaces $Root $Ws ($FromId + ',' + $ToId)
+    $lines = New-Object System.Collections.ArrayList
+    [void]$lines.Add(('; Saves switching from {0} to {1}, {2}. Finished by the wizard if it was cut short.' -f $FromId, $ToId, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
+    foreach ($pl in $places) {
+        $live = Join-SocialPath $saves $pl
+        $mineOut = Join-SocialPath $out $pl
+        $theirs = Join-SocialPath $in $pl
+        $isInner = ($script:SwapInner -contains $pl)
+        if (-not (Test-Path -LiteralPath $live) -and -not (Test-Path -LiteralPath $theirs)) { continue }
+        if (Test-Path -LiteralPath $live) { [void]$lines.Add(($live + '|' + $mineOut)) }
+        if (Test-Path -LiteralPath $theirs) { [void]$lines.Add(($theirs + '|' + $live)) }
+        else { [void]$lines.Add(('mkdir|' + $live)) }
+    }
+    New-SocialDir (Join-SocialPath $Ws 'profile\saves-of')
+    [System.IO.File]::WriteAllLines((Join-SocialPath $Ws 'profile\saves-of\switch.txt'), [string[]]$lines.ToArray())
+    Invoke-SocialSwapJournal $Ws
+    return $true
+}
+
 # Settles the open moment and opens a new one for $PersonId ('' = keep
 # whoever is open). Returns that person's ledger (key -> @{ Secs; Last }).
 function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId = '') {
@@ -1094,6 +1202,7 @@ function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId =
     }
     $who = $(if ($PersonId -ne '') { $PersonId } elseif ($openId -ne '') { $openId } else { 'guest' })
     try { Switch-SocialFavorites $Root $Ws $openId $who } catch { }
+    try { [void](Switch-SocialSaves $Root $Ws $openId $who) } catch { Write-SocialLog $Ws ('saves switch: ' + $_.Exception.Message) }
     Write-SocialTimesFile $openF $now ('id = ' + $who)
     if ($who -match '^[A-Za-z0-9_\-]{1,40}$') { return (Read-SocialTimesFile (Join-SocialPath $dir ($who + '.txt'))) }
     return @{}

@@ -10,6 +10,8 @@
 ;           "seed X <- Y" ships the file at Y in X's place, for a file whose
 ;           copy on this drive is personal (wizard.ini holds Steven's name).
 ;    skip   never shipped, even if a line above matches it
+;    admin  the admin tools: shipped, but listed in admin-manifest.txt instead
+;           of manifest.txt, so only an admin's setup downloads them
 ;
 ;  *  matches inside one folder, ** matches any depth.
 ;
@@ -27,6 +29,10 @@ code  ship-list.txt
 code  START HERE.txt
 code  RUN THIS AFTER AN UPDATE.bat
 
+; The admin tools are a download of their own (2026-10-17). These two
+; lines must stay ABOVE scripts/*.ps1: the first matching line wins.
+admin scripts/AdminEngine.ps1
+admin scripts/AdminUI.ps1
 code  scripts/*.ps1
 code  scripts/*.vbs
 

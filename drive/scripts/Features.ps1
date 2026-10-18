@@ -72,6 +72,16 @@ function Get-FeatureCatalogue {
         reverts = $true
     }
 
+    # 2026-10-17 ("streaming profiles"): a friend logged in on this setup
+    # plays with their own saves; the owner's are put aside, then back.
+    $c['separatesaves'] = @{
+        title   = 'Separate saves for each person'
+        desc    = 'When someone else picks their profile at PLAY, they get their own saves and yours are kept aside until you play again. Guests use whatever saves are in place.'
+        off     = 'Off: everybody shares the same saves.'
+        scripts = @()
+        reverts = $false
+    }
+
     $c['wiichooser'] = @{
         title   = 'Wii: Wii Remotes or a controller?'
         desc    = 'Wii games that also play with a controller ask first. A controller skips the Wii Menu, so no Wii Remote is needed to get in.'
