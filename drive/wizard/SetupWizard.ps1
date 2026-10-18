@@ -4433,6 +4433,17 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         <TextBlock x:Name="UpdateBarText" Foreground="#FFCFE6FF" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0"/>
       </DockPanel>
     </Border>
+    <!-- 2026-10-17: only for a person on the admins list whose setup does not
+         have the admin tools yet (they are a download of their own). -->
+    <Border x:Name="AdminBar" DockPanel.Dock="Top" Background="#FF22223A" Padding="14,8" Visibility="Collapsed">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+          <Button x:Name="AdminBarLaterBtn" Content="Later" Padding="12,4" FontSize="13" Margin="0,0,8,0"/>
+          <Button x:Name="AdminBarGetBtn" Content="Get admin tools" Padding="12,4" FontSize="13" FontWeight="Bold"/>
+        </StackPanel>
+        <TextBlock Foreground="#FFCFE6FF" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0" Text="You are an admin. The admin tools are available for you: they add the Admin page (reports, Stable or Dev, publishing games)."/>
+      </DockPanel>
+    </Border>
     <Grid x:Name="TabsHost">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto"/>
@@ -5043,6 +5054,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $script:updateNowBtn   = $script:win.FindName('UpdateNowBtn')
     $script:updateLaterBtn = $script:win.FindName('UpdateLaterBtn')
     $script:updateNotesBtn = $script:win.FindName('UpdateNotesBtn')
+    $script:adminBar       = $script:win.FindName('AdminBar')
     # The little picture on each tab, in tab order. Looked up by name one at a
     # time like everything else here, so the static test can check every one of
     # them against the XAML.
@@ -5127,6 +5139,10 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $script:updateNowBtn.Add_Click({ Invoke-WizardUpdate 'Update' })
     $script:updateLaterBtn.Add_Click({ $script:updateBar.Visibility = 'Collapsed' })
     $script:updateNotesBtn.Add_Click({ Show-UpdateNotes })
+    try {
+        $script:win.FindName('AdminBarGetBtn').Add_Click({ Invoke-AdminPackGet })
+        $script:win.FindName('AdminBarLaterBtn').Add_Click({ $script:adminBar.Visibility = 'Collapsed'; $script:adminBarLater = $true })
+    } catch { Log ('admin bar: ' + $_.Exception.Message) }
 
     $script:playButton.Add_Click({
         $script:win.Close()
@@ -8285,6 +8301,13 @@ function Sync-AdminTab($Extras = $null) {
         $prof = $null
         try { $prof = Read-SocialProfile $Ws } catch { }
         $is = Test-SocialIsAdmin $prof $Extras
+        # An admin without the admin tools gets the offer bar at the top, not
+        # the tab: the tab comes once the tools are here (Steven, 2026-10-17:
+        # only show it "if someone shows they have the admin update available").
+        if ($null -ne $script:adminBar) {
+            $script:adminBar.Visibility = $(if ($is -and -not $script:adminUiOk -and -not $script:adminBarLater) { 'Visible' } else { 'Collapsed' })
+        }
+        if (-not $script:adminUiOk) { return }
         if ($is -and $null -eq $script:adminTab) {
             $ti = New-Object System.Windows.Controls.TabItem
             $hdr = New-Object System.Windows.Controls.StackPanel; $hdr.Orientation = 'Horizontal'
@@ -8351,39 +8374,24 @@ function Sync-AdminTab($Extras = $null) {
 }
 
 #  WITHOUT THE ADMIN TOOLS. The admin page's code is a download of its own
-#  (scripts\AdminUI.ps1 + AdminEngine.ps1, see Install-UpdAdminPack), so a
-#  person on the admins list whose setup does not have it yet gets one card
-#  with one button. These two stand in only when AdminUI.ps1 did not load.
+#  (scripts\AdminUI.ps1 + AdminEngine.ps1, see Install-UpdAdminPack). Without
+#  it there is no Admin tab (an admin sees the offer bar instead), so these
+#  two only keep the callers elsewhere in the wizard safe.
 if (-not $script:adminUiOk) {
-    function Invoke-AdminRefresh { Render-Admin }
-    function Render-Admin {
-        $panel = $script:adminPanel
-        if ($null -eq $panel) { return }
-        $panel.Children.Clear()
-        [void]$panel.Children.Add((New-SectionHeader 'Admin tools'))
-        $t = New-Text 'You are an admin, but the admin tools are not on this setup yet. They are a separate download, so ordinary setups stay smaller. Press the button to get them (a few seconds), then the wizard opens again with the full Admin page.' $ColDim 13
-        $t.TextWrapping = 'Wrap'; $t.Margin = '0,4,0,8'
-        [void]$panel.Children.Add($t)
-        $b = New-SocialButton 'Get the admin tools' { Invoke-AdminPackGet }; $b.FontWeight = 'Bold'; $b.HorizontalAlignment = 'Left'; $b.Margin = '0'
-        [void]$panel.Children.Add($b)
-        if ($script:adminNote -ne '') {
-            $n = New-Text $script:adminNote $ColDim 12; $n.TextWrapping = 'Wrap'; $n.Margin = '0,8,0,0'
-            [void]$panel.Children.Add($n)
-        }
-    }
+    function Invoke-AdminRefresh { }
+    function Render-Admin { }
 }
 
 # Downloads the admin tools (in the background), then offers to reopen.
 function Invoke-AdminPackGet {
     if (-not $script:updateOk) { [void](Show-Choice $WizardName 'The update engine is missing on this setup, so the admin tools cannot be downloaded.' @('OK')); return }
-    $script:adminNote = 'Downloading the admin tools...'; Render-Admin
     $r = Invoke-EngineWork 'downloading the admin tools' @('UpdateEngine.ps1') 'Install-UpdAdminPack $args[0]' @($Ws)
     if ($null -eq $r) { $r = @{ Ok = $false; Message = 'No answer.' } }
     Log ("admin: tools download - " + $r.Message)
-    $script:adminNote = $r.Message; Render-Admin
     if ($r.Ok) {
-        $c = Show-Choice $WizardName ($r.Message + "`n`nThe wizard needs to open again to use them.") @('Reopen now', 'Later')
-        if ($c -eq 0) { Restart-WizardWindow 'admin' }
+        if ($null -ne $script:adminBar) { $script:adminBar.Visibility = 'Collapsed' }
+        $c = Show-Choice $WizardName ($r.Message + "`n`nThe wizard opens again to add the Admin page.") @('Reopen now', 'Later')
+        if ($c -eq 'Reopen now') { Restart-WizardWindow 'admin' }
     }
     else { [void](Show-Choice $WizardName $r.Message @('OK')) }
 }
