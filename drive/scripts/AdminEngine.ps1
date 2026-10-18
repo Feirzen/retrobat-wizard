@@ -418,9 +418,9 @@ function Send-AdminLibPieces([string]$Fkey, [string]$Fapi, [string]$Frepo, $RelO
 function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '') {
     $res = @{ Ok = $false; Message = '' }
     $key = Get-AdminLibKey $Ws
-    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
     $fkey = Get-SocialToken $Ws
-    if ($fkey -eq '') { $res.Message = 'This drive has no friends key (social\social-token.txt), so there is nowhere private to put the file.'; return $res }
+    if ($fkey -eq '') { $res.Message = 'This setup has no friends key (social\social-token.txt), so there is nowhere private to put the file.'; return $res }
     if (-not (Test-Path -LiteralPath $File)) { $res.Message = 'The file is gone.'; return $res }
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
     $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
@@ -638,7 +638,7 @@ function Get-AdminLibUsedNames($Games) {
 function Get-AdminLibraryContents([string]$Ws) {
     $res = @{ Ok = $false; Message = ''; Games = @(); Leftovers = @() }
     $key = Get-AdminLibKey $Ws
-    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
     $fkey = Get-SocialToken $Ws
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
     $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
@@ -665,7 +665,7 @@ function Get-AdminLibraryContents([string]$Ws) {
 function Remove-AdminLibraryGames([string]$Ws, [string[]]$GameIds, $Leftovers = @()) {
     $res = @{ Ok = $false; Message = ''; Removed = @(); Cleared = 0 }
     $key = Get-AdminLibKey $Ws
-    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
     $fkey = Get-SocialToken $Ws
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
     $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })

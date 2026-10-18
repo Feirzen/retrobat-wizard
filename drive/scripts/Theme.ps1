@@ -24,6 +24,12 @@
         mid accents    (the green Play button, gold) stay, a touch deeper
     In dark mode every colour passes through untouched.
 
+    THE ACCENT (2026-10-17, "two-colour themes" on Steven's list) lives in
+    wizard\accent.txt: gold (the default, and what no file means), blue,
+    violet or rose. Every gold in every window turns to that colour, at the
+    same brightness, in light and dark alike. Green and red are left out on
+    purpose: they mean "fine" and "problem" all over the wizard.
+
     ASCII ONLY, Windows PowerShell 5.1. Never throws.
 #>
 
@@ -60,8 +66,22 @@ function Resolve-WizTheme {
 
 $script:WizTheme = Resolve-WizTheme
 
+$script:WizAccents = [ordered]@{ gold = 44; blue = 212; violet = 268; rose = 334 }
+function Get-WizAccentFile { return (Join-Path (Split-Path $PSScriptRoot -Parent) 'wizard\accent.txt') }
+function Get-WizAccent {
+    try {
+        $f = Get-WizAccentFile
+        if (Test-Path -LiteralPath $f) { $t = ([System.IO.File]::ReadAllText($f)).Trim().ToLower(); if ($script:WizAccents.Contains($t)) { return $t } }
+    } catch { }
+    return 'gold'
+}
+function Set-WizAccent([string]$Name) { try { [System.IO.File]::WriteAllText((Get-WizAccentFile), $Name) } catch { } }
+$script:WizAccent = Get-WizAccent
+
 function Convert-ThemeHex([string]$hex) {
-    if ($script:WizTheme -ne 'light') { return $hex }
+    $light = ($script:WizTheme -eq 'light')
+    $acc = $(if ($null -ne $script:WizAccent) { [string]$script:WizAccent } else { 'gold' })
+    if (-not $light -and $acc -eq 'gold') { return $hex }
     if ($hex -notmatch '^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$') { return $hex }
     if ($script:ThemeCache.ContainsKey($hex)) { return $script:ThemeCache[$hex] }
     try {
@@ -80,7 +100,10 @@ function Convert-ThemeHex([string]$hex) {
             else { $hue = (($r - $g) / $d) + 4 }
             $hue = $hue * 60; if ($hue -lt 0) { $hue += 360 }
         }
-        if ($sat -lt 0.22) {
+        # the accent: golds take the chosen colour's hue
+        if ($acc -ne 'gold' -and $sat -gt 0.40 -and $hue -ge 32 -and $hue -le 56) { $hue = [double]$script:WizAccents[$acc] }
+        if (-not $light) { }
+        elseif ($sat -lt 0.22) {
             # Near-black is used for edges and the pixel shadows under tiles;
             # those become a soft grey rather than vanishing into white.
             if ($l -lt 0.075) { $l = 0.80 }
@@ -104,7 +127,7 @@ function Convert-ThemeHex([string]$hex) {
 }
 
 function Convert-ThemeXaml([string]$Xaml) {
-    if ($script:WizTheme -ne 'light') { return $Xaml }
+    if ($script:WizTheme -ne 'light' -and ([string]$script:WizAccent -eq 'gold' -or [string]$script:WizAccent -eq '')) { return $Xaml }
     return [regex]::Replace($Xaml, '#[0-9A-Fa-f]{8}\b', [System.Text.RegularExpressions.MatchEvaluator]{ param($mm) Convert-ThemeHex $mm.Value })
 }
 

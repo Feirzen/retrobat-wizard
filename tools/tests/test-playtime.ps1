@@ -41,6 +41,32 @@ Check 'friend top game is mario' ($st.Top.Count -eq 1 -and $st.Top[0].Name -eq '
 Check 'favourite still shows' ($st.Fav.Count -eq 1)
 $all = Get-SocialGameStats $Root @{}
 Check 'without a ledger, the drive totals' (($all.Top | Where-Object Name -eq 'Zelda').Minutes -eq 90)
+# 6. favourites per person: friend22 is open; steven1 picks PLAY
+$script:SocialRunningOverride = { $false }
+$gl = Join-Path $Root 'roms/snes/gamelist.xml'
+$null = Update-SocialPlayLedger $Root $Ws 'steven1'
+$favs = Read-SocialFavorites $Root
+Check 'steven gets back the star he had (mario)' ($favs.ContainsKey('snes|./mario.sfc'))
+# steven stars zelda too, then the friend picks PLAY: the friend starts with the stars they had (mario)
+$t = [System.IO.File]::ReadAllText($gl).Replace('<name>Zelda</name>', '<name>Zelda</name><favorite>true</favorite>')
+[System.IO.File]::WriteAllText($gl, $t)
+$null = Update-SocialPlayLedger $Root $Ws 'friend22'
+$favs = Read-SocialFavorites $Root
+Check 'friend gets their own stars back' ($favs.ContainsKey('snes|./mario.sfc') -and -not $favs.ContainsKey('snes|./zelda.sfc'))
+$null = Update-SocialPlayLedger $Root $Ws 'steven1'
+$favs = Read-SocialFavorites $Root
+Check 'steven gets zelda and mario back' ($favs.ContainsKey('snes|./zelda.sfc') -and $favs.ContainsKey('snes|./mario.sfc'))
+Check 'names and times untouched' ([System.IO.File]::ReadAllText($gl) -match '<gametime>5400</gametime>')
+# a newcomer starts with no stars; a guest changes nothing
+$null = Update-SocialPlayLedger $Root $Ws 'newbie9'
+Check 'newcomer: no stars' ((Read-SocialFavorites $Root).Count -eq 0)
+$null = Update-SocialPlayLedger $Root $Ws 'guest'
+Check 'guest: nothing changed' ((Read-SocialFavorites $Root).Count -eq 0)
+# RetroBat open: no swapping
+$script:SocialRunningOverride = { $true }
+$null = Update-SocialPlayLedger $Root $Ws 'steven1'
+Check 'while RetroBat is open nothing is swapped' ((Read-SocialFavorites $Root).Count -eq 0)
+
 Remove-Item $T -Recurse -Force
 Write-Host ("play time tests: {0} passed, {1} failed" -f $pass, $fail)
 if ($fail -gt 0) { exit 1 }

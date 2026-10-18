@@ -3730,6 +3730,20 @@ function Update-Rail {
 
 # Choose first, THEN reload (Steven, 2026-10-14): the Theme button opens three
 # choices, and only picking one closes and reopens the window in it.
+function Switch-WizardAccent([string]$Name) {
+    try {
+        if ($Name -eq (Get-WizAccent)) { if ($null -ne $script:themePick) { $script:themePick.Visibility = 'Collapsed' }; return }
+        Set-WizAccent $Name
+        Log ('new look: accent -> ' + $Name + ', reopening')
+        $me = $PSCommandPath; if ([string]::IsNullOrWhiteSpace($me)) { $me = Join-Path $WizardDir 'SetupWizard.ps1' }
+        $area = Get-RailArea
+        $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+        $cmd = "Start-Sleep -Milliseconds 700; & '" + $me.Replace("'", "''") + "' -Tab " + $area
+        Start-Process -FilePath $ps -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-Command', $cmd) -WindowStyle Hidden
+        $script:win.Close()
+    } catch { Log ('new look: accent switch failed - ' + $_.Exception.Message) }
+}
+
 function Switch-WizardTheme([string]$Mode = '') {
     try {
         if (@('system', 'light', 'dark') -notcontains $Mode) { return }
@@ -4039,6 +4053,22 @@ function Initialize-NewLook {
         }
         if ($null -ne $tb -and $null -ne $script:themePick) {
             $tb.Add_Click({ $script:themePick.Visibility = $(if ($script:themePick.Visibility -eq 'Visible') { 'Collapsed' } else { 'Visible' }) })
+        }
+        # the accent colour (2026-10-17): a swatch each, the one in use ringed
+        $ap = $script:win.FindName('AccentPick')
+        if ($null -ne $ap -and (Get-Command Get-WizAccent -ErrorAction SilentlyContinue)) {
+            $nowAcc = Get-WizAccent
+            foreach ($an in @(@('gold', '#FFE5B83B', 'Gold'), @('blue', '#FF3B8AE5', 'Blue'), @('violet', '#FF9B5BE5', 'Violet'), @('rose', '#FFE53B8A', 'Rose'))) {
+                $ab = New-Object System.Windows.Controls.Button
+                $ab.Width = 30; $ab.Height = 24; $ab.Margin = '0,3,6,0'; $ab.ToolTip = $an[2]; $ab.Tag = $an[0]
+                $sw = New-Object System.Windows.Controls.Border
+                $sw.Width = 18; $sw.Height = 12; $sw.CornerRadius = '2'
+                $sw.Background = (New-Object System.Windows.Media.BrushConverter).ConvertFromString($an[1])   # the real colour, not themed
+                $ab.Content = $sw
+                if ($an[0] -eq $nowAcc) { $ab.BorderThickness = '2'; $ab.BorderBrush = (New-Brush $ColText) }
+                $ab.Add_Click({ param($s2, $e2) Switch-WizardAccent ([string]$s2.Tag) })
+                [void]$ap.Children.Add($ab)
+            }
         }
         foreach ($pair in @(@('ThemeAuto', 'system'), @('ThemeLight', 'light'), @('ThemeDark', 'dark'))) {
             $pb = $script:win.FindName($pair[0])
@@ -4432,6 +4462,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             <Button x:Name="ThemeAuto"  Content="Auto (like Windows)" Margin="0,3,0,0" HorizontalContentAlignment="Left"/>
             <Button x:Name="ThemeLight" Content="Light"              Margin="0,3,0,0" HorizontalContentAlignment="Left"/>
             <Button x:Name="ThemeDark"  Content="Dark"               Margin="0,3,0,0" HorizontalContentAlignment="Left"/>
+            <TextBlock Text="Accent colour" Foreground="#FF9AA0AA" FontSize="12" Margin="2,10,0,2"/>
+            <WrapPanel x:Name="AccentPick"/>
           </StackPanel>
         </StackPanel>
         <StackPanel>
@@ -4675,6 +4707,14 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                at its top edge. Now it sits BEHIND the page in the
                bottom-right corner, so lists run all the way down and
                anything with a background simply covers it. -->
+          <!-- Move every save at once (2026-10-17): one file out, one file in. -->
+          <StackPanel x:Name="SaveTransferBar" DockPanel.Dock="Top" Orientation="Horizontal" Margin="6,0,0,10">
+            <TextBlock Text="All saves in one file:" Foreground="#FF9AA0AA" FontSize="13" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button x:Name="SaveExportBtn" Content="Export saves..." Padding="12,4" FontSize="13" Margin="0,0,8,0"
+                    ToolTip="Pack every save into one file, to take to another setup or computer"/>
+            <Button x:Name="SaveImportBtn" Content="Import saves..." Padding="12,4" FontSize="13"
+                    ToolTip="Bring saves back from a file made with Export saves (a safety copy of the saves here is kept first)"/>
+          </StackPanel>
           <Grid>
             <Image x:Name="ArtSaves" Stretch="None"
                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,4" IsHitTestVisible="False"
@@ -5019,6 +5059,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     Initialize-Saves
     Render-SaveConsoleList
     Render-SaveGames
+    try { Initialize-SaveTransfer } catch { Log ('saves: export/import buttons - ' + $_.Exception.Message) }
     Initialize-FeatureTab
     Render-Features
     Render-Help
@@ -11986,6 +12027,55 @@ function Show-TextInput([string]$Title, [string]$Message, [string]$Default = '')
 
 # Reads the backup index. No disk walking, so this is cheap enough to re-run
 # after every backup and every restore.
+# ---------------------------------------------------------------------------
+#  EVERY SAVE IN ONE FILE                                       (2026-10-17)
+# ---------------------------------------------------------------------------
+#  The engine is scripts\SaveTransfer.ps1. Export packs <RetroBat>\saves into
+#  one .zip wherever the person chooses; Import puts one back after packing
+#  the saves here into _ClaudeWorkspace\archive\ first.
+function Initialize-SaveTransfer {
+    $ex = $script:win.FindName('SaveExportBtn'); $im = $script:win.FindName('SaveImportBtn')
+    $lib = Join-Path $ScriptsDir 'SaveTransfer.ps1'
+    if (-not (Test-Path -LiteralPath $lib)) { $bar = $script:win.FindName('SaveTransferBar'); if ($null -ne $bar) { $bar.Visibility = 'Collapsed' }; return }
+    if ($null -ne $ex) { $ex.Add_Click({ Invoke-SaveExport }) }
+    if ($null -ne $im) { $im.Add_Click({ Invoke-SaveImport }) }
+}
+function Invoke-SaveExport {
+    if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it first, so every game has finished saving.' @('OK')); return }
+    try {
+        $dlg = New-Object Microsoft.Win32.SaveFileDialog
+        $dlg.Title = 'Where should the saves file go?'
+        $dlg.FileName = ('RetroBat saves {0}.zip' -f (Get-Date -Format 'yyyy-MM-dd'))
+        $dlg.Filter = 'Saves file (*.zip)|*.zip'
+        $dlg.InitialDirectory = [Environment]::GetFolderPath('Desktop')
+        if (-not $dlg.ShowDialog()) { return }
+        $out = $dlg.FileName
+    } catch { return }
+    $r = Invoke-EngineWork 'packing your saves' @('SaveTransfer.ps1') 'Export-RetroBatSaves $args[0] $args[1]' @($Root, $out)
+    if ($null -eq $r) { $r = @{ Ok = $false; Message = 'That did not finish. Details are in wizard.log.' } }
+    Log ('saves: export - ' + $r.Message)
+    $msg = [string]$r.Message
+    if ($r.Ok) { $msg += "`n`nTo bring them back, here or on another setup: Saves, Import saves, and pick this file." }
+    [void](Show-Choice $WizardName $msg @('OK'))
+}
+function Invoke-SaveImport {
+    if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it first, then try again.' @('OK')); return }
+    try {
+        $dlg = New-Object Microsoft.Win32.OpenFileDialog
+        $dlg.Title = 'Pick a saves file made with Export saves'
+        $dlg.Filter = 'Saves file (*.zip)|*.zip'
+        $dlg.InitialDirectory = [Environment]::GetFolderPath('Desktop')
+        if (-not $dlg.ShowDialog()) { return }
+        $zf = $dlg.FileName
+    } catch { return }
+    $pick = Show-Choice $WizardName ("Put the saves from {0} in place?`n`nA save in the file replaces the same save here. Saves that are only here stay. The saves here now are packed into a safety copy first, so this can be undone." -f [System.IO.Path]::GetFileName($zf)) @('Import', 'Cancel')
+    if ($pick -ne 'Import') { return }
+    $r = Invoke-EngineWork 'bringing your saves in' @('SaveTransfer.ps1') 'Import-RetroBatSaves $args[0] $args[1] $args[2]' @($Root, $Ws, $zf)
+    if ($null -eq $r) { $r = @{ Ok = $false; Message = 'That did not finish. Details are in wizard.log.' } }
+    Log ('saves: import - ' + $r.Message)
+    [void](Show-Choice $WizardName ([string]$r.Message) @('OK'))
+}
+
 function Initialize-Saves {
     $script:saveBackupRoot  = Join-Path $Ws 'SaveBackups'
     $script:saveVersionRoot = Join-Path $script:saveBackupRoot 'Versions'

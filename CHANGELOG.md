@@ -22,7 +22,9 @@ Newest first. Written for players: what you will notice.
 - Its own title bar, with minimise, full screen and close.
 - New pictures for profiles and machines: Wii Remote, Wii U GamePad, Xbox, PlayStation and more.
 - Zoom and move your own profile picture.
-- Play time follows the person who is playing, not the drive.
+- Play time and favourite stars follow the person who is playing, not the drive.
+- Pick an accent colour (gold, blue, violet or rose) under Theme.
+- Saves: Export saves packs every save into one file; Import saves brings them back (with a safety copy first).
 - The online library is grouped by company, each game opens for a closer look, there is a Request a game button, and downloads show how far they have got.
 - Stable or Dev: the page says which one this setup runs, and one press switches.
 

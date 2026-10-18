@@ -190,7 +190,7 @@ try {
         }
         if ($Console) {
             Write-Host ''
-            Write-Host ("  Version {0} is downloaded and checked (this drive has {1})." -f $st.version, $here)
+            Write-Host ("  Version {0} is downloaded and checked (this setup has {1})." -f $st.version, $here)
             if ($st.notes) { Write-Host ("  What's new: " + ($st.notes -replace ' \| ', "`n              ")) }
             if (-not (Ask-Console 'Install it now?')) { Write-Host '  Left as it is. Nothing changed.'; exit 0 }
         }
@@ -211,7 +211,7 @@ try {
         }
         if ($Console) {
             Write-Host ''
-            Write-Host ("  The last update took this drive from {0} to {1} on {2}." -f $info.From, $info.To, $info.Time)
+            Write-Host ("  The last update took this setup from {0} to {1} on {2}." -f $info.From, $info.To, $info.Time)
             if (-not (Ask-Console ("Go back to {0}?" -f $info.From))) { Write-Host '  Left as it is. Nothing changed.'; exit 0 }
         }
         Show-UpdWindow 'Going back one update'

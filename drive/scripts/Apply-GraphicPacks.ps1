@@ -246,7 +246,7 @@ foreach ($p in $Packs) {
     $rules = Join-Path (Join-Path $PackRoot $packPath) 'rules.txt'
     if (-not (Test-Path -LiteralPath $rules)) {
         Say ("  MISSING  {0}" -f $packPath) 'Yellow'
-        Say  "           that pack is not on this drive, nothing done for it" 'DarkGray'
+        Say  "           that pack is not in this setup, nothing done for it" 'DarkGray'
         $problems++
         continue
     }

@@ -48,7 +48,7 @@ $feat = Get-Features $Root
 $path = Get-FeaturesPath $Root
 
 Say ""
-Say "  What this drive does for you" 'White'
+Say "  What this setup does for you" 'White'
 Say "  ---------------------------------------------------------------------" 'DarkGray'
 Say ""
 

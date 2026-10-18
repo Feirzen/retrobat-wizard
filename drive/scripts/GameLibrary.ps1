@@ -220,7 +220,7 @@ function Get-LibPrivateFile([string]$Ws, [string]$Name, [string]$OutFile) {
         . $se
     }
     $key = Get-SocialToken $Ws
-    if ($key -eq '') { throw 'this drive has no friends key, which private library games need' }
+    if ($key -eq '') { throw 'this setup has no friends key, which private library games need' }
     $repo = Get-SocialRepo $Ws
     $h = @{ Authorization = "Bearer $key"; Accept = 'application/vnd.github+json'; 'X-GitHub-Api-Version' = '2022-11-28' }
     $rel = Invoke-WebRequest -Uri "https://api.github.com/repos/$repo/releases/tags/library" -Headers $h -UseBasicParsing -TimeoutSec 60 -ErrorAction Stop

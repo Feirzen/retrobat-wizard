@@ -978,6 +978,89 @@ function Write-SocialTimesFile([string]$Path, $Map, [string]$Head) {
     Move-Item -LiteralPath $tmp -Destination $Path -Force
 }
 
+# ---- favourites per person (2026-10-17) -----------------------------------
+#  RetroBat has one favourite star per game for the whole drive. When a
+#  DIFFERENT person picks PLAY, the stars of the person who was playing are
+#  kept in profile\play\<id>.fav and the new person's stars are put on
+#  instead (none, the first time). Only while RetroBat is closed (it
+#  rewrites gamelist.xml as it closes), only between two people with a
+#  profile: a guest changes nothing. Only the <favorite> lines are touched.
+function Test-SocialRetroBatOpen {
+    if ($null -ne $script:SocialRunningOverride) { return [bool](& $script:SocialRunningOverride) }
+    foreach ($n in @('emulationstation', 'retrobat')) { if (@(Get-Process -Name $n -ErrorAction SilentlyContinue).Count -gt 0) { return $true } }
+    return $false
+}
+$script:SocialRunningOverride = $null
+
+function Read-SocialFavorites([string]$Root) {
+    $set = @{}
+    $roms = Join-SocialPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return $set }
+    foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        $txt = ''; try { $txt = [System.IO.File]::ReadAllText($gl) } catch { continue }
+        if ($txt -notmatch '<favorite>') { continue }
+        $x = $null; try { [xml]$x = $txt } catch { continue }
+        $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+        foreach ($g in @($x.SelectNodes('/gameList/game[favorite]'))) {
+            if ($null -eq $g) { continue }
+            if (([string]$g.SelectSingleNode('favorite').InnerText).Trim() -ne 'true') { continue }
+            $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+            $set[('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim())] = $true
+        }
+    }
+    return $set
+}
+
+function Set-SocialFavorites([string]$Root, $Set) {
+    $roms = Join-SocialPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return 0 }
+    $changed = 0
+    foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+        $x = New-Object System.Xml.XmlDocument
+        $x.PreserveWhitespace = $true
+        try { $x.Load($gl) } catch { continue }
+        $dirty = $false
+        foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+            if ($null -eq $g) { continue }
+            $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+            $want = $Set.ContainsKey(('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim()))
+            $fn = $g.SelectSingleNode('favorite')
+            $has = ($null -ne $fn -and ([string]$fn.InnerText).Trim() -eq 'true')
+            if ($want -eq $has) { continue }
+            if ($want) {
+                if ($null -eq $fn) { $fn = $x.CreateElement('favorite'); [void]$g.AppendChild($fn) }
+                $fn.InnerText = 'true'
+            }
+            else { [void]$g.RemoveChild($fn) }
+            $dirty = $true; $changed++
+        }
+        if ($dirty) {
+            $tmp = $gl + '.fav-tmp'
+            $x.Save($tmp)
+            Move-Item -LiteralPath $tmp -Destination $gl -Force
+        }
+    }
+    return $changed
+}
+
+function Switch-SocialFavorites([string]$Root, [string]$Ws, [string]$FromId, [string]$ToId) {
+    if ($FromId -eq $ToId -or $FromId -eq 'guest' -or $ToId -eq 'guest' -or $FromId -eq '' -or $ToId -eq '') { return }
+    if ($FromId -notmatch '^[A-Za-z0-9_\-]{1,40}$' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return }
+    if (Test-SocialRetroBatOpen) { return }
+    $dir = Get-SocialPlayDir $Ws
+    $cur = Read-SocialFavorites $Root
+    [System.IO.File]::WriteAllLines((Join-SocialPath $dir ($FromId + '.fav')), [string[]]@(@('; favourite games (sys|path), kept by the wizard') + @($cur.Keys | Sort-Object)))
+    $want = @{}
+    $toF = Join-SocialPath $dir ($ToId + '.fav')
+    if (Test-Path -LiteralPath $toF) { foreach ($l in [System.IO.File]::ReadAllLines($toF)) { if ($l -ne '' -and -not $l.StartsWith(';')) { $want[$l] = $true } } }
+    [void](Set-SocialFavorites $Root $want)
+}
+
 # Settles the open moment and opens a new one for $PersonId ('' = keep
 # whoever is open). Returns that person's ledger (key -> @{ Secs; Last }).
 function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId = '') {
@@ -1010,6 +1093,7 @@ function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId =
         Write-SocialTimesFile (Join-SocialPath $dir ($PersonId + '.txt')) $now ''
     }
     $who = $(if ($PersonId -ne '') { $PersonId } elseif ($openId -ne '') { $openId } else { 'guest' })
+    try { Switch-SocialFavorites $Root $Ws $openId $who } catch { }
     Write-SocialTimesFile $openF $now ('id = ' + $who)
     if ($who -match '^[A-Za-z0-9_\-]{1,40}$') { return (Read-SocialTimesFile (Join-SocialPath $dir ($who + '.txt'))) }
     return @{}

@@ -20,4 +20,5 @@ es_systems.cfg, Dolphin.ini).
 | test-flash.ps1 | FlashArtwork (Flash shelf names and pictures) | 21 |
 | test-firstrun.ps1 | FirstRunDefaults (new setup RetroBat settings, shared scraper login) | 20 |
 | test-wiimenu.ps1 | WiiMenu (bring your own Wii Menu, never overwriting saves) | 10 |
-| test-playtime.ps1 | Play time per person (SocialEngine ledgers) | 12 |
+| test-playtime.ps1 | Play time and favourites per person (SocialEngine ledgers) | 19 |
+| test-savetransfer.ps1 | Export / import every save in one file | 11 |
