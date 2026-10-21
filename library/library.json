@@ -2124,6 +2124,26 @@
       ] }
     },
     {
+      "id": "donkey-kong-country-tropical-freeze",
+      "title": "Donkey Kong Country : Tropical Freeze",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Donkey Kong Country: Tropical Freeze is the fifth game in the Donkey Kong Country series and was released exclusively for Nintendo Wii U and later ported to the Nintendo Switch. While celebrating Donkey Kong's birthday the Kong family witnesses how an invasion fleet of arctic...",
+      "added": "2026-10-21",
+      "art": "library/art/donkey-kong-country-tropical-freeze.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux", "size": 12713230336, "sha256": "7f40deaaab3682fee1f5a8f0c7a01832dd9bf6b9dfc57ac869dfe7e03eb89c51", "pieces": [
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part01", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part01", "size": 1992294400, "sha256": "fa51d6cf25e6283e412a0ca66df1b2b712934543326b0e1c00d1dcdc9e818ed5" },
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part02", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part02", "size": 1992294400, "sha256": "36913e4b9d20de67c4f52b30fe2ded7425d0885809a30309c021bbe5a207fe97" },
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part03", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part03", "size": 1992294400, "sha256": "4d6da37c54f720e409d7ec2cfe72293377a167d743056c7d5eb504f31d13a44a" },
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part04", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part04", "size": 1992294400, "sha256": "134d060e2b445141c413f42d3ab7e187712a7f2c9daeb0a9de5404c09f27cc68" },
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part05", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part05", "size": 1992294400, "sha256": "a48aa64435c8281a355d7e31ae4930acfd67ab521eb0c090f7cd108296bd2bb7" },
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part06", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part06", "size": 1992294400, "sha256": "fdb18b2c8db9b9a6427125e32a665640fe5b73c5c1e2b6daa71dc87b4efaca15" },
+        { "name": "Donkey Kong Country - Tropical Freeze (USA) (En,Fr,Es) (Rev 1).wux.part07", "url": "private:donkey-kong-country-tropical-freeze__Donkey.Kong.Country.-.Tropical.Freeze.USA.En.Fr.Es.Rev.1.wux.part07", "size": 759463936, "sha256": "b7a47698d2da76fbd10bc13d0ad3ce75b30159a483ea59005f0de96e43796507" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
