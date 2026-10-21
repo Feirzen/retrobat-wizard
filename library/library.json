@@ -2100,6 +2100,30 @@
       ] }
     },
     {
+      "id": "call-of-duty-black-ops-ii",
+      "title": "Call of Duty : Black Ops II",
+      "system": "wiiu",
+      "players": "1-4",
+      "description": "In the not-too-distant future, two superpowers dominate the world. The United States and China have pushed each other to the brink of destruction. When a cyber-terrorism strike unleashes America's drones against its own cities, the situation goes from bad to full-blown...",
+      "added": "2026-10-21",
+      "art": "library/art/call-of-duty-black-ops-ii.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux", "size": 20370489344, "sha256": "f4cdf055a008b633feeb20e4bd34e97a93ffa5b81d03974f9601b163b288e957", "pieces": [
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part01", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part01", "size": 1992294400, "sha256": "516eb983e119201ad1577cd10af67a1593117b0dbd88889852dc7c760bff286a" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part02", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part02", "size": 1992294400, "sha256": "d5b1ec3850f8b2e82d71533baccd1f61fb94d9b48c3ceec9606fb28344a4297a" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part03", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part03", "size": 1992294400, "sha256": "5f12a06d865eb639034979c27730a6c1c160eef1f65f86839ef515451c041072" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part04", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part04", "size": 1992294400, "sha256": "4458c3ac47dcf03f1dba2e01f1dffb918710ccf8e8c949ed0dd071807ecf300d" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part05", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part05", "size": 1992294400, "sha256": "89da4d18968333185e4f372f62ad0230af14899cc8544ea89fc0b7a1b8d71d60" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part06", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part06", "size": 1992294400, "sha256": "86834572453dc994347477c580a78f7504897012e1470c91f670c22fdbe57e76" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part07", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part07", "size": 1992294400, "sha256": "f6340c75fe0afe64d0d9e72d32dfd5c10fd7e2b24b261b7f43fe6e4552f4dddc" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part08", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part08", "size": 1992294400, "sha256": "bb9cca1dc76a0265367be7f63684cc0c2e9deb739906eb31c638b4d9c6b0eedb" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part09", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part09", "size": 1992294400, "sha256": "b4a33f365fa768d5c8e26200f3d3452033cff0a1db59b86d2fbc0addc43084db" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part10", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part10", "size": 1992294400, "sha256": "0c6d773e2242ac01ee23a5b4f55d91b5ee7d1543d78468d9045a27f179f0ee70" },
+        { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part11", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part11", "size": 447545344, "sha256": "5885fe98e5aed01182b8d71745256fe87562eaacdb8f73e2c9ff42c09feed6e5" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
