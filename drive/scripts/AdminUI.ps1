@@ -591,6 +591,9 @@ function Invoke-AdminPublishTick {
         $script:adminNote = $r.Message
         $script:libCatalog = $null
         Render-Admin
-        [void](Show-Choice $WizardName $r.Message @('OK'))
+        # Kept in the taskbar so the upload could finish (see Add_Closing): no
+        # pop-up that could jump in front of a game. The note is on the Admin page.
+        $down = $false; try { $down = ([string]$script:win.WindowState -eq 'Minimized') } catch { }
+        if (-not $down) { [void](Show-Choice $WizardName $r.Message @('OK')) }
     } catch { Log "admin: publish tick - $_" }
 }
