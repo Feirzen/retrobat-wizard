@@ -431,7 +431,7 @@ try {
         }
 
         if ($wrongMachine) {
-            $checks['settings'] = New-Check 'warn' "The settings on the drive were applied for another computer ($activeMachine)." @(
+            $checks['settings'] = New-Check 'warn' "The settings in this setup were applied for another computer ($activeMachine)." @(
                 "This machine is $thisMachine. Run Apply My Settings to switch over.")
         }
         elseif ($drift.Count -eq 0) {

@@ -80,6 +80,8 @@ function Test-CmGameWants([string]$Path) {
         # which cannot carry the words itself)
         $leaf = ([System.IO.Path]::GetFileName($Path)).ToLower()
         if (@(Get-CmFiles) -contains $leaf) { return $true }
+        # a game with its own key layout (2026-10-17)
+        if ($null -ne (Get-CmKeymap $Path)) { return $true }
         if ((Get-Item -LiteralPath $Path).Length -gt 16KB) { return $false }
         $t = [System.IO.File]::ReadAllText($Path)
         return ($t -match 'Launch-Browser' -or $t -match '(?i)couch\s*mouse\s*=\s*on')
@@ -274,10 +276,18 @@ public class RBToast : Form
 '@
         }
         $script:Toast = New-Object RBToast
-        $script:ToastMouse = [RBToast]::MouseIcon()
-        $script:ToastPad = $null
-        $pp = Join-Path $Ws 'wizard\controllers.png'
-        if (Test-Path -LiteralPath $pp) { $script:ToastPad = [System.Drawing.Image]::FromStream((New-Object System.IO.MemoryStream(,[System.IO.File]::ReadAllBytes($pp)))) }
+        # Steven's pictures (2026-10-17): a mouse and a controller, both with
+        # little waves, on a light square. Missing: the drawn mouse and the
+        # Controllers picture, as before.
+        function Get-CmPic([string]$Name) {
+            $f = Join-Path $Ws ('wizard\' + $Name)
+            if (-not (Test-Path -LiteralPath $f)) { return $null }
+            return [System.Drawing.Image]::FromStream((New-Object System.IO.MemoryStream(,[System.IO.File]::ReadAllBytes($f))))
+        }
+        $script:ToastMouse = Get-CmPic 'cm-mouse.png'
+        if ($null -eq $script:ToastMouse) { $script:ToastMouse = [RBToast]::MouseIcon() }
+        $script:ToastPad = Get-CmPic 'cm-pad.png'
+        if ($null -eq $script:ToastPad) { $script:ToastPad = Get-CmPic 'controllers.png' }
     }
     catch { Write-CmLog ('pop-up unavailable: ' + $_.Exception.Message); $script:Toast = $null }
 }

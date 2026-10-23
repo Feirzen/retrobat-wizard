@@ -637,6 +637,10 @@ $script:ProfileIconChoices = @(
     # 'wiimote' removed 2026-10-14 (Steven: the picture was broken).
     'nes', 'snes', 'n64', 'gamecube',
     'gameboy', 'gba', 'ds', 'switch',
+    # 2026-10-17: Steven's controller pictures (the Wii Remote and the
+    # GamePad as two, Xbox, PlayStation, a plain pad and a mouse)
+    'wiiremote', 'gamepad', 'xbox', 'xboxone', 'xboxseries',
+    'playstation', 'ps4', 'ps5', 'pad', 'mouse',
     'pc', 'laptop', 'monitor', 'brokenlaptop'
 )
 

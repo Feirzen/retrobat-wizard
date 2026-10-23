@@ -390,6 +390,109 @@ function Get-UpdRawUrl($Cfg, [string]$Ref, [string]$Rel) {
 }
 
 # ---------------------------------------------------------------------------
+#  BOTH CHANNELS AT A GLANCE (2026-10-17)
+#  Steven: "I'm never sure which I'm looking at." The Admin page shows what
+#  Stable and Dev each hold right now, next to what this drive runs. Two tiny
+#  files (latest.ini and latest-dev.ini), read in the background with the
+#  usual check, written to update\channels.ini for the window to read.
+# ---------------------------------------------------------------------------
+function Update-UpdChannelInfo([string]$Ws) {
+    $cfg = Get-UpdConfig $Ws
+    $P = Get-UpdPaths $Ws
+    New-UpdDir $P.Dir
+    $out = @('; Written by scripts\UpdateEngine.ps1. What each channel holds on GitHub. Safe to delete.',
+             ('time = ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
+    foreach ($pair in @(@('stable', 'latest.ini'), @('dev', 'latest-dev.ini'))) {
+        $tmp = Join-UpdPath $P.Dir ($pair[0] + '-peek.tmp')
+        try {
+            Invoke-UpdFetch ((Get-UpdRawUrl $cfg $cfg.Branch $pair[1]) + '?t=' + [DateTime]::UtcNow.Ticks) $tmp
+            $ini = Read-UpdIni $tmp
+            $out += ($pair[0] + '_version = ' + [string]$ini['version'])
+            $out += ($pair[0] + '_tag = ' + [string]$ini['tag'])
+        }
+        catch { $out += ($pair[0] + '_version = ') }
+        finally { try { if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force } } catch { } }
+    }
+    try { [System.IO.File]::WriteAllLines((Join-UpdPath $P.Dir 'channels.ini'), [string[]]$out) } catch { }
+}
+
+# @{ StableVersion; StableTag; DevVersion; DevTag; Time } from the last look,
+# all '' when there has not been one.
+function Read-UpdChannelInfo([string]$Ws) {
+    $ini = @{}
+    try { $ini = Read-UpdIni (Join-UpdPath (Get-UpdPaths $Ws).Dir 'channels.ini') } catch { }
+    return @{ StableVersion = [string]$ini['stable_version']; StableTag = [string]$ini['stable_tag']
+              DevVersion = [string]$ini['dev_version']; DevTag = [string]$ini['dev_tag']; Time = [string]$ini['time'] }
+}
+
+# ---------------------------------------------------------------------------
+#  THE ADMIN TOOLS, A DOWNLOAD OF THEIR OWN (2026-10-17)
+#  Steven: "add the admin as its own download". The Admin page's code
+#  (scripts\AdminEngine.ps1 and scripts\AdminUI.ps1) is NOT in manifest.txt,
+#  so an ordinary setup never gets it. It is listed in admin-manifest.txt,
+#  beside manifest.txt at the same commit and in the same format, and only a
+#  person on the admins list fetches it, with the button on their Admin page.
+#  Every file is checked against its SHA-256 like any update file.
+#  After each update, a setup that has the admin tools gets the matching ones
+#  (Invoke-UpdateInstall calls this), so they never fall out of step.
+# ---------------------------------------------------------------------------
+function Install-UpdAdminPack([string]$Ws, [string]$Tag = '') {
+    $res = @{ Ok = $false; Files = 0; Message = '' }
+    if (Test-UpdWorkshop $Ws) {
+        $res.Message = 'This is the workshop drive: the admin tools here are the ones being worked on, so nothing was downloaded.'
+        return $res
+    }
+    $cfg = Get-UpdConfig $Ws
+    $P = Get-UpdPaths $Ws
+    New-UpdDir $P.Dir
+    if ($Tag -eq '') { $Tag = (Get-UpdInstalled $Ws).Tag }
+    if ($Tag -eq '') {
+        # Never updated yet (a fresh install): the channel's newest.
+        $lt = Join-UpdPath $P.Dir 'admin-latest.tmp'
+        try {
+            Invoke-UpdFetch ((Get-UpdRawUrl $cfg $cfg.Branch $cfg.Latest) + '?t=' + [DateTime]::UtcNow.Ticks) $lt
+            $Tag = [string](Read-UpdIni $lt)['tag']
+        }
+        catch { $res.Message = 'Could not reach GitHub. Check the internet and try again.'; return $res }
+        finally { try { if (Test-Path -LiteralPath $lt) { Remove-Item -LiteralPath $lt -Force } } catch { } }
+        if ($Tag -eq '') { $res.Message = 'GitHub did not say which version is newest. Try again later.'; return $res }
+    }
+    $manTmp = Join-UpdPath $P.Dir 'admin-manifest.tmp'
+    try {
+        try { Invoke-UpdFetch (Get-UpdRawUrl $cfg $Tag 'admin-manifest.txt') $manTmp }
+        catch { $res.Message = 'Could not get the list of admin tools. Check the internet. If this setup has not been updated in a while, update it first, then try again.'; return $res }
+        $man = Read-UpdManifest $manTmp
+        if (-not $man.Ok) { $res.Message = 'The list of admin tools was refused: ' + $man.Problem; return $res }
+        foreach ($e in $man.Entries) {
+            $dest = Join-UpdPath $Ws $e.Path
+            if ((Test-Path -LiteralPath $dest -PathType Leaf) -and (Get-UpdHash $dest) -eq $e.Hash) { continue }
+            New-UpdDir (Split-Path -Parent $dest)
+            $tmp = $dest + '.part'
+            try { Invoke-UpdFetch (Get-UpdRawUrl $cfg $Tag ('drive/' + $e.Path)) $tmp }
+            catch { $res.Message = ('The download stopped partway ({0}). Try again.' -f $e.Path); return $res }
+            $ok = (Test-Path -LiteralPath $tmp) -and ((Get-Item -LiteralPath $tmp).Length -eq $e.Size) -and ((Get-UpdHash $tmp) -eq $e.Hash)
+            if (-not $ok) {
+                try { Remove-Item -LiteralPath $tmp -Force } catch { }
+                $res.Message = ('A downloaded file did not match its checksum ({0}). Nothing was changed for that file.' -f $e.Path)
+                return $res
+            }
+            if (Test-Path -LiteralPath $dest) { Remove-Item -LiteralPath $dest -Force }
+            Move-Item -LiteralPath $tmp -Destination $dest
+            $res.Files++
+        }
+        Write-UpdLog $Ws ("admin tools: {0} file(s) brought up to date ({1})" -f $res.Files, $Tag)
+        $res.Ok = $true
+        $res.Message = $(if ($res.Files -gt 0) { 'The admin tools are on this setup now.' } else { 'The admin tools here were already up to date.' })
+        return $res
+    }
+    finally { try { if (Test-Path -LiteralPath $manTmp) { Remove-Item -LiteralPath $manTmp -Force } } catch { } }
+}
+
+function Test-UpdAdminPack([string]$Ws) {
+    return (Test-Path -LiteralPath (Join-UpdPath $Ws 'scripts\AdminEngine.ps1')) -and (Test-Path -LiteralPath (Join-UpdPath $Ws 'scripts\AdminUI.ps1'))
+}
+
+# ---------------------------------------------------------------------------
 #  The lock. Two wizards open at once must not download into the same folder.
 # ---------------------------------------------------------------------------
 function Enter-UpdLock([string]$Ws) {
@@ -652,6 +755,7 @@ function Invoke-UpdateInstall {
     $res = @{ Ok = $false; Message = ''; Version = ''; Changed = 0; Added = 0; Removed = 0 }
     $P = Get-UpdPaths $Ws
     $from = Get-UpdLocalVersion $Ws
+    $hadAdmin = Test-Path -LiteralPath (Join-UpdPath $Ws 'scripts\AdminEngine.ps1')
 
     $dirName = Get-UpdReadyVersion $Ws
     if ($dirName -eq '') { $res.Message = 'There is no downloaded update waiting.'; return $res }
@@ -791,6 +895,15 @@ function Invoke-UpdateInstall {
         $touchedTiers   = @($lines | Where-Object { $_ -match "`tmachine/(tiers|rules)/" }).Count -gt 0
         if ($touchedRestore) { Say 'Putting protected files in place'; Invoke-UpdPostStep $Ws 'Restore-ProtectedFiles.ps1' }
         if ($touchedTiers)   { Say 'Re-applying settings';             Invoke-UpdPostStep $Ws 'Apply-Settings.ps1' }
+    }
+
+    # --- the admin tools, for a setup that has them --------------------------
+    if ($hadAdmin) {
+        Say 'Updating the admin tools'
+        try {
+            $a = Install-UpdAdminPack $Ws ([string]$target['tag'])
+            if (-not $a.Ok) { Write-UpdLog $Ws ("install: admin tools not refreshed - " + $a.Message) }
+        } catch { Write-UpdLog $Ws ("install: admin tools not refreshed - " + $_.Exception.Message) }
     }
 
     $res.Ok = $true

@@ -73,7 +73,7 @@ for rel in sorted(all_files):
     if any(k == 'skip' and pat_to_re(p).match(rel) for k, p, _ in rules):
         continue
     for kind, p, src in rules:
-        if kind in ('code', 'seed') and src is None and pat_to_re(p).match(rel):
+        if kind in ('code', 'seed', 'admin') and src is None and pat_to_re(p).match(rel):
             entries[rel] = (kind, os.path.join(ws, rel))
             break
 for kind, p, src in rules:
@@ -105,6 +105,12 @@ if os.path.isdir(drive):
     shutil.rmtree(drive)
 lines = ['# retrobat-wizard manifest. Built by publish.py from ship-list.txt.',
          'version\t' + version]
+# The admin tools: same format, kind 'code', in a list of their own that
+# only an admin's setup reads (Install-UpdAdminPack). manifest.txt never
+# names them, so older drives, which refuse any kind but code and seed,
+# read it as always.
+admin_lines = ['# retrobat-wizard ADMIN TOOLS. Built by publish.py from ship-list.txt.',
+               'version\t' + version]
 total = 0
 for rel in sorted(entries, key=str.lower):
     kind, src = entries[rel]
@@ -113,15 +119,22 @@ for rel in sorted(entries, key=str.lower):
     shutil.copyfile(src, dst)
     data = open(dst, 'rb').read()
     total += len(data)
-    lines.append('%s\t%s\t%d\t%s' % (kind, hashlib.sha256(data).hexdigest(), len(data), rel))
+    line = '%s\t%s\t%d\t%s' % ('code' if kind == 'admin' else kind, hashlib.sha256(data).hexdigest(), len(data), rel)
+    (admin_lines if kind == 'admin' else lines).append(line)
 
 # version.txt in the repo must say the version being published
 vt = open(os.path.join(drive, 'version.txt')).read().strip()
 assert vt == version, 'version.txt says %s, publishing %s' % (vt, version)
 
 open(os.path.join(repo, 'manifest.txt'), 'w', newline='\n').write('\n'.join(lines) + '\n')
+am = os.path.join(repo, 'admin-manifest.txt')
+if len(admin_lines) > 2:
+    open(am, 'w', newline='\n').write('\n'.join(admin_lines) + '\n')
+elif os.path.exists(am):
+    os.remove(am)
 open(os.path.join(repo, '.gitattributes'), 'w', newline='\n').write(
     '# Byte-for-byte: the drive checks every file against its SHA-256.\n* -text\n')
 print('%d files, %.1f MB, version %s' % (len(entries), total / 1048576, version))
-print('code: %d  seed: %d' % (sum(1 for e in entries.values() if e[0] == 'code'),
-                              sum(1 for e in entries.values() if e[0] == 'seed')))
+print('code: %d  seed: %d  admin: %d' % (sum(1 for e in entries.values() if e[0] == 'code'),
+                                         sum(1 for e in entries.values() if e[0] == 'seed'),
+                                         sum(1 for e in entries.values() if e[0] == 'admin')))

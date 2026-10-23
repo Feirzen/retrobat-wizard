@@ -12,6 +12,11 @@
         -Console        plain text in a console instead of a window, with a
                         yes/no question before anything changes. Used by the
                         two buttons in Maintenance Steps.
+        -Title <text>   the window's heading (the Admin page's Stable / Dev
+                        switch says "Switching to Dev")
+        -RevertChannel <stable|dev>
+                        the channel to put back if the switch does not finish,
+                        so a failed switch leaves the drive as it was
 
     Started by:
         the wizard's "Update now" bar and Help tab buttons (window mode)
@@ -27,7 +32,9 @@ param(
     [ValidateSet('Update', 'GoBack')][string]$Mode = 'Update',
     [int]$WaitPid = 0,
     [switch]$Relaunch,
-    [switch]$Console
+    [switch]$Console,
+    [string]$Title = '',
+    [string]$RevertChannel = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -52,6 +59,7 @@ if ($WaitPid -gt 0) {
 # --- the window: small, borderless, the same look as the wizard's splash ----
 $script:uw = $null
 $script:uwText = $null
+$script:uwBar = $null
 function Show-UpdWindow([string]$Title) {
     if ($Console) { Write-Host ''; Write-Host "  $Title" -ForegroundColor Cyan; return }
     try {
@@ -70,7 +78,8 @@ function Show-UpdWindow([string]$Title) {
         $t2.Text = 'Starting'; $t2.FontSize = 13; $t2.Margin = '0,10,0,12'; $t2.TextWrapping = 'Wrap'
         $t2.Foreground = (New-Object System.Windows.Media.BrushConverter).ConvertFromString((Convert-ThemeHex '#FF9AA0AA'))
         $pb = New-Object System.Windows.Controls.ProgressBar
-        $pb.IsIndeterminate = $true; $pb.Height = 8
+        $pb.IsIndeterminate = $true; $pb.Height = 8; $pb.Maximum = 100
+        $script:uwBar = $pb
         [void]$sp.Children.Add($t1); [void]$sp.Children.Add($t2); [void]$sp.Children.Add($pb)
         $w.Content = $sp
         $w.Show()
@@ -85,6 +94,15 @@ function Update-UpdWindow([string]$Msg) {
     if ($null -eq $script:uw) { return }
     try {
         $script:uwText.Text = $Msg
+        # "Downloading 12 of 40" fills the bar (2026-10-17: something to
+        # watch, so a long wait never looks stuck).
+        if ($null -ne $script:uwBar) {
+            if ($Msg -match '(\d+) of (\d+)' -and [int]$Matches[2] -gt 0) {
+                $script:uwBar.IsIndeterminate = $false
+                $script:uwBar.Value = [math]::Min(100, 100.0 * [int]$Matches[1] / [int]$Matches[2])
+            }
+            elseif ($Msg -match '^Installing') { $script:uwBar.IsIndeterminate = $true }
+        }
         # Let the window repaint before the next slow step starts.
         $script:uw.Dispatcher.Invoke([action]{}, [System.Windows.Threading.DispatcherPriority]::Background)
     } catch { }
@@ -125,6 +143,13 @@ function Ask-Console([string]$Question) {
     return ($a -match '^\s*[Yy]')
 }
 
+# A Stable / Dev switch that did not finish puts the old channel back, so
+# the drive never says Dev while it still runs Stable.
+function Undo-UpdSwitch {
+    if ($RevertChannel -eq '') { return }
+    try { Set-UpdChannel $Ws $RevertChannel; Write-UpdLog $Ws ("updater: switch did not finish, channel back to " + $RevertChannel) } catch { }
+}
+
 function Start-WizardAgain {
     if (-not $Relaunch) { return }
     try {
@@ -140,8 +165,9 @@ function Start-WizardAgain {
 try {
     if ($Mode -eq 'Update') {
         $here = Get-UpdLocalVersion $Ws
-        Show-UpdWindow 'Updating the wizard'
+        Show-UpdWindow $(if ($Title -ne '') { $Title } else { 'Updating the wizard' })
         if (Test-UpdRetroBatRunning) {
+            Undo-UpdSwitch
             Show-UpdResult 'RetroBat is open. Close it completely, then press Update now again.' $false
             Start-WizardAgain
             exit 1
@@ -157,18 +183,20 @@ try {
         }
         if ($st.state -ne 'ready') {
             $msg = if ($st.message) { $st.message } else { 'The update could not be downloaded.' }
+            Undo-UpdSwitch
             Show-UpdResult ($msg + "`n`nNothing was changed.") $false
             Start-WizardAgain
             exit 1
         }
         if ($Console) {
             Write-Host ''
-            Write-Host ("  Version {0} is downloaded and checked (this drive has {1})." -f $st.version, $here)
+            Write-Host ("  Version {0} is downloaded and checked (this setup has {1})." -f $st.version, $here)
             if ($st.notes) { Write-Host ("  What's new: " + ($st.notes -replace ' \| ', "`n              ")) }
             if (-not (Ask-Console 'Install it now?')) { Write-Host '  Left as it is. Nothing changed.'; exit 0 }
         }
         Update-UpdWindow ("Installing version " + $st.version)
         $r = Invoke-UpdateInstall -Ws $Ws -Progress { param($m) Update-UpdWindow $m }
+        if (-not $r.Ok) { Undo-UpdSwitch }
         Show-UpdResult $r.Message $r.Ok
         Start-WizardAgain
         if ($r.Ok) { exit 0 } else { exit 1 }
@@ -183,7 +211,7 @@ try {
         }
         if ($Console) {
             Write-Host ''
-            Write-Host ("  The last update took this drive from {0} to {1} on {2}." -f $info.From, $info.To, $info.Time)
+            Write-Host ("  The last update took this setup from {0} to {1} on {2}." -f $info.From, $info.To, $info.Time)
             if (-not (Ask-Console ("Go back to {0}?" -f $info.From))) { Write-Host '  Left as it is. Nothing changed.'; exit 0 }
         }
         Show-UpdWindow 'Going back one update'
@@ -196,6 +224,7 @@ try {
 }
 catch {
     Write-UpdLog $Ws ("updater: FATAL - " + $_.Exception.Message)
+    Undo-UpdSwitch
     Show-UpdResult ("The updater hit an error: " + $_.Exception.Message + "`n`nDetails are in _ClaudeWorkspace\update\update.log.") $false
     Start-WizardAgain
     exit 1

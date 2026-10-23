@@ -61,6 +61,35 @@ function Get-FeatureCatalogue {
         reverts = $true
     }
 
+    # 2026-10-17: the "how this game plays" screen before Flash, ScummVM and
+    # browser games, and the Wii Remotes-or-controller question for Wii
+    # games that play either way.
+    $c['howtoplay'] = @{
+        title   = 'How to play, before keyboard games'
+        desc    = 'Flash, point-and-click and browser games first show how the controller works in them (the mouse, or the game''s own keys), with PLAY or Back.'
+        off     = 'Off starts them straight away.'
+        scripts = @('Fix-Portability.ps1')
+        reverts = $true
+    }
+
+    # 2026-10-17 ("streaming profiles"): a friend logged in on this setup
+    # plays with their own saves; the owner's are put aside, then back.
+    $c['separatesaves'] = @{
+        title   = 'Separate saves for each person'
+        desc    = 'When someone else picks their profile at PLAY, they get their own saves and yours are kept aside until you play again. Guests use whatever saves are in place.'
+        off     = 'Off: everybody shares the same saves.'
+        scripts = @()
+        reverts = $false
+    }
+
+    $c['wiichooser'] = @{
+        title   = 'Wii: Wii Remotes or a controller?'
+        desc    = 'Wii games that also play with a controller ask first. A controller skips the Wii Menu, so no Wii Remote is needed to get in.'
+        off     = 'Off: they always start the usual way.'
+        scripts = @()
+        reverts = $true
+    }
+
     $c['launchmenu'] = @{
         title   = 'Ask before a slow launch'
         desc    = 'A "Launch game?" screen before every game, on every console.'
