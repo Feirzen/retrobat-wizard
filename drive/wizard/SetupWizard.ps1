@@ -5213,6 +5213,19 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                 if ($pick -ne 'Close anyway') { $e2.Cancel = $true }
                 else { Log ("closed while still working on: {0}" -f $script:busyLabel) }
             }
+            # A library upload runs in its own runspace and is not counted in
+            # busyDepth, so closing (X, or PLAY, which closes first) used to end
+            # it without a word. Offer to keep the wizard down in the taskbar
+            # until it finishes instead (Steven, 2026-10-21).
+            elseif ($null -ne $script:adminLibJob -and -not $script:adminLibJob.Handle.IsCompleted) {
+                $pick = Show-Choice $WizardName ("Games are still uploading to the online library ({0}).`n`nClosing the wizard stops the upload. Keep it running in the taskbar and it finishes by itself, even while you play." -f $script:adminLibJob.Title) @('Keep uploading', 'Stop the upload and close')
+                if ($pick -ne 'Stop the upload and close') {
+                    $e2.Cancel = $true
+                    try { $script:win.WindowState = 'Minimized' } catch { }
+                    Log ("kept open in the taskbar: still uploading {0}" -f $script:adminLibJob.Title)
+                }
+                else { Log ("closed while uploading: {0}" -f $script:adminLibJob.Title) }
+            }
         } catch { }
     })
 
