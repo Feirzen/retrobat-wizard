@@ -2144,6 +2144,23 @@
       ] }
     },
     {
+      "id": "fifa-soccer-13",
+      "title": "FIFA Soccer 13",
+      "system": "wiiu",
+      "players": "1-4",
+      "description": "Get a player's-eye view of the action or guide it from above in FIFA 2013, revolutionized for Wii U! The Wii U GamePad gives you total control of the pitch. See the game through a player's perspective as you line up free kicks. Tap any player you want to control, instantly...",
+      "added": "2026-10-24",
+      "art": "library/art/fifa-soccer-13.jpg",
+      "files": [
+      ],
+      "parts": { "name": "FIFA Soccer 13 (USA) (En,Fr,Es).wux", "size": 7952433152, "sha256": "1894f6c5a78f94d5a01ce2f571bb001d3253e72af840b6677297f5dba7e99eef", "pieces": [
+        { "name": "FIFA Soccer 13 (USA) (En,Fr,Es).wux.part01", "url": "private:fifa-soccer-13__FIFA.Soccer.13.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "8e0016ab07c2ff084ceaaacb3a6abd58392dd0bcbb8473e447dc9eebcab31144" },
+        { "name": "FIFA Soccer 13 (USA) (En,Fr,Es).wux.part02", "url": "private:fifa-soccer-13__FIFA.Soccer.13.USA.En.Fr.Es.wux.part02", "size": 1992294400, "sha256": "a93925c051a4634f881634b381fd60e3d2972fdee1985f918729be7bc65de82b" },
+        { "name": "FIFA Soccer 13 (USA) (En,Fr,Es).wux.part03", "url": "private:fifa-soccer-13__FIFA.Soccer.13.USA.En.Fr.Es.wux.part03", "size": 1992294400, "sha256": "a58e56bfbdef96f4defba8fd30fd8d0c2ca7da6a65709019b9a66561db66b850" },
+        { "name": "FIFA Soccer 13 (USA) (En,Fr,Es).wux.part04", "url": "private:fifa-soccer-13__FIFA.Soccer.13.USA.En.Fr.Es.wux.part04", "size": 1975549952, "sha256": "42cce19e9149e976528fc738cb6eb9c517392dbf431bf74c42133e0c734f3fe0" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
