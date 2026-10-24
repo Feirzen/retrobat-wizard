@@ -2161,6 +2161,26 @@
       ] }
     },
     {
+      "id": "the-legend-of-zelda-breath-of-the-wild",
+      "title": "The Legend of Zelda: Breath of the Wild",
+      "system": "wiiu",
+      "players": "1",
+      "description": "Forget everything you know about The Legend of Zelda games. Step into a world of discovery, exploration and adventure in The Legend of Zelda: Breath of the Wild, a boundary-breaking new game in the acclaimed series. Travel across fields, through forests and to mountain peaks as...",
+      "added": "2026-10-24",
+      "art": "library/art/the-legend-of-zelda-breath-of-the-wild.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux", "size": 13860143104, "sha256": "a507eade013f1886c9c2716587cb1c99d58d915d0f25060643e2195b83f40e49", "pieces": [
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part01", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "615193d2bbc20e885299dac754af5fc594951bd4c51e2a0711005a5560e492e0" },
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part02", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part02", "size": 1992294400, "sha256": "98cecf4d8252cbf7e8fe00fd74a907129dbe4257a80b7f456f3b28fc100ec24f" },
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part03", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part03", "size": 1992294400, "sha256": "8a49b265c8b86e64756d037384b3ccdba73991e0264660d13f8f7fa04a7cde71" },
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part04", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part04", "size": 1992294400, "sha256": "71a82b5ac196a3666bb85cc2b4670c0b776fdfe805a9f6240e0eef2f29e167ac" },
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part05", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part05", "size": 1992294400, "sha256": "507b7fa8e5ebfa980f25498d3ffb4950d71adf41ca97fbfd17c8fac6ead40701" },
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part06", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part06", "size": 1992294400, "sha256": "7313e6844096bd890fe2501af91c5e5baba240aea3e6f834b12f9b2e0c08ee69" },
+        { "name": "Legend of Zelda, The - Breath of the Wild (USA) (En,Fr,Es).wux.part07", "url": "private:the-legend-of-zelda-breath-of-the-wild__Legend.of.Zelda.The.-.Breath.of.the.Wild.USA.En.Fr.Es.wux.part07", "size": 1906376704, "sha256": "f0dc6e1c7b4e2c348f5b5bb82f6bcbe7813a933c1fa46bd888049c38a7960c48" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
