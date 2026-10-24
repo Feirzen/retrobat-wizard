@@ -2161,6 +2161,22 @@
       ] }
     },
     {
+      "id": "lego-batman-2-dc-super-heroes",
+      "title": "LEGO Batman 2 : DC Super Heroes",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "LEGO Batman 2: DC Super Heroes is an action game and the sequel to LEGO Batman: The Videogame. Just like the first game it draws elements from the Batman universe but built entirely in LEGO-style bricks. It starts when a \"Man of the Year\" award ceremony in Gotham City is...",
+      "added": "2026-10-24",
+      "art": "library/art/lego-batman-2-dc-super-heroes.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Batman 2 - DC Super Heroes (USA) (En,Fr,Es,Pt).wux", "size": 4836982784, "sha256": "93ae80c53ad2244809de6f7dca9b28fee9b3f64db43a412eabb0e72da1c37829", "pieces": [
+        { "name": "LEGO Batman 2 - DC Super Heroes (USA) (En,Fr,Es,Pt).wux.part01", "url": "private:lego-batman-2-dc-super-heroes__LEGO.Batman.2.-.DC.Super.Heroes.USA.En.Fr.Es.Pt.wux.part01", "size": 1992294400, "sha256": "fc2884365739468fbd007770c6aeb139509e83db18712aca5b962def33162ecf" },
+        { "name": "LEGO Batman 2 - DC Super Heroes (USA) (En,Fr,Es,Pt).wux.part02", "url": "private:lego-batman-2-dc-super-heroes__LEGO.Batman.2.-.DC.Super.Heroes.USA.En.Fr.Es.Pt.wux.part02", "size": 1992294400, "sha256": "dd49c6ca9658df7031eb5f4f62aa00b4fe702c3f829e4d55ddad83dec2eecd32" },
+        { "name": "LEGO Batman 2 - DC Super Heroes (USA) (En,Fr,Es,Pt).wux.part03", "url": "private:lego-batman-2-dc-super-heroes__LEGO.Batman.2.-.DC.Super.Heroes.USA.En.Fr.Es.Pt.wux.part03", "size": 852393984, "sha256": "1e34c39ba4151e7f7d37a281f3e1121c88bc948c655a5d1192ff61373091057d" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
