@@ -2314,6 +2314,24 @@
       ] }
     },
     {
+      "id": "paper-mario-color-splash",
+      "title": "Paper Mario : Color Splash",
+      "system": "wiiu",
+      "players": "1",
+      "description": "A mystery is afoot on Prism Island - and only Paper Mario can solve it by restoring the island's vanishing colors with his new Paint Hammer and the powerful Battle Cards up his sleeve. These fresh layers of strategy, along with the hilarious action adventure gameplay the series...",
+      "added": "2026-10-24",
+      "art": "library/art/paper-mario-color-splash.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Paper Mario - Color Splash (USA) (En,Fr,Es).wux", "size": 9518972928, "sha256": "375dd57059d2b084c842d02f16a0791483124e3ac07ff7297df43eb071b37cad", "pieces": [
+        { "name": "Paper Mario - Color Splash (USA) (En,Fr,Es).wux.part01", "url": "private:paper-mario-color-splash__Paper.Mario.-.Color.Splash.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "3c88dd6b81984aa1dbf88d222d5538c748b911914da1ce60ef39a99d9994aa85" },
+        { "name": "Paper Mario - Color Splash (USA) (En,Fr,Es).wux.part02", "url": "private:paper-mario-color-splash__Paper.Mario.-.Color.Splash.USA.En.Fr.Es.wux.part02", "size": 1992294400, "sha256": "6b5f3237fa1859e7ec9b95c20e38d3e5b81fc653a470e15d2b4f29f9ba404180" },
+        { "name": "Paper Mario - Color Splash (USA) (En,Fr,Es).wux.part03", "url": "private:paper-mario-color-splash__Paper.Mario.-.Color.Splash.USA.En.Fr.Es.wux.part03", "size": 1992294400, "sha256": "a2754036718861758aa49ef36ac91edd577d575f73d76570e7170045b975a764" },
+        { "name": "Paper Mario - Color Splash (USA) (En,Fr,Es).wux.part04", "url": "private:paper-mario-color-splash__Paper.Mario.-.Color.Splash.USA.En.Fr.Es.wux.part04", "size": 1992294400, "sha256": "ad25b5145de8c47e8adc3f9738ca196cee1483c307fda8509d77b5c268e7465b" },
+        { "name": "Paper Mario - Color Splash (USA) (En,Fr,Es).wux.part05", "url": "private:paper-mario-color-splash__Paper.Mario.-.Color.Splash.USA.En.Fr.Es.wux.part05", "size": 1549795328, "sha256": "fd05483445e58c09cdb61952ede52daf345033dd0ec499654b7d21cc617cf735" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
