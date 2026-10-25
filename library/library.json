@@ -2201,6 +2201,24 @@
       ] }
     },
     {
+      "id": "lego-jurassic-world",
+      "title": "LEGO Jurassic World",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "LEGO Jurassic World is an action game based on the four Jurassic Park movies and released alongside the 2015 movie Jurassic World. As with many other Tt Games titles it adapts a licensed franchise to a world built up out of LEGO bricks. The game consists of 20 levels, five for...",
+      "added": "2026-10-24",
+      "art": "library/art/lego-jurassic-world.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Jurassic World (USA) (En,Fr,Es,Pt).wux", "size": 8408334336, "sha256": "ec2c85c541ddac7927a02cb13a0735cfdca96457876ee707eba1c85b5b512880", "pieces": [
+        { "name": "LEGO Jurassic World (USA) (En,Fr,Es,Pt).wux.part01", "url": "private:lego-jurassic-world__LEGO.Jurassic.World.USA.En.Fr.Es.Pt.wux.part01", "size": 1992294400, "sha256": "ef8bbc586abb972a6e2577066340f05e1efd5b965dcdf948e82524298c4f0a07" },
+        { "name": "LEGO Jurassic World (USA) (En,Fr,Es,Pt).wux.part02", "url": "private:lego-jurassic-world__LEGO.Jurassic.World.USA.En.Fr.Es.Pt.wux.part02", "size": 1992294400, "sha256": "5f7e9e6e273a5552ce400d26ba88867db6da27249051ba3e8c464b74f9a8bb39" },
+        { "name": "LEGO Jurassic World (USA) (En,Fr,Es,Pt).wux.part03", "url": "private:lego-jurassic-world__LEGO.Jurassic.World.USA.En.Fr.Es.Pt.wux.part03", "size": 1992294400, "sha256": "76e3a1303ca565a5aa636166f59d4428e05fd45919dff4f31d299c34b451c360" },
+        { "name": "LEGO Jurassic World (USA) (En,Fr,Es,Pt).wux.part04", "url": "private:lego-jurassic-world__LEGO.Jurassic.World.USA.En.Fr.Es.Pt.wux.part04", "size": 1992294400, "sha256": "3dda4bf7c57175ac38fe3e30d6bd03bdb6756d23f0bf546dc71ba5d87cf6afd2" },
+        { "name": "LEGO Jurassic World (USA) (En,Fr,Es,Pt).wux.part05", "url": "private:lego-jurassic-world__LEGO.Jurassic.World.USA.En.Fr.Es.Pt.wux.part05", "size": 439156736, "sha256": "6c51b45ef2f088e53a7a2604e0da52ffa140fa0219715b748bac397cb81d6f4e" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
