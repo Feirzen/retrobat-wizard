@@ -2286,6 +2286,18 @@
       ] }
     },
     {
+      "id": "new-super-mario-bros-u",
+      "title": "New Super Mario Bros. U",
+      "system": "wiiu",
+      "players": "1-5",
+      "description": "Mario will leap onto Wii U in New Super Mario Bros. U, a new side-scrolling adventure that introduces new transformations for Mario and the ability for players to play as their Mii characters. The game also introduces the new Boost Mode, which can be used to add blocks, to help...",
+      "added": "2026-10-24",
+      "art": "library/art/new-super-mario-bros-u.jpg",
+      "files": [
+        { "name": "New Super Mario Bros. U (USA) (En,Fr,Es) (Rev 2).wux", "url": "private:new-super-mario-bros-u__New.Super.Mario.Bros.U.USA.En.Fr.Es.Rev.2.wux", "size": 1916534784, "sha256": "ed2cca1cf6cf18161b77e9f03c502ca8e9771eb8fac147ccb5b701d7bfa814ae" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
