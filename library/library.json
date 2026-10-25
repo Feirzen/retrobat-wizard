@@ -2406,6 +2406,21 @@
       ]
     },
     {
+      "id": "super-mario-3d-world",
+      "title": "Super Mario 3D World",
+      "system": "wiiu",
+      "players": "1-4",
+      "description": "Whilst exploring the Mushroom Kingdom, Mario, Luigi, Princess Peach, and Toad come across a strange clear pipe, which a curious green fairy-like creature, called a Sprixie, pops out of. Suddenly, Bowser appears and captures the fairy before escaping through the pipe. Thus, Mario...",
+      "added": "2026-10-25",
+      "art": "library/art/super-mario-3d-world.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Super Mario 3D World (USA) (En,Fr,Es) (Rev 2).wux", "size": 2993815552, "sha256": "b07984632b4e052f931b2583fe58cb30d3ea0919d487b0b8b1eb1b4c28d1e463", "pieces": [
+        { "name": "Super Mario 3D World (USA) (En,Fr,Es) (Rev 2).wux.part01", "url": "private:super-mario-3d-world__Super.Mario.3D.World.USA.En.Fr.Es.Rev.2.wux.part01", "size": 1992294400, "sha256": "04fabfd5e5b456da47a1ee86710d98b9ea209ba686c5a4d5260d2caf698cdd23" },
+        { "name": "Super Mario 3D World (USA) (En,Fr,Es) (Rev 2).wux.part02", "url": "private:super-mario-3d-world__Super.Mario.3D.World.USA.En.Fr.Es.Rev.2.wux.part02", "size": 1001521152, "sha256": "26f268d01e286b0048567bd4bf1760cdc69f636bb3e4b142cb5e209c586bcbe0" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
