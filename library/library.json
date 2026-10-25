@@ -2332,6 +2332,22 @@
       ] }
     },
     {
+      "id": "pikmin-3",
+      "title": "Pikmin 3",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Pikmin 3 is a fully reimagined, mass-action strategy title from the critically acclaimed Pikmin series. Players will discover a beautiful world filled with strange creatures and take command of a swarm of ant-like Pikmin trying to survive. The world is densely packed with...",
+      "added": "2026-10-24",
+      "art": "library/art/pikmin-3.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Pikmin 3 (USA) (En,Fr,Es) (Rev 1).wux", "size": 5185699840, "sha256": "c65745e4ba57c939fae73a696d5605c0baa6225eb8f1a742ea1e977fbc109b61", "pieces": [
+        { "name": "Pikmin 3 (USA) (En,Fr,Es) (Rev 1).wux.part01", "url": "private:pikmin-3__Pikmin.3.USA.En.Fr.Es.Rev.1.wux.part01", "size": 1992294400, "sha256": "cf7bf34f3bbb9ea3fc5499858b6995255b6d5d6df248c0226c2fd9683397edff" },
+        { "name": "Pikmin 3 (USA) (En,Fr,Es) (Rev 1).wux.part02", "url": "private:pikmin-3__Pikmin.3.USA.En.Fr.Es.Rev.1.wux.part02", "size": 1992294400, "sha256": "0f8045b2d36da5e2b1a99de1d35efe77e0d076d42094a434b2e81c67c9ad96cf" },
+        { "name": "Pikmin 3 (USA) (En,Fr,Es) (Rev 1).wux.part03", "url": "private:pikmin-3__Pikmin.3.USA.En.Fr.Es.Rev.1.wux.part03", "size": 1201111040, "sha256": "ea65a5b981634b581acc7ec626b070e7ac0529a6cf5acce6bc1bb8597f9fedbc" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
