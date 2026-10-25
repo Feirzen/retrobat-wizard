@@ -2576,6 +2576,22 @@
       ] }
     },
     {
+      "id": "halo-2",
+      "title": "Halo 2",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "Halo 2 is the sequel to the highly successful and critically acclaimed Halo: Combat Evolved. In Halo 2, the saga continues as Master Chief?a genetically enhanced super-soldier?is the only thing standing between the relentless Covenant and the destruction of all humankind.",
+      "added": "2026-10-25",
+      "art": "library/art/halo-2.png",
+      "files": [
+      ],
+      "parts": { "name": "Halo 2 (USA, Europe) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso", "size": 4721410048, "sha256": "a5b99c1ce2ee650f12caf342118c716cedd4a797fc369b3f0eba82382734f05c", "pieces": [
+        { "name": "Halo 2 (USA, Europe) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso.part01", "url": "private:halo-2__Halo.2.USA.Europe.En.Ja.Fr.De.Es.It.Zh.Ko.xiso.iso.part01", "size": 1992294400, "sha256": "6b8e353ed1e15a0f36fd69b9717176df5f499df0355a2e68c4a202beaee43106" },
+        { "name": "Halo 2 (USA, Europe) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso.part02", "url": "private:halo-2__Halo.2.USA.Europe.En.Ja.Fr.De.Es.It.Zh.Ko.xiso.iso.part02", "size": 1992294400, "sha256": "84a94ab381190d2717bf3e9b2b29cd0f8691a3ed5a44edac8ba9c353d1b4bd68" },
+        { "name": "Halo 2 (USA, Europe) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso.part03", "url": "private:halo-2__Halo.2.USA.Europe.En.Ja.Fr.De.Es.It.Zh.Ko.xiso.iso.part03", "size": 736821248, "sha256": "c8b83a4e3d15ee06440f6ca22560ac1ec0fbe9c25c3f7b8298da42cd7b903bb4" }
+      ] }
+    },
+    {
       "id": "halo-combat-evolved",
       "title": "Halo: Combat Evolved",
       "system": "xbox",
