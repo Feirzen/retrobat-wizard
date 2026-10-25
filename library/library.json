@@ -2714,6 +2714,21 @@
       ] }
     },
     {
+      "id": "star-wars-knights-of-the-old-republic",
+      "title": "Star Wars : Knights of the Old Republic",
+      "system": "xbox",
+      "players": "1",
+      "description": "Long before the Galactic Civil War, an epic drama begins. Engage in this saga set in the Golden Age of the Republic--over 4,000 years before the first Star Wars film, when both Jedi and Sith number in the thousands. With the Galaxy reeling from a recent conflict with the Dark...",
+      "added": "2026-10-25",
+      "art": "library/art/star-wars-knights-of-the-old-republic.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Star Wars - Knights of the Old Republic (USA) (Rev 1).xiso.iso", "size": 3939303424, "sha256": "c90852607ab0c798aec9a362c0be4ef65daac9bd050ca27965200610466fd150", "pieces": [
+        { "name": "Star Wars - Knights of the Old Republic (USA) (Rev 1).xiso.iso.part01", "url": "private:star-wars-knights-of-the-old-republic__Star.Wars.-.Knights.of.the.Old.Republic.USA.Rev.1.xiso.iso.part01", "size": 1992294400, "sha256": "40ed5c991fae7bf7c51d4aeae54ee3d6158785deff510f98e67e2357a6dc3d96" },
+        { "name": "Star Wars - Knights of the Old Republic (USA) (Rev 1).xiso.iso.part02", "url": "private:star-wars-knights-of-the-old-republic__Star.Wars.-.Knights.of.the.Old.Republic.USA.Rev.1.xiso.iso.part02", "size": 1947009024, "sha256": "f44889cfacfc951250862e5f6b244cd47cb4fb1fb0c4d977282c2f342589662b" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
