@@ -2348,6 +2348,22 @@
       ] }
     },
     {
+      "id": "pokk-n-tournament",
+      "title": "Pokkn Tournament",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Battle Pokmon like never before in all-new, action-packed arena fights! Perform vivid Pokmon moves in all their glory with button combinations through an intuitive fighting system to unleash devastating attacks upon your opponent to become the Pokkn Tournament champion!Learn...",
+      "added": "2026-10-25",
+      "art": "library/art/pokk-n-tournament.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Pokken Tournament (USA) (En,Fr,Es).wux", "size": 5018976256, "sha256": "b54db17818bbb7a66ec3af9b2d54d0319ddb0906d91aec6088ee59f2ccbd229c", "pieces": [
+        { "name": "Pokken Tournament (USA) (En,Fr,Es).wux.part01", "url": "private:pokk-n-tournament__Pokken.Tournament.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "312e3d3d1d74385f4f5a2b81eda0306845a0f3ee9764da123496fcf46e750e17" },
+        { "name": "Pokken Tournament (USA) (En,Fr,Es).wux.part02", "url": "private:pokk-n-tournament__Pokken.Tournament.USA.En.Fr.Es.wux.part02", "size": 1992294400, "sha256": "ac05debd9732e1dc4f4d80a0d56228b53fe0db0278c6c3220343900a2bf6e247" },
+        { "name": "Pokken Tournament (USA) (En,Fr,Es).wux.part03", "url": "private:pokk-n-tournament__Pokken.Tournament.USA.En.Fr.Es.wux.part03", "size": 1034387456, "sha256": "a541dd2cb46bed0df8d6f2f1b1280de918349b731d50c7473fd40cf59cdac29b" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
