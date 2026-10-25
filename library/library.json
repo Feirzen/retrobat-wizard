@@ -2236,6 +2236,24 @@
       ] }
     },
     {
+      "id": "lego-the-hobbit",
+      "title": "LEGO The Hobbit",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "LEGO The Hobbit is based on the first two films in The Hobbit movie trilogy: The Hobbit: An Unexpected Journey and The Hobbit: Desolation of Smaug. Like the other LEGO Tt games it is an adaptation of the franchise to the LEGO universe. It allows players to play through different...",
+      "added": "2026-10-24",
+      "art": "library/art/lego-the-hobbit.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO The Hobbit (USA) (En,Fr,Es,Pt).wux", "size": 8690008064, "sha256": "8f68c8c0c196e769721ca65363d8ce03f08eb986166f7ea097d73a089f5d22d9", "pieces": [
+        { "name": "LEGO The Hobbit (USA) (En,Fr,Es,Pt).wux.part01", "url": "private:lego-the-hobbit__LEGO.The.Hobbit.USA.En.Fr.Es.Pt.wux.part01", "size": 1992294400, "sha256": "af797de95c3ed3462879b1f89fd4c86604576f9b20f6f77d54a85e98a8d0145f" },
+        { "name": "LEGO The Hobbit (USA) (En,Fr,Es,Pt).wux.part02", "url": "private:lego-the-hobbit__LEGO.The.Hobbit.USA.En.Fr.Es.Pt.wux.part02", "size": 1992294400, "sha256": "9de4e98ec906096b4d898165d1ca4e7e08f3e8eaf62135399878b28decd146cb" },
+        { "name": "LEGO The Hobbit (USA) (En,Fr,Es,Pt).wux.part03", "url": "private:lego-the-hobbit__LEGO.The.Hobbit.USA.En.Fr.Es.Pt.wux.part03", "size": 1992294400, "sha256": "c0dae90ffa2c36d648a90d2a53bc1a4750ac40447f3c7e83dd5223ab99e0ef32" },
+        { "name": "LEGO The Hobbit (USA) (En,Fr,Es,Pt).wux.part04", "url": "private:lego-the-hobbit__LEGO.The.Hobbit.USA.En.Fr.Es.Pt.wux.part04", "size": 1992294400, "sha256": "a3bf88cd04c8dac87b4e106e130b6d4f0c9b18101d468c38fe55a1ffdc08bc21" },
+        { "name": "LEGO The Hobbit (USA) (En,Fr,Es,Pt).wux.part05", "url": "private:lego-the-hobbit__LEGO.The.Hobbit.USA.En.Fr.Es.Pt.wux.part05", "size": 720830464, "sha256": "8026c01ec4c20906e51e746060b128d57d9ecc3b243a9475f31efb360f4f2c36" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
