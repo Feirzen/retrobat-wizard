@@ -2698,6 +2698,22 @@
       ] }
     },
     {
+      "id": "project-gotham-racing-2",
+      "title": "Project Gotham Racing 2",
+      "system": "xbox",
+      "players": "1-8",
+      "description": "Project Gotham Racing 2 is a racing game released for Xbox. Drive through the streets of the world's most famous cities in automotive gems such as Ferrari, Porsche and Lotus to earn Kudos that unlock more cars.",
+      "added": "2026-10-25",
+      "art": "library/art/project-gotham-racing-2.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Project Gotham Racing 2 (USA, Asia) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso", "size": 5649793024, "sha256": "6943653e6e8540f2c473579cf27c8e710d79ac76f88abaa95ec0c011c5bd69cd", "pieces": [
+        { "name": "Project Gotham Racing 2 (USA, Asia) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso.part01", "url": "private:project-gotham-racing-2__Project.Gotham.Racing.2.USA.Asia.En.Ja.Fr.De.Es.It.Zh.Ko.xiso.iso.part01", "size": 1992294400, "sha256": "7dc217cddbecf9f735df071225558e0c2374ad13675e26c61842295ae45a09db" },
+        { "name": "Project Gotham Racing 2 (USA, Asia) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso.part02", "url": "private:project-gotham-racing-2__Project.Gotham.Racing.2.USA.Asia.En.Ja.Fr.De.Es.It.Zh.Ko.xiso.iso.part02", "size": 1992294400, "sha256": "9a91cee46f00c9434791c3873b947be44a661b036579775fd2e765cb8966a8e6" },
+        { "name": "Project Gotham Racing 2 (USA, Asia) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso.part03", "url": "private:project-gotham-racing-2__Project.Gotham.Racing.2.USA.Asia.En.Ja.Fr.De.Es.It.Zh.Ko.xiso.iso.part03", "size": 1665204224, "sha256": "cc38c23d28293ee089c93504a6f09541db4f493f3e2483932576fa4cfd947480" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
