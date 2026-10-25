@@ -2499,6 +2499,22 @@
       ] }
     },
     {
+      "id": "crimson-skies-high-road-to-revenge",
+      "title": "Crimson Skies : High Road To Revenge",
+      "system": "xbox",
+      "players": "1-16",
+      "description": "You take the role of the daring air pirate Nathan Zachary, leader of the infamous Fortune Hunters. The high-flying adventure's single player campaign is filled with escapes, defense/escort missions and dogfights. You can take on friends over Xbox Live! as well.",
+      "added": "2026-10-25",
+      "art": "library/art/crimson-skies-high-road-to-revenge.png",
+      "files": [
+      ],
+      "parts": { "name": "Crimson Skies - High Road to Revenge (USA) (En,Fr,De,Zh,Ko).xiso.iso", "size": 4381802496, "sha256": "d5ccec2a235ffe6a1c521c4f3c7efc315acf0b04f7d3fe23b017f9d3d9e0d1f9", "pieces": [
+        { "name": "Crimson Skies - High Road to Revenge (USA) (En,Fr,De,Zh,Ko).xiso.iso.part01", "url": "private:crimson-skies-high-road-to-revenge__Crimson.Skies.-.High.Road.to.Revenge.USA.En.Fr.De.Zh.Ko.xiso.iso.part01", "size": 1992294400, "sha256": "71bfbf7e22ee469c9b2f16ae98da83b671b16e5e7d9ba25384285bd2b7c0f4c0" },
+        { "name": "Crimson Skies - High Road to Revenge (USA) (En,Fr,De,Zh,Ko).xiso.iso.part02", "url": "private:crimson-skies-high-road-to-revenge__Crimson.Skies.-.High.Road.to.Revenge.USA.En.Fr.De.Zh.Ko.xiso.iso.part02", "size": 1992294400, "sha256": "7e123246eb5f591d6fbc06a1a66f030de58ea08a685001f0b583f0254116dda7" },
+        { "name": "Crimson Skies - High Road to Revenge (USA) (En,Fr,De,Zh,Ko).xiso.iso.part03", "url": "private:crimson-skies-high-road-to-revenge__Crimson.Skies.-.High.Road.to.Revenge.USA.En.Fr.De.Zh.Ko.xiso.iso.part03", "size": 397213696, "sha256": "69b04503249034ac05af86e9cd604c09029d981793883e100df1dfffe330b3d4" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
