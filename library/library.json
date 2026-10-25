@@ -2382,6 +2382,18 @@
       ] }
     },
     {
+      "id": "scribblenauts-unlimited",
+      "title": "Scribblenauts Unlimited",
+      "system": "wiiu",
+      "players": "1-4",
+      "description": "Scribblenauts Unlimited features a huge side-scrolling open world with new, high-definition hand-drawn scenery and objects where players can help the game's hero, Maxwell, solve robust puzzles and challenges by summoning any object they can imagine. And for the first time,...",
+      "added": "2026-10-25",
+      "art": "library/art/scribblenauts-unlimited.jpg",
+      "files": [
+        { "name": "Scribblenauts Unlimited (USA) (En,Fr,Es,Pt).wux", "url": "private:scribblenauts-unlimited__Scribblenauts.Unlimited.USA.En.Fr.Es.Pt.wux", "size": 1543438336, "sha256": "2b429bd29a305ff32da5411042ce9cdf63d0e2952c6d99c78424a8c51fd74a24" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
