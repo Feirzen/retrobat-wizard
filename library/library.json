@@ -2639,6 +2639,21 @@
       ] }
     },
     {
+      "id": "mechassault",
+      "title": "Mechassault",
+      "system": "xbox",
+      "players": "1-8",
+      "description": "MechAssault was the first BattleMech video game published for the Xbox. Developed by Day 1 Studios and published by Microsoft, MechAssault was initiated when Denny Thorley of Day 1 Studios approached Jon Kimmich of Microsoft about developing an original BattleTech game built...",
+      "added": "2026-10-25",
+      "art": "library/art/mechassault.png",
+      "files": [
+      ],
+      "parts": { "name": "MechAssault (USA) (En,Fr,De) (Rev 1).xiso.iso", "size": 3272802304, "sha256": "04c39581914df7b620e051b29d4b2569abc46506d547e1a23513f5b5e5ab4322", "pieces": [
+        { "name": "MechAssault (USA) (En,Fr,De) (Rev 1).xiso.iso.part01", "url": "private:mechassault__MechAssault.USA.En.Fr.De.Rev.1.xiso.iso.part01", "size": 1992294400, "sha256": "4054fafd9edbd3b22e13ddb15a83327bc13d7f7501e3b274c7c5524578291b89" },
+        { "name": "MechAssault (USA) (En,Fr,De) (Rev 1).xiso.iso.part02", "url": "private:mechassault__MechAssault.USA.En.Fr.De.Rev.1.xiso.iso.part02", "size": 1280507904, "sha256": "81083d878606f5d1e328f109fd1909d9e69b8a8f3614de4cc5f6385681a7cad9" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
