@@ -2683,6 +2683,21 @@
       ] }
     },
     {
+      "id": "panzer-dragoon-orta",
+      "title": "Panzer Dragoon Orta",
+      "system": "xbox",
+      "players": "1",
+      "description": "The fourth installment of the Panzer Dragoon series has you playing Orta, a young girl who has been imprisoned by the Empire. Under a wave of attack, the prison camp is broken through by a mysterious dragon, and Orta takes it upon herself to ride the dragon, and destroy the...",
+      "added": "2026-10-25",
+      "art": "library/art/panzer-dragoon-orta.png",
+      "files": [
+      ],
+      "parts": { "name": "Panzer Dragoon Orta (USA).xiso.iso", "size": 3098279936, "sha256": "7f45a0cdbde152f6cce216ace26bb2322443b0592898fa8bf4d58d34ab2941a4", "pieces": [
+        { "name": "Panzer Dragoon Orta (USA).xiso.iso.part01", "url": "private:panzer-dragoon-orta__Panzer.Dragoon.Orta.USA.xiso.iso.part01", "size": 1992294400, "sha256": "de95f74df95fa8f968b5ba0a131dcf720109bf92c7e83c22942dca86158e5ece" },
+        { "name": "Panzer Dragoon Orta (USA).xiso.iso.part02", "url": "private:panzer-dragoon-orta__Panzer.Dragoon.Orta.USA.xiso.iso.part02", "size": 1105985536, "sha256": "bf389ba1a818a2f26206a2aa93873168b7b4069714fb62e3c4fba70002cc11b8" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
