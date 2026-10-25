@@ -2666,6 +2666,23 @@
       ] }
     },
     {
+      "id": "ninja-gaiden-black",
+      "title": "Ninja Gaiden Black",
+      "system": "xbox",
+      "players": "1",
+      "description": "Ninja Gaiden Black puts you in the shoes of Ryu Hayabusa, a ninja by trade. After Lord Doku puts his clan to the sword, our hero sets out to exact his revenge, using his sacred sword and spectacular acrobatics. Pure action takes precedence over the infiltration traditionally...",
+      "added": "2026-10-25",
+      "art": "library/art/ninja-gaiden-black.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Ninja Gaiden Black (USA) (En,Ja).xiso.iso", "size": 6337134592, "sha256": "dc965ec508fef878545cc47623b3beda8c31c9f87617378b320fa2d9b96e05c6", "pieces": [
+        { "name": "Ninja Gaiden Black (USA) (En,Ja).xiso.iso.part01", "url": "private:ninja-gaiden-black__Ninja.Gaiden.Black.USA.En.Ja.xiso.iso.part01", "size": 1992294400, "sha256": "fa821e614ef6bd8d8b81671645bc9b7b27898097e7555e1096f40012202c9c67" },
+        { "name": "Ninja Gaiden Black (USA) (En,Ja).xiso.iso.part02", "url": "private:ninja-gaiden-black__Ninja.Gaiden.Black.USA.En.Ja.xiso.iso.part02", "size": 1992294400, "sha256": "5fb242d8c24a2395dc381835feded91a90a143bbc534e8760932d9ada17eacba" },
+        { "name": "Ninja Gaiden Black (USA) (En,Ja).xiso.iso.part03", "url": "private:ninja-gaiden-black__Ninja.Gaiden.Black.USA.En.Ja.xiso.iso.part03", "size": 1992294400, "sha256": "10ffb13cd2a71de056bb16e127cd3fb9bde62b4a086d5d98f08122facad7b094" },
+        { "name": "Ninja Gaiden Black (USA) (En,Ja).xiso.iso.part04", "url": "private:ninja-gaiden-black__Ninja.Gaiden.Black.USA.En.Ja.xiso.iso.part04", "size": 360251392, "sha256": "8763adc3337f1d5752a12fb262a1e5fe52edc1e0c047d465add7be3735ba2dae" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
