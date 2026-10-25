@@ -2481,6 +2481,24 @@
       ] }
     },
     {
+      "id": "yoshi-s-woolly-world",
+      "title": "Yoshi's Woolly World",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Yoshi's Woolly World is a platform game in which the player assumes the role of Yoshi. Similar to developer Good-Feel's previous title Kirby's Epic Yarn, the game is set in a world where the characters and environment are composed of yarn and cloth. Yoshi retains much of his...",
+      "added": "2026-10-25",
+      "art": "library/art/yoshi-s-woolly-world.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Yoshi's Woolly World (USA) (En,Fr,Es).wux", "size": 8818556928, "sha256": "ba83254e25ab2c923d78a681c9b17b91bb4a754e9e351d905ced2883b8bb5591", "pieces": [
+        { "name": "Yoshi's Woolly World (USA) (En,Fr,Es).wux.part01", "url": "private:yoshi-s-woolly-world__Yoshi.s.Woolly.World.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "a25a140d056932f072dba7c856034b4df1b1266479daca39ee0e2508630a8ff3" },
+        { "name": "Yoshi's Woolly World (USA) (En,Fr,Es).wux.part02", "url": "private:yoshi-s-woolly-world__Yoshi.s.Woolly.World.USA.En.Fr.Es.wux.part02", "size": 1992294400, "sha256": "1a4b3930ecc3b83a34da08cdbe72ebeefe336fa28c503cac8c623dc503ca5e8e" },
+        { "name": "Yoshi's Woolly World (USA) (En,Fr,Es).wux.part03", "url": "private:yoshi-s-woolly-world__Yoshi.s.Woolly.World.USA.En.Fr.Es.wux.part03", "size": 1992294400, "sha256": "b30ebff5c3c3378652b796e49575881499d4ecbea6724d3743849e8942dcbe9a" },
+        { "name": "Yoshi's Woolly World (USA) (En,Fr,Es).wux.part04", "url": "private:yoshi-s-woolly-world__Yoshi.s.Woolly.World.USA.En.Fr.Es.wux.part04", "size": 1992294400, "sha256": "8955a1babc777ffba63d9beb8847e32a56cf9287cbfb8e3171c527415656c319" },
+        { "name": "Yoshi's Woolly World (USA) (En,Fr,Es).wux.part05", "url": "private:yoshi-s-woolly-world__Yoshi.s.Woolly.World.USA.En.Fr.Es.wux.part05", "size": 849379328, "sha256": "d5362098c468c2988ead405037799f6b5a449329fbd8d80be9c32ea7fb606082" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
