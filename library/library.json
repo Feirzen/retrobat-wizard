@@ -2607,6 +2607,23 @@
       ] }
     },
     {
+      "id": "jade-empire",
+      "title": "Jade Empire",
+      "system": "xbox",
+      "players": "1-10",
+      "description": "Set in an ancient world inspired by mythical China, Jade Empire lets you train under your master's watchful eye as you learn powerful martial arts and mystical powers. When danger threatens, you'll travel across the world, from the harsh mountains of the Land of Howling Spirits...",
+      "added": "2026-10-25",
+      "art": "library/art/jade-empire.png",
+      "files": [
+      ],
+      "parts": { "name": "Jade Empire (USA, Europe) (En,Es,It).xiso.iso", "size": 6587744256, "sha256": "51fc7edda275713172c1c998a664be9ecc9a2df2212e284363d5e705f31ae0eb", "pieces": [
+        { "name": "Jade Empire (USA, Europe) (En,Es,It).xiso.iso.part01", "url": "private:jade-empire__Jade.Empire.USA.Europe.En.Es.It.xiso.iso.part01", "size": 1992294400, "sha256": "fba8b385f3b51bb41ed24d6360c50a09136c9802931a0d8041c5e56fef4ad0d5" },
+        { "name": "Jade Empire (USA, Europe) (En,Es,It).xiso.iso.part02", "url": "private:jade-empire__Jade.Empire.USA.Europe.En.Es.It.xiso.iso.part02", "size": 1992294400, "sha256": "eb1322272189d5df78f864a9b1296c4c427974c92eb0c6aea292c373d7dcffd1" },
+        { "name": "Jade Empire (USA, Europe) (En,Es,It).xiso.iso.part03", "url": "private:jade-empire__Jade.Empire.USA.Europe.En.Es.It.xiso.iso.part03", "size": 1992294400, "sha256": "197f6ddd51c259bd828c69aea24315c89b1de77c2d12b7ab09f51ed3c0f55fff" },
+        { "name": "Jade Empire (USA, Europe) (En,Es,It).xiso.iso.part04", "url": "private:jade-empire__Jade.Empire.USA.Europe.En.Es.It.xiso.iso.part04", "size": 610861056, "sha256": "1b233d88ab25d419e80432de466ec3e968a9cbf06caa391eee8abe7d4fc07008" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
