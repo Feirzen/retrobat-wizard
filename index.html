@@ -107,6 +107,19 @@ main { margin-left: 92px; }
   font-family: 'Press Start 2P', monospace; font-size: 9px; }
 .seg button + button { border-left: 2px solid var(--border2); }
 .seg button.on { background: var(--accBg); color: var(--accent); }
+.search { position: relative; margin: 18px 0 0; }
+.search input { width: 100%; font: inherit; font-size: 17px; padding: 12px 46px 12px 42px; border-radius: 0; -webkit-appearance: none; appearance: none;
+  background: var(--surface) no-repeat 14px center / 18px; color: var(--text); border: 2px solid var(--border2); outline: none;
+  box-shadow: 3px 3px 0 var(--border); transition: border-color .15s; }
+.search input::-webkit-search-cancel-button { display: none; }
+.search input:focus { border-color: var(--accent); }
+.search::before { content: ""; position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); pointer-events: none;
+  background: var(--muted); -webkit-mask: var(--glass) center / contain no-repeat; mask: var(--glass) center / contain no-repeat;
+  --glass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E"); }
+.search button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 2px solid var(--border2);
+  background: var(--surface2); color: var(--dim); cursor: pointer; font-family: 'Press Start 2P', monospace; font-size: 9px; border-radius: 0; }
+.nomatch { padding: 18px 20px; }
+mark { background: var(--accBg); color: var(--accent); padding: 0 1px; }
 .rows { display: flex; flex-direction: column; }
 .row { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: none; border: none;
   border-top: 2px solid var(--border); padding: 10px 16px; cursor: pointer; color: inherit; font: inherit; }
@@ -255,6 +268,7 @@ body.in #site { display: block; }
     <div class="eyebrow">Picked for game nights</div>
     <h1>Game library</h1>
     <p>The easy way to get these is the wizard's <b>Games</b> tab, which puts them in the right place for you. Tap a console to open it.</p>
+    <div class="search"><input id="q" type="search" placeholder="Find a game" aria-label="Find a game" autocomplete="off" spellcheck="false"><button id="qx" aria-label="Clear" hidden>X</button></div>
     <div class="libbar"><span class="note">View</span>
       <div class="seg" id="viewSeg"><button data-v="compact">Compact</button><button data-v="big">Big</button></div></div>
     <div id="lib"><p class="note">Loading the library...</p></div>
@@ -307,10 +321,13 @@ const CONSOLES = [
   ["gamecube", "GameCube", "gamecube"], ["wii", "Wii", "wiimote"], ["wiiu", "Wii U", "wiimote"],
   ["switch", "Switch", "switch"], ["gb", "Game Boy", "gameboy"], ["gbc", "Game Boy Color", "gameboy"],
   ["gba", "Game Boy Advance", "gba"], ["nds", "Nintendo DS", "ds"], ["3ds", "3DS", "ds"],
-  ["flash", "Flash", "pc"], ["scummvm", "ScummVM", "pc"], ["windows", "PC", "pc"]
+  ["flash", "Flash", "pc"], ["scummvm", "ScummVM", "pc"], ["windows", "PC", "pc"],
+  ["xbox", "Xbox", "pc"], ["xbox360", "Xbox 360", "pc"]
 ];
 const pic = sys => W + ((CONSOLES.find(c => c[0] === sys) || [0, 0, "pc"])[2]) + ".png";
 function esc(s) { return String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+// "1 player", "1-2 players"
+const players = g => g.players ? esc(g.players) + (String(g.players).trim() === "1" ? " player" : " players") + " &middot; " : "";
 function card(g) {
   const files = g.files || [];
   // A game over 2 GB (3.0.0) has no files, only "parts" that the wizard
@@ -325,7 +342,7 @@ function card(g) {
   const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
     : `<img class="fallback" src="${pic(g.system)}" alt="">`;
   return `<div class="game"><div class="art">${art}</div><div class="body"><b>${esc(g.title)}</b>
-    <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
+    <div class="meta">${players(g)}${mb} MB</div>
     ${g.description ? `<p>${esc(g.description)}</p>` : ""}<div class="get">${get}</div></div></div>`;
 }
 // One short row per game for the Compact view: small art, the name, one line.
@@ -336,8 +353,17 @@ function row(g, i) {
   const mb = (files.concat(g.parts || []).reduce((a, f) => a + (f.size || 0), 0) / 1048576).toFixed(1);
   const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
     : `<img class="fallback" src="${pic(g.system)}" alt="">`;
-  const line = (g.players ? esc(g.players) + " players &middot; " : "") + mb + " MB" + (g.description ? " &middot; " + esc(g.description) : "");
-  return `<button class="row" data-i="${i}"><span class="thumb">${art}</span><span class="txt"><b>${esc(g.title)}</b><span>${line}</span></span><span class="open">&#9654;</span></button>`;
+  const line = players(g) + mb + " MB" + (g.description ? " &middot; " + esc(g.description) : "");
+  return `<button class="row" data-i="${i}"><span class="thumb">${art}</span><span class="txt"><b>${hl(g.title)}</b><span>${line}</span></span><span class="open">&#9654;</span></button>`;
+}
+// search: ignores case, accents and punctuation, so "zelda link" finds "Zelda II : The Adventure of Link"
+let Q = "";
+const norm = t => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const matches = g => { if (!Q) return true; const t = norm(g.title); return norm(Q).split(" ").every(w => t.includes(w)); };
+function hl(title) {
+  const t = esc(title); if (!Q) return t;
+  const words = norm(Q).split(" ").filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  return words.length ? t.replace(new RegExp("(" + words.join("|") + ")", "ig"), "<mark>$1</mark>") : t;
 }
 let LIB = [], VIEW = store("rbw-libview") === "big" ? "big" : "compact";
 const openSys = new Set();   // consoles start folded; this remembers which are open
@@ -346,18 +372,23 @@ function drawLibrary() {
   document.querySelectorAll("#viewSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === VIEW));
   if (!LIB.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
   const order = CONSOLES.map(c => c[0]);
-  const systems = [...new Set(LIB.map(g => g.system))].sort((a, b) =>
+  const shown = LIB.filter(matches);
+  if (!shown.length) { box.innerHTML = `<div class="card nomatch"><p style="margin:0">No game called "${esc(Q)}" yet. Want it added? Use Suggest something on the wizard's Help tab.</p></div>`; return; }
+  const systems = [...new Set(shown.map(g => g.system))].sort((a, b) =>
     (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
   box.innerHTML = systems.map(sys => {
-    const list = LIB.map((g, i) => [g, i]).filter(x => x[0].system === sys)
+    const list = LIB.map((g, i) => [g, i]).filter(x => x[0].system === sys && matches(x[0]))
       .sort((a, b) => String(a[0].title).localeCompare(String(b[0].title)));
     const name = (CONSOLES.find(c => c[0] === sys) || [0, sys])[1];
     const inner = VIEW === "big" ? `<div class="games">${list.map(x => card(x[0])).join("")}</div>`
       : `<div class="rows">${list.map(x => row(x[0], x[1])).join("")}</div>`;
-    return `<details class="sys" data-sys="${esc(sys)}"${openSys.has(sys) ? " open" : ""}><summary><img src="${pic(sys)}" alt=""><h3>${esc(name)}</h3>
-      <span class="count">${list.length} game${list.length === 1 ? "" : "s"}</span><span class="arrow">&#9654;</span></summary>${inner}</details>`;
+    const all = LIB.filter(g => g.system === sys).length;
+    const count = Q ? `${list.length} of ${all}` : `${list.length} game${list.length === 1 ? "" : "s"}`;
+    return `<details class="sys" data-sys="${esc(sys)}"${Q || openSys.has(sys) ? " open" : ""}><summary><img src="${pic(sys)}" alt=""><h3>${esc(name)}</h3>
+      <span class="count">${count}</span><span class="arrow">&#9654;</span></summary>${inner}</details>`;
   }).join("");
   box.querySelectorAll("details.sys").forEach(d => d.addEventListener("toggle", () => {
+    if (Q) return;   // while searching, folding doesn't change what stays open afterwards
     if (d.open) openSys.add(d.dataset.sys); else openSys.delete(d.dataset.sys);
   }));
   box.querySelectorAll(".row").forEach(b => b.addEventListener("click", () => openGame(LIB[+b.dataset.i])));
@@ -369,6 +400,14 @@ async function loadLibrary() {
     drawLibrary();
   } catch (e) { document.getElementById("lib").innerHTML = '<div class="card"><p>The library could not load right now.</p></div>'; }
 }
+const qBox = document.getElementById("q"), qX = document.getElementById("qx");
+let qTimer = null;
+qBox.addEventListener("input", () => {
+  qX.hidden = !qBox.value; clearTimeout(qTimer);
+  qTimer = setTimeout(() => { Q = qBox.value.trim(); drawLibrary(); }, 120);
+});
+qBox.addEventListener("keydown", e => { if (e.key === "Escape" && qBox.value) { e.stopPropagation(); qX.click(); } });
+qX.addEventListener("click", () => { qBox.value = ""; Q = ""; qX.hidden = true; drawLibrary(); qBox.focus(); });
 document.querySelectorAll("#viewSeg button").forEach(b => b.addEventListener("click", () => {
   VIEW = b.dataset.v; store("rbw-libview", VIEW); drawLibrary();
 }));
