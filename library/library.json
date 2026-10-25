@@ -2256,6 +2256,24 @@
       ] }
     },
     {
+      "id": "the-lego-movie-videogame",
+      "title": "The LEGO Movie Videogame",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "The LEGO Movie Videogame is a third-person action-adventure game based on the 2014 animated film The Lego Movie. Just like the previous LEGO games by Tt Games it offers a world where the characters are built entirely using LEGO bricks. For this title all the environments are...",
+      "added": "2026-10-24",
+      "art": "library/art/the-lego-movie-videogame.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Movie, The - Videogame (USA) (En,Fr,Es,Pt) (Rev 1).wux", "size": 8565784576, "sha256": "3d90d659e98946c9a553da35c2a1e423991e663f8b12edbddd1fc18eb1d6561b", "pieces": [
+        { "name": "LEGO Movie, The - Videogame (USA) (En,Fr,Es,Pt) (Rev 1).wux.part01", "url": "private:the-lego-movie-videogame__LEGO.Movie.The.-.Videogame.USA.En.Fr.Es.Pt.Rev.1.wux.part01", "size": 1992294400, "sha256": "64fc7ef01683a948b75c008c9c75b9d7ac0ebdd7f1b0f839f79d78fe6959d305" },
+        { "name": "LEGO Movie, The - Videogame (USA) (En,Fr,Es,Pt) (Rev 1).wux.part02", "url": "private:the-lego-movie-videogame__LEGO.Movie.The.-.Videogame.USA.En.Fr.Es.Pt.Rev.1.wux.part02", "size": 1992294400, "sha256": "84f4c642fe11c25a4a114c9ad2b379686a80f1159412d468690830e51d538e6e" },
+        { "name": "LEGO Movie, The - Videogame (USA) (En,Fr,Es,Pt) (Rev 1).wux.part03", "url": "private:the-lego-movie-videogame__LEGO.Movie.The.-.Videogame.USA.En.Fr.Es.Pt.Rev.1.wux.part03", "size": 1992294400, "sha256": "2ff8a6c0b3c71d00d8a112c5f6e51f918aa334914ae6c143fc8ff0c615e2094a" },
+        { "name": "LEGO Movie, The - Videogame (USA) (En,Fr,Es,Pt) (Rev 1).wux.part04", "url": "private:the-lego-movie-videogame__LEGO.Movie.The.-.Videogame.USA.En.Fr.Es.Pt.Rev.1.wux.part04", "size": 1992294400, "sha256": "35b6535b180bbf5805c40580719bc8cfda97cafc996717ad166e18020ca8f707" },
+        { "name": "LEGO Movie, The - Videogame (USA) (En,Fr,Es,Pt) (Rev 1).wux.part05", "url": "private:the-lego-movie-videogame__LEGO.Movie.The.-.Videogame.USA.En.Fr.Es.Pt.Rev.1.wux.part05", "size": 596606976, "sha256": "07f1902904e87fce36f4243deb2327a8ec44a29d585ede7b4526b1ab2d488e66" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
