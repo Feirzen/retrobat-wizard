@@ -2576,6 +2576,21 @@
       ] }
     },
     {
+      "id": "halo-combat-evolved",
+      "title": "Halo: Combat Evolved",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "Humanity is the midst of a long war against an alien alliance called the Covenant who have been wiping out colony after colony. You hero is Master Chief, who is given no name beyond his rank in the game itself. He is stationed on the Pillar of Autumn, a ship which, per protocol...",
+      "added": "2026-10-25",
+      "art": "library/art/halo-combat-evolved.png",
+      "files": [
+      ],
+      "parts": { "name": "Halo - Combat Evolved (USA) (Rev 2).xiso.iso", "size": 3625713664, "sha256": "43ec0813edadd592b7b489a930f108d289db9313ac337611110ffca8be0a7258", "pieces": [
+        { "name": "Halo - Combat Evolved (USA) (Rev 2).xiso.iso.part01", "url": "private:halo-combat-evolved__Halo.-.Combat.Evolved.USA.Rev.2.xiso.iso.part01", "size": 1992294400, "sha256": "fb56c0bd1e57cc46a60961e642329edae3b1d1b7f7bb60d46de74c684399d837" },
+        { "name": "Halo - Combat Evolved (USA) (Rev 2).xiso.iso.part02", "url": "private:halo-combat-evolved__Halo.-.Combat.Evolved.USA.Rev.2.xiso.iso.part02", "size": 1633419264, "sha256": "aa864bdb5117433237ab9d4a37f75b73b7dcea88e11bc238ec1a63cf2e7f330a" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
