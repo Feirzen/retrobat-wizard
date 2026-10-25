@@ -2271,6 +2271,21 @@
       ] }
     },
     {
+      "id": "new-super-luigi-u",
+      "title": "New Super Luigi U",
+      "system": "wiiu",
+      "players": "1-5",
+      "description": "New Super Luigi U is a platform game on Wii U. Offered in stand-alone or as an extension of the game New Super Mario Bros. U, it allows to control Luigi in 82 revamped levels and adapted to the game play of Luigi. Carottin is now playable in multiplayer and each stage must be...",
+      "added": "2026-10-24",
+      "art": "library/art/new-super-luigi-u.jpg",
+      "files": [
+      ],
+      "parts": { "name": "New Super Luigi U (USA) (En,Fr,Es).wux", "size": 2580316160, "sha256": "ea012a052f56c663beadad915bbe008e55b427d66093eb04d16e9fb6411d6eb5", "pieces": [
+        { "name": "New Super Luigi U (USA) (En,Fr,Es).wux.part01", "url": "private:new-super-luigi-u__New.Super.Luigi.U.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "9cee151ef526f6c79d155dcd9ca7feb3667cab9b697679279ce8e809a9da5c24" },
+        { "name": "New Super Luigi U (USA) (En,Fr,Es).wux.part02", "url": "private:new-super-luigi-u__New.Super.Luigi.U.USA.En.Fr.Es.wux.part02", "size": 588021760, "sha256": "da91688e387a09ba4c5185758eed7ca27c4e95a48368a3c51fcc7a2cd59e4b8e" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
