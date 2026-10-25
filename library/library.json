@@ -2177,6 +2177,30 @@
       ] }
     },
     {
+      "id": "lego-city-undercover",
+      "title": "LEGO City Undercover",
+      "system": "wiiu",
+      "players": "1",
+      "description": "LEGO City comes to life, only on the Wii U system! The popular LEGO City vehicles and play sets come to life for the first time in the vast, open world of the LEGO City: Undercover game. As police officer Chase McCain you are armed with clever disguises, special abilities,...",
+      "added": "2026-10-24",
+      "art": "library/art/lego-city-undercover.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux", "size": 21236776960, "sha256": "f1e7093dff2bcad5db086a64f5ed380e3d5901a56c858cc39114ea4e210dce76", "pieces": [
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part01", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part01", "size": 1992294400, "sha256": "95dbe802965f80b278c077e6e38c116dd6b44f43ab7d614cc8d0a5c6ce86db95" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part02", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part02", "size": 1992294400, "sha256": "c023029cf2d6da71efa11758ac0c1d6f19b940c00c3e79d795186afc80313f13" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part03", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part03", "size": 1992294400, "sha256": "3b3bcee76c4e15b9315e8555edb8b3f0fd0d56cc7c008115746f3afdc0da44e4" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part04", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part04", "size": 1992294400, "sha256": "4c3cb2b0bc585befbc9f3e12eb4afcc3fda28eafaf5edac5f2d0d8bbd6f86374" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part05", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part05", "size": 1992294400, "sha256": "8988588342a0588ff69b881a1e04c13eb00c252b4607553aa2ca175f26a0059e" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part06", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part06", "size": 1992294400, "sha256": "47fb19fdba67b7e16952e14898aece0922a326c3563673505fc65d34e604cec2" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part07", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part07", "size": 1992294400, "sha256": "d4085d255ba155182b9857bd6fc3dce1d26ce926c339ab35522ba44bc4acf251" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part08", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part08", "size": 1992294400, "sha256": "b60718f59dec3297fe31dcac9b8a3a9267eab0e24cce94a281ba10d99b320c4e" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part09", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part09", "size": 1992294400, "sha256": "0e1cab446852682762e516fe20fe60654b606b89bc6dc14c72ed7fca306d7d7c" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part10", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part10", "size": 1992294400, "sha256": "e184c0aa9ad0ab41291db41c03e9a6b7d7874973dde4febbc3982c898f845ec1" },
+        { "name": "LEGO City Undercover (USA) (En,Fr,Es) (Rev 1).wux.part11", "url": "private:lego-city-undercover__LEGO.City.Undercover.USA.En.Fr.Es.Rev.1.wux.part11", "size": 1313832960, "sha256": "26ee336aa63379cbba31087832fa4dbaf4eca807d81a0198d7458785a088dc6e" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
