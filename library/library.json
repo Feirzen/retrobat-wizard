@@ -2219,6 +2219,23 @@
       ] }
     },
     {
+      "id": "lego-marvel-super-heroes",
+      "title": "LEGO Marvel Super Heroes",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Lego Marvel Super Heroes is an action game, reuniting about one hundred and a half Marvel heroes and villains coming from several Marvel franchises, having the player control the good ones in order to save the Earth from a team of the vicious (headed by Galactus, also named as...",
+      "added": "2026-10-24",
+      "art": "library/art/lego-marvel-super-heroes.jpg",
+      "files": [
+      ],
+      "parts": { "name": "LEGO Marvel Super Heroes (USA) (En,Fr,Es,Pt).wux", "size": 7108952064, "sha256": "d917e2d2f72f975000ffead03ae36cfb4c233fabc7c899061917b52e02965454", "pieces": [
+        { "name": "LEGO Marvel Super Heroes (USA) (En,Fr,Es,Pt).wux.part01", "url": "private:lego-marvel-super-heroes__LEGO.Marvel.Super.Heroes.USA.En.Fr.Es.Pt.wux.part01", "size": 1992294400, "sha256": "0d713ccd65488fa561f7e8c3411fd2da6677c703e299ff0fdb8dba1b7908068a" },
+        { "name": "LEGO Marvel Super Heroes (USA) (En,Fr,Es,Pt).wux.part02", "url": "private:lego-marvel-super-heroes__LEGO.Marvel.Super.Heroes.USA.En.Fr.Es.Pt.wux.part02", "size": 1992294400, "sha256": "06de669f43453c7591aba18b6043aa6ca43ea587b2a2123aa92be04959b236af" },
+        { "name": "LEGO Marvel Super Heroes (USA) (En,Fr,Es,Pt).wux.part03", "url": "private:lego-marvel-super-heroes__LEGO.Marvel.Super.Heroes.USA.En.Fr.Es.Pt.wux.part03", "size": 1992294400, "sha256": "b20257b6dd9a63c022d1f4a57ff98d7f85e61a909cafa9eb8652beaebc5e34fc" },
+        { "name": "LEGO Marvel Super Heroes (USA) (En,Fr,Es,Pt).wux.part04", "url": "private:lego-marvel-super-heroes__LEGO.Marvel.Super.Heroes.USA.En.Fr.Es.Pt.wux.part04", "size": 1132068864, "sha256": "4f198cacea4193254ab045ca49b57c48abe76a3fbf08819e35afdb9c273b29a1" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
