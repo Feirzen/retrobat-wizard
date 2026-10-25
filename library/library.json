@@ -2802,6 +2802,22 @@
       ] }
     },
     {
+      "id": "tom-clancy-s-splinter-cell-chaos-theory",
+      "title": "Tom Clancy's Splinter Cell : Chaos Theory",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "As Sam Fisher, Third Echelon's most skilled Splinter Cell operative, you are assigned to execute a hazardous series of operations to investigate and eliminate a new source of information attacks originating in North Korea. At your disposal is a lethal array of tactics ranging...",
+      "added": "2026-10-25",
+      "art": "library/art/tom-clancy-s-splinter-cell-chaos-theory.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Tom Clancy's Splinter Cell - Chaos Theory (USA, Europe) (En,Fr,De,Es,It).xiso.iso", "size": 5755502592, "sha256": "5ad3e4ea95cc74c0d7b9efd93e942500dd7d708a4679cb573b902890b3b4dd1d", "pieces": [
+        { "name": "Tom Clancy's Splinter Cell - Chaos Theory (USA, Europe) (En,Fr,De,Es,It).xiso.iso.part01", "url": "private:tom-clancy-s-splinter-cell-chaos-theory__Tom.Clancy.s.Splinter.Cell.-.Chaos.Theory.USA.Europe.En.Fr.De.Es.It.xiso.iso.part01", "size": 1992294400, "sha256": "7dcbd8ebf8b5e6d49a71f8bf9a51a39034770305b9ac5acf7a7412d3d18a4719" },
+        { "name": "Tom Clancy's Splinter Cell - Chaos Theory (USA, Europe) (En,Fr,De,Es,It).xiso.iso.part02", "url": "private:tom-clancy-s-splinter-cell-chaos-theory__Tom.Clancy.s.Splinter.Cell.-.Chaos.Theory.USA.Europe.En.Fr.De.Es.It.xiso.iso.part02", "size": 1992294400, "sha256": "70bcefb1beb0b818bdd6d7ca8c2d45debe56a95c094e4e5568fb3d44ec132ccc" },
+        { "name": "Tom Clancy's Splinter Cell - Chaos Theory (USA, Europe) (En,Fr,De,Es,It).xiso.iso.part03", "url": "private:tom-clancy-s-splinter-cell-chaos-theory__Tom.Clancy.s.Splinter.Cell.-.Chaos.Theory.USA.Europe.En.Fr.De.Es.It.xiso.iso.part03", "size": 1770913792, "sha256": "bdd1fece1e5f316bea7968780de31eac7f2bfcf39026b70ed7b756785911ce91" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
