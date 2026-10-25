@@ -591,6 +591,13 @@ function Invoke-AdminPublishTick {
         $script:adminNote = $r.Message
         $script:libCatalog = $null
         Render-Admin
-        [void](Show-Choice $WizardName $r.Message @('OK'))
+        # Kept in the taskbar so the upload could finish (see Add_Closing): no
+        # pop-up that could jump in front of a game. The note is on the Admin page.
+        $down = $false; try { $down = ([string]$script:win.WindowState -eq 'Minimized') } catch { }
+        if (-not $down) { [void](Show-Choice $WizardName $r.Message @('OK')) }
+        # Kept alive only so the upload could finish, and still down in the
+        # taskbar: its job is done, so it closes itself (Claude, 2026-10-24).
+        # Opened back up by then, it stays open.
+        elseif ($script:closeAfterUpload) { $script:closeAfterUpload = $false; Log 'admin: upload finished in the taskbar, closing'; try { $script:win.Close() } catch { } }
     } catch { Log "admin: publish tick - $_" }
 }
