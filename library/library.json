@@ -2421,6 +2421,28 @@
       ] }
     },
     {
+      "id": "super-smash-bros-for-wii-u",
+      "title": "Super Smash Bros. for Wii U",
+      "system": "wiiu",
+      "players": "1-8",
+      "description": "Mario! Link! Samus! Pikachu! All of your favorite Nintendo characters are back, along with plenty of new faces, in Super Smash Bros. for Wii U, the next entry in the beloved Super Smash Bros. series. Up to four players can battle each other locally or online across beautifully...",
+      "added": "2026-10-25",
+      "art": "library/art/super-smash-bros-for-wii-u.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux", "size": 16235560960, "sha256": "dd14385c14b9773c61a370bb35b8ee81e7e4a9d7b72a3dfba53999a11fd66cfd", "pieces": [
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part01", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part01", "size": 1992294400, "sha256": "b84fe9ffe813e4330a3035de14fc291351bab3411edc81ffb322c35c896bda87" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part02", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part02", "size": 1992294400, "sha256": "771b548f80af71a5f32cfee3e302155a65204b95f0416e8bf76f7f622a1ec24b" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part03", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part03", "size": 1992294400, "sha256": "c77494b95785988ffe54343a2ef8e4331dc2b6ad3f0375b21d2f1a0a95e769a2" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part04", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part04", "size": 1992294400, "sha256": "54905ce85ba7842da7ed7cf37d2f62544f8418d14979c67c50a618abde6bacb2" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part05", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part05", "size": 1992294400, "sha256": "a2417815f8683f051f492b1749232491b626b30b3d5680fd7c9d06d5f9539db4" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part06", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part06", "size": 1992294400, "sha256": "3abb65af4912a60f7999a378a6ddbf051c055687eb7af9c9e0dcfb0eb902a124" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part07", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part07", "size": 1992294400, "sha256": "4898cb21d886e84af96a538cfc5b814282e08cd90194e8cc9eb35f0cc23c1609" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part08", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part08", "size": 1992294400, "sha256": "7d1ad7ca55f116195e7d801a39d1d3b18e5c2c6c7ec0635cde9363d0c83c89b2" },
+        { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part09", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part09", "size": 297205760, "sha256": "e530766400545860d5d333e01ee657e9996cc9b4f5a7da95ca291a1ae7c99839" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
