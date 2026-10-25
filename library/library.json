@@ -2745,6 +2745,21 @@
       ] }
     },
     {
+      "id": "star-wars-republic-commando",
+      "title": "Star Wars : Republic Commando",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "Star Wars: Republic Commando on Xbox puts you in command of a small, elite squad of the Empire's future great army. Accompanied by 3 other soldiers, each with their own specialism, you have to blast through the enemy and other droids that stand in your way. The story is located...",
+      "added": "2026-10-25",
+      "art": "library/art/star-wars-republic-commando.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Star Wars - Republic Commando (USA).xiso.iso", "size": 3637903360, "sha256": "d269066e64063dc09444b3a464967d8f1a4c2c18a742344adb24fca0a6e1aad6", "pieces": [
+        { "name": "Star Wars - Republic Commando (USA).xiso.iso.part01", "url": "private:star-wars-republic-commando__Star.Wars.-.Republic.Commando.USA.xiso.iso.part01", "size": 1992294400, "sha256": "7775489e37466ef2d90fb02d9869a0846ab4a807c5abeb2ec51af87cff669140" },
+        { "name": "Star Wars - Republic Commando (USA).xiso.iso.part02", "url": "private:star-wars-republic-commando__Star.Wars.-.Republic.Commando.USA.xiso.iso.part02", "size": 1645608960, "sha256": "8107534f0fbcc42393c15ca72ef964b5b0c19ac0d546bd1fbc4f007d846fa554" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
