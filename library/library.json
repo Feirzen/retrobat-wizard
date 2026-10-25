@@ -2624,6 +2624,21 @@
       ] }
     },
     {
+      "id": "jsrf-jet-set-radio-future",
+      "title": "JSRF : Jet Set Radio Future",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "A follow up to the Dreamcast title Jet Grind Radio. The setting is Tokyo in the year 2024. Freedom is a valuable commodity and freedom of expression even more so. Gangs of misbehaving teens strap on rocket-powered roller blades and skate, grind, and mark their territory with...",
+      "added": "2026-10-25",
+      "art": "library/art/jsrf-jet-set-radio-future.png",
+      "files": [
+      ],
+      "parts": { "name": "JSRF - Jet Set Radio Future (USA).xiso.iso", "size": 2502426624, "sha256": "1b45f3a36de92fbb3fa92a3778dfe08503105a3c59570cc7367a4f28c5951278", "pieces": [
+        { "name": "JSRF - Jet Set Radio Future (USA).xiso.iso.part01", "url": "private:jsrf-jet-set-radio-future__JSRF.-.Jet.Set.Radio.Future.USA.xiso.iso.part01", "size": 1992294400, "sha256": "382ac471086ca7487a2a7de4fdcb95bd540ae7d4d750b92ec24c240514de03a7" },
+        { "name": "JSRF - Jet Set Radio Future (USA).xiso.iso.part02", "url": "private:jsrf-jet-set-radio-future__JSRF.-.Jet.Set.Radio.Future.USA.xiso.iso.part02", "size": 510132224, "sha256": "791d6a7b83ce852ea2e37dff24686b79ea4f9c8e8e57e87ee52111a1d28105e5" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
