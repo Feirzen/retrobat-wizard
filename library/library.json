@@ -2531,6 +2531,21 @@
       ] }
     },
     {
+      "id": "fable",
+      "title": "Fable",
+      "system": "xbox",
+      "players": "1",
+      "description": "Fable? is a ground-breaking role-playing adventure game from Peter Molyneux, in which your every action determines your skills, appearance, and reputation. Create your life story from childhood to death. Grow from an inexperienced adolescent into the most powerful being in the...",
+      "added": "2026-10-25",
+      "art": "library/art/fable.png",
+      "files": [
+      ],
+      "parts": { "name": "Fable (USA, Europe).xiso.iso", "size": 2473328640, "sha256": "a0d2b2a83aac05d170ce0b91e9cbf0fdd48b93b9fe3fcaf54a8baceeddcecb33", "pieces": [
+        { "name": "Fable (USA, Europe).xiso.iso.part01", "url": "private:fable__Fable.USA.Europe.xiso.iso.part01", "size": 1992294400, "sha256": "f8ef8fee5fe7c9636c56a43efae4de3c87f67f48ad3134f29555f14975110640" },
+        { "name": "Fable (USA, Europe).xiso.iso.part02", "url": "private:fable__Fable.USA.Europe.xiso.iso.part02", "size": 481034240, "sha256": "55771291a342584cc2506afd41a60fbef94ecbc6b2a7254db8983931894226d9" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
