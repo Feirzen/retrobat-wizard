@@ -2772,6 +2772,21 @@
       ]
     },
     {
+      "id": "toejam-earl-iii-mission-to-earth",
+      "title": "ToeJam & Earl III : Mission to Earth",
+      "system": "xbox",
+      "players": "1-2",
+      "description": "ToeJam & Earl III: Mission to Earth on Xbox is a game mixing adventure and platforming, in which you play as two wacky aliens who love to waddle and dance hip-hop. This third opus sends the two aliens to Earth to preach the good word and convert its inhabitants to the benefits...",
+      "added": "2026-10-25",
+      "art": "library/art/toejam-earl-iii-mission-to-earth.jpg",
+      "files": [
+      ],
+      "parts": { "name": "ToeJam & Earl III - Mission to Earth (USA).xiso.iso", "size": 2669150208, "sha256": "f8e2c5266db5a5aafb81100fbceb1fab17ce0ecb5ebf9e2c160789ebf64bf670", "pieces": [
+        { "name": "ToeJam & Earl III - Mission to Earth (USA).xiso.iso.part01", "url": "private:toejam-earl-iii-mission-to-earth__ToeJam.Earl.III.-.Mission.to.Earth.USA.xiso.iso.part01", "size": 1992294400, "sha256": "7f463100961247708577404326d48da4c62277a8839bce95a66f96e04236f97a" },
+        { "name": "ToeJam & Earl III - Mission to Earth (USA).xiso.iso.part02", "url": "private:toejam-earl-iii-mission-to-earth__ToeJam.Earl.III.-.Mission.to.Earth.USA.xiso.iso.part02", "size": 676855808, "sha256": "74d34aa7b0f2efd066e83092b039bc9423b846dc9c7f2e5026d6d837bdb44319" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
