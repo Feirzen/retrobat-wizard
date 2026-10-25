@@ -2394,6 +2394,18 @@
       ]
     },
     {
+      "id": "shovel-knight",
+      "title": "Shovel Knight",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Shovel Knight is a sweeping classic action adventure game with awesome gameplay, memorable characters, and an 8-bit retro aesthetic. It's a hot mashup of new and old! You play as the eponymous Shovel Knight, a small knight with a huge quest. Shovel Knight has come to this land...",
+      "added": "2026-10-25",
+      "art": "library/art/shovel-knight.png",
+      "files": [
+        { "name": "Shovel Knight (USA).wux", "url": "private:shovel-knight__Shovel.Knight.USA.wux", "size": 1544355840, "sha256": "81c7f4e7aa4c2e8039969b21dfeb5e938d3b68e1fd2b302aa986751f6fa5cf58" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
