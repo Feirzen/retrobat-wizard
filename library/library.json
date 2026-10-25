@@ -2515,6 +2515,22 @@
       ] }
     },
     {
+      "id": "dead-or-alive-ultimate",
+      "title": "Dead Or Alive : Ultimate",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "Dead or Alive Ultimate combines the original Dead or Alive with a redesigned Dead or Alive 2 and takes the series online for the first time. Both games can be played on Xbox Live, which enables you to test your fighting skills against gamers from around the world. The new Dead...",
+      "added": "2026-10-25",
+      "art": "library/art/dead-or-alive-ultimate.png",
+      "files": [
+      ],
+      "parts": { "name": "Dead or Alive 1 Ultimate (USA, Asia) (En,Ja).xiso.iso", "size": 4387635200, "sha256": "475711717a2d67e7c258250b318b0ab92b472fc513b44d187db16ac2d1839bac", "pieces": [
+        { "name": "Dead or Alive 1 Ultimate (USA, Asia) (En,Ja).xiso.iso.part01", "url": "private:dead-or-alive-ultimate__Dead.or.Alive.1.Ultimate.USA.Asia.En.Ja.xiso.iso.part01", "size": 1992294400, "sha256": "bb0fc8bd1fb977677320140768396840915e87bed735002f145c625647001e7f" },
+        { "name": "Dead or Alive 1 Ultimate (USA, Asia) (En,Ja).xiso.iso.part02", "url": "private:dead-or-alive-ultimate__Dead.or.Alive.1.Ultimate.USA.Asia.En.Ja.xiso.iso.part02", "size": 1992294400, "sha256": "7d2e36d67eec61116187d6b60b107a7ce54263d4c3a451a23faae167a96f366f" },
+        { "name": "Dead or Alive 1 Ultimate (USA, Asia) (En,Ja).xiso.iso.part03", "url": "private:dead-or-alive-ultimate__Dead.or.Alive.1.Ultimate.USA.Asia.En.Ja.xiso.iso.part03", "size": 403046400, "sha256": "9a8ce909f2cda2aed87a311565a1580edb4f55635d90109b16574bfbcdc1b52a" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
