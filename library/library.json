@@ -2729,6 +2729,22 @@
       ] }
     },
     {
+      "id": "star-wars-knights-of-the-old-republic-ii",
+      "title": "Star Wars : Knights of the Old Republic II : The Sith Lords",
+      "system": "xbox",
+      "players": "1",
+      "description": "Star Wars: Knights of the Old Republic II: The Sith Lords on Xbox is a role-playing game set 3,000 years before the events of the film saga. You play the role of a survivor of the Jedi order, saved by his exile. Can you regain your lost status and save the galaxy from a terrible...",
+      "added": "2026-10-25",
+      "art": "library/art/star-wars-knights-of-the-old-republic-ii.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Star Wars - Knights of the Old Republic II - The Sith Lords (USA).xiso.iso", "size": 4112318464, "sha256": "02335a0001fca6021af26d3a202d8efc3299c349663137ffe7fa025f29a70cb6", "pieces": [
+        { "name": "Star Wars - Knights of the Old Republic II - The Sith Lords (USA).xiso.iso.part01", "url": "private:star-wars-knights-of-the-old-republic-ii__Star.Wars.-.Knights.of.the.Old.Republic.II.-.The.Sith.Lords.USA.xiso.iso.part01", "size": 1992294400, "sha256": "6d2db6680d4f266099ccbc9ac99e8551409c70db76438849d022a970f61b9de8" },
+        { "name": "Star Wars - Knights of the Old Republic II - The Sith Lords (USA).xiso.iso.part02", "url": "private:star-wars-knights-of-the-old-republic-ii__Star.Wars.-.Knights.of.the.Old.Republic.II.-.The.Sith.Lords.USA.xiso.iso.part02", "size": 1992294400, "sha256": "59cc59403a84d041e99cafd90a5be86c0a46051f1b3e28b2dc90dbd40d95ea11" },
+        { "name": "Star Wars - Knights of the Old Republic II - The Sith Lords (USA).xiso.iso.part03", "url": "private:star-wars-knights-of-the-old-republic-ii__Star.Wars.-.Knights.of.the.Old.Republic.II.-.The.Sith.Lords.USA.xiso.iso.part03", "size": 127729664, "sha256": "221fc8f25af3cefd3500b7cabcc307a7cb4c2afeb7f13f7ddcb391c753fd9aba" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
