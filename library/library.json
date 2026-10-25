@@ -2546,6 +2546,21 @@
       ] }
     },
     {
+      "id": "fuzion-frenzy",
+      "title": "Fuzion Frenzy",
+      "system": "xbox",
+      "players": "1-4",
+      "description": "Fuzion Frenzy is a launch title for the Microsoft Xbox. At its core, Fuzion Frenzy is a four-player party game featuring 45 different mini-games (not including the titular Fuzion Frenzy). A demo of the game was included with some other launch titles in the US, including Halo,...",
+      "added": "2026-10-25",
+      "art": "library/art/fuzion-frenzy.png",
+      "files": [
+      ],
+      "parts": { "name": "Fuzion Frenzy (USA).xiso.iso", "size": 2084569088, "sha256": "8662b9ccdf2507e6d1edd3fa8ec3003cc7b8f016e0f55518aa700200db104618", "pieces": [
+        { "name": "Fuzion Frenzy (USA).xiso.iso.part01", "url": "private:fuzion-frenzy__Fuzion.Frenzy.USA.xiso.iso.part01", "size": 1992294400, "sha256": "1edadca58f5b1bdb404cc5866aae28b16c1b0f7d98a640acc839bc5527fd4658" },
+        { "name": "Fuzion Frenzy (USA).xiso.iso.part02", "url": "private:fuzion-frenzy__Fuzion.Frenzy.USA.xiso.iso.part02", "size": 92274688, "sha256": "cc123aae8e90abdb37d9d45c440cc2be4d0420ddfff9d6a85cb99ed8779b8760" }
+      ] }
+    },
+    {
       "id": "the-elder-scrolls-iii-morrowind",
       "title": "The Elder Scrolls III : Morrowind",
       "system": "xbox",
