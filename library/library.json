@@ -2254,6 +2254,23 @@
       ] }
     },
     {
+      "id": "mario-kart-8",
+      "title": "Mario Kart 8",
+      "system": "wiiu",
+      "players": "1-4",
+      "description": "Mario Kart 8 is the 8th installment of the Mario Kart series, for the Wii U console. The gameplay includes thirty-two circuits (sixteen brand new ones and sixteen retro ones) on which the characters race riding a variety of vehicles like the returning motorcycles from Mario Kart...",
+      "added": "2026-10-24",
+      "art": "library/art/mario-kart-8.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Mario Kart 8 (USA) (En,Fr,Es) (Rev 5).wux", "size": 6143868928, "sha256": "df64f10021368f61b82dbcc4ccd97d4b01b4a804284c9d9916fd0a8670318956", "pieces": [
+        { "name": "Mario Kart 8 (USA) (En,Fr,Es) (Rev 5).wux.part01", "url": "private:mario-kart-8__Mario.Kart.8.USA.En.Fr.Es.Rev.5.wux.part01", "size": 1992294400, "sha256": "aa85cdc2f8912146c71507af1bcce5ab709207e5e4ea97f14d2cbb2bb8f1c7c4" },
+        { "name": "Mario Kart 8 (USA) (En,Fr,Es) (Rev 5).wux.part02", "url": "private:mario-kart-8__Mario.Kart.8.USA.En.Fr.Es.Rev.5.wux.part02", "size": 1992294400, "sha256": "b718fb632b0b304b6fb02a6586f3b21c4e79de68909ef76a127f37eefbf93c6a" },
+        { "name": "Mario Kart 8 (USA) (En,Fr,Es) (Rev 5).wux.part03", "url": "private:mario-kart-8__Mario.Kart.8.USA.En.Fr.Es.Rev.5.wux.part03", "size": 1992294400, "sha256": "cefa8f90d6249c94062f0e31ebd4681568a1c8e1fdd7a02def1270c6aae86ccc" },
+        { "name": "Mario Kart 8 (USA) (En,Fr,Es) (Rev 5).wux.part04", "url": "private:mario-kart-8__Mario.Kart.8.USA.En.Fr.Es.Rev.5.wux.part04", "size": 166985728, "sha256": "8ad995894ea969c5ee53dcd2150295d91b4bfd399b4001549d5c35d9818eb5b5" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
