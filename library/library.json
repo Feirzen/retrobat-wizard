@@ -2298,6 +2298,22 @@
       ]
     },
     {
+      "id": "pac-man-and-the-ghostly-adventures-2",
+      "title": "Pac-Man and the Ghostly Adventures 2",
+      "system": "wiiu",
+      "players": "1",
+      "description": "New Worlds. New Friends. New Power Ups.The gang is back! Following the colorful characters and world of the PAC-MAN and the Ghostly Adventures animated series, PAC-MAN and the Ghostly Adventures 2 will feature PAC-MAN, Spiral and Cylindria in an all-new storyline as they defend...",
+      "added": "2026-10-24",
+      "art": "library/art/pac-man-and-the-ghostly-adventures-2.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Pac-Man and the Ghostly Adventures 2 (USA) (En,Fr,Es,Pt).wux", "size": 5307858944, "sha256": "6bc7a978897cba18ea45ba36220427fda5a3e897927c6ae3f17702cc8a7a6a69", "pieces": [
+        { "name": "Pac-Man and the Ghostly Adventures 2 (USA) (En,Fr,Es,Pt).wux.part01", "url": "private:pac-man-and-the-ghostly-adventures-2__Pac-Man.and.the.Ghostly.Adventures.2.USA.En.Fr.Es.Pt.wux.part01", "size": 1992294400, "sha256": "7e9d9e5ce57f2a328d8150a88afeb00d607b717352e6977d8de3f82904124f42" },
+        { "name": "Pac-Man and the Ghostly Adventures 2 (USA) (En,Fr,Es,Pt).wux.part02", "url": "private:pac-man-and-the-ghostly-adventures-2__Pac-Man.and.the.Ghostly.Adventures.2.USA.En.Fr.Es.Pt.wux.part02", "size": 1992294400, "sha256": "e0883b81bcd0dbbb539b39711c0ae0180f96a07969d98220b51d5304abf5924c" },
+        { "name": "Pac-Man and the Ghostly Adventures 2 (USA) (En,Fr,Es,Pt).wux.part03", "url": "private:pac-man-and-the-ghostly-adventures-2__Pac-Man.and.the.Ghostly.Adventures.2.USA.En.Fr.Es.Pt.wux.part03", "size": 1323270144, "sha256": "39e2244e112a7417185e7cc7000b15dc9188dcb67cca5fa4423f446aec11c678" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
