@@ -2364,6 +2364,24 @@
       ] }
     },
     {
+      "id": "rayman-legends",
+      "title": "Rayman Legends",
+      "system": "wiiu",
+      "players": "1-5",
+      "description": "Developed by Ubisoft Montpellier, Rayman Legends is the follow-up to last year's highly-acclaimed Rayman Origins. Rayman Legends takes full advantage of the Wii U controller to bring players innovative multiplayer interactions that go beyond those found in traditional platform...",
+      "added": "2026-10-25",
+      "art": "library/art/rayman-legends.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Rayman Legends (USA) (En,Fr,Es).wux", "size": 8308719616, "sha256": "5aca8532b079f845a2a7443eb3188939a563dfd5225b2d761a857e55e56e41cd", "pieces": [
+        { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part01", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part01", "size": 1992294400, "sha256": "b4ea25f9aa355b9ef36eb717e5f2568cc6a3e99e9f55d98ac21a5d2c474df3de" },
+        { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part02", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part02", "size": 1992294400, "sha256": "241e021a039fe585dcdd13892593f8af599168cc2cb760393f36db3b26969c30" },
+        { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part03", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part03", "size": 1992294400, "sha256": "78b6094c5ac0d8e202f88aff09036b13b9ca024e1520c09f4cb36dbb7aba7513" },
+        { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part04", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part04", "size": 1992294400, "sha256": "b13549aec735ab582d5f7554ba89dea7a1af6fde3c7240b060fb8e742f3ab6d1" },
+        { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part05", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part05", "size": 339542016, "sha256": "799a25e8e3bc80059d03614093d013ad483096d4ced21762c0b220005aa709af" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
