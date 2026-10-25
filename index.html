@@ -164,7 +164,7 @@ body.in #site { display: block; }
 
 /* ---- theme menu, top right ---- */
 .themebtn { position: fixed; top: 10px; right: 12px; z-index: 60; width: 38px; height: 38px; border-radius: 0;
-  background: var(--surface); border: 2px solid var(--border2); color: var(--dim); cursor: pointer; font-size: 16px; box-shadow: 3px 3px 0 var(--border); }
+  background: var(--surface); border: 2px solid var(--border2); color: var(--dim); cursor: pointer; font-size: 16px; box-shadow: 3px 3px 0 var(--border); display: grid; place-items: center; padding: 0; }
 .thememenu { position: fixed; top: 56px; right: 12px; z-index: 61; background: var(--surface); border: 2px solid var(--border2);
   border-radius: 0; padding: 6px; min-width: 180px; box-shadow: 5px 5px 0 var(--shadow); display: none; }
 .thememenu.open { display: block; }
@@ -393,10 +393,20 @@ const THEMES = {
   chameleon: { label: "Chameleon", swatch: "conic-gradient(#f87171,#fbbf24,#34d399,#38bdf8,#a78bfa,#f87171)" },
 };
 const CHAM_VARS = ["bg","surface","surface2","border","border2","text","dim","muted","accent","ok","bad","star","shadow","accBg"];
-function chameleon() {
+// chameleon: tone (any / light / dark) and a lock that keeps the colours you like
+let cham = { tone: "any", lock: null }, chamNow = null;
+try { cham = Object.assign(cham, JSON.parse(store("rbw-cham") || "{}")); } catch (e) {}
+const saveCham = () => store("rbw-cham", JSON.stringify(cham));
+function chameleon() { paintCham(cham.lock || makeCham(cham.tone)); }
+function paintCham(v) {
+  chamNow = v;
+  CHAM_VARS.forEach(k => document.documentElement.style.setProperty("--" + k, v[k]));
+  document.getElementById("themeColorMeta").setAttribute("content", getComputedStyle(document.body).backgroundColor);
+}
+function makeCham(tone) {
   const h = Math.floor(Math.random() * 360), acc = (h + 120 + Math.floor(Math.random() * 110)) % 360;
   const H = (x, s, l, a) => `hsl(${x} ${s}% ${l}%${a ? " / " + a + "%" : ""})`;
-  const light = Math.random() < 0.28;
+  const light = tone === "light" ? true : tone === "dark" ? false : Math.random() < 0.28;
   const v = light
     ? { bg: H(h,32,95), surface: H(h,42,99), surface2: H(h,26,91), border: H(h,22,83), border2: H(h,20,66), text: H(h,38,11),
         dim: H(h,18,33), muted: H(h,14,50), accent: H(acc,66,37), ok: "hsl(158 72% 29%)", bad: "hsl(0 72% 44%)",
@@ -404,7 +414,7 @@ function chameleon() {
     : { bg: H(h,26,7), surface: H(h,22,12), surface2: H(h,26,9), border: H(h,18,21), border2: H(h,18,33), text: H(h,26,95),
         dim: H(h,14,74), muted: H(h,12,50), accent: H(acc,74,63), ok: "hsl(158 66% 56%)", bad: "hsl(0 82% 73%)",
         star: "hsl(38 92% 55%)", shadow: "rgba(0,0,0,.5)", accBg: H(acc,74,63,14) };
-  CHAM_VARS.forEach(k => document.documentElement.style.setProperty("--" + k, v[k]));
+  return v;
 }
 function applyTheme(t) {
   if (!THEMES[t]) t = "midnight";
@@ -420,10 +430,30 @@ function drawMenu(cur) {
     `<button data-t="${k}" class="${k === cur ? "sel" : ""}"><span class="swatch" style="background:${t.swatch}"></span>${t.label}${k === "chameleon" && cur === "chameleon" ? " (tap again)" : ""}</button>`).join("");
   m.querySelectorAll("button").forEach(b => b.addEventListener("click", () => applyTheme(b.dataset.t)));
 }
-document.getElementById("themeBtn").addEventListener("click", () => document.getElementById("themeMenu").classList.toggle("open"));
+// the old theme menu only opens if the shared kit didn't load; normally the gear rolls out the kit tray
+document.getElementById("themeBtn").addEventListener("click", () => { if (window.Kit) return; document.getElementById("themeMenu").classList.toggle("open"); });
 document.addEventListener("click", e => { if (!e.target.closest(".thememenu,.themebtn")) document.getElementById("themeMenu").classList.remove("open"); });
 applyTheme(store("rbw-theme") || "midnight");
+
+/* Shared kit (Feirzen/flag-hub): the top-right button is the settings gear. It rolls out
+   the kit tray (Look and Flag); the site still paints its own four looks.
+   Keep the kit <script> tag at the bottom of this page. */
+const RB_NAMES = { midnight: "dark", paper: "light", sepia: "sepia", chameleon: "chameleon" };
+const curTheme = () => document.documentElement.getAttribute("data-theme") || "midnight";
+window.KitConfig = {
+  gear: "#themeBtn",
+  look: {
+    get: () => ({ theme: RB_NAMES[curTheme()] || "dark", tone: cham.tone, locked: !!cham.lock }),
+    set: t => { cham.lock = null; saveCham(); applyTheme(Object.keys(RB_NAMES).find(k => RB_NAMES[k] === t) || "midnight"); },
+    tone: t => { const was = !!cham.lock; cham.tone = t; paintCham(makeCham(t)); cham.lock = was ? chamNow : null; saveCham(); },
+    lock: on => { cham.lock = on ? chamNow : null; saveCham(); },
+    reroll: () => paintCham(makeCham(cham.tone)),
+  },
+};
+document.getElementById("themeBtn").innerHTML = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+document.getElementById("themeBtn").setAttribute("aria-label", "Settings");
+document.getElementById("themeBtn").title = "Settings";
 </script>
-<script src="https://feirzen.github.io/flag-hub/kit/kit.js" data-app="retrobat-wizard" data-name="RetroBat Wizard" data-look="off" defer></script>
+<script src="https://feirzen.github.io/flag-hub/kit/kit.js" data-app="retrobat-wizard" data-name="RetroBat Wizard" defer></script>
 </body>
 </html>
