@@ -44,7 +44,7 @@ function Get-HelpSections {
     $sections = @()
 
     $sections += @{
-        heading = 'WHAT THIS DRIVE IS'
+        heading = 'WHAT THIS SETUP IS'
         lines   = @(
             'A retro game collection on one external drive, with the emulators',
             'and every setting already done. Plug it in, press Play, that is all.'
@@ -71,7 +71,7 @@ function Get-HelpSections {
     $sections += @{
         heading = 'THE FEATURES TAB'
         lines   = @(
-            'Nine things this drive does that plain RetroBat does not, each a',
+            'Nine things this setup does that plain RetroBat does not, each a',
             'tick box. Untick one and RetroBat''s own behaviour comes back.'
         )
     }

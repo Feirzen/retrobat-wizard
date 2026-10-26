@@ -452,7 +452,7 @@ function ConvertFrom-SocialRecord([string]$Text, [string]$BlobId) {
 # list is also saved to social\cache\players.json, so the wizard can draw the
 # friend list straight away next time, before the network answers.
 function Get-SocialPlayers([string]$Ws) {
-    $res = @{ Ok = $false; Players = @(); Message = ''; Names = @{}; Admins = @() }
+    $res = @{ Ok = $false; Players = @(); Message = ''; Names = @{}; Admins = @(); Resets = @{} }
     $repo = Get-SocialRepo $Ws
     $owner, $name = $repo.Split('/')
     # One request for everything: players\ (the people), names\ (the admins'
@@ -480,7 +480,7 @@ function Get-SocialPlayers([string]$Ws) {
     $res.Ok = $true
     $res.Players = $list.ToArray()
     $x = ConvertFrom-SocialExtras $d
-    $res.Names = $x.Names; $res.Admins = $x.Admins
+    $res.Names = $x.Names; $res.Admins = $x.Admins; $res.Resets = $x.Resets
     try {
         $P = Get-SocialPaths $Ws
         New-SocialDir $P.Cache
@@ -672,10 +672,17 @@ function Test-SocialNameTaken($Players, [string]$Name, [string]$MyId) {
 #  names\<id>.txt: an admin's answer to that person's name request, either
 #  "approved:<name>" or "declined:<name>". The person's own wizard reads it
 #  and changes (or keeps) the name, because only they write their own file.
+#  names\<id>-pw.txt (2026-10-25): "reset:<time>", an admin's password reset.
+#  Until that person sets a new password, they can log in without one.
 function ConvertFrom-SocialExtras($Data) {
-    $out = @{ Names = @{}; Admins = @() }
+    $out = @{ Names = @{}; Admins = @(); Resets = @{} }
     try {
         foreach ($e in @($Data.data.repository.names.entries)) {
+            if ([string]$e.name -match '^([a-z0-9]{10})-pw\.txt$') {
+                $rid = $Matches[1]
+                if ($null -ne $e.object -and [int]$e.object.byteSize -le 100 -and ([string]$e.object.text).Trim() -match '^reset:(\S+)$') { $out.Resets[$rid] = $Matches[1] }
+                continue
+            }
             if ([string]$e.name -notmatch '^([a-z0-9]{10})\.txt$') { continue }
             $id = $Matches[1]
             if ($null -eq $e.object -or [int]$e.object.byteSize -gt 200) { continue }
@@ -692,9 +699,9 @@ function ConvertFrom-SocialExtras($Data) {
 
 function Get-SocialCachedExtras([string]$Ws) {
     $P = Get-SocialPaths $Ws
-    if (-not (Test-Path -LiteralPath $P.Players)) { return @{ Names = @{}; Admins = @() } }
+    if (-not (Test-Path -LiteralPath $P.Players)) { return @{ Names = @{}; Admins = @(); Resets = @{} } }
     try { return (ConvertFrom-SocialExtras ([System.IO.File]::ReadAllText($P.Players) | ConvertFrom-Json)) }
-    catch { return @{ Names = @{}; Admins = @() } }
+    catch { return @{ Names = @{}; Admins = @(); Resets = @{} } }
 }
 
 function Test-SocialIsAdmin($Prof, $Extras) {
@@ -737,6 +744,12 @@ function Get-SocialPasswordHash([string]$Id, [string]$Password) {
     $sha = [System.Security.Cryptography.SHA256]::Create()
     $b = $sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes('rbw-pw:' + $Id + ':' + $Password))
     return (($b | ForEach-Object { $_.ToString('x2') }) -join '')
+}
+
+# An admin reset this person's password after they last set one?
+function Test-SocialPwReset($Record, $Resets) {
+    if ($null -eq $Record -or $null -eq $Resets -or -not $Resets.ContainsKey([string]$Record.Id)) { return $false }
+    return ([string]$Resets[[string]$Record.Id] -gt [string]$Record.PwSet)
 }
 
 function Test-SocialPassword($Record, [string]$Password) {
@@ -908,7 +921,385 @@ function Set-SocialHiddenGame([string]$Ws, [string]$System, [string]$Path, [bool
 # Every played or starred game on this drive. Returns @{ Top; Recent; Fav; All }
 # of @{ Name; System; Path; Minutes; Last; Image; Favorite }. $Hidden is the
 # table Get-SocialHiddenGames returns.
-function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6) {
+# ---------------------------------------------------------------------------
+#  PLAY TIME PER PERSON                                          (2026-10-17)
+# ---------------------------------------------------------------------------
+#  Steven: play data "tracked per logged-in profile rather than per drive, so
+#  a friend streaming to his device shows as themselves". RetroBat keeps ONE
+#  play time per game (gametime and lastplayed in each gamelist.xml), for
+#  the whole drive. So the wizard keeps a small ledger per person:
+#      profile\play\<person id>.txt    sys|path|seconds|lastplayed
+#      profile\play\open.txt           who is playing now, and RetroBat's
+#                                      totals at the moment they started
+#  Settling (Update-SocialPlayLedger) gives everything RetroBat counted since
+#  that moment to the person in open.txt, then starts a new moment for
+#  whoever is playing now. It runs when PLAY is pressed (after "Who's
+#  playing?"), when the wizard shows play times, and when the background
+#  helper checks in. The very first settle on a drive gives the times
+#  already there to whoever is logged in then (the owner, normally).
+#  Favourites stay the drive's own: RetroBat has one star per game.
+function Get-SocialPlayDir([string]$Ws) { return (Join-SocialPath $Ws 'profile\play') }
+
+# RetroBat's own totals now: key "sys|path" -> @{ Secs; Last } ("yyyyMMddTHHmmss").
+function Read-SocialRetroBatTimes([string]$Root) {
+    $out = @{}
+    $roms = Join-SocialPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return $out }
+    foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+        $txt = ''
+        try { $txt = [System.IO.File]::ReadAllText($gl) } catch { continue }
+        if ($txt -notmatch '<gametime>|<lastplayed>') { continue }
+        $x = $null
+        try { [xml]$x = $txt } catch { continue }
+        foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+            if ($null -eq $g) { continue }
+            $secs = 0; $last = ''
+            $n1 = $g.SelectSingleNode('gametime'); if ($null -ne $n1) { [int]::TryParse([string]$n1.InnerText, [ref]$secs) | Out-Null }
+            $n2 = $g.SelectSingleNode('lastplayed'); if ($null -ne $n2) { $last = ([string]$n2.InnerText).Trim() }
+            if ($secs -le 0 -and $last -eq '') { continue }
+            $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+            $out[('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim())] = @{ Secs = $secs; Last = $last }
+        }
+    }
+    return $out
+}
+
+function Read-SocialTimesFile([string]$Path) {
+    $out = @{}
+    if (-not (Test-Path -LiteralPath $Path)) { return $out }
+    foreach ($l in [System.IO.File]::ReadAllLines($Path)) {
+        if ($l.StartsWith(';') -or $l.StartsWith('id =')) { continue }
+        $p = $l.Split('|')
+        if ($p.Count -lt 4) { continue }
+        $secs = 0; [int]::TryParse($p[$p.Count - 2], [ref]$secs) | Out-Null
+        $key = (($p[0..($p.Count - 3)]) -join '|')
+        $out[$key] = @{ Secs = $secs; Last = $p[$p.Count - 1] }
+    }
+    return $out
+}
+
+function Write-SocialTimesFile([string]$Path, $Map, [string]$Head) {
+    $lines = New-Object System.Collections.ArrayList
+    [void]$lines.Add('; Play time, written by the wizard (SocialEngine.ps1, PLAY TIME PER PERSON). sys|path|seconds|last played')
+    if ($Head -ne '') { [void]$lines.Add($Head) }
+    foreach ($k in @($Map.Keys | Sort-Object)) { [void]$lines.Add(('{0}|{1}|{2}' -f $k, [int]$Map[$k].Secs, [string]$Map[$k].Last)) }
+    $tmp = $Path + '.tmp'
+    [System.IO.File]::WriteAllLines($tmp, [string[]]$lines.ToArray())
+    Move-Item -LiteralPath $tmp -Destination $Path -Force
+}
+
+# ---- favourites per person (2026-10-17) -----------------------------------
+#  RetroBat has one favourite star per game for the whole drive. When a
+#  DIFFERENT person picks PLAY, the stars of the person who was playing are
+#  kept in profile\play\<id>.fav and the new person's stars are put on
+#  instead (none, the first time). Only while RetroBat is closed (it
+#  rewrites gamelist.xml as it closes), only between two people with a
+#  profile: a guest changes nothing. Only the <favorite> lines are touched.
+function Test-SocialRetroBatOpen {
+    if ($null -ne $script:SocialRunningOverride) { return [bool](& $script:SocialRunningOverride) }
+    foreach ($n in @('emulationstation', 'retrobat')) { if (@(Get-Process -Name $n -ErrorAction SilentlyContinue).Count -gt 0) { return $true } }
+    return $false
+}
+$script:SocialRunningOverride = $null
+
+function Read-SocialFavorites([string]$Root) {
+    $set = @{}
+    $roms = Join-SocialPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return $set }
+    foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        $txt = ''; try { $txt = [System.IO.File]::ReadAllText($gl) } catch { continue }
+        if ($txt -notmatch '<favorite>') { continue }
+        $x = $null; try { [xml]$x = $txt } catch { continue }
+        $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+        foreach ($g in @($x.SelectNodes('/gameList/game[favorite]'))) {
+            if ($null -eq $g) { continue }
+            if (([string]$g.SelectSingleNode('favorite').InnerText).Trim() -ne 'true') { continue }
+            $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+            $set[('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim())] = $true
+        }
+    }
+    return $set
+}
+
+function Set-SocialFavorites([string]$Root, $Set) {
+    $roms = Join-SocialPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return 0 }
+    $changed = 0
+    foreach ($sd in @([System.IO.Directory]::GetDirectories($roms))) {
+        $gl = Join-Path $sd 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        $sys = ([System.IO.Path]::GetFileName($sd)).ToLower()
+        $x = New-Object System.Xml.XmlDocument
+        $x.PreserveWhitespace = $true
+        try { $x.Load($gl) } catch { continue }
+        $dirty = $false
+        foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+            if ($null -eq $g) { continue }
+            $pn = $g.SelectSingleNode('path'); if ($null -eq $pn) { continue }
+            $want = $Set.ContainsKey(('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim()))
+            $fn = $g.SelectSingleNode('favorite')
+            $has = ($null -ne $fn -and ([string]$fn.InnerText).Trim() -eq 'true')
+            if ($want -eq $has) { continue }
+            if ($want) {
+                if ($null -eq $fn) { $fn = $x.CreateElement('favorite'); [void]$g.AppendChild($fn) }
+                $fn.InnerText = 'true'
+            }
+            else { [void]$g.RemoveChild($fn) }
+            $dirty = $true; $changed++
+        }
+        if ($dirty) {
+            $tmp = $gl + '.fav-tmp'
+            $x.Save($tmp)
+            Move-Item -LiteralPath $tmp -Destination $gl -Force
+        }
+    }
+    return $changed
+}
+
+function Switch-SocialFavorites([string]$Root, [string]$Ws, [string]$FromId, [string]$ToId) {
+    if ($FromId -eq $ToId -or $FromId -eq 'guest' -or $ToId -eq 'guest' -or $FromId -eq '' -or $ToId -eq '') { return }
+    if ($FromId -notmatch '^[A-Za-z0-9_\-]{1,40}$' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return }
+    if (Test-SocialRetroBatOpen) { return }
+    $dir = Get-SocialPlayDir $Ws
+    $cur = Read-SocialFavorites $Root
+    [System.IO.File]::WriteAllLines((Join-SocialPath $dir ($FromId + '.fav')), [string[]]@(@('; favourite games (sys|path), kept by the wizard') + @($cur.Keys | Sort-Object)))
+    $want = @{}
+    $toF = Join-SocialPath $dir ($ToId + '.fav')
+    if (Test-Path -LiteralPath $toF) { foreach ($l in [System.IO.File]::ReadAllLines($toF)) { if ($l -ne '' -and -not $l.StartsWith(';')) { $want[$l] = $true } } }
+    [void](Set-SocialFavorites $Root $want)
+}
+
+# ---- separate saves per person (2026-10-17, "streaming profiles") --------
+#  Steven: "his profile keeps the drive's current saves, every other profile
+#  gets its own separate saves". When a DIFFERENT person with a profile picks
+#  PLAY, the save places below are MOVED (a rename on the same drive: instant,
+#  nothing copied) into profile\saves-of\<who was playing>\, and the new
+#  person's own are moved back in (empty folders the first time). Guests use
+#  whatever saves are in place, as before. Only while RetroBat is closed.
+#  Switched by 'separatesaves' in features.ini (on unless it says off).
+#
+#  WHAT MOVES. Every console folder in saves\ that holds only saves (NES,
+#  SNES, N64, GB/GBC/GBA, DS, PlayStation 1 and so on) moves whole. Consoles
+#  whose folder also holds system files keep that folder, and only their
+#  save folder moves:
+#      Wii        wii\dolphin-emu\User\Wii\title\00010000   (disc game saves)
+#      GameCube   gamecube\dolphin-emu\User\GC, dolphin\User\GC (memory cards)
+#      Wii U      wiiu\cemu\mlc01\usr\save\00050000
+#      PS2        ps2\pcsx2\memcards, ps2\pcsx2-16\memcards
+#      PS3        ps3\rpcs3\dev_hdd0\home
+#      PS Vita    psvita\vita3k\ux0\user
+#  Left shared on purpose (the save sits among installed content, accounts or
+#  system files, so moving it could break the console): 3DS, Switch, Xbox,
+#  Xbox 360, PSP, Flash, PC, Steam, arcade (mame and friends) and the ports.
+#
+#  A JOURNAL (profile\saves-of\switch.txt) lists every move before it starts
+#  and is deleted when all are done, so a switch cut short (power, unplugged
+#  drive) is finished the next time, never half-done for good.
+#
+#  REBUILT 2026-10-25 after it went wrong on Steven's drive: the background
+#  helper and the wizard both ran a switch at the same moment, and the two
+#  tripped over each other (saves renamed aside, nothing lost; all put back
+#  by hand). Now:
+#    - ONE place decides: Switch-SocialPerson, called only when someone signs
+#      in to the wizard or picks at PLAY. Reading play time never switches.
+#    - ONE at a time: a lock file held for the whole switch, across programs.
+#    - WHOSE SAVES ARE IN PLACE is written down (profile\saves-of\owner.txt),
+#      not guessed from the play-time records.
+#    - A folder that has saves in it is NEVER moved aside or replaced: that
+#      place is skipped and logged instead.
+$script:SwapShared = @('3ds', 'switch', 'xbox', 'xbox360', 'psp', 'flash', 'windows', 'steam', 'ports', 'mame', 'hbmame', 'psxmame',
+                       'wii', 'wiiu', 'gamecube', 'dolphin', 'ps2', 'ps3', 'ps4', 'psvita', 'teknoparrot', 'epic', 'gog', 'eagames', 'amazon')
+$script:SwapInner = @('wii\dolphin-emu\User\Wii\title\00010000', 'gamecube\dolphin-emu\User\GC', 'dolphin\User\GC',
+                      'wiiu\cemu\mlc01\usr\save\00050000', 'ps2\pcsx2\memcards', 'ps2\pcsx2-16\memcards',
+                      'ps3\rpcs3\dev_hdd0\home', 'psvita\vita3k\ux0\user')
+
+# OFF unless features.ini says "separatesaves = on" (2026-10-25: held back
+# from 3.1 after the mix-up on Steven's drive; ready, tested, not yet tried
+# on real hardware). Not on the Features page until then.
+function Test-SocialSeparateSaves([string]$Ws) {
+    $f = Join-SocialPath $Ws 'features.ini'
+    if (-not (Test-Path -LiteralPath $f)) { return $false }
+    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*separatesaves\s*=\s*(on|true|yes|1)\b') { return $true } }
+    return $false
+}
+
+function Test-SocialHasFiles([string]$Dir) {
+    if (-not (Test-Path -LiteralPath $Dir)) { return $false }
+    try { foreach ($f in [System.IO.Directory]::EnumerateFiles($Dir, '*', [System.IO.SearchOption]::AllDirectories)) { return $true } } catch { return $true }
+    return $false
+}
+
+function Get-SocialSavePlaces([string]$Root, [string]$Ws, [string]$Ids) {
+    $places = New-Object System.Collections.ArrayList
+    $saves = Join-SocialPath $Root 'saves'
+    $tops = @{}
+    if (Test-Path -LiteralPath $saves) { foreach ($d in [System.IO.Directory]::GetDirectories($saves)) { $tops[[System.IO.Path]::GetFileName($d).ToLower()] = [System.IO.Path]::GetFileName($d) } }
+    foreach ($id in ($Ids -split ',')) {
+        $st = Join-SocialPath $Ws ('profile\saves-of\' + $id)
+        if (Test-Path -LiteralPath $st) { foreach ($d in [System.IO.Directory]::GetDirectories($st)) { $n = [System.IO.Path]::GetFileName($d); if (-not $tops.ContainsKey($n.ToLower())) { $tops[$n.ToLower()] = $n } } }
+    }
+    foreach ($k in @($tops.Keys | Sort-Object)) {
+        if ($script:SwapShared -contains $k) { continue }
+        if ($k -match '\.kept-\d') { continue }   # never treat a set-aside folder as a console
+        [void]$places.Add($tops[$k])
+    }
+    foreach ($p in $script:SwapInner) { [void]$places.Add($p) }
+    return @($places)
+}
+
+# Moves a save folder. The place it goes to must be missing or EMPTY (an
+# empty one is cleared first); one with files in it is never touched.
+function Move-SocialPlace([string]$From, [string]$To) {
+    if (-not (Test-Path -LiteralPath $From)) { return $true }
+    if (Test-Path -LiteralPath $To) {
+        if (Test-SocialHasFiles $To) { return $false }
+        Remove-Item -LiteralPath $To -Recurse -Force
+    }
+    $parent = Split-Path $To -Parent
+    if (-not (Test-Path -LiteralPath $parent)) { [void](New-Item -ItemType Directory -Path $parent -Force) }
+    Move-Item -LiteralPath $From -Destination $To
+    return $true
+}
+
+# Runs (or finishes) the moves in the journal. Each line: from|to, or mkdir|path.
+# Call only while holding the lock.
+function Invoke-SocialSwapJournal([string]$Ws) {
+    $j = Join-SocialPath $Ws 'profile\saves-of\switch.txt'
+    if (-not (Test-Path -LiteralPath $j)) { return 0 }
+    $skipped = 0
+    foreach ($l in [System.IO.File]::ReadAllLines($j)) {
+        if ($l -eq '' -or $l.StartsWith(';')) { continue }
+        $p = $l.Split('|')
+        if ($p.Count -lt 2) { continue }
+        if ($p[0] -eq 'mkdir') { if (-not (Test-Path -LiteralPath $p[1])) { [void](New-Item -ItemType Directory -Path $p[1] -Force) }; continue }
+        if (-not (Move-SocialPlace $p[0] $p[1])) { $skipped++; Write-SocialLog $Ws ('saves switch: left alone, it already has saves in it: ' + $p[1]) }
+    }
+    if (Test-Path -LiteralPath $j) { Remove-Item -LiteralPath $j -Force }
+    return $skipped
+}
+
+function Get-SocialSavesOwner([string]$Ws) {
+    $f = Join-SocialPath $Ws 'profile\saves-of\owner.txt'
+    if (-not (Test-Path -LiteralPath $f)) { return '' }
+    $t = ([System.IO.File]::ReadAllText($f)).Trim()
+    if ($t -match '^[A-Za-z0-9_\-]{1,40}$') { return $t }
+    return ''
+}
+function Set-SocialSavesOwner([string]$Ws, [string]$Id) {
+    New-SocialDir (Join-SocialPath $Ws 'profile\saves-of')
+    [System.IO.File]::WriteAllText((Join-SocialPath $Ws 'profile\saves-of\owner.txt'), $Id)
+}
+
+# The saves of $FromId go to profile\saves-of\<FromId>, those of $ToId come in.
+# Call only while holding the lock (Switch-SocialPerson does).
+function Switch-SocialSaves([string]$Root, [string]$Ws, [string]$FromId, [string]$ToId) {
+    [void](Invoke-SocialSwapJournal $Ws)     # a switch cut short last time is finished first
+    if ($FromId -eq $ToId -or $FromId -eq '' -or $ToId -eq '') { return $false }
+    if ($FromId -notmatch '^[A-Za-z0-9_\-]{1,40}$' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return $false }
+    $saves = Join-SocialPath $Root 'saves'
+    if (-not (Test-Path -LiteralPath $saves)) { return $false }
+    $out = Join-SocialPath $Ws ('profile\saves-of\' + $FromId)
+    $in  = Join-SocialPath $Ws ('profile\saves-of\' + $ToId)
+    $places = Get-SocialSavePlaces $Root $Ws ($FromId + ',' + $ToId)
+    $lines = New-Object System.Collections.ArrayList
+    [void]$lines.Add(('; Saves switching from {0} to {1}, {2}. Finished by the wizard if it was cut short.' -f $FromId, $ToId, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
+    foreach ($pl in $places) {
+        $live = Join-SocialPath $saves $pl
+        $mineOut = Join-SocialPath $out $pl
+        $theirs = Join-SocialPath $in $pl
+        $liveHas = Test-SocialHasFiles $live
+        $theirsHas = Test-SocialHasFiles $theirs
+        if (-not $liveHas -and -not $theirsHas) { continue }   # nothing either way
+        if ($liveHas) { [void]$lines.Add(($live + '|' + $mineOut)) }
+        if ($theirsHas) { [void]$lines.Add(($theirs + '|' + $live)) }
+        else { [void]$lines.Add(('mkdir|' + $live)) }
+    }
+    New-SocialDir (Join-SocialPath $Ws 'profile\saves-of')
+    [System.IO.File]::WriteAllLines((Join-SocialPath $Ws 'profile\saves-of\switch.txt'), [string[]]$lines.ToArray())
+    $sk = Invoke-SocialSwapJournal $Ws
+    if ($sk -gt 0) { Write-SocialLog $Ws ("saves switch: {0} place(s) left as they were" -f $sk) }
+    return $true
+}
+
+# THE one entry point (2026-10-25). $ToId is now using this setup: their
+# favourite stars, and their saves (when 'separatesaves' is on), are put in
+# place. Guests use whatever is in place. Returns 'switched', 'same', 'skip'
+# or 'busy'.
+function Switch-SocialPerson([string]$Root, [string]$Ws, [string]$ToId) {
+    if ($ToId -eq '' -or $ToId -eq 'guest' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return 'skip' }
+    if (Test-SocialRetroBatOpen) { return 'skip' }
+    $dir = Join-SocialPath $Ws 'profile\saves-of'
+    New-SocialDir $dir
+    $lockF = Join-SocialPath $dir 'switch.lock'
+    $lock = $null
+    try { $lock = [System.IO.File]::Open($lockF, 'OpenOrCreate', 'ReadWrite', 'None') }
+    catch { Write-SocialLog $Ws 'saves switch: another switch is running, this one is skipped'; return 'busy' }
+    try {
+        $owner = Get-SocialSavesOwner $Ws
+        if ($owner -eq '') {
+            # the first time: whoever was playing last owns what is in place
+            $openF = Join-SocialPath (Get-SocialPlayDir $Ws) 'open.txt'
+            if (Test-Path -LiteralPath $openF) { foreach ($l in [System.IO.File]::ReadAllLines($openF)) { if ($l -match '^id = ([A-Za-z0-9_\-]{1,40})$' -and $Matches[1] -ne 'guest') { $owner = $Matches[1] } } }
+            if ($owner -eq '') { $owner = $ToId }
+            Set-SocialSavesOwner $Ws $owner
+        }
+        if ($owner -eq $ToId) { [void](Invoke-SocialSwapJournal $Ws); return 'same' }
+        try { Switch-SocialFavorites $Root $Ws $owner $ToId } catch { Write-SocialLog $Ws ('favourites switch: ' + $_.Exception.Message) }
+        if (Test-SocialSeparateSaves $Ws) { [void](Switch-SocialSaves $Root $Ws $owner $ToId) }
+        Set-SocialSavesOwner $Ws $ToId
+        Write-SocialLog $Ws ("switched this setup from {0} to {1}" -f $owner, $ToId)
+        return 'switched'
+    }
+    catch { Write-SocialLog $Ws ('saves switch: ' + $_.Exception.Message); return 'skip' }
+    finally { try { $lock.Close() } catch { } }
+}
+
+# Settles the open moment and opens a new one for $PersonId ('' = keep
+# whoever is open). Returns that person's ledger (key -> @{ Secs; Last }).
+function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId = '', [switch]$Switch) {
+    $dir = Get-SocialPlayDir $Ws
+    New-SocialDir $dir
+    $openF = Join-SocialPath $dir 'open.txt'
+    $now = Read-SocialRetroBatTimes $Root
+    $openId = ''
+    if (Test-Path -LiteralPath $openF) { foreach ($l in [System.IO.File]::ReadAllLines($openF)) { if ($l -match '^id = (.+)$') { $openId = $Matches[1].Trim() } } }
+    if ($openId -ne '' -and $openId -match '^[A-Za-z0-9_\-]{1,40}$') {
+        $snap = Read-SocialTimesFile $openF
+        $ledF = Join-SocialPath $dir ($openId + '.txt')
+        $led = Read-SocialTimesFile $ledF
+        $changed = $false
+        foreach ($k in $now.Keys) {
+            $before = $(if ($snap.ContainsKey($k)) { [int]$snap[$k].Secs } else { 0 })
+            $lastBefore = $(if ($snap.ContainsKey($k)) { [string]$snap[$k].Last } else { '' })
+            $add = [int]$now[$k].Secs - $before
+            $newLast = ([string]$now[$k].Last -ne '' -and [string]$now[$k].Last -ne $lastBefore)
+            if ($add -le 0 -and -not $newLast) { continue }
+            if (-not $led.ContainsKey($k)) { $led[$k] = @{ Secs = 0; Last = '' } }
+            if ($add -gt 0) { $led[$k].Secs = [int]$led[$k].Secs + $add }
+            if ($newLast) { $led[$k].Last = [string]$now[$k].Last }
+            $changed = $true
+        }
+        if ($changed) { Write-SocialTimesFile $ledF $led '' }
+    }
+    elseif ($PersonId -ne '' -and $PersonId -ne 'guest' -and @(Get-ChildItem -LiteralPath $dir -Filter '*.txt' -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'open.txt' }).Count -eq 0) {
+        # the first time on this drive: the times already here are the owner's
+        Write-SocialTimesFile (Join-SocialPath $dir ($PersonId + '.txt')) $now ''
+    }
+    $who = $(if ($PersonId -ne '') { $PersonId } elseif ($openId -ne '') { $openId } else { 'guest' })
+    # Saves and favourite stars move ONLY when asked (sign-in, PLAY), never
+    # because play time was read (2026-10-25: that ran two switches at once).
+    if ($Switch) { [void](Switch-SocialPerson $Root $Ws $who) }
+    Write-SocialTimesFile $openF $now ('id = ' + $who)
+    if ($who -match '^[A-Za-z0-9_\-]{1,40}$') { return (Read-SocialTimesFile (Join-SocialPath $dir ($who + '.txt'))) }
+    return @{}
+}
+
+function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6, $Ledger = $null) {
     $all = New-Object System.Collections.ArrayList
     $roms = Join-SocialPath $Root 'roms'
     if (Test-Path -LiteralPath $roms) {
@@ -928,8 +1319,19 @@ function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]
                     if ([DateTime]::TryParseExact(([string]$n2.InnerText).Trim(), 'yyyyMMddTHHmmss', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { $last = $d }
                 }
                 $n3 = $g.SelectSingleNode('favorite');   if ($null -ne $n3 -and ([string]$n3.InnerText).Trim() -eq 'true') { $fav = $true }
-                if ($secs -le 0 -and $null -eq $last -and -not $fav) { continue }
                 $path = ''; $pn = $g.SelectSingleNode('path'); if ($null -ne $pn) { $path = ([string]$pn.InnerText).Trim() }
+                # (2026-10-17) With a person's ledger, their own time and last
+                # play replace the drive's.
+                if ($null -ne $Ledger) {
+                    $lk = '{0}|{1}' -f $sys, $path
+                    $secs = 0; $last = $null
+                    if ($Ledger.ContainsKey($lk)) {
+                        $secs = [int]$Ledger[$lk].Secs
+                        $d = [DateTime]::MinValue
+                        if ([DateTime]::TryParseExact([string]$Ledger[$lk].Last, 'yyyyMMddTHHmmss', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { $last = $d }
+                    }
+                }
+                if ($secs -le 0 -and $null -eq $last -and -not $fav) { continue }
                 if ($Hidden.ContainsKey(('{0}|{1}' -f $sys, $path).ToLower())) { continue }
                 $name = ''; $nn = $g.SelectSingleNode('name'); if ($null -ne $nn) { $name = ([string]$nn.InnerText).Trim() }
                 if ($name -eq '') { $name = [System.IO.Path]::GetFileNameWithoutExtension($path) }

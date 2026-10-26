@@ -80,6 +80,8 @@ function Test-CmGameWants([string]$Path) {
         # which cannot carry the words itself)
         $leaf = ([System.IO.Path]::GetFileName($Path)).ToLower()
         if (@(Get-CmFiles) -contains $leaf) { return $true }
+        # a game with its own key layout (2026-10-17)
+        if ($null -ne (Get-CmKeymap $Path)) { return $true }
         if ((Get-Item -LiteralPath $Path).Length -gt 16KB) { return $false }
         $t = [System.IO.File]::ReadAllText($Path)
         return ($t -match 'Launch-Browser' -or $t -match '(?i)couch\s*mouse\s*=\s*on')
@@ -122,23 +124,14 @@ function Test-CmWiiuTouch([string]$Path) {
 # browser-games.ini (headed by the game's file name). $null = none.
 $script:CmVk = @{ space = 0x20; enter = 0x0D; shift = 0x10; ctrl = 0x11; tab = 0x09; esc = 0x1B; backspace = 0x08
                   up = 0x26; down = 0x28; left = 0x25; right = 0x27 }
+# (2026-10-25) through KeyLayouts.ps1: the person playing's own layout when
+# they made one, else the game's default. Read fresh each game.
 function Get-CmKeymap([string]$Path) {
     try {
         if ($Path -eq '') { return $null }
-        $leaf = ([System.IO.Path]::GetFileName($Path)).ToLower()
-        foreach ($ini in @('flash-games.ini', 'browser-games.ini')) {
-            $f = Join-Path $Ws $ini
-            if (-not (Test-Path -LiteralPath $f)) { continue }
-            $in = $false; $keys = ''; $stick = ''
-            foreach ($raw in [System.IO.File]::ReadAllLines($f)) {
-                $t = $raw.Trim()
-                if ($t -match '^\[(.+)\]$') { if ($in) { break }; $in = ($Matches[1].Trim().ToLower() -eq $leaf); continue }
-                if (-not $in -or $t.StartsWith(';')) { continue }
-                if ($t -match '^keys\s*=\s*(.+)$') { $keys = $Matches[1] }
-                if ($t -match '^stick\s*=\s*(.+)$') { $stick = $Matches[1].Trim().ToLower() }
-            }
-            if ($keys -ne '' -or $stick -ne '') { return @{ Keys = $keys; Stick = $stick } }
-        }
+        if (-not (Get-Command Get-KlLayout -ErrorAction SilentlyContinue)) { . (Join-Path $PSScriptRoot 'KeyLayouts.ps1') }
+        $l = Get-KlLayout $Ws ([System.IO.Path]::GetFileName($Path))
+        if ($l.Keys -ne '' -or $l.Stick -ne '') { return @{ Keys = $l.Keys; Stick = $l.Stick } }
     } catch { }
     return $null
 }
@@ -179,7 +172,7 @@ function Get-CmRunningSystem {
 
 # --- the little pop-up (2026-10-13, Steven: "a little mouse icon when it
 # turns on, and a little controller icon when it turns back off") --------
-# A small square near the bottom of the screen: a pixel mouse for ON, the
+# A small square in the bottom right corner of the screen: a pixel mouse for ON, the
 # drive's own controller picture for OFF. It never takes the focus away from
 # the game and clicks pass straight through it. Shown for about a second and
 # a half, then it fades. If anything about it fails, the couch mouse carries
@@ -203,8 +196,9 @@ public class RBToast : Form
         FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = false; TopMost = true;
         StartPosition = FormStartPosition.Manual; Width = 250; Height = 180;
         BackColor = Color.FromArgb(24, 24, 30); DoubleBuffered = true;
+        // Bottom right, out of the way of the game (Steven, 2026-10-25).
         Rectangle wa = Screen.PrimaryScreen.WorkingArea;
-        Left = wa.Left + (wa.Width - Width) / 2; Top = wa.Bottom - Height - 60;
+        Left = wa.Right - Width - 28; Top = wa.Bottom - Height - 28;
     }
     protected override bool ShowWithoutActivation { get { return true; } }
     protected override CreateParams CreateParams
@@ -274,10 +268,18 @@ public class RBToast : Form
 '@
         }
         $script:Toast = New-Object RBToast
-        $script:ToastMouse = [RBToast]::MouseIcon()
-        $script:ToastPad = $null
-        $pp = Join-Path $Ws 'wizard\controllers.png'
-        if (Test-Path -LiteralPath $pp) { $script:ToastPad = [System.Drawing.Image]::FromStream((New-Object System.IO.MemoryStream(,[System.IO.File]::ReadAllBytes($pp)))) }
+        # Steven's pictures (2026-10-17): a mouse and a controller, both with
+        # little waves, on a light square. Missing: the drawn mouse and the
+        # Controllers picture, as before.
+        function Get-CmPic([string]$Name) {
+            $f = Join-Path $Ws ('wizard\' + $Name)
+            if (-not (Test-Path -LiteralPath $f)) { return $null }
+            return [System.Drawing.Image]::FromStream((New-Object System.IO.MemoryStream(,[System.IO.File]::ReadAllBytes($f))))
+        }
+        $script:ToastMouse = Get-CmPic 'cm-mouse.png'
+        if ($null -eq $script:ToastMouse) { $script:ToastMouse = [RBToast]::MouseIcon() }
+        $script:ToastPad = Get-CmPic 'cm-pad.png'
+        if ($null -eq $script:ToastPad) { $script:ToastPad = Get-CmPic 'controllers.png' }
     }
     catch { Write-CmLog ('pop-up unavailable: ' + $_.Exception.Message); $script:Toast = $null }
 }
@@ -287,8 +289,8 @@ function Show-CmToast([string]$Layout) {
         switch ($Layout) {
             'mouse' { $script:Toast.Set($script:ToastMouse, 'Mouse ON', 'Push in the left stick to switch off') }
             'touch' { $script:Toast.Set($script:ToastMouse, 'Mouse ON', 'Right stick moves, push it in to tap') }
-            'keys'  { $script:Toast.Set($script:ToastPad, 'Keyboard', 'Push in the left stick for the mouse') }
-            default { $script:Toast.Set($script:ToastPad, 'Mouse OFF', 'Push in the left stick to switch on') }
+            'keys'  { $script:Toast.Set($script:ToastPad, 'Controller', 'Push in the left stick for the mouse') }
+            default { $script:Toast.Set($script:ToastPad, 'Controller', 'Push in the left stick for the mouse') }
         }
         $script:Toast.Opacity = 0.95
         if (-not $script:Toast.Visible) { $script:Toast.Show() }

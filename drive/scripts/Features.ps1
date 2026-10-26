@@ -61,6 +61,38 @@ function Get-FeatureCatalogue {
         reverts = $true
     }
 
+    # 2026-10-17: the "how this game plays" screen before Flash, ScummVM and
+    # browser games, and the Wii Remotes-or-controller question for Wii
+    # games that play either way.
+    $c['howtoplay'] = @{
+        title   = 'How to play, before keyboard games'
+        desc    = 'Flash, point-and-click and browser games first show how the controller works in them (the mouse, or the game''s own keys), with PLAY or Back.'
+        off     = 'Off starts them straight away.'
+        scripts = @('Fix-Portability.ps1')
+        reverts = $true
+    }
+
+    # separatesaves: held back to the next update (2026-10-25), see
+    # SocialEngine.ps1. Off unless features.ini says on.
+
+    # 2026-10-25: M-rated games out of sight (scripts\FamilyFilter.ps1).
+    $c['familyfilter'] = @{
+        title   = 'Family-friendly'
+        desc    = 'Hides M-rated games: from RetroBat''s menus (from the next PLAY), from the online library, and from Jump in on the Saves page. Add your own games to the list on Settings, This setup.'
+        off     = 'Off: every game shows.'
+        scripts = @()
+        reverts = $false
+        default = $false
+    }
+
+    $c['wiichooser'] = @{
+        title   = 'Wii: Wii Remotes or a controller?'
+        desc    = 'Wii games that also play with a controller ask first. A controller skips the Wii Menu, so no Wii Remote is needed to get in.'
+        off     = 'Off: they always start the usual way.'
+        scripts = @()
+        reverts = $true
+    }
+
     $c['launchmenu'] = @{
         title   = 'Ask before a slow launch'
         desc    = 'A "Launch game?" screen before every game, on every console.'
@@ -236,7 +268,9 @@ function Get-FeaturesPath([string]$Root) {
 function Get-Features([string]$Root) {
     $cat    = Get-FeatureCatalogue
     $result = [ordered]@{}
-    foreach ($k in $cat.Keys) { $result[$k] = $true }
+    # On unless the catalogue says a switch starts off (default = $false,
+    # 2026-10-25: the family-friendly filter is opt-in).
+    foreach ($k in $cat.Keys) { $result[$k] = $(if ($cat[$k].ContainsKey('default')) { [bool]$cat[$k]['default'] } else { $true }) }
 
     # Set by the loop below the moment a real 'fixed3dsframe' line is seen,
     # so an old 'hidedecorations' line cannot then overrule it whichever

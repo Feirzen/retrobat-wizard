@@ -42,8 +42,24 @@ $root = ''
 foreach ($cand in @($Here, (Split-Path $Here -Parent), (Join-Path $Here 'RetroBat'))) {
     if (Test-RetroBatFolder $cand) { $root = $cand; break }
 }
+# (2026-10-17) Not next to this file? RetroBat's own installer suggests
+# C:\RetroBat, so look there, then at the top of every other drive (a
+# RetroBat put on an external drive).
 if ($root -eq '') {
-    Say 'This is not inside a RetroBat folder. Pick your RetroBat folder (the one with RetroBat.exe in it).'
+    $look = @((Join-Path $env:SystemDrive 'RetroBat'))
+    try { foreach ($d in [System.IO.DriveInfo]::GetDrives()) { if ($d.IsReady) { $look += (Join-Path $d.RootDirectory.FullName 'RetroBat') } } } catch { }
+    foreach ($cand in ($look | Select-Object -Unique)) {
+        if (Test-RetroBatFolder $cand) {
+            Say ("Found RetroBat at {0}" -f $cand) 'White'
+            $a = (Read-Host '  Install the wizard there? Press Enter for yes, or type N and Enter to pick another folder').Trim().ToUpper()
+            if ($a -ne 'N') { $root = $cand }
+            break
+        }
+    }
+}
+if ($root -eq '') {
+    Say ('RetroBat was not found in the usual place ({0}\RetroBat) or at the top of any drive.' -f $env:SystemDrive) 'Yellow'
+    Say 'Pick your RetroBat folder (the one with RetroBat.exe in it).'
     try {
         Add-Type -AssemblyName System.Windows.Forms
         $dlg = New-Object System.Windows.Forms.FolderBrowserDialog
@@ -76,7 +92,7 @@ foreach ($d in @($ws, (Join-Path $ws 'scripts'))) { if (-not (Test-Path -Literal
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
 $ProgressPreference = 'SilentlyContinue'
 Write-Host ''
-Say 'Downloading the wizard. The first time takes a few minutes; every file is checked.' 'White'
+Say 'STEP 1 of 3: downloading the wizard (a few minutes; every file is checked).' 'Cyan'
 try {
     $latest = (Invoke-WebRequest -Uri ("https://raw.githubusercontent.com/$Repo/main/latest.ini?t=" + [DateTime]::UtcNow.Ticks) -UseBasicParsing -TimeoutSec 60).Content
     $tag = ''
@@ -92,6 +108,8 @@ $st = Invoke-UpdateCheck -Ws $ws -Progress { param($m) Say $m 'DarkGray' }
 if ($st.state -eq 'uptodate') { Say 'Every file is already in place.' 'Green' }
 elseif ($st.state -ne 'ready') { Stop-Install ("The download did not finish: {0} Run this again; it carries on where it stopped." -f $st.message) }
 else {
+    Write-Host ''
+    Say 'STEP 2 of 3: putting the wizard in place.' 'Cyan'
     $r = Invoke-UpdateInstall -Ws $ws -NoPostSteps -Progress { param($m) Say $m 'DarkGray' }
     if (-not $r.Ok) { Stop-Install $r.Message }
     Say ("Installed version {0}: {1} files." -f $r.Version, ($r.Changed + $r.Added)) 'Green'
@@ -129,10 +147,12 @@ if (Test-Path -LiteralPath (Join-Path $ckau 'theme.xml')) {
 }
 else {
     Write-Host ''
-    Say 'Next: the ckau-book theme, the look this wizard is built for. It is a big download (1 to 2 GB).' 'White'
-    $ans = (Read-Host '  Press Enter to get it now, or type N and Enter to skip').Trim().ToUpper()
-    if ($ans -eq 'N') { Say 'Skipped. The wizard explains how to get it later.' 'Yellow' }
-    else {
+    Say 'STEP 3 of 3: the ckau-book theme, the look RetroBat gets with the wizard.' 'Cyan'
+    Say 'This is the slow part: a 1 to 2 GB download, often 10 to 30 minutes.' 'White'
+    Say 'The numbers below keep moving while it works. Leave this window open; you can use the computer meanwhile.' 'White'
+    # (2026-10-17) No question any more: a question here sat waiting unseen
+    # while it looked like the download was still going (Steven).
+    if ($true) {
         $zip = Join-Path $ws 'ckau-book-download.zip'
         $tmpDir = Join-Path $root '_ck'
         try {
@@ -171,7 +191,12 @@ else {
 
 # --- 5. the wizard's own setup --------------------------------------------------
 Write-Host ''
-Say 'Done. Opening the wizard''s setup now: pick Quick setup if you are not sure.' 'Green'
+Say '======================================================' 'Green'
+Say ' ALL DONE. The wizard''s setup is opening now.' 'Green'
+Say ' Pick Quick setup if you are not sure.' 'Green'
+Say ' This window closes by itself.' 'Green'
+Say '======================================================' 'Green'
 $vbs = Join-Path $ws 'wizard\Launch-Wizard.vbs'
 Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\wscript.exe') -ArgumentList @('//nologo', ('"' + $vbs + '"'), '-Setup')
 Start-Sleep -Seconds 2
+exit 0

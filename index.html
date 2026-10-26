@@ -126,6 +126,13 @@ main { margin-left: 92px; }
 .modal-box .game .art { height: 240px; }
 .modal-x { position: absolute; top: 6px; right: 6px; z-index: 2; width: 34px; height: 34px; border-radius: 0; cursor: pointer;
   background: var(--surface); color: var(--text); border: 2px solid var(--border2); font-family: 'Press Start 2P', monospace; font-size: 11px; }
+details.co { margin: 22px 0 8px; }
+details.co > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 6px 2px; border-bottom: 2px solid var(--border2); }
+details.co > summary::-webkit-details-marker { display: none; }
+details.co > summary h2 { margin: 0; font-size: 20px; }
+details.co > summary .count { margin-left: auto; font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--muted); }
+details.co > summary .arrow { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--accent); transition: transform .15s; }
+details.co[open] > summary .arrow { transform: rotate(90deg); }
 details.sys { margin: 16px 0; background: var(--surface); border: 2px solid var(--border2); box-shadow: 4px 4px 0 var(--border); }
 details.sys > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 12px 16px;
   background: var(--surface2); border-bottom: 2px solid transparent; user-select: none; }
@@ -241,13 +248,20 @@ body.in #site { display: block; }
         <li><b>Download RetroBat (free).</b> Straight from RetroBat's own GitHub, about 1.9 GB:
           <br><a class="btn" style="margin-top:10px" href="https://github.com/RetroBat-Official/retrobat/releases/download/8.2.1/RetroBat-v8.2.1-stable-win64-setup.exe">Download RetroBat 8.2.1</a>
           <br><span class="note">This is the full, standalone RetroBat for Windows: everything lives in one folder and runs from anywhere. If you have an external hard drive, this is a great use for it, because your games and saves go wherever the drive goes.</span></li>
-        <li><b>Install it and open it once.</b> Run the file you downloaded and pick a short folder like <code>D:\RetroBat</code>: not right at the top of the drive, no spaces, not in Program Files. Then double-click <code>RetroBat.exe</code>, let it finish starting up, set up your controller if it asks, and close it.</li>
-        <li><b>Download the wizard installer</b> and unzip it <b>into your RetroBat folder</b>, right next to <code>RetroBat.exe</code>.
+        <li><b>Install it and open it once.</b> Run the file you downloaded.
+          <br><span class="note"><b>Windows protected your PC?</b> Windows shows this blue box for programs it has not seen much of. Click <b>More info</b>, then <b>Run anyway</b>.</span>
+          <br><span class="note"><b>Where it goes:</b> the folder it suggests (<code>C:\RetroBat</code>) is fine. To keep everything on an <b>external drive</b> instead, change the folder to one on that drive, like <code>D:\RetroBat</code>. Either way: no spaces, not in Program Files.</span>
+          <br>Then open RetroBat, let it finish starting up, set up your controller if it asks, and close it.</li>
+        <li><b>Download the wizard installer</b> and unzip it anywhere (your Downloads folder is fine).
           <br><a class="btn" style="margin-top:10px" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the installer</a></li>
-        <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It downloads the wizard and the ckau-book look the wizard is built for (a big one, 1 to 2 GB; press N if you would rather skip it), then asks a few quick questions (pick Quick setup if you are not sure). Everything can be changed later inside the wizard.</li>
+        <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It finds RetroBat by itself (or asks you to pick its folder) and works in three steps, each one named in the window as it goes:
+          <br>1. the wizard (a few minutes),
+          <br>2. putting it in place,
+          <br>3. the ckau-book look (1 to 2 GB, often 10 to 30 minutes: the slow part, with numbers that keep moving).
+          <br>Then the wizard opens and asks a few quick questions (pick Quick setup if you are not sure; every question has a Back button). The black window closes by itself. Everything can be changed later inside the wizard.</li>
         <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
       </ol>
-      <p class="note">Windows may warn about a downloaded script. Choose More info, then Run anyway. You never need a GitHub account.</p>
+      <p class="note">Windows may warn about the installer too: More info, then Run anyway. You never need a GitHub account.</p>
     </div>
   </section>
 
@@ -304,9 +318,11 @@ if (store("rbw-in") === "1") letIn();
 const W = "site/consoles/";
 const CONSOLES = [
   ["nes", "NES", "nes"], ["snes", "SNES", "snes"], ["n64", "Nintendo 64", "n64"],
-  ["gamecube", "GameCube", "gamecube"], ["wii", "Wii", "wiimote"], ["wiiu", "Wii U", "wiimote"],
+  ["gamecube", "GameCube", "gamecube"], ["wii", "Wii", "wiiremote"], ["wiiu", "Wii U", "gamepad"],
   ["switch", "Switch", "switch"], ["gb", "Game Boy", "gameboy"], ["gbc", "Game Boy Color", "gameboy"],
   ["gba", "Game Boy Advance", "gba"], ["nds", "Nintendo DS", "ds"], ["3ds", "3DS", "ds"],
+  ["xbox", "Xbox", "xbox"], ["xbox360", "Xbox 360", "xboxone"],
+  ["psx", "PlayStation", "playstation"], ["ps2", "PlayStation 2", "playstation"], ["ps3", "PlayStation 3", "playstation"],
   ["flash", "Flash", "pc"], ["scummvm", "ScummVM", "pc"], ["windows", "PC", "pc"]
 ];
 const pic = sys => W + ((CONSOLES.find(c => c[0] === sys) || [0, 0, "pc"])[2]) + ".png";
@@ -341,14 +357,29 @@ function row(g, i) {
 }
 let LIB = [], VIEW = store("rbw-libview") === "big" ? "big" : "compact";
 const openSys = new Set();   // consoles start folded; this remembers which are open
+const closedCo = new Set();  // company groups start open; this remembers which were folded
+const COS = ["Nintendo", "Xbox", "PlayStation", "Sega", "PC and more"];
+function company(s) {
+  if (["nes","snes","n64","gamecube","wii","wiiu","switch","gb","gbc","gba","nds","3ds","virtualboy","fds"].includes(s)) return "Nintendo";
+  if (["xbox","xbox360"].includes(s)) return "Xbox";
+  if (["psx","ps2","ps3","psp","psvita"].includes(s)) return "PlayStation";
+  if (["megadrive","genesis","mastersystem","gamegear","saturn","dreamcast","segacd","sega32x"].includes(s)) return "Sega";
+  return "PC and more";
+}
 function drawLibrary() {
   const box = document.getElementById("lib");
   document.querySelectorAll("#viewSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === VIEW));
   if (!LIB.length) { box.innerHTML = '<div class="card"><p>Nothing in the library yet. Check back soon.</p></div>'; return; }
   const order = CONSOLES.map(c => c[0]);
+  const rank = s => (order.indexOf(s) < 0 ? 99 : order.indexOf(s));
   const systems = [...new Set(LIB.map(g => g.system))].sort((a, b) =>
-    (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
-  box.innerHTML = systems.map(sys => {
+    (COS.indexOf(company(a)) - COS.indexOf(company(b))) || (rank(a) - rank(b)) || String(a).localeCompare(String(b)));
+  // (2026-10-17) Consoles grouped by who made them, the same groups as the wizard.
+  const groups = COS.map(co => [co, systems.filter(s => company(s) === co)]).filter(x => x[1].length);
+  box.innerHTML = groups.map(([co, syss]) => {
+    const n = LIB.filter(g => company(g.system) === co).length;
+    return `<details class="co" data-co="${esc(co)}"${closedCo.has(co) ? "" : " open"}><summary><h2>${esc(co)}</h2><span class="count">${n} game${n === 1 ? "" : "s"}</span><span class="arrow">&#9654;</span></summary>` +
+      syss.map(sys => {
     const list = LIB.map((g, i) => [g, i]).filter(x => x[0].system === sys)
       .sort((a, b) => String(a[0].title).localeCompare(String(b[0].title)));
     const name = (CONSOLES.find(c => c[0] === sys) || [0, sys])[1];
@@ -356,9 +387,13 @@ function drawLibrary() {
       : `<div class="rows">${list.map(x => row(x[0], x[1])).join("")}</div>`;
     return `<details class="sys" data-sys="${esc(sys)}"${openSys.has(sys) ? " open" : ""}><summary><img src="${pic(sys)}" alt=""><h3>${esc(name)}</h3>
       <span class="count">${list.length} game${list.length === 1 ? "" : "s"}</span><span class="arrow">&#9654;</span></summary>${inner}</details>`;
-  }).join("");
+      }).join("") + `</details>`;
+  }).join("") + `<p class="note" style="margin-top:18px">Want a game added? Ask from the wizard: <b>Games</b>, then <b>Request a game</b>.</p>`;
   box.querySelectorAll("details.sys").forEach(d => d.addEventListener("toggle", () => {
     if (d.open) openSys.add(d.dataset.sys); else openSys.delete(d.dataset.sys);
+  }));
+  box.querySelectorAll("details.co").forEach(d => d.addEventListener("toggle", () => {
+    if (d.open) closedCo.delete(d.dataset.co); else closedCo.add(d.dataset.co);
   }));
   box.querySelectorAll(".row").forEach(b => b.addEventListener("click", () => openGame(LIB[+b.dataset.i])));
 }

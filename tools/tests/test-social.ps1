@@ -259,6 +259,19 @@ Assert ($j -match '"files": \[') 'files written as a list'
 Assert ((ConvertTo-AdminLibraryJson 'n' @() | ConvertFrom-Json).games.Count -eq 0) 'empty library'
 Assert ((Get-AdminLibId 'Star Fox: The Sequel!!') -eq 'star-fox-the-sequel') 'library id'
 
+# password resets (2026-10-25)
+$xd = [pscustomobject]@{ data = [pscustomobject]@{ repository = [pscustomobject]@{
+    names = [pscustomobject]@{ entries = @(
+        [pscustomobject]@{ name = 'abcdefghij-pw.txt'; object = [pscustomobject]@{ text = 'reset:2026-10-25T12:00:00Z'; byteSize = 26 } },
+        [pscustomobject]@{ name = 'abcdefghij.txt'; object = [pscustomobject]@{ text = 'approved:Newname'; byteSize = 16 } }) }
+    admins = [pscustomobject]@{ text = "abcdefghij`n" } } } }
+$xx = ConvertFrom-SocialExtras $xd
+Assert ($xx.Resets['abcdefghij'] -eq '2026-10-25T12:00:00Z') 'reset read'
+Assert ($xx.Names['abcdefghij'].Name -eq 'Newname') 'name answer still read beside a reset'
+Assert (Test-SocialPwReset ([pscustomobject]@{ Id = 'abcdefghij'; PwSet = '2026-10-01T00:00:00Z' }) $xx.Resets) 'reset newer than password: let in'
+Assert (-not (Test-SocialPwReset ([pscustomobject]@{ Id = 'abcdefghij'; PwSet = '2026-10-26T00:00:00Z' }) $xx.Resets)) 'new password set after reset: reset over'
+Assert (-not (Test-SocialPwReset ([pscustomobject]@{ Id = 'zzzzzzzzzz'; PwSet = '' }) $xx.Resets)) 'nobody else'
+
 Remove-Item -Recurse -Force $base
 Write-Host ("social tests: {0} passed, {1} failed" -f $script:pass, $script:fail)
 if ($script:fail -gt 0) { exit 1 }

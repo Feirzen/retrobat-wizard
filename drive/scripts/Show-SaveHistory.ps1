@@ -156,7 +156,7 @@ while ($true) {
         Write-Host '   emulator rather than by you) and system files (Wii and 3DS internal' -ForegroundColor DarkGray
         Write-Host '   memory, and emulator settings).'                                     -ForegroundColor DarkGray
     }
-    Write-Host '   Names are worked out from the game files on this drive. Anything'   -ForegroundColor DarkGray
+    Write-Host '   Names are worked out from the game files in this setup. Anything'   -ForegroundColor DarkGray
     Write-Host '   still shown as a code, like GKYE, could not be worked out - add it'  -ForegroundColor DarkGray
     Write-Host '   to game-name-shortcuts.txt in this folder, or use the wizard''s'      -ForegroundColor DarkGray
     Write-Host '   Saves tab, which has a button for it.'                                -ForegroundColor DarkGray

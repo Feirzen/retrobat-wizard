@@ -132,6 +132,13 @@ function Set-AdminNameAnswer([string]$Ws, [string]$Id, [string]$Name, [bool]$App
     return (Set-AdminRepoFile $Ws "names/$Id.txt" ($word + ':' + (Get-SocialClean $Name 20)) "name $word for $Id")
 }
 
+# A password reset (2026-10-25): they can log in once without it and are
+# asked for a new one. Their wizard picks it up the next time it looks.
+function Set-AdminPwReset([string]$Ws, [string]$Id) {
+    if ($Id -notmatch '^[a-z0-9]{10}$') { return $false }
+    return (Set-AdminRepoFile $Ws "names/$Id-pw.txt" ('reset:' + (Format-SocialTime (Get-SocialNowUtc))) "password reset for $Id")
+}
+
 function Set-AdminList([string]$Ws, [string[]]$Ids) {
     $clean = @($Ids | Where-Object { $_ -match '^[a-z0-9]{10}$' } | Select-Object -Unique)
     if ($clean.Count -eq 0) { return $false }      # never leave nobody in charge
@@ -290,6 +297,101 @@ function Get-AdminRangeHash([string]$File, [long]$Offset, [long]$Size) {
     finally { $in.Close(); $h.Dispose() }
 }
 
+# ---------------------------------------------------------------------------
+#  ONE UPLOAD, WITH RETRIES, SPEED AND A CHECK                  (2026-10-17)
+# ---------------------------------------------------------------------------
+#  Steven: a 1.9 GB piece kept stopping with "connection forcibly closed",
+#  and he wanted "a speed and estimated time", and to be sure "the upload
+#  matches exactly the source material". So every upload (a whole game or
+#  one piece):
+#    - tries up to 3 times, clearing any half-sent copy GitHub kept
+#    - says how fast and how long is left, in $Sync.Stage
+#    - is checked afterwards: GitHub's size, and its own SHA-256 of the file
+#      (the "digest") against the one worked out here
+#  Returns @{ Ok; Name; Message; Checked }.
+function Format-AdminEta([double]$Sec) {
+    if ($Sec -lt 60) { return 'under a minute left' }
+    if ($Sec -lt 3600) { return ('about {0} min left' -f [math]::Ceiling($Sec / 60)) }
+    return ('about {0:N1} hours left' -f ($Sec / 3600))
+}
+function Clear-AdminHalfUpload([string]$Fkey, [string]$Fapi, $RelId, [string]$Name) {
+    try {
+        $r = Invoke-AdminLibApi $Fkey 'GET' "$Fapi/releases/$RelId/assets?per_page=100"
+        if ($r.Status -ne 200) { return }
+        foreach ($a in @($r.Body | ConvertFrom-Json)) {
+            if ($null -ne $a -and [string]$a.name -eq $Name) { [void](Invoke-AdminLibApi $Fkey 'DELETE' "$Fapi/releases/assets/$($a.id)") }
+        }
+    } catch { }
+}
+function Send-AdminUpload([string]$Fkey, [string]$Fapi, [string]$Frepo, $RelId, [string]$AssetName, [string]$File, [long]$Offset, [long]$Size, [string]$Sha, $Sync, [string]$Label) {
+    $res = @{ Ok = $false; Name = ''; Message = ''; Checked = $false }
+    $upUrl = '{0}/repos/{1}/releases/{2}/assets?name={3}' -f $script:AdminUploadBase, $Frepo, $RelId, [Uri]::EscapeDataString($AssetName)
+    for ($try = 1; $try -le 3; $try++) {
+        if ($try -gt 1) {
+            $Sync.Stage = ('{0}: the connection dropped, trying again ({1} of 3)...' -f $Label, $try)
+            Clear-AdminHalfUpload $Fkey $Fapi $RelId $AssetName
+            Start-Sleep -Seconds (5 * $try)
+        }
+        try {
+            $req = [System.Net.HttpWebRequest]::Create($upUrl)
+            $req.Method = 'POST'; $req.ContentType = 'application/octet-stream'; $req.ContentLength = $Size
+            $req.AllowWriteStreamBuffering = $false; $req.SendChunked = $false
+            $req.Timeout = 3600000; $req.ReadWriteTimeout = 3600000
+            $req.UserAgent = 'RetroBat-Wizard'; $req.Accept = 'application/vnd.github+json'
+            $req.Headers.Add('Authorization', "Bearer $Fkey")
+            $req.Headers.Add('X-GitHub-Api-Version', '2022-11-28')
+            $in = [System.IO.File]::OpenRead($File)
+            try {
+                [void]$in.Seek($Offset, 'Begin')
+                $out = $req.GetRequestStream()
+                try {
+                    $buf = New-Object byte[] (1MB); $sent = [long]0
+                    $clock = [System.Diagnostics.Stopwatch]::StartNew(); $lastShow = -1000
+                    while ($sent -lt $Size) {
+                        $n = $in.Read($buf, 0, [int][math]::Min([long]$buf.Length, $Size - $sent))
+                        if ($n -le 0) { break }
+                        $out.Write($buf, 0, $n); $sent += $n
+                        $Sync.Percent = [int](100 * $sent / [math]::Max(1, $Size))
+                        $ms = $clock.ElapsedMilliseconds
+                        if ($ms - $lastShow -ge 1000 -and $ms -gt 0) {
+                            $lastShow = $ms
+                            $bps = $sent / ($ms / 1000.0)
+                            $eta = $(if ($bps -gt 0) { Format-AdminEta (($Size - $sent) / $bps) } else { '' })
+                            $Sync.Stage = ('{0}: {1}% at {2:N1} MB/s, {3}' -f $Label, $Sync.Percent, ($bps / 1MB), $eta)
+                        }
+                    }
+                } finally { $out.Close() }
+            } finally { $in.Close() }
+            $resp = $req.GetResponse()
+            $txt = (New-Object System.IO.StreamReader($resp.GetResponseStream())).ReadToEnd()
+            $resp.Close()
+            $obj = $txt | ConvertFrom-Json
+            $res.Name = [string]$obj.name
+            # --- the check: GitHub's copy against the file here -----------
+            $Sync.Stage = ('{0}: checking GitHub''s copy matches...' -f $Label)
+            $gotSize = [long]$obj.size; $dig = [string]$obj.digest
+            if ($dig -eq '' -and $null -ne $obj.id) {
+                Start-Sleep -Seconds 3
+                $chk = Invoke-AdminLibApi $Fkey 'GET' "$Fapi/releases/assets/$($obj.id)"
+                if ($chk.Status -eq 200) { $o2 = $chk.Body | ConvertFrom-Json; $dig = [string]$o2.digest; $gotSize = [long]$o2.size }
+            }
+            if ($gotSize -ne $Size -or ($dig -ne '' -and $Sha -ne '' -and $dig -ne ('sha256:' + $Sha))) {
+                $res.Message = ('{0}: GitHub''s copy did not match the file here, so it was taken down. Press Publish to send it again.' -f $Label)
+                Clear-AdminHalfUpload $Fkey $Fapi $RelId $AssetName
+                return $res
+            }
+            $res.Checked = ($dig -ne '')
+            $res.Ok = $true
+            return $res
+        }
+        catch {
+            $res.Message = ('{0} stopped uploading: {1}' -f $Label, $_.Exception.Message)
+            if ($try -eq 3) { return $res }
+        }
+    }
+    return $res
+}
+
 # Uploads every piece to the private release. A piece already up with the
 # same fingerprint is not sent again, so a stopped publish carries on where it
 # left off. Fills in each piece's UpName. Returns @{ Ok; Message }.
@@ -301,36 +403,10 @@ function Send-AdminLibPieces([string]$Fkey, [string]$Fapi, [string]$Frepo, $RelO
             elseif ([string]$a.name -eq $pc.Asset) { [void](Invoke-AdminLibApi $Fkey 'DELETE' "$Fapi/releases/assets/$($a.id)") }
         }
         if ($pc.UpName -ne '') { continue }
-        $Sync.Stage = ('Uploading piece {0} of {1}...' -f $pc.Index, @($Pieces).Count); $Sync.Percent = 0
-        $upUrl = '{0}/repos/{1}/releases/{2}/assets?name={3}' -f $script:AdminUploadBase, $Frepo, $RelObj.id, [Uri]::EscapeDataString($pc.Asset)
-        try {
-            $req = [System.Net.HttpWebRequest]::Create($upUrl)
-            $req.Method = 'POST'; $req.ContentType = 'application/octet-stream'; $req.ContentLength = $pc.Size
-            $req.AllowWriteStreamBuffering = $false; $req.SendChunked = $false
-            $req.Timeout = 3600000; $req.ReadWriteTimeout = 3600000
-            $req.UserAgent = 'RetroBat-Wizard'; $req.Accept = 'application/vnd.github+json'
-            $req.Headers.Add('Authorization', "Bearer $Fkey")
-            $req.Headers.Add('X-GitHub-Api-Version', '2022-11-28')
-            $in = [System.IO.File]::OpenRead($File)
-            try {
-                [void]$in.Seek($pc.Offset, 'Begin')
-                $out = $req.GetRequestStream()
-                try {
-                    $buf = New-Object byte[] (1MB); $sent = [long]0
-                    while ($sent -lt $pc.Size) {
-                        $n = $in.Read($buf, 0, [int][math]::Min([long]$buf.Length, $pc.Size - $sent))
-                        if ($n -le 0) { break }
-                        $out.Write($buf, 0, $n); $sent += $n
-                        $Sync.Percent = [int](100 * $sent / [math]::Max(1, $pc.Size))
-                    }
-                } finally { $out.Close() }
-            } finally { $in.Close() }
-            $resp = $req.GetResponse()
-            $txt = (New-Object System.IO.StreamReader($resp.GetResponseStream())).ReadToEnd()
-            $resp.Close()
-            $pc.UpName = [string](($txt | ConvertFrom-Json).name)
-        }
-        catch { return @{ Ok = $false; Message = ('Piece {0} stopped uploading: {1}. Press Publish again: pieces already up are not sent twice.' -f $pc.Index, $_.Exception.Message) } }
+        $Sync.Percent = 0
+        $u = Send-AdminUpload $Fkey $Fapi $Frepo $RelObj.id $pc.Asset $File $pc.Offset $pc.Size $pc.Sha $Sync ('Piece {0} of {1}' -f $pc.Index, @($Pieces).Count)
+        if (-not $u.Ok) { return @{ Ok = $false; Message = ($u.Message + '. Press Publish again: pieces already up are not sent twice.') } }
+        $pc.UpName = $u.Name
         if ($pc.UpName -notmatch '^[A-Za-z0-9._\-]{1,200}$') { return @{ Ok = $false; Message = 'GitHub took a piece but answered with an odd name. Press Publish again.' } }
     }
     return @{ Ok = $true; Message = '' }
@@ -349,9 +425,9 @@ function Send-AdminLibPieces([string]$Fkey, [string]$Fapi, [string]$Frepo, $RelO
 function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '') {
     $res = @{ Ok = $false; Message = '' }
     $key = Get-AdminLibKey $Ws
-    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
     $fkey = Get-SocialToken $Ws
-    if ($fkey -eq '') { $res.Message = 'This drive has no friends key (social\social-token.txt), so there is nowhere private to put the file.'; return $res }
+    if ($fkey -eq '') { $res.Message = 'This setup has no friends key (social\social-token.txt), so there is nowhere private to put the file.'; return $res }
     if (-not (Test-Path -LiteralPath $File)) { $res.Message = 'The file is gone.'; return $res }
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
     $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
@@ -421,36 +497,9 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
 
     # The upload streams the file, so a big disc never sits in memory.
     if ($upName -eq '') {
-    $Sync.Stage = 'Uploading...'
-    $upUrl = '{0}/repos/{1}/releases/{2}/assets?name={3}' -f $script:AdminUploadBase, $frepo, $relObj.id, [Uri]::EscapeDataString($asset)
-    try {
-        $req = [System.Net.HttpWebRequest]::Create($upUrl)
-        $req.Method = 'POST'; $req.ContentType = 'application/octet-stream'; $req.ContentLength = $len
-        $req.AllowWriteStreamBuffering = $false; $req.SendChunked = $false
-        $req.Timeout = 3600000; $req.ReadWriteTimeout = 3600000
-        $req.UserAgent = 'RetroBat-Wizard'; $req.Accept = 'application/vnd.github+json'
-        $req.Headers.Add('Authorization', "Bearer $fkey")
-        $req.Headers.Add('X-GitHub-Api-Version', '2022-11-28')
-        $in = [System.IO.File]::OpenRead($File)
-        try {
-            $out = $req.GetRequestStream()
-            try {
-                $buf = New-Object byte[] (1MB); $sent = [long]0
-                while (($n = $in.Read($buf, 0, $buf.Length)) -gt 0) {
-                    $out.Write($buf, 0, $n); $sent += $n
-                    $Sync.Percent = [int](100 * $sent / [math]::Max(1, $len))
-                }
-            } finally { $out.Close() }
-        } finally { $in.Close() }
-        $resp = $req.GetResponse()
-        $txt = (New-Object System.IO.StreamReader($resp.GetResponseStream())).ReadToEnd()
-        $resp.Close()
-        $upName = [string](($txt | ConvertFrom-Json).name)
-    }
-    catch {
-        $res.Message = 'The upload stopped: ' + $_.Exception.Message
-        return $res
-    }
+    $u = Send-AdminUpload $fkey $fapi $frepo $relObj.id $asset $File 0 $len $sha $Sync 'Uploading'
+    if (-not $u.Ok) { $res.Message = $u.Message; return $res }
+    $upName = $u.Name
     }
     else { $Sync.Stage = 'Already uploaded, skipping the upload...'; $Sync.Percent = 100 }
     # GitHub's own name for it is the one written down (it may tidy ours).
@@ -540,8 +589,12 @@ function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
     $list = @($Items | Where-Object { $null -ne $_ })
     $done = @(); $failed = @(); $lastMsg = ''
     $n = 0
+    $skipped = @()
     foreach ($it in $list) {
         $n++
+        # (2026-10-17) A game crossed off the queue while others upload.
+        if ($null -ne $Sync.Skip -and $Sync.Skip.ContainsKey([string]$n)) { $skipped += [string]$it.Title; continue }
+        $Sync.Current = $n
         $Sync.Prefix = $(if ($list.Count -gt 1) { "Game $n of $($list.Count): " } else { '' })
         $Sync.Percent = 0
         $r = Publish-AdminLibraryGame $Ws ([string]$it.File) ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art)
@@ -550,13 +603,15 @@ function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
         if (-not $r.Ok -and ($r.Message -like '*library key*' -or $r.Message -like '*friends key*')) { break }
     }
     $Sync.Prefix = ''
+    $Sync.Current = 0
     $res = @{ Ok = ($failed.Count -eq 0 -and $done.Count -gt 0); Done = $done; Failed = $failed; Message = '' }
     if ($list.Count -eq 1) {
-        $res.Message = $(if ($res.Ok) { "$($done[0]) is in the online library. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)." } else { $lastMsg })
+        $res.Message = $(if ($res.Ok) { "$($done[0]) is in the online library, and GitHub's copy was checked against the file here. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)." } elseif ($skipped.Count -gt 0) { 'Crossed off, nothing was sent.' } else { $lastMsg })
         return $res
     }
     $m = @()
-    if ($done.Count -gt 0) { $m += ('In the online library ({0}): {1}.' -f $done.Count, ($done -join ', ')) }
+    if ($done.Count -gt 0) { $m += ('In the online library ({0}), each checked against the file here: {1}.' -f $done.Count, ($done -join ', ')) }
+    if ($skipped.Count -gt 0) { $m += ('Crossed off: {0}.' -f ($skipped -join ', ')) }
     if ($failed.Count -gt 0) { $m += ("Did not go up:`n" + ($failed -join "`n")) }
     if ($done.Count -gt 0) { $m += "Friends see them within about 5 minutes (GitHub's copy refreshes)." }
     $res.Message = ($m -join "`n`n")
@@ -590,7 +645,7 @@ function Get-AdminLibUsedNames($Games) {
 function Get-AdminLibraryContents([string]$Ws) {
     $res = @{ Ok = $false; Message = ''; Games = @(); Leftovers = @() }
     $key = Get-AdminLibKey $Ws
-    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
     $fkey = Get-SocialToken $Ws
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
     $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
@@ -617,7 +672,7 @@ function Get-AdminLibraryContents([string]$Ws) {
 function Remove-AdminLibraryGames([string]$Ws, [string[]]$GameIds, $Leftovers = @()) {
     $res = @{ Ok = $false; Message = ''; Removed = @(); Cleared = 0 }
     $key = Get-AdminLibKey $Ws
-    if ($key -eq '') { $res.Message = 'There is no library key on this drive yet.'; return $res }
+    if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
     $fkey = Get-SocialToken $Ws
     $api = "$script:AdminApiBase/repos/$script:AdminLibRepo"
     $frepo = $(if ($script:AdminFileRepo -ne '') { $script:AdminFileRepo } else { Get-SocialRepo $Ws })
