@@ -2227,6 +2227,19 @@
       ]
     },
     {
+      "id": "mortal-kombat-ii",
+      "title": "Mortal Kombat II",
+      "system": "snes",
+      "players": "1-2",
+      "description": "The Mortal Kombat fighters, plus several new ones, return for a tournament held by the evil Shang Tsung of the Outworld. The action is one-on-one as before, and famed for its high level of violence and blood (other than the sanitised Nintendo version). There are 5 difficulty...",
+      "added": "2026-10-26",
+      "art": "library/art/mortal-kombat-ii.png",
+      "video": "library/video/mortal-kombat-ii.mp4",
+      "files": [
+        { "name": "Mortal Kombat II (USA) (Rev 1).sfc", "url": "private:mortal-kombat-ii__Mortal.Kombat.II.USA.Rev.1.sfc", "size": 3145728, "sha256": "ca2f86ca77f822fcd8e86f5a287f2a76d0becbb81a7bce73ae22909beb2f834c" }
+      ]
+    },
+    {
       "id": "street-fighter-ii-turbo",
       "title": "Street Fighter II Turbo",
       "system": "snes",
