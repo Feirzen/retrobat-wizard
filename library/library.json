@@ -1290,6 +1290,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "diddy-kong-racing-usa-en-fr-rev-1",
+      "title": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/diddy-kong-racing-usa-en-fr-rev-1.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)", "name": "diddy-kong-racing-usa-en-fr-rev-1.zip", "size": 12585415, "sha256": "1fb239b719266bd2074f63711a4a7783f44d511af979f5be61063808b02382e4", "url": "private:diddy-kong-racing-usa-en-fr-rev-1__diddy-kong-racing-usa-en-fr-rev-1.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-64",
       "title": "Donkey Kong 64",
       "system": "n64",
