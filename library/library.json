@@ -540,6 +540,20 @@
       ]
     },
     {
+      "id": "chuchu-rocket",
+      "title": "ChuChu Rocket!",
+      "system": "dreamcast",
+      "players": "1-4",
+      "description": "ChuChu Rocket is an action puzzler, designed predominantly as a multi-player game. You have indirect control over mice, and must guide them to the safety of a rocket, and away from a cat. You do this by placing arrows on the ground, which they will follow. The multi-player game...",
+      "added": "2026-10-26",
+      "art": "library/art/chuchu-rocket.png",
+      "video": "library/video/chuchu-rocket.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "ChuChu Rocket! (USA) (En,Ja,Fr,De,Es)", "name": "chuchu-rocket.zip", "size": 1204437475, "sha256": "e2191448a2bab57c66b31985267c85c5132c9e1dbaec210792e2359472628ccd", "url": "private:chuchu-rocket__chuchu-rocket.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
