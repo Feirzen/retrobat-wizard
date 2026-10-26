@@ -2597,6 +2597,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "harvest-moon-back-to-nature",
+      "title": "Harvest Moon : Back to Nature",
+      "system": "psx",
+      "players": "1",
+      "description": "As an Child you visited your Grandfathers ranch when vacation plans fell trough. Return to the farm that holds fond childhood memories and rejuvenate its long neglected fields. Tend to your livestock and interact with over 50 characters. As you struggle to make the farm...",
+      "added": "2026-10-26",
+      "art": "library/art/harvest-moon-back-to-nature.png",
+      "video": "library/video/harvest-moon-back-to-nature.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Harvest Moon - Back to Nature (USA)", "name": "harvest-moon-back-to-nature.zip", "size": 213987475, "sha256": "4d485723dbd6e1bc4c48d255c02fca35447748e06a607f8d7aed8b3c661d96d3", "url": "private:harvest-moon-back-to-nature__harvest-moon-back-to-nature.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
