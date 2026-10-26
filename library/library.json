@@ -1252,6 +1252,20 @@
       ]
     },
     {
+      "id": "banjo-tooie",
+      "title": "Banjo-Tooie",
+      "system": "n64",
+      "players": "1-4",
+      "description": "After two years under the rock, Gruntilda is finally set free from her death bed by her two sisters. As nothing but a skeleton, Grunty and her sisters plan a way of curing her looks by sucking the life out of the land so as to restore her body to its old self. On hearing this...",
+      "added": "2026-10-26",
+      "art": "library/art/banjo-tooie.png",
+      "video": "library/video/banjo-tooie.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Banjo-Tooie (USA)", "name": "banjo-tooie.zip", "size": 33560069, "sha256": "801248dbed42f95c25f1d77f26aadbe7b329408f2196beec123261bf26b9c57f", "url": "private:banjo-tooie__banjo-tooie.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "banjo-tooie-usa",
       "title": "Banjo-Tooie (USA)",
       "system": "n64",
