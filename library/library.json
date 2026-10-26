@@ -2443,6 +2443,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "crash-bandicoot",
+      "title": "Crash Bandicoot",
+      "system": "psx",
+      "players": "1",
+      "description": "Crash Bandicoot, a heroic, agile and mutated marsupial who must save his girlfriend Tawna. The main antagonist is Doctor Neo Cortex, a mad scientist who was often ridiculed by the scientific community for his outlandish (but nearly workable) theories and is now motivated to...",
+      "added": "2026-10-26",
+      "art": "library/art/crash-bandicoot.png",
+      "video": "library/video/crash-bandicoot.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Crash Bandicoot (USA)", "name": "crash-bandicoot.zip", "size": 632180367, "sha256": "dabf6ff7038ae8a22ae0176fff0e91d49c226fc5da486beb16818eb72f7440c6", "url": "private:crash-bandicoot__crash-bandicoot.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "crash-bandicoot-warped",
       "title": "Crash Bandicoot : Warped",
       "system": "psx",
