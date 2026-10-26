@@ -4215,8 +4215,9 @@
       "system": "xbox",
       "players": "1",
       "description": "Fable? is a ground-breaking role-playing adventure game from Peter Molyneux, in which your every action determines your skills, appearance, and reputation. Create your life story from childhood to death. Grow from an inexperienced adolescent into the most powerful being in the...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/fable.png",
+      "video": "library/video/fable.mp4",
       "files": [
       ],
       "parts": { "name": "Fable (USA, Europe).xiso.iso", "size": 2473328640, "sha256": "a0d2b2a83aac05d170ce0b91e9cbf0fdd48b93b9fe3fcaf54a8baceeddcecb33", "pieces": [
