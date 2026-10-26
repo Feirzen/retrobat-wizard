@@ -1959,7 +1959,17 @@ function Complete-FirstRun([bool]$ThemeMissing) {
     if ($script:noFfmpeg) {
         $msg += "`n`nVideo volume levelling is off for now: it needs a free tool called ffmpeg, which is not in this setup yet."
     }
-    if ($ThemeMissing) {
+    # (2026-10-25) The installer fetches ckau-book in the background while
+    # this setup runs, and leaves update\theme-downloading.txt until it is in.
+    $themeComing = $false
+    try {
+        $tm = Join-Path $Ws 'update\theme-downloading.txt'
+        $themeComing = (Test-Path -LiteralPath $tm) -and (((Get-Date) - (Get-Item -LiteralPath $tm).LastWriteTime).TotalHours -lt 6)
+    } catch { }
+    if ($ThemeMissing -and $themeComing) {
+        $msg += "`n`nThe ckau-book look is still downloading in the installer's window. Leave that window open; when its last bar is done, press Play and RetroBat switches to it by itself."
+    }
+    elseif ($ThemeMissing) {
         $msg += "`n`nOne optional thing: for the full look, open RetroBat, press START, go to UPDATES & DOWNLOADS > THEMES and install ckau-book (a big download, about 2 GB). Then press Play in the wizard and it switches to it for you. Everything else already works without it."
     }
     [void](Show-Choice $WizardName $msg @('Let''s play'))

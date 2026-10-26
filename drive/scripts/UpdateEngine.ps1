@@ -784,7 +784,12 @@ function Invoke-UpdateInstall {
     $migJour  = Join-UpdPath $prevDir 'migrations.txt'
     $stamp    = Get-UpdStamp
 
-    function Say([string]$m) { if ($null -ne $Progress) { try { & $Progress $m } catch { } } }
+    # NOT a function called Say (2026-10-25). The 3.1 installer's own progress
+    # block called ITS function Say; PowerShell found this one first, so the
+    # two called each other until PowerShell gave up: about 40 silent seconds
+    # per message, and a fresh install sat on "STEP 2" for half an hour. A
+    # script block in a variable cannot be picked up by a caller's code.
+    $updSay = { param([string]$m) if ($null -ne $Progress) { try { & $Progress $m } catch { } } }
 
     try {
         # --- the previous\ from last time goes to SAFE TO DELETE -------------
@@ -807,16 +812,21 @@ function Invoke-UpdateInstall {
         $newMig = Join-UpdPath $filesDir 'scripts/Migrations.ps1'
         if (Test-Path -LiteralPath $newMig) { $migLib = $newMig }
         if (Test-Path -LiteralPath $migLib) {
-            Say 'Tidying up old names'
+            & $updSay 'Tidying up old names'
             . $migLib
             $logger = { param($m) Write-UpdLog $Ws $m }
             [void](Invoke-DriveMigrations -Ws $Ws -Journal $migJour -Logger $logger)
         }
 
         # --- the files -------------------------------------------------------
+        # version.txt goes LAST (2026-10-25): it is what says "this version is
+        # here", so an install cut short must never have it early. Otherwise
+        # the next check says up to date with half the files missing (the
+        # friend's laptop).
+        $order = @($man.Entries | Where-Object { $_.Path -ne 'version.txt' }) + @($man.Entries | Where-Object { $_.Path -eq 'version.txt' })
         $wanted = @{}
         $n = 0
-        foreach ($e in $man.Entries) {
+        foreach ($e in $order) {
             $n++
             $wanted[$e.Path.ToLower()] = $true
             $dest = Join-UpdPath $Ws $e.Path
@@ -829,7 +839,7 @@ function Invoke-UpdateInstall {
             if (-not (Test-Path -LiteralPath $src)) { throw "the download is missing $($e.Path) - run Check for updates again" }
             if ((Get-UpdHash $src) -ne $e.Hash) { throw "the download of $($e.Path) is damaged - run Check for updates again" }
 
-            if ($n % 10 -eq 0) { Say ("Installing ({0} of {1})" -f $n, $man.Entries.Count) }
+            if ($n % 10 -eq 0) { & $updSay ("Installing ({0} of {1})" -f $n, $man.Entries.Count) }
             if ($exists) {
                 Copy-UpdFile $dest (Join-UpdPath (Join-UpdPath $prevDir 'files') $e.Path)
                 Copy-UpdFile $src $dest
@@ -893,13 +903,13 @@ function Invoke-UpdateInstall {
         if (Test-Path -LiteralPath $journal) { $lines = @([System.IO.File]::ReadAllLines($journal)) }
         $touchedRestore = @($lines | Where-Object { $_ -match "`tupdate-restore(-off)?/" }).Count -gt 0
         $touchedTiers   = @($lines | Where-Object { $_ -match "`tmachine/(tiers|rules)/" }).Count -gt 0
-        if ($touchedRestore) { Say 'Putting protected files in place'; Invoke-UpdPostStep $Ws 'Restore-ProtectedFiles.ps1' }
-        if ($touchedTiers)   { Say 'Re-applying settings';             Invoke-UpdPostStep $Ws 'Apply-Settings.ps1' }
+        if ($touchedRestore) { & $updSay 'Putting protected files in place'; Invoke-UpdPostStep $Ws 'Restore-ProtectedFiles.ps1' }
+        if ($touchedTiers)   { & $updSay 'Re-applying settings';             Invoke-UpdPostStep $Ws 'Apply-Settings.ps1' }
     }
 
     # --- the admin tools, for a setup that has them --------------------------
     if ($hadAdmin) {
-        Say 'Updating the admin tools'
+        & $updSay 'Updating the admin tools'
         try {
             $a = Install-UpdAdminPack $Ws ([string]$target['tag'])
             if (-not $a.Ok) { Write-UpdLog $Ws ("install: admin tools not refreshed - " + $a.Message) }
