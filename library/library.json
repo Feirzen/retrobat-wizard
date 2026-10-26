@@ -441,6 +441,18 @@
       ]
     },
     {
+      "id": "super-mario-3d-land",
+      "title": "Super Mario 3D Land",
+      "system": "3ds",
+      "players": "1",
+      "description": "Super Mario 3D Land is a platform game that has been described by game designer Shigeru Miyamoto as a \"3D Mario that plays as a 2D Mario game.\" As such, Super Mario 3D Land combines the elements of traditional side-scrolling Mario titles, such as linear-based levels, with those...",
+      "added": "2026-10-26",
+      "art": "library/art/super-mario-3d-land.png",
+      "files": [
+        { "name": "Super Mario 3D Land (USA) (En,Fr,Es) (Rev 1).cci", "url": "private:super-mario-3d-land__Super.Mario.3D.Land.USA.En.Fr.Es.Rev.1.cci", "size": 536870912, "sha256": "002da038529ce5467b14aa2461dce3304ab53260fd984e259e8814b98fd4d0fd" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
