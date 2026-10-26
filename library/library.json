@@ -1277,6 +1277,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "conker-s-bad-fur-day-usa",
+      "title": "Conker's Bad Fur Day (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/conker-s-bad-fur-day-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Conker's Bad Fur Day (USA)", "name": "conker-s-bad-fur-day-usa.zip", "size": 67119648, "sha256": "6cc39249caff86cfde5a9b80a65072450f2746f5c5e5e19882476f63f791bbe6", "url": "private:conker-s-bad-fur-day-usa__conker-s-bad-fur-day-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-64",
       "title": "Donkey Kong 64",
       "system": "n64",
