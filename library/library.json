@@ -2136,6 +2136,19 @@
       ]
     },
     {
+      "id": "earthworm-jim",
+      "title": "Earthworm Jim",
+      "system": "snes",
+      "players": "1",
+      "description": "A crow is chasing a worm named Jim while in outer space Psy-Crow is chasing a renegade ship. The ship's captain has stolen an ultra-high-tech-indestructible-super-space-cyber-suit and Queen Slug-for-a-Butt has ordered Psy-Crow to get it, since it can make her more beautiful than...",
+      "added": "2026-10-26",
+      "art": "library/art/earthworm-jim.png",
+      "video": "library/video/earthworm-jim.mp4",
+      "files": [
+        { "name": "Earthworm Jim (USA).sfc", "url": "private:earthworm-jim__Earthworm.Jim.USA.sfc", "size": 3145728, "sha256": "4579e437279f79eedd6b9cf648a814df2ab2c83d937a1bcec1578d28965fb9a0" }
+      ]
+    },
+    {
       "id": "final-fantasy-iii",
       "title": "Final Fantasy III",
       "system": "snes",
