@@ -2429,6 +2429,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "chrono-cross",
+      "title": "Chrono Cross",
+      "system": "psx",
+      "players": "1",
+      "description": "Chrono Cross is a sequel to the SNES RPG Chrono Trigger. The main character is Serge, a young boy from a fishing village. One day, while strolling on the sea shore with his sweetheart, Serge suddenly disappears. He comes back to senses several moments later. Everything seems...",
+      "added": "2026-10-26",
+      "art": "library/art/chrono-cross.png",
+      "video": "library/video/chrono-cross.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Chrono Cross (USA, Canada) (Disc 1)", "name": "chrono-cross.zip", "size": 736763965, "sha256": "ce1089c76d0f7853bd9533648361e8564d3c962c03e31e2e36ccdb47fd9c4597", "url": "private:chrono-cross__chrono-cross.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
