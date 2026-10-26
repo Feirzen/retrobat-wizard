@@ -1342,6 +1342,19 @@
       ]
     },
     {
+      "id": "pok-mon-stadium",
+      "title": "Pokmon Stadium",
+      "system": "n64",
+      "players": "1-4",
+      "description": "At long last, all of your favorite Pokmon are ready to go head-to-head on the N64! Whether you're battle a friend, a Gym Leader or a tournament contestant, you're about to witness some of the most spectacular battle scenes in Pokmon history! Select a team from a huge stable...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-stadium.png",
+      "video": "library/video/pok-mon-stadium.mp4",
+      "files": [
+        { "name": "Pokemon Stadium (USA) (Rev 2).zip", "url": "private:pok-mon-stadium__Pokemon.Stadium.USA.Rev.2.zip", "size": 27214319, "sha256": "a41319485c5cfe132c3b36dd819038b2af1701a547d8cc8194f13f27454ceac7" }
+      ]
+    },
+    {
       "id": "pok-mon-snap",
       "title": "Pokmon Snap",
       "system": "n64",
@@ -1352,18 +1365,6 @@
       "video": "library/video/pok-mon-snap.mp4",
       "files": [
         { "name": "Pokemon Snap (USA).zip", "url": "private:pok-mon-snap__Pokemon.Snap.USA.zip", "size": 8873096, "sha256": "b018c946dbaf0aee8efa4da0ea44aa390ba74da84dfc05e0d53b7205cf675673" }
-      ]
-    },
-    {
-      "id": "pok-mon-stadium",
-      "title": "Pokmon Stadium",
-      "system": "n64",
-      "players": "1-4",
-      "description": "At long last, all of your favorite Pokmon are ready to go head-to-head on the N64! Whether you're battle a friend, a Gym Leader or a tournament contestant, you're about to witness some of the most spectacular battle scenes in Pokmon history! Select a team from a huge stable...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-stadium.png",
-      "files": [
-        { "name": "Pokemon Stadium (USA) (Rev 2).zip", "url": "private:pok-mon-stadium__Pokemon.Stadium.USA.Rev.2.zip", "size": 27214319, "sha256": "a41319485c5cfe132c3b36dd819038b2af1701a547d8cc8194f13f27454ceac7" }
       ]
     },
     {
