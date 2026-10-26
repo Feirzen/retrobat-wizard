@@ -263,19 +263,18 @@
       ]
     },
     {
-      "id": "pok-mon-sun",
-      "title": "Pokmon Sun",
+      "id": "pokemon-super-mystery-dungeon",
+      "title": "Pokemon Super Mystery Dungeon",
       "system": "3ds",
       "players": "1",
-      "description": "Pokmon Sun, along with Pokmon Moon, marks the start of the seventh generation of the Pokmon franchise. The game takes place in the Alola region, an archipelago whose culture, geography, and native wildlife are based on those of Hawaii. A number of Alola's native Pokmon have...",
+      "description": "The definitive Pokemon Mystery Dungeon! Prepare yourself for a grand adventure where you become a Pokemon and battle alongside Legendary and Mythical Pokemon to help save the world! Befriend Pokemon and explore ever-changing mystery dungeons with them! Players are suddenly...",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-sun.png",
+      "art": "library/art/pokemon-super-mystery-dungeon.png",
       "files": [
       ],
-      "parts": { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "3bf16643f7d8a285b19fbbbdf1a39f954efff094d0b18eea2202f6db7dde03ce", "pieces": [
-        { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "fe647abbd060abf551b6121ca081e4fc43fec9276779fc3c6ebae86824265226" },
-        { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "f43e2a7cd89083af609dfe85e50f6c3689e51d2bdca295c723d2fcedc802a827" },
-        { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      "parts": { "name": "Pokemon Super Mystery Dungeon (USA).cci", "size": 2147483648, "sha256": "3bef3705187c17eefaefcaa0782c739f2d3c48a7dc6eb05215ff9cfce229d531", "pieces": [
+        { "name": "Pokemon Super Mystery Dungeon (USA).cci.part01", "url": "private:pokemon-super-mystery-dungeon__Pokemon.Super.Mystery.Dungeon.USA.cci.part01", "size": 1992294400, "sha256": "a899359e2a96cfd69b6c039fe7807b1c4bfd815a67ae524163a0e6742d7569d0" },
+        { "name": "Pokemon Super Mystery Dungeon (USA).cci.part02", "url": "private:pokemon-super-mystery-dungeon__Pokemon.Super.Mystery.Dungeon.USA.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
     },
     {
@@ -322,6 +321,22 @@
       "parts": { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "d76faafacd746fdcc5ec04a60b8b82ceb9678c3ad937b374234a506c50c417e4", "pieces": [
         { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "f3986e685cc0ed7fd337fff17dd7d68a0fbc87bbe50434cd5e02c0d43ac09e8a" },
         { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
+      "id": "pok-mon-sun",
+      "title": "Pokmon Sun",
+      "system": "3ds",
+      "players": "1",
+      "description": "Pokmon Sun, along with Pokmon Moon, marks the start of the seventh generation of the Pokmon franchise. The game takes place in the Alola region, an archipelago whose culture, geography, and native wildlife are based on those of Hawaii. A number of Alola's native Pokmon have...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-sun.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "3bf16643f7d8a285b19fbbbdf1a39f954efff094d0b18eea2202f6db7dde03ce", "pieces": [
+        { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "fe647abbd060abf551b6121ca081e4fc43fec9276779fc3c6ebae86824265226" },
+        { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "f43e2a7cd89083af609dfe85e50f6c3689e51d2bdca295c723d2fcedc802a827" },
+        { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
       ] }
     },
     {
