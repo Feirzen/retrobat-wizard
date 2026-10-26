@@ -1707,6 +1707,20 @@
       ]
     },
     {
+      "id": "perfect-dark",
+      "title": "Perfect Dark",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Joanna Dark is an agent for the Carrington Institute, a secret organization funded by anonymous sources and dedicated to protecting the world. Through their highly trained operatives and special devices (gadgets), Carrington keeps an eye on terrorists, world powers, and strange...",
+      "added": "2026-10-26",
+      "art": "library/art/perfect-dark.png",
+      "video": "library/video/perfect-dark.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Perfect Dark (USA) (Rev 1)", "name": "perfect-dark.zip", "size": 33560096, "sha256": "d6faa021d7b61db44a9a1804a600bb8f86c60f9a472226c7f504cccc82d6154d", "url": "private:perfect-dark__perfect-dark.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "perfect-dark-usa-rev-1",
       "title": "Perfect Dark (USA) (Rev 1)",
       "system": "n64",
