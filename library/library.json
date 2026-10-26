@@ -1292,6 +1292,20 @@
       ]
     },
     {
+      "id": "bomberman-64",
+      "title": "Bomberman 64",
+      "system": "n64",
+      "players": "1-4",
+      "description": "The evil Altair is using the Omni Cube to drain the energy from Planet Bomber. With the aid of a mysterious helper, you must defeat Altair, and restore peace to Planet Bomber. In the Adventure mode, guide Bomberman through twenty-four areas of perilous conflict. Battle Altair's...",
+      "added": "2026-10-26",
+      "art": "library/art/bomberman-64.jpg",
+      "video": "library/video/bomberman-64.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Bomberman 64 (USA)", "name": "bomberman-64.zip", "size": 8390408, "sha256": "3ff0f069f760ee5316dacf5c2cc9fb3aee166b4c819a885da032ddc51cf8274f", "url": "private:bomberman-64__bomberman-64.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "bomberman-64-usa",
       "title": "Bomberman 64 (USA)",
       "system": "n64",
