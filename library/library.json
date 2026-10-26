@@ -239,6 +239,21 @@
       ]
     },
     {
+      "id": "pok-mon-omega-ruby",
+      "title": "Pokmon Omega Ruby",
+      "system": "3ds",
+      "players": "1",
+      "description": "Immerse yourself in the incredible adventure of Pokmon Omega Ruby for Nintendo 3DS and 2DS! A fresh take on the world first discovered in 2003 in Pokmon Ruby for Game Boy Advance. With enhanced graphics and new content, this is the perfect setting to prove you're the best...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-omega-ruby.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "d76faafacd746fdcc5ec04a60b8b82ceb9678c3ad937b374234a506c50c417e4", "pieces": [
+        { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "f3986e685cc0ed7fd337fff17dd7d68a0fbc87bbe50434cd5e02c0d43ac09e8a" },
+        { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "pok-mon-alpha-sapphire",
       "title": "Pokmon Alpha Sapphire",
       "system": "3ds",
