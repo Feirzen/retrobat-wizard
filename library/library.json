@@ -1428,8 +1428,9 @@
       "system": "n64",
       "players": "1",
       "description": "The story follows Link, a boy raised among the Kokiri in the forest village of Hyrule. Summoned by the guardian spirit, the Great Deku Tree, Link learns of an impending danger: Ganondorf, leader of the Gerudo, seeks the Triforce, a sacred relic that grants godlike power. With...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/the-legend-of-zelda-ocarina-of-time.png",
+      "video": "library/video/the-legend-of-zelda-ocarina-of-time.mp4",
       "files": [
         { "name": "Legend of Zelda, The - Ocarina of Time (USA) (Rev 2).zip", "url": "private:the-legend-of-zelda-ocarina-of-time__Legend.of.Zelda.The.-.Ocarina.of.Time.USA.Rev.2.zip", "size": 26140109, "sha256": "cdfd39d27a75d3fc027b7d5264624477ec7d83382a58f281ecd20fc2e34842cf" }
       ]
