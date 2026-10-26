@@ -151,6 +151,18 @@
       ]
     },
     {
+      "id": "mario-luigi-dream-team",
+      "title": "Mario & Luigi : Dream Team",
+      "system": "3ds",
+      "players": "1",
+      "description": "Mario and Luigi embark on the adventure of their dreams in a hilarious action RPG that combines the resort world of Pi'illo Island with the wild landscapes of Luigi's imagination, where anything can happen. Meet a host of hilarious characters as you strive to rescue Princess...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-luigi-dream-team.png",
+      "files": [
+        { "name": "Mario & Luigi - Dream Team (USA) (En,Fr,Es) (Rev 1).cci", "url": "private:mario-luigi-dream-team__Mario.Luigi.-.Dream.Team.USA.En.Fr.Es.Rev.1.cci", "size": 1073741824, "sha256": "9d3ae196ad163d9f23d7f2f237f1019b13426891c7d3cfc09807a7f67828b4af" }
+      ]
+    },
+    {
       "id": "mario-luigi-bowser-s-inside-story-bowser",
       "title": "Mario & Luigi: Bowser's Inside Story + Bowser Jr.'s Journey",
       "system": "3ds",
