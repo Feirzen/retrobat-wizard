@@ -199,6 +199,18 @@
       ]
     },
     {
+      "id": "mario-party-the-top-100",
+      "title": "Mario Party: The Top 100",
+      "system": "3ds",
+      "players": "1",
+      "description": "With 100 minigames, it's the ultimate Mario Party?!Ever partied with Mario? Stuffed mouthfuls of pizza? Dodged penguins? Well, the party is back with the top 100 minigames in Mario Party? series history! Test your memory, speed, and luck in a variety of multiplayer minigame...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-party-the-top-100.png",
+      "files": [
+        { "name": "Mario Party - The Top 100 (USA).cci", "url": "private:mario-party-the-top-100__Mario.Party.-.The.Top.100.USA.cci", "size": 536870912, "sha256": "070f278c408ebaaadfb278e1b1ed710de3a6acc96a27e9f31c1465acd194b5cf" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
