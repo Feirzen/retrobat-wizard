@@ -72,6 +72,22 @@
       ] }
     },
     {
+      "id": "hyrule-warriors-legends",
+      "title": "Hyrule Warriors Legends",
+      "system": "3ds",
+      "players": "1",
+      "description": "Cut down entire legions of enemies as fan-favorite Legend of Zelda characters using powerful moves as Hyrule Warriors comes to the Nintendo 3DS. Control multiple characters to enhance your strategies and enjoy new story elements with playable characters from The Legend of Zelda:...",
+      "added": "2026-10-26",
+      "art": "library/art/hyrule-warriors-legends.png",
+      "files": [
+      ],
+      "parts": { "name": "Hyrule Warriors Legends (USA).cci", "size": 4294967296, "sha256": "414b236ad2bfd37db99173bc91706467537d04934a14f1d449c95be19e40b2d8", "pieces": [
+        { "name": "Hyrule Warriors Legends (USA).cci.part01", "url": "private:hyrule-warriors-legends__Hyrule.Warriors.Legends.USA.cci.part01", "size": 1992294400, "sha256": "1b26aa5e66b1f786ee48074e89a205437ffbb4e09f573e40e3ce35176f9578bf" },
+        { "name": "Hyrule Warriors Legends (USA).cci.part02", "url": "private:hyrule-warriors-legends__Hyrule.Warriors.Legends.USA.cci.part02", "size": 1992294400, "sha256": "cd480a4aeb487fc2087318fa54d6ce846e5c8c3053b69ed20e2c6b7ed57bf7bc" },
+        { "name": "Hyrule Warriors Legends (USA).cci.part03", "url": "private:hyrule-warriors-legends__Hyrule.Warriors.Legends.USA.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
