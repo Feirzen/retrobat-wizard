@@ -42,6 +42,21 @@
       ] }
     },
     {
+      "id": "fifa-15-legacy-edition",
+      "title": "Fifa 15 - Legacy Edition",
+      "system": "3ds",
+      "players": "1",
+      "description": "Play traditional 11 versus 11 matches with over 500 officially licensed clubs or free your game on the streets in 5 versus 5 street matches. Complete and earn awards in every game mode. Unlock the most coveted players to form your own dream club of international superstars or...",
+      "added": "2026-10-26",
+      "art": "library/art/fifa-15-legacy-edition.png",
+      "files": [
+      ],
+      "parts": { "name": "FIFA 15 - Legacy Edition (USA) (En,Fr,Es).cci", "size": 2147483648, "sha256": "4b1a47ac15592aa7b9f5f5055555485bc9f646ca4490131ad825cf5cc40189b6", "pieces": [
+        { "name": "FIFA 15 - Legacy Edition (USA) (En,Fr,Es).cci.part01", "url": "private:fifa-15-legacy-edition__FIFA.15.-.Legacy.Edition.USA.En.Fr.Es.cci.part01", "size": 1992294400, "sha256": "985fec191c70e7224473bae388e8761e9ff709251156341655dc3801002bf613" },
+        { "name": "FIFA 15 - Legacy Edition (USA) (En,Fr,Es).cci.part02", "url": "private:fifa-15-legacy-edition__FIFA.15.-.Legacy.Edition.USA.En.Fr.Es.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
