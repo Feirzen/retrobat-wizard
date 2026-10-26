@@ -2162,6 +2162,19 @@
       ]
     },
     {
+      "id": "f-zero",
+      "title": "F-Zero",
+      "system": "snes",
+      "players": "1",
+      "description": "F-Zero is a futuristic racing game, set in the year 2560. The player chooses one of the four available hovercars and then can race with other hovercars in one of the gameplay modes - \"Practice\" or \"Grand Prix\". In \"Practice\" mode, the player chooses one track where he competes...",
+      "added": "2026-10-26",
+      "art": "library/art/f-zero.png",
+      "video": "library/video/f-zero.mp4",
+      "files": [
+        { "name": "F-Zero (USA).sfc", "url": "private:f-zero__F-Zero.USA.sfc", "size": 524288, "sha256": "bf16c3c867c58e2ab061c70de9295b6930d63f29f81cc986f5ecae03e0ad18d2" }
+      ]
+    },
+    {
       "id": "mega-man-x",
       "title": "Mega Man X",
       "system": "snes",
