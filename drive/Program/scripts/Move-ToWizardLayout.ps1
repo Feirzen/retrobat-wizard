@@ -65,7 +65,7 @@ function Note([string]$m) {
 }
 function Show-Step([string]$m) {
     Note $m
-    if ($null -ne $script:Label) { $script:Label.Text = $m; ([type]'System.Windows.Forms.Application')::DoEvents() }
+    if ($null -ne $script:Label) { try { $script:Label.Text = $m; $script:Form.Refresh() } catch { } }
 }
 function Write-Journal([string]$Line) {
     if ($script:Journal -eq '') { return }
@@ -305,8 +305,9 @@ function Wait-ForQuiet([string]$OldWs) {
         $rb = @(Get-Process -Name 'emulationstation', 'RetroBat', 'BatGui', 'emulatorLauncher' -ErrorAction SilentlyContinue)
         if ($rb.Count -eq 0) { break }
         if ($Quiet) { return $false }
-        $a = ([type]'System.Windows.Forms.MessageBox')::Show("RetroBat is open. Close it, then press Retry.`n`n(The wizard is tidying its folder once, after the 3.2 update.)", 'RetroBat Wizard', 'RetryCancel', 'Warning')
-        if ([string]$a -ne 'Retry') { return $false }
+        $a = 2
+        try { $a = (New-Object -ComObject WScript.Shell).Popup("RetroBat is open. Close it, then press Retry.`n`n(The wizard is tidying its folder once, after the 3.2 update.)", 0, 'RetroBat Wizard', 53) } catch { }
+        if ($a -ne 4) { return $false }   # 4 = Retry
     }
     # the wizard's own helpers run from the old folder
     $me = $PID
@@ -362,22 +363,25 @@ $oldWs = Join-WizPath $Root $script:WizOldFolderName
 $newWs = Join-WizPath $Root $script:WizFolderName
 $result = 'nothing'
 try {
-    if (-not $Quiet -and $script:OnWindows) {
+    # The little window is only a nicety: if it cannot be drawn, the move
+    # carries on without it (3.2 test, 2026-10-26: a colour call failed on
+    # Windows PowerShell and stopped the whole move).
+    if (-not $Quiet -and $script:OnWindows) { try {
         Add-Type -AssemblyName System.Windows.Forms
         Add-Type -AssemblyName System.Drawing
         $script:Form = New-Object System.Windows.Forms.Form
         $script:Form.Text = 'RetroBat Wizard'; $script:Form.Width = 520; $script:Form.Height = 150
         $script:Form.StartPosition = 'CenterScreen'; $script:Form.FormBorderStyle = 'FixedDialog'; $script:Form.ControlBox = $false
-        $script:Form.TopMost = $true; $script:Form.BackColor = ([type]'System.Drawing.Color')::FromArgb(27, 27, 34)
+        $script:Form.TopMost = $true; $script:Form.BackColor = 'Black'
         $t = New-Object System.Windows.Forms.Label
-        $t.Text = 'Tidying the wizard''s folder (once, after the 3.2 update)'; $t.ForeColor = ([type]'System.Drawing.Color')::White
-        $t.Font = New-Object System.Drawing.Font('Segoe UI', 11, ([type]'System.Drawing.FontStyle')::Bold); $t.AutoSize = $true; $t.Location = New-Object System.Drawing.Point(18, 18)
+        $t.Text = 'Tidying the wizard''s folder (once, after the 3.2 update)'; $t.ForeColor = 'White'
+        $t.Font = New-Object System.Drawing.Font('Segoe UI', 11, 'Bold'); $t.AutoSize = $true; $t.Location = New-Object System.Drawing.Point(18, 18)
         $script:Label = New-Object System.Windows.Forms.Label
-        $script:Label.ForeColor = ([type]'System.Drawing.Color')::FromArgb(154, 160, 170); $script:Label.Width = 470; $script:Label.Height = 40
+        $script:Label.ForeColor = 'Silver'; $script:Label.Width = 470; $script:Label.Height = 40
         $script:Label.Location = New-Object System.Drawing.Point(18, 52); $script:Label.Font = New-Object System.Drawing.Font('Segoe UI', 9.5)
         $script:Form.Controls.Add($t); $script:Form.Controls.Add($script:Label)
-        $script:Form.Show(); ([type]'System.Windows.Forms.Application')::DoEvents()
-    }
+        $script:Form.Show(); [void]$script:Form.Refresh()
+    } catch { Note ('no progress window: ' + $_.Exception.Message); try { if ($null -ne $script:Form) { $script:Form.Close() } } catch { }; $script:Form = $null; $script:Label = $null } }
 
     if (-not (Test-Path -LiteralPath $oldWs) -and -not (Test-Path -LiteralPath $newWs)) { throw 'neither _ClaudeWorkspace nor _Wizard is here' }
 
