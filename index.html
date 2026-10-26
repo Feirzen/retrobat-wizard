@@ -169,18 +169,6 @@ details.sys[open] > summary .arrow { transform: rotate(90deg); }
 body.in #gate { display: none; }
 body.in #site { display: block; }
 
-/* ---- theme menu, top right ---- */
-.themebtn { position: fixed; top: 10px; right: 12px; z-index: 60; width: 38px; height: 38px; border-radius: 0;
-  background: var(--surface); border: 2px solid var(--border2); color: var(--dim); cursor: pointer; font-size: 16px; box-shadow: 3px 3px 0 var(--border); }
-.thememenu { position: fixed; top: 56px; right: 12px; z-index: 61; background: var(--surface); border: 2px solid var(--border2);
-  border-radius: 0; padding: 6px; min-width: 180px; box-shadow: 5px 5px 0 var(--shadow); display: none; }
-.thememenu.open { display: block; }
-.thememenu button { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; color: var(--text);
-  cursor: pointer; padding: 10px 12px; border-radius: 0; font: inherit; font-size: 14px; text-align: left; }
-.thememenu button:hover { background: var(--surface2); }
-.thememenu button.sel { color: var(--accent); font-weight: bold; }
-.swatch { width: 16px; height: 16px; border-radius: 0; border: 1px solid var(--border2); flex: 0 0 16px; }
-
 /* phones: the rail moves to the bottom */
 @media (max-width: 720px) {
   .rail { top: auto; right: 0; width: auto; height: 74px; flex-direction: row; justify-content: center; gap: 10px;
@@ -198,8 +186,6 @@ body.in #site { display: block; }
 </style>
 </head>
 <body>
-<button class="themebtn" id="themeBtn" aria-label="Theme" title="Theme">&#9680;</button>
-<div class="thememenu" id="themeMenu"></div>
 
 <div id="gate">
   <img src="site/icon-192.png" alt="RetroBat Wizard">
@@ -251,17 +237,18 @@ body.in #site { display: block; }
         <li><b>Install it and open it once.</b> Run the file you downloaded.
           <br><span class="note"><b>Windows protected your PC?</b> Windows shows this blue box for programs it has not seen much of. Click <b>More info</b>, then <b>Run anyway</b>.</span>
           <br><span class="note"><b>Where it goes:</b> the folder it suggests (<code>C:\RetroBat</code>) is fine. To keep everything on an <b>external drive</b> instead, change the folder to one on that drive, like <code>D:\RetroBat</code>. Either way: no spaces, not in Program Files.</span>
+          <br><span class="note"><b>The list of extra parts</b> (if it shows one): tick <b>Visual C++</b> and <b>DirectX 9</b>, RetroBat needs both. Leave <b>Dokan</b> and <b>WinFsp</b> unticked: they only open games packed as <code>.squashfs</code> files, which this setup does not use. No list at all? Then they are already on the computer.</span>
           <br>Then open RetroBat, let it finish starting up, set up your controller if it asks, and close it.</li>
-        <li><b>Download the wizard installer</b> and unzip it anywhere (your Downloads folder is fine).
+        <li><b>Download the wizard installer.</b> A small zip with one file in it.
           <br><a class="btn" style="margin-top:10px" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the installer</a></li>
-        <li><b>Double-click <code>INSTALL THE WIZARD.bat</code>.</b> It finds RetroBat by itself (or asks you to pick its folder) and works in three steps, each one named in the window as it goes:
-          <br>1. the wizard (a few minutes),
-          <br>2. putting it in place,
-          <br>3. the ckau-book look (1 to 2 GB, often 10 to 30 minutes: the slow part, with numbers that keep moving).
-          <br>Then the wizard opens and asks a few quick questions (pick Quick setup if you are not sure; every question has a Back button). The black window closes by itself. Everything can be changed later inside the wizard.</li>
+        <li><b>Open the zip and double-click <code>INSTALL THE WIZARD.bat</code>.</b> No unzipping needed. If Windows asks, click <b>Run</b> (or <b>More info</b>, then <b>Run anyway</b>). It finds RetroBat by itself, or asks you to pick its folder, then shows three bars, each with how long is left:
+          <br>1. the wizard (about 17 MB, usually under a minute),
+          <br>2. putting it in place (a few seconds),
+          <br>3. the ckau-book look (about 1.7 GB, it keeps going in the background).
+          <br>The wizard's setup opens as soon as bar 2 is full, so you can carry on while the look finishes: pick Quick setup if you are not sure, and every question has a Back button. Leave the installer window open until bar 3 is done; it closes by itself. The next time you press Play, RetroBat switches to the new look.</li>
         <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
       </ol>
-      <p class="note">Windows may warn about the installer too: More info, then Run anyway. You never need a GitHub account.</p>
+      <p class="note">You never need a GitHub account. Something went wrong? Run the installer again: it carries on where it stopped. It keeps notes in <code>RetroBat\_ClaudeWorkspace\update\install.log</code>.</p>
     </div>
   </section>
 
@@ -420,18 +407,25 @@ document.getElementById("modalX").addEventListener("click", closeGame);
 modal.addEventListener("click", e => { if (e.target === modal) closeGame(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeGame(); });
 
-// ---- themes: midnight, paper, sepia, chameleon (same as Study Decks) ----
-const THEMES = {
-  midnight:  { label: "Midnight",  swatch: "#0f0f13" },
-  paper:     { label: "Paper",     swatch: "#f6f3ec" },
-  sepia:     { label: "Sepia",     swatch: "#2a211a" },
-  chameleon: { label: "Chameleon", swatch: "conic-gradient(#f87171,#fbbf24,#34d399,#38bdf8,#a78bfa,#f87171)" },
-};
+// ---- themes: Midnight, Paper, Sepia, Chameleon ----
+// (2026-10-25) Picked from the gear's Look panel (the Flag Hub kit), like
+// every other site. The kit draws the controls; this paints the site's own
+// palettes, so the retro colours stay. Kit names map: dark = Midnight,
+// light = Paper.
+const PALETTE = { dark: "midnight", light: "paper", sepia: "sepia", chameleon: "chameleon" };
 const CHAM_VARS = ["bg","surface","surface2","border","border2","text","dim","muted","accent","ok","bad","star","shadow","accBg"];
+let look = {};
+try { look = JSON.parse(store("rbw-look") || "{}") || {}; } catch (e) { look = {}; }
+if (!PALETTE[look.theme]) {   // from the old top-right menu, if it was used
+  look.theme = ({ paper: "light", midnight: "dark", sepia: "sepia", chameleon: "chameleon" })[store("rbw-theme")] || "dark";
+}
+if (!look.tone) look.tone = "any";
+function saveLook() { store("rbw-look", JSON.stringify(look)); }
+function setVars(v) { CHAM_VARS.forEach(k => v ? document.documentElement.style.setProperty("--" + k, v[k]) : document.documentElement.style.removeProperty("--" + k)); }
 function chameleon() {
   const h = Math.floor(Math.random() * 360), acc = (h + 120 + Math.floor(Math.random() * 110)) % 360;
   const H = (x, s, l, a) => `hsl(${x} ${s}% ${l}%${a ? " / " + a + "%" : ""})`;
-  const light = Math.random() < 0.28;
+  const light = look.tone === "light" ? true : look.tone === "dark" ? false : Math.random() < 0.28;
   const v = light
     ? { bg: H(h,32,95), surface: H(h,42,99), surface2: H(h,26,91), border: H(h,22,83), border2: H(h,20,66), text: H(h,38,11),
         dim: H(h,18,33), muted: H(h,14,50), accent: H(acc,66,37), ok: "hsl(158 72% 29%)", bad: "hsl(0 72% 44%)",
@@ -439,26 +433,25 @@ function chameleon() {
     : { bg: H(h,26,7), surface: H(h,22,12), surface2: H(h,26,9), border: H(h,18,21), border2: H(h,18,33), text: H(h,26,95),
         dim: H(h,14,74), muted: H(h,12,50), accent: H(acc,74,63), ok: "hsl(158 66% 56%)", bad: "hsl(0 82% 73%)",
         star: "hsl(38 92% 55%)", shadow: "rgba(0,0,0,.5)", accBg: H(acc,74,63,14) };
-  CHAM_VARS.forEach(k => document.documentElement.style.setProperty("--" + k, v[k]));
+  setVars(v);
+  look.vars = v; saveLook();
 }
-function applyTheme(t) {
-  if (!THEMES[t]) t = "midnight";
-  document.documentElement.setAttribute("data-theme", t);
-  if (t === "chameleon") chameleon(); else CHAM_VARS.forEach(k => document.documentElement.style.removeProperty("--" + k));
+function paint() {
+  document.documentElement.setAttribute("data-theme", PALETTE[look.theme]);
+  if (look.theme === "chameleon") { if (look.locked && look.vars) setVars(look.vars); else chameleon(); }
+  else setVars(null);
   document.getElementById("themeColorMeta").setAttribute("content", getComputedStyle(document.body).backgroundColor);
-  store("rbw-theme", t);
-  drawMenu(t);
 }
-function drawMenu(cur) {
-  const m = document.getElementById("themeMenu");
-  m.innerHTML = Object.entries(THEMES).map(([k, t]) =>
-    `<button data-t="${k}" class="${k === cur ? "sel" : ""}"><span class="swatch" style="background:${t.swatch}"></span>${t.label}${k === "chameleon" && cur === "chameleon" ? " (tap again)" : ""}</button>`).join("");
-  m.querySelectorAll("button").forEach(b => b.addEventListener("click", () => applyTheme(b.dataset.t)));
-}
-document.getElementById("themeBtn").addEventListener("click", () => document.getElementById("themeMenu").classList.toggle("open"));
-document.addEventListener("click", e => { if (!e.target.closest(".thememenu,.themebtn")) document.getElementById("themeMenu").classList.remove("open"); });
-applyTheme(store("rbw-theme") || "midnight");
+window.KitConfig = { look: {
+  get: () => ({ theme: look.theme, tone: look.tone, locked: !!look.locked }),
+  set: t => { if (PALETTE[t]) { look.theme = t; saveLook(); paint(); } },
+  tone: t => { look.tone = t; saveLook(); if (look.theme === "chameleon" && !look.locked) paint(); },
+  lock: on => { look.locked = !!on; saveLook(); },
+  reroll: () => { if (look.theme === "chameleon") paint(); },
+  labels: { dark: "Midnight", light: "Paper" }
+} };
+paint();
 </script>
-<script src="https://feirzen.github.io/flag-hub/kit/kit.js" data-app="retrobat-wizard" data-name="RetroBat Wizard" data-look="off" defer></script>
+<script src="https://feirzen.github.io/flag-hub/kit/kit.js" data-app="retrobat-wizard" data-name="RetroBat Wizard" defer></script>
 </body>
 </html>
