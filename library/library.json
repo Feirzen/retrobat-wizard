@@ -1346,6 +1346,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "diddy-kong-racing",
+      "title": "Diddy Kong Racing",
+      "system": "n64",
+      "players": "1-4",
+      "description": "It's an island takeover when the evil space wizard, Wizpig, discovers Tiger Island! After the islands prized racetracks become sealed up, Timber Tiger contacts his friend Diddy Kong to help him reclaim the racetracks and save the island before his parents return. Along for the...",
+      "added": "2026-10-26",
+      "art": "library/art/diddy-kong-racing.png",
+      "video": "library/video/diddy-kong-racing.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)", "name": "diddy-kong-racing.zip", "size": 12585415, "sha256": "c98bce0588a26a090f10368db4bc8bb59e1ed73915e478d08e1ac24546338cac", "url": "private:diddy-kong-racing__diddy-kong-racing.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "diddy-kong-racing-usa-en-fr-rev-1",
       "title": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)",
       "system": "n64",
