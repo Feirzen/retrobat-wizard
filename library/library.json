@@ -1599,6 +1599,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "mario-party-3",
+      "title": "Mario Party 3",
+      "system": "n64",
+      "players": "1-4",
+      "description": "The series continues with a set of 70 new mini-games. Play in the new single-player Story mode, or bring in some friends for Party mode. Four player games and a new two player mode are also available for play. In Battle Royale mode (four player), you race around different boards...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-party-3.png",
+      "video": "library/video/mario-party-3.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Party 3 (USA)", "name": "mario-party-3.zip", "size": 33560075, "sha256": "fb95482ac05ef53a09e75c17d9f3398c5c7dfed039c72f0c45320a23e7828cbc", "url": "private:mario-party-3__mario-party-3.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mario-party-3-usa",
       "title": "Mario Party 3 (USA)",
       "system": "n64",
