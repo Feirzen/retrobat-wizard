@@ -4381,8 +4381,9 @@
       "system": "xbox",
       "players": "1-8",
       "description": "Project Gotham Racing 2 is a racing game released for Xbox. Drive through the streets of the world's most famous cities in automotive gems such as Ferrari, Porsche and Lotus to earn Kudos that unlock more cars.",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/project-gotham-racing-2.jpg",
+      "video": "library/video/project-gotham-racing-2.mp4",
       "files": [
       ],
       "parts": { "name": "Project Gotham Racing 2 (USA, Asia) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso", "size": 5649793024, "sha256": "6943653e6e8540f2c473579cf27c8e710d79ac76f88abaa95ec0c011c5bd69cd", "pieces": [
