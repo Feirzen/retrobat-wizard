@@ -3421,6 +3421,7 @@ function Get-RunningWork {
             $d = ''; try { $d = Get-LibJobProgress $lj.Game } catch { }
             $out += @{ Label = ('Downloading ' + [string]$lj.Game.Title); Detail = $d; Safe = $true }
         }
+        foreach ($qg in @($script:libQueue)) { $out += @{ Label = ('Waiting to download ' + [string]$qg.Title); Detail = ''; Safe = $true } }
     } catch { }
     return $out
 }
@@ -6225,6 +6226,8 @@ $script:libBusy      = @{}       # game id -> 'Downloading...'
 $script:libBusyText  = @{}       # game id -> the words on its row, kept up to date while it downloads
 $script:libDone      = @{}       # game id -> @{ Ok; Message }, the last download's result
 $script:libJobs      = @()       # running downloads
+$script:libQueue     = New-Object System.Collections.ArrayList   # games waiting their turn (3.2)
+$script:LibAtOnce    = 2         # downloads at the same time (Steven, 2026-10-26)
 $script:libTimer     = $null
 $script:gamesSystems = $null
 
@@ -6392,12 +6395,15 @@ function Invoke-LibraryTick {
             $redraw = $true
         }
         $script:libJobs = $still
+        if ($redraw -and $script:libQueue.Count -gt 0) { Start-LibQueue; $still = $script:libJobs }
         foreach ($j in $still) {
             if ($j.Kind -ne 'install') { continue }
             $tb = $script:libBusyText[$j.Game.Id]
             if ($null -ne $tb) { try { $tb.Text = Get-LibJobProgress $j.Game } catch { } }
+            $qb = $script:libBusyText[('q:' + [string]$j.Game.Id)]
+            if ($null -ne $qb) { try { $qb.Text = ('{0}  -  {1}' -f $j.Game.Title, (Get-LibJobProgress $j.Game)) } catch { } }
         }
-        if ($still.Count -eq 0) { $script:libTimer.Stop() }
+        if ($still.Count -eq 0 -and $script:libQueue.Count -eq 0) { $script:libTimer.Stop() }
         if ($redraw) { Render-Games }
         if ($failNote) { [void](Show-Choice $WizardName $failNote @('OK')) }
     }
@@ -6467,23 +6473,96 @@ function Get-LibJobProgress($Game) {
     $dl = Join-Path $Ws 'Cache\library\downloads'
     $have = [long]0
     foreach ($f in @($Game.Files)) {
-        foreach ($p in @(Get-ChildItem -LiteralPath $dl -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq ($f.Name + '.part') -or $_.Name -like ($f.Name + '.piece*') })) { $have += $p.Length }
+        $fn = ([string]$f.Name) -replace '/', '~'
+        foreach ($p in @(Get-ChildItem -LiteralPath $dl -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq ($fn + '.part') -or $_.Name.StartsWith($fn + '.piece') })) { $have += $p.Length }
     }
     $total = [math]::Max([long]1, [long]$Game.Size)
-    if ($have -ge $total) { return 'Checking it matches the library...' }
+    if ($have -ge $total) { return $(if (@($Game.Files | Where-Object { $null -ne $_.PSObject.Properties['Unpack'] }).Count -gt 0) { 'Checking it and unpacking the folder...' } else { 'Checking it matches the library...' }) }
     $pc = [int](100 * $have / $total)
     return ('Downloading... {0}% ({1:N0} of {2:N0} MB)' -f $pc, ($have / 1MB), ($total / 1MB))
 }
 
+# THE DOWNLOAD LINE (3.2, 2026-10-26). Steven: "a queue, 2 at a time". Every
+# game added goes to the end of the line; two download at once and the next
+# one starts by itself when one finishes. Waiting games can be moved up or
+# taken out of the line; the line shows at the top of the online library.
 function Invoke-LibraryAdd($Game) {
     if ($script:libBusy.ContainsKey($Game.Id)) { return }
     $mb = [math]::Round($Game.Size / 1MB, 1)
-    $pick = Show-Choice $WizardName ("Add {0} to your games?`n`n{1} MB download. It goes into the {2} folder and shows up the next time RetroBat starts." -f $Game.Title, $mb, $Game.System) @('Add it', 'Cancel')
+    $running = @($script:libJobs | Where-Object { $_.Kind -eq 'install' }).Count + $script:libQueue.Count
+    $what = $(if ($running -gt 0) { 'It joins the download line and starts by itself when it is its turn.' } else { 'It starts downloading now.' })
+    $pick = Show-Choice $WizardName ("Add {0} to your games?`n`n{1} MB download. It goes into the {2} folder and shows up the next time RetroBat starts.`n`n{3}" -f $Game.Title, $mb, $Game.System, $what) @('Add it', 'Cancel')
     if ($pick -ne 'Add it') { return }
-    $script:libBusy[$Game.Id] = 'Downloading...'
+    $script:libBusy[$Game.Id] = 'Waiting in line...'
     $script:libDone.Remove($Game.Id)
-    Start-LibraryJob 'install' $Game
+    [void]$script:libQueue.Add($Game)
+    Log ("library: {0} joins the download line ({1} waiting)" -f $Game.Title, $script:libQueue.Count)
+    Start-LibQueue
     Render-Games
+}
+
+# Starts waiting games while fewer than $script:LibAtOnce are downloading.
+function Start-LibQueue {
+    while ($script:libQueue.Count -gt 0 -and @($script:libJobs | Where-Object { $_.Kind -eq 'install' }).Count -lt $script:LibAtOnce) {
+        $g = $script:libQueue[0]; $script:libQueue.RemoveAt(0)
+        $script:libBusy[$g.Id] = 'Downloading...'
+        Start-LibraryJob 'install' $g
+    }
+}
+
+function Move-LibQueued([string]$Id, [int]$By) {
+    for ($i = 0; $i -lt $script:libQueue.Count; $i++) {
+        if ([string]$script:libQueue[$i].Id -ne $Id) { continue }
+        $j = [math]::Max(0, [math]::Min($script:libQueue.Count - 1, $i + $By))
+        if ($j -ne $i) { $g = $script:libQueue[$i]; $script:libQueue.RemoveAt($i); $script:libQueue.Insert($j, $g) }
+        break
+    }
+    Render-Games
+}
+
+function Remove-LibQueued([string]$Id) {
+    for ($i = 0; $i -lt $script:libQueue.Count; $i++) {
+        if ([string]$script:libQueue[$i].Id -eq $Id) { Log ("library: {0} taken out of the line" -f $script:libQueue[$i].Title); $script:libQueue.RemoveAt($i); break }
+    }
+    $script:libBusy.Remove($Id)
+    Render-Games
+}
+
+# The line, drawn at the top of the online library while anything is in it.
+function Add-LibQueueBox($panel) {
+    $running = @($script:libJobs | Where-Object { $_.Kind -eq 'install' })
+    if ($running.Count -eq 0 -and $script:libQueue.Count -eq 0) { return }
+    $box = New-Object System.Windows.Controls.Border
+    $box.Background = (New-Brush $ColPanel); $box.Padding = '14,10'; $box.Margin = '0,10,0,4'; $box.CornerRadius = '6'
+    $sp = New-Object System.Windows.Controls.StackPanel
+    [void]$sp.Children.Add((New-Text ('Downloads ({0} at a time)' -f $script:LibAtOnce) $ColText 14 $true))
+    foreach ($j in $running) {
+        $t = New-Text ('{0}  -  ' -f $j.Game.Title) $ColText 13
+        try { $t.Text += (Get-LibJobProgress $j.Game) } catch { }
+        $t.Margin = '0,4,0,0'
+        $script:libBusyText[('q:' + [string]$j.Game.Id)] = $t
+        [void]$sp.Children.Add($t)
+    }
+    $n = 0
+    foreach ($g in @($script:libQueue)) {
+        $n++
+        $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,4,0,0'
+        $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
+        [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right')
+        if ($n -gt 1) {
+            $up = New-Object System.Windows.Controls.Button; $up.Content = 'Move up'; $up.Padding = '8,1'; $up.FontSize = 12; $up.Margin = '6,0,0,0'; $up.Tag = [string]$g.Id
+            $up.Add_Click({ param($s2, $e2) Move-LibQueued ([string]$s2.Tag) -1 })
+            [void]$btns.Children.Add($up)
+        }
+        $rm = New-Object System.Windows.Controls.Button; $rm.Content = 'Remove'; $rm.Padding = '8,1'; $rm.FontSize = 12; $rm.Margin = '6,0,0,0'; $rm.Tag = [string]$g.Id
+        $rm.Add_Click({ param($s2, $e2) Remove-LibQueued ([string]$s2.Tag) })
+        [void]$btns.Children.Add($rm)
+        [void]$row.Children.Add($btns)
+        [void]$row.Children.Add((New-Text ('{0}. {1}  ({2:N0} MB, waiting)' -f $n, $g.Title, ($g.Size / 1MB)) $ColDim 13))
+        [void]$sp.Children.Add($row)
+    }
+    $box.Child = $sp
+    [void]$panel.Children.Add($box)
 }
 
 function Render-Games {
@@ -6513,6 +6592,7 @@ function Render-Games {
     $lt = New-Text 'Free, homebrew and fan-made games, picked out and put online for you. Add any you like.' $ColDim 13
     $lt.TextWrapping = 'Wrap'
     [void]$panel.Children.Add($lt)
+    Add-LibQueueBox $panel
     $cat = $script:libCatalog
     # Family-friendly on: M-rated games are left out of the list (2026-10-25).
     if ($null -ne $cat -and $cat.Ok -and (Test-FamilyOn)) {

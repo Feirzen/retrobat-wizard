@@ -267,7 +267,8 @@ function Get-LibCatalog([string]$Ws) {
         foreach ($f in @($g.files)) {
             $fn = [string]$f.name
             $u = [string]$f.url
-            if ($fn -eq '' -or $fn -match '[\\/:*?"<>|]' -or $fn -match '^\.') { $bad = $true; break }
+            # 3.2: a game of several files may keep some in a folder ("Disc 1/x.bin")
+            if (-not (Test-LibRelName $fn)) { $bad = $true; break }
             if ($u -notmatch '^https://(raw\.githubusercontent\.com|github\.com)/' -and $u -notmatch '^private:[A-Za-z0-9._\-]{1,200}$') { $bad = $true; break }
             if ([string]$f.sha256 -notmatch '^[0-9a-f]{64}$') { $bad = $true; break }
             $files += [pscustomobject]@{ Name = $fn; Url = $u; Size = [long]$f.size; Sha = [string]$f.sha256 }
@@ -285,6 +286,26 @@ function Get-LibCatalog([string]$Ws) {
             }
             if ($pn -eq '' -or $pn -match '[\\/:*?"<>|]' -or $pn -match '^\.' -or [string]$g.parts.sha256 -notmatch '^[0-9a-f]{64}$' -or $pieces.Count -lt 2) { $bad = $true }
             if (-not $bad) { $files += [pscustomobject]@{ Name = $pn; Url = ''; Size = [long]$g.parts.size; Sha = [string]$g.parts.sha256; Pieces = $pieces } }
+        }
+        # 3.2: a folder game (PS3, Wii U ...): one packed file, maybe in
+        # pieces, unpacked into roms\<console>\<folder> on download.
+        if (-not $bad -and $files.Count -eq 0 -and $null -eq $g.parts -and $null -ne $g.bundle) {
+            $bd = $g.bundle
+            $bf = [string]$bd.folder
+            if (-not (Test-LibRelName $bf) -or $bf.Contains('/') -or [string]$bd.sha256 -notmatch '^[0-9a-f]{64}$') { $bad = $true }
+            $pieces = @()
+            foreach ($pc in @($bd.pieces | Where-Object { $null -ne $_ })) {
+                $u = [string]$pc.url
+                if ($u -notmatch '^private:[A-Za-z0-9._\-]{1,200}$' -or [string]$pc.sha256 -notmatch '^[0-9a-f]{64}$') { $bad = $true; break }
+                $pieces += [pscustomobject]@{ Url = $u; Size = [long]$pc.size; Sha = [string]$pc.sha256 }
+            }
+            $bu = [string]$bd.url
+            if ($pieces.Count -eq 0 -and $bu -notmatch '^private:[A-Za-z0-9._\-]{1,200}$') { $bad = $true }
+            if (-not $bad) {
+                $fo = [pscustomobject]@{ Name = ($bf + '.zip'); Url = $bu; Size = [long]$bd.size; Sha = [string]$bd.sha256; Unpack = $bf }
+                if ($pieces.Count -gt 0) { $fo | Add-Member -NotePropertyName Pieces -NotePropertyValue $pieces }
+                $files += $fo
+            }
         }
         if ($bad -or $files.Count -eq 0) { continue }
         [void]$games.Add([pscustomobject]@{
@@ -327,11 +348,90 @@ function Get-LibCatalog([string]$Ws) {
     return $res
 }
 
+# A name inside a console folder, / between folders (3.2): plain letters,
+# no part empty or starting with a dot, nothing that climbs out.
+function Test-LibRelName([string]$Name) {
+    if ($Name -eq '' -or $Name.Length -gt 200 -or $Name -match '[^\x20-\x7E]' -or $Name -match '[\\:*?"<>|]') { return $false }
+    foreach ($seg in ($Name -split '/')) { if ($seg -eq '' -or $seg.StartsWith('.') -or $seg.Trim() -ne $seg) { return $false } }
+    return $true
+}
+
+# Unpacks a folder game's .zip into $Dest (a new folder). Every name is
+# checked to stay inside $Dest. Returns @{ Ok; Message }.
+function Expand-LibBundle([string]$Zip, [string]$Dest) {
+    $res = @{ Ok = $false; Message = '' }
+    try {
+        Add-Type -AssemblyName System.IO.Compression -ErrorAction SilentlyContinue
+        Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+        if (Test-Path -LiteralPath $Dest) { Remove-Item -LiteralPath $Dest -Recurse -Force }
+        [void](New-Item -ItemType Directory -Path $Dest -Force)
+        $full = [System.IO.Path]::GetFullPath($Dest).TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+        $z = [System.IO.Compression.ZipFile]::OpenRead($Zip)
+        try {
+            $buf = New-Object byte[] (4MB)
+            foreach ($e in $z.Entries) {
+                if ($e.FullName.EndsWith('/') -or $e.Name -eq '') { continue }
+                $to = [System.IO.Path]::GetFullPath((Join-LibPath $Dest $e.FullName))
+                if (-not $to.StartsWith($full, [System.StringComparison]::OrdinalIgnoreCase)) { throw "a name in it points outside the game folder ($($e.FullName))" }
+                $pd = Split-Path $to -Parent
+                if (-not (Test-Path -LiteralPath $pd)) { [void](New-Item -ItemType Directory -Path $pd -Force) }
+                $in = $e.Open(); $out = [System.IO.File]::Create($to)
+                try { while (($n = $in.Read($buf, 0, $buf.Length)) -gt 0) { $out.Write($buf, 0, $n) } } finally { $out.Close(); $in.Close() }
+            }
+        } finally { $z.Dispose() }
+        $res.Ok = $true
+    }
+    catch {
+        $res.Message = 'Unpacking the game failed: ' + $_.Exception.Message
+        try { if (Test-Path -LiteralPath $Dest) { Remove-Item -LiteralPath $Dest -Recurse -Force } } catch { }
+    }
+    return $res
+}
+
+# The files a picked game needs with it (3.2, for publishing): a .cue's
+# tracks, a .gdi's tracks, an .m3u's discs (and their tracks), a .ccd's
+# .img/.sub, an .mds's .mdf. $Folder is the console folder; every file must
+# be inside it. Returns @{ Ok; Message; Files = @(@{ Path; Name }) }, the
+# picked file first, Name being its path inside $Folder with / between folders.
+function Get-LibGameSet([string]$File, [string]$Folder) {
+    $res = @{ Ok = $false; Message = ''; Files = @() }
+    $base = [System.IO.Path]::GetFullPath($Folder).TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+    $seen = @{}
+    $list = New-Object System.Collections.ArrayList
+    $todo = New-Object System.Collections.Queue
+    $todo.Enqueue([System.IO.Path]::GetFullPath($File))
+    while ($todo.Count -gt 0) {
+        $p = [string]$todo.Dequeue()
+        if ($seen.ContainsKey($p.ToLower())) { continue }
+        $seen[$p.ToLower()] = $true
+        if (-not $p.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)) { $res.Message = "$([System.IO.Path]::GetFileName($p)) is outside the console's folder, so the game cannot go up as it is."; return $res }
+        if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { $res.Message = "$([System.IO.Path]::GetFileName($File)) needs $([System.IO.Path]::GetFileName($p)), and it is not there."; return $res }
+        [void]$list.Add(@{ Path = $p; Name = ($p.Substring($base.Length) -replace '\\', '/') })
+        $dir = Split-Path $p -Parent
+        $ext = [System.IO.Path]::GetExtension($p).ToLower()
+        $want = @()
+        try {
+            switch ($ext) {
+                '.cue' { foreach ($l in [System.IO.File]::ReadAllLines($p)) { if ($l -match '^\s*FILE\s+"([^"]+)"' -or $l -match '^\s*FILE\s+(\S+)') { $want += $Matches[1] } } }
+                '.gdi' { $k = 0; foreach ($l in [System.IO.File]::ReadAllLines($p)) { $k++; if ($k -eq 1) { continue }; if ($l -match '^\s*\d+\s+\d+\s+\d+\s+\d+\s+"([^"]+)"' -or $l -match '^\s*\d+\s+\d+\s+\d+\s+\d+\s+(\S+)') { $want += $Matches[1] } } }
+                '.m3u' { foreach ($l in [System.IO.File]::ReadAllLines($p)) { $t = $l.Trim(); if ($t -ne '' -and -not $t.StartsWith('#')) { $want += $t } } }
+                '.ccd' { foreach ($x in @('.img', '.sub')) { $c = [System.IO.Path]::ChangeExtension($p, $x); if (Test-Path -LiteralPath $c) { $want += [System.IO.Path]::GetFileName($c) } } }
+                '.mds' { $want += [System.IO.Path]::GetFileName([System.IO.Path]::ChangeExtension($p, '.mdf')) }
+            }
+        } catch { $res.Message = "$([System.IO.Path]::GetFileName($p)) could not be read."; return $res }
+        foreach ($w in $want) { $todo.Enqueue([System.IO.Path]::GetFullPath((Join-LibPath $dir $w))) }
+    }
+    $res.Ok = $true
+    $res.Files = @($list)
+    return $res
+}
+
 # Is this library game already on the drive? (every file there, right size)
 function Test-LibGameInstalled($Game, $Systems) {
     $sys = @($Systems | Where-Object { $_.Name -eq $Game.System })
     if ($sys.Count -eq 0) { return $false }
     foreach ($f in $Game.Files) {
+        if ($null -ne $f.PSObject.Properties['Unpack']) { if (-not (Test-Path -LiteralPath (Join-LibPath $sys[0].Folder $f.Unpack) -PathType Container)) { return $false }; continue }
         $p = Join-LibPath $sys[0].Folder $f.Name
         if (-not (Test-Path -LiteralPath $p)) { return $false }
         if ((Get-Item -LiteralPath $p).Length -ne $f.Size) { return $false }
@@ -389,7 +489,7 @@ function Install-LibGame([string]$Ws, $Game, $Systems) {
     if (-not (Test-Path -LiteralPath $dl)) { [void](New-Item -ItemType Directory -Path $dl -Force) }
     $ready = @()
     foreach ($f in $Game.Files) {
-        $tmp = Join-LibPath $dl ($f.Name + '.part')
+        $tmp = Join-LibPath $dl (($f.Name -replace '/', '~') + '.part')
         if ($null -ne $f.PSObject.Properties['Pieces'] -and @($f.Pieces).Count -gt 0) {
             $j = Join-LibPieces $Ws $f $dl $tmp
             if (-not $j.Ok) { $res.Message = $j.Message; return $res }
@@ -403,12 +503,24 @@ function Install-LibGame([string]$Ws, $Game, $Systems) {
             $res.Message = "$($f.Name) did not match its checksum, so it was not added."
             return $res
         }
-        $ready += ,@($tmp, $f.Name)
+        $ready += ,@($tmp, $f.Name, $(if ($null -ne $f.PSObject.Properties['Unpack']) { [string]$f.Unpack } else { '' }))
     }
     if (-not (Test-Path -LiteralPath $sys[0].Folder)) { [void](New-Item -ItemType Directory -Path $sys[0].Folder -Force) }
     foreach ($r in $ready) {
+        if ($r[2] -ne '') {
+            # a folder game: unpack next to where it goes, then put it in place
+            $dest = Join-LibPath $sys[0].Folder $r[2]
+            if (Test-Path -LiteralPath $dest) { Remove-Item -LiteralPath $r[0] -Force; continue }
+            $u = Expand-LibBundle $r[0] ($dest + '.unpacking')
+            Remove-Item -LiteralPath $r[0] -Force -ErrorAction SilentlyContinue
+            if (-not $u.Ok) { $res.Message = $u.Message; return $res }
+            Move-Item -LiteralPath ($dest + '.unpacking') -Destination $dest
+            continue
+        }
         $dest = Join-LibPath $sys[0].Folder $r[1]
         if (Test-Path -LiteralPath $dest) { Remove-Item -LiteralPath $r[0] -Force; continue }   # never replace a file already there
+        $pd = Split-Path $dest -Parent
+        if (-not (Test-Path -LiteralPath $pd)) { [void](New-Item -ItemType Directory -Path $pd -Force) }
         Move-Item -LiteralPath $r[0] -Destination $dest
     }
     $res.Ok = $true

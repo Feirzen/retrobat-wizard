@@ -22,7 +22,7 @@ class H(BaseHTTPRequestHandler):
     # the PRIVATE repo's release, where the files now live.
     def auth(self):
         a = self.headers.get('Authorization')
-        if self.path in ('/state', '/quirk'): return True
+        if self.path in ('/state', '/quirk') or self.path.startswith('/blob/'): return True
         pub = '/repos/Feirzen/retrobat-wizard/' in self.path
         priv = '/repos/Feirzen/retrobat-wizard-social/' in self.path
         if (pub and a == 'Bearer github_pat_TEST') or (priv and a == 'Bearer github_pat_SOCIAL'):
@@ -42,6 +42,10 @@ class H(BaseHTTPRequestHandler):
         if self.path == '/state':
             return self.send(200, {'assets': list(state['assets']), 'library': json.loads(state['library']),
                                    'art': {k: v['size'] for k, v in state['art'].items()}, 'uploads': state['uploads']})
+        if self.path.startswith('/blob/'):
+            b = state.get('blobs', {}).get(urllib.parse.unquote(self.path[6:]))
+            if b is None: return self.send(404, {})
+            self.send_response(200); self.send_header('Content-Length', str(len(b))); self.end_headers(); self.wfile.write(b); return
         if self.path == '/quirk':
             state['quirk'] = True; return self.send(200, {})
         self.send(404, {})
@@ -60,6 +64,7 @@ class H(BaseHTTPRequestHandler):
             if state['quirk']: name = name.replace('__', '__x.')
             if name in state['assets']: return self.send(422, {'errors': [{'code': 'already_exists'}]})
             state['next'] += 1; state['uploads'] += 1
+            state.setdefault('blobs', {})[name] = b
             state['assets'][name] = {'id': state['next'], 'name': name, 'size': len(b), 'state': 'uploaded',
                                      'digest': 'sha256:' + hashlib.sha256(b).hexdigest()}
             return self.send(201, dict(state['assets'][name], url='https://api.github.com/repos/Feirzen/retrobat-wizard-social/releases/assets/%d' % state['next']))

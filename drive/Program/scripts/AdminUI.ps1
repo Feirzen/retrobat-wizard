@@ -242,12 +242,14 @@ function Render-Admin {
         [void]$panel.Children.Add($kb)
     }
     else {
-        $t = New-Text 'Pick one or more games from your roms folder and they go online by themselves. The name, players, description and box art come from what RetroBat already knows; it only asks for a picture when a game has none. The details and art show on the public list and website; the files stay private, so only a wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own. Any size: a game over 2 GB goes up in pieces and comes back down as one.' $ColDim 13
+        $t = New-Text 'Pick one or more games from your roms folder and they go online by themselves. The name, players, description and box art come from what RetroBat already knows; it only asks for a picture when a game has none. The details and art show on the public list and website; the files stay private, so only a wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own. Any size: a game over 2 GB goes up in pieces and comes back down as one. A game made of several files (.cue and .bin, .gdi, .m3u) takes its other files with it; a game that is a whole folder (PS3, Wii U) uses A folder game. You can add more games while the queue runs.' $ColDim 13
         [void]$panel.Children.Add($t)
         $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
-        $pb = New-SocialButton 'Publish games...' { Invoke-AdminPublish }; $pb.Margin = '0'; $pb.FontWeight = 'Bold'
-        $pb.IsEnabled = ($null -eq $script:adminLibJob)
+        $pb = New-SocialButton $(if ($null -ne $script:adminLibJob) { 'Add more games...' } else { 'Publish games...' }) { Invoke-AdminPublish }; $pb.Margin = '0'; $pb.FontWeight = 'Bold'
         [void]$row.Children.Add($pb)
+        $fb = New-SocialButton 'A folder game...' { Invoke-AdminPublishFolder }
+        $fb.ToolTip = 'For a game that is a whole folder (PS3, Wii U ...). Pick its folder.'
+        [void]$row.Children.Add($fb)
         $xb = New-SocialButton 'Remove games...' { Invoke-AdminRemove }
         $xb.IsEnabled = ($null -eq $script:adminLibJob)
         [void]$row.Children.Add($xb)
@@ -485,53 +487,126 @@ function Update-AdminQueueList {
     }
 }
 
+# 3.2 (2026-10-26): games of several files (.cue + .bin, .gdi, .m3u ...) go
+# up with all their files, folder games (PS3, Wii U ...) have their own
+# button, and more games can be added while the queue is running (Steven:
+# "add games on to a current queue of games").
+
+# The console folder a path sits in (the longest match, so gb never takes
+# gba's games), or $null.
+function Get-AdminPickSystem([string]$Path) {
+    $sys = $null; $best = 0
+    foreach ($s in @(Get-GamesSystems)) {
+        $base = ([string]$s.Folder).TrimEnd('\', '/') + '\'
+        if ($base.Length -gt $best -and $Path.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)) { $sys = $s; $best = $base.Length }
+    }
+    if ($null -eq $sys) { try { $sys = Resolve-GameConsole $Path } catch { } }
+    return $sys
+}
+
+# One picked game -> its queue item and line, asking for box art if it has
+# none. $Set: Get-LibGameSet's answer (files), or $null for a folder game.
+function New-AdminPublishItem($Sys, [string]$Path, $Set, [long]$Bytes) {
+    $info = Get-LibGamelistInfo $Sys $Path
+    $title = ([string]$info.Title).Trim()
+    $desc = (([string]$info.Description) -replace '\s+', ' ').Trim()
+    if ($desc.Length -gt 280) { $desc = $desc.Substring(0, 280); $cut = $desc.LastIndexOf(' '); if ($cut -gt 200) { $desc = $desc.Substring(0, $cut) }; $desc += '...' }
+    $art = [string]$info.Art
+    if ($art -eq '') {
+        $ans = Show-Choice $WizardName ("RetroBat has no box art for '{0}'.`n`nPick a picture for the library, or skip it and the console's picture shows instead." -f $title) @('Pick a picture', 'Skip')
+        if ($ans -eq 'Pick a picture') {
+            try {
+                $pd = New-Object Microsoft.Win32.OpenFileDialog
+                $pd.Title = "A picture for $title"
+                $pd.Filter = 'Pictures|*.png;*.jpg;*.jpeg;*.gif;*.webp'
+                $pd.InitialDirectory = [string]$Sys.Folder
+                if ($pd.ShowDialog()) { $art = $pd.FileName }
+            } catch { }
+        }
+    }
+    $it = @{ File = $Path; System = $Sys.Name; Title = $title; Players = ([string]$info.Players).Trim(); Description = $desc; Art = $art }
+    $kind = ''
+    if ($null -eq $Set) { $it.Folder = $Path; $kind = ', folder' }
+    elseif (@($Set.Files).Count -gt 1) {
+        $it.MainName = [string]$Set.Files[0].Name
+        $it.Extra = @($Set.Files | Select-Object -Skip 1 | ForEach-Object { @{ Path = [string]$_.Path; Name = [string]$_.Name } })
+        $kind = (', {0} files' -f @($Set.Files).Count)
+    }
+    $line = ('{0} ({1}, {2} MB{3}{4})' -f $title, $Sys.FullName, [math]::Round($Bytes / 1MB, 1), $kind, $(if ($art -eq '') { ', no art' } else { '' }))
+    return @{ Item = $it; Line = $line }
+}
+
 function Invoke-AdminPublish {
-    if ($null -ne $script:adminLibJob -or -not $script:gamesOk) { return }
+    if (-not $script:gamesOk) { return }
     try {
         Add-Type -AssemblyName PresentationFramework
         $dlg = New-Object Microsoft.Win32.OpenFileDialog
-        $dlg.Title = 'Choose games for the online library (pick as many as you like)'
+        $dlg.Title = $(if ($null -ne $script:adminLibJob) { 'Add games to the queue (pick as many as you like)' } else { 'Choose games for the online library (pick as many as you like)' })
         $dlg.Multiselect = $true
         $dlg.InitialDirectory = (Join-Path $Root 'roms')
         if (-not $dlg.ShowDialog()) { return }
     } catch { return }
-    $systems = @(Get-GamesSystems)
-    $items = @(); $lines = @()
+    # Work out each game's files first, so a .bin picked together with its
+    # .cue is not sent twice.
+    $sets = @(); $covered = @{}; $problems = @()
     foreach ($f in @($dlg.FileNames)) {
-        # the console folder the game sits in (the longest match, so gb never takes gba's games)
-        $sys = $null; $best = 0
-        foreach ($s in $systems) {
-            $base = ([string]$s.Folder).TrimEnd('\', '/') + '\'
-            if ($base.Length -gt $best -and $f.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)) { $sys = $s; $best = $base.Length }
-        }
-        if ($null -eq $sys) { $sys = Resolve-GameConsole $f }
-        if ($null -eq $sys) { continue }
-        $info = Get-LibGamelistInfo $sys $f
-        $title = ([string]$info.Title).Trim()
-        $desc = (([string]$info.Description) -replace '\s+', ' ').Trim()
-        if ($desc.Length -gt 280) { $desc = $desc.Substring(0, 280); $cut = $desc.LastIndexOf(' '); if ($cut -gt 200) { $desc = $desc.Substring(0, $cut) }; $desc += '...' }
-        $art = [string]$info.Art
-        if ($art -eq '') {
-            $ans = Show-Choice $WizardName ("RetroBat has no box art for '{0}'.`n`nPick a picture for the library, or skip it and the console's picture shows instead." -f $title) @('Pick a picture', 'Skip')
-            if ($ans -eq 'Pick a picture') {
-                try {
-                    $pd = New-Object Microsoft.Win32.OpenFileDialog
-                    $pd.Title = "A picture for $title"
-                    $pd.Filter = 'Pictures|*.png;*.jpg;*.jpeg;*.gif;*.webp'
-                    $pd.InitialDirectory = [string]$sys.Folder
-                    if ($pd.ShowDialog()) { $art = $pd.FileName }
-                } catch { }
-            }
-        }
-        $mb = [math]::Round((Get-Item -LiteralPath $f).Length / 1MB, 1)
-        $items += @{ File = $f; System = $sys.Name; Title = $title; Players = ([string]$info.Players).Trim(); Description = $desc; Art = $art }
-        $lines += ('{0} ({1}, {2} MB{3})' -f $title, $sys.FullName, $mb, $(if ($art -eq '') { ', no art' } else { '' }))
+        $sys = Get-AdminPickSystem $f
+        if ($null -eq $sys) { $problems += ('{0}: not in a console folder' -f [System.IO.Path]::GetFileName($f)); continue }
+        $gs = Get-LibGameSet $f ([string]$sys.Folder)
+        if (-not $gs.Ok) { $problems += $gs.Message; continue }
+        $sets += @{ Sys = $sys; File = $f; Set = $gs }
+        if (@($gs.Files).Count -gt 1) { foreach ($x in @($gs.Files | Select-Object -Skip 1)) { $covered[([string]$x.Path).ToLower()] = $true } }
     }
+    $items = @(); $lines = @()
+    foreach ($e in $sets) {
+        if ($covered.ContainsKey(([System.IO.Path]::GetFullPath($e.File)).ToLower())) { continue }   # part of another picked game
+        $bytes = [long]0; foreach ($x in @($e.Set.Files)) { $bytes += (Get-Item -LiteralPath $x.Path).Length }
+        $n = New-AdminPublishItem $e.Sys $e.File $e.Set $bytes
+        $items += $n.Item; $lines += $n.Line
+    }
+    if ($problems.Count -gt 0) { [void](Show-Choice $WizardName ("These cannot go up as they are:`n`n" + ($problems -join "`n")) @('OK')) }
     if ($items.Count -eq 0) { return }
-    $picked = Show-QueueEditor $items ([string[]]$lines)
+    Add-AdminPublishItems $items $lines
+}
+
+# A game that is a whole folder (PS3, Wii U, ...): pick the folder.
+function Invoke-AdminPublishFolder {
+    if (-not $script:gamesOk) { return }
+    $path = ''
+    try {
+        Add-Type -AssemblyName System.Windows.Forms
+        $fd = New-Object System.Windows.Forms.FolderBrowserDialog
+        $fd.Description = 'Pick the game''s own folder (for example roms\ps3\My Game.ps3). It goes up packed into one file and comes back down as the same folder.'
+        $fd.SelectedPath = (Join-Path $Root 'roms')
+        if ($fd.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) { return }
+        $path = $fd.SelectedPath
+    } catch { return }
+    $sys = Get-AdminPickSystem $path
+    if ($null -eq $sys -or ([string]$sys.Folder).TrimEnd('\', '/') -ieq $path.TrimEnd('\', '/')) {
+        [void](Show-Choice $WizardName 'Pick one game''s folder inside a console folder (roms\ps3\My Game.ps3), not the console folder itself.' @('OK')); return
+    }
+    $bytes = [long]0; try { $bytes = [long]((Get-ChildItem -LiteralPath $path -Recurse -File -Force | Measure-Object -Property Length -Sum).Sum) } catch { }
+    if ($bytes -le 0) { [void](Show-Choice $WizardName 'That folder is empty.' @('OK')); return }
+    $n = New-AdminPublishItem $sys $path $null $bytes
+    $n.Line += '  -  packed on this drive first, so it needs that much free room for a while'
+    Add-AdminPublishItems @($n.Item) @($n.Line)
+}
+
+# Starts the queue, or adds to the one already running.
+function Add-AdminPublishItems($Items, [string[]]$Lines) {
+    $picked = Show-QueueEditor $Items $Lines
     if ($null -eq $picked) { return }
     $items = @($picked)
+    if ($null -ne $script:adminLibJob) {
+        foreach ($it in $items) { [void]$script:adminLibJob.Items.Add($it) }
+        Log ("admin: added to the running queue: {0}" -f ((@($items | ForEach-Object { '{0} ({1})' -f $_.Title, $_.System })) -join ', '))
+        $script:adminLibJob.Shown = -1
+        Update-AdminQueueList
+        return
+    }
     try {
+        $queue = [System.Collections.ArrayList]::Synchronized((New-Object System.Collections.ArrayList))
+        foreach ($it in $items) { [void]$queue.Add($it) }
         $sync = [hashtable]::Synchronized(@{ Stage = 'Starting...'; Percent = 0; Prefix = ''; Current = 0; Skip = [hashtable]::Synchronized(@{}) })
         $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
         try { $iss.ExecutionPolicy = 'Bypass' } catch { }
@@ -539,9 +614,9 @@ function Invoke-AdminPublish {
         $ps = [System.Management.Automation.PowerShell]::Create(); $ps.Runspace = $rs
         [void]$ps.AddScript('param($s, $a, $ws, $items, $sync) . $s; . $a; Publish-AdminLibraryGames $ws $items $sync')
         foreach ($arg in @($script:socialLib, (Join-Path $ScriptsDir 'AdminEngine.ps1'), $Ws)) { [void]$ps.AddArgument($arg) }
-        [void]$ps.AddArgument($items); [void]$ps.AddArgument($sync)
+        [void]$ps.AddArgument($queue); [void]$ps.AddArgument($sync)
         $label = $(if ($items.Count -eq 1) { $items[0].Title } else { "$($items.Count) games" })
-        $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $label; Items = $items; Shown = -1 }
+        $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $label; Items = $queue; Shown = -1 }
         try { Start-WorkWatch } catch { }
         Log ("admin: publishing {0}: {1}" -f $label, ((@($items | ForEach-Object { '{0} ({1})' -f $_.Title, $_.System })) -join ', '))
         $script:adminLibTimer = New-Object System.Windows.Threading.DispatcherTimer
@@ -604,6 +679,7 @@ function Invoke-AdminPublishTick {
             if ($null -ne $script:adminLibText) {
                 $txt = [string]$j.Sync.Stage
                 if ($txt -eq 'Uploading...') { $txt = 'Uploading... {0}%' -f $j.Sync.Percent }
+                if ($txt -like 'Packing the folder*') { $txt = 'Packing the folder into one file... {0}%' -f $j.Sync.Percent }
                 $script:adminLibText.Text = ([string]$j.Sync.Prefix) + $txt
             }
             if ([int]$j.Sync.Current -ne [int]$j.Shown) { $j.Shown = [int]$j.Sync.Current; Update-AdminQueueList }

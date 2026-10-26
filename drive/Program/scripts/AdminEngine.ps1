@@ -244,6 +244,26 @@ function ConvertTo-AdminLibraryJson($Note, $Games) {
             }
             [void]$sb.Append("`n      ] }")
         }
+        # 3.2: a folder game, packed into one file (maybe in pieces). "files"
+        # stays empty, so older wizards leave it out.
+        if ($null -ne $g.bundle -and [string]$g.bundle.folder -ne '') {
+            $bd = $g.bundle
+            [void]$sb.Append(",`n      `"bundle`": { `"folder`": " + (ConvertTo-AdminJsonString ([string]$bd.folder)) + ', "name": ' + (ConvertTo-AdminJsonString ([string]$bd.name)) +
+                ', "size": ' + ([long]$bd.size) + ', "sha256": ' + (ConvertTo-AdminJsonString ([string]$bd.sha256)))
+            if (@($bd.pieces | Where-Object { $null -ne $_ }).Count -gt 0) {
+                [void]$sb.Append(', "pieces": [')
+                $pf = $true
+                foreach ($pc in @($bd.pieces)) {
+                    if (-not $pf) { [void]$sb.Append(',') }
+                    $pf = $false
+                    [void]$sb.Append("`n        { `"name`": " + (ConvertTo-AdminJsonString $pc.name) + ', "url": ' + (ConvertTo-AdminJsonString $pc.url) +
+                        ', "size": ' + ([long]$pc.size) + ', "sha256": ' + (ConvertTo-AdminJsonString $pc.sha256) + ' }')
+                }
+                [void]$sb.Append("`n      ] }")
+            }
+            else { [void]$sb.Append(', "url": ' + (ConvertTo-AdminJsonString ([string]$bd.url)) + ' }') }
+        }
+        if ([string]$g.min -ne '') { [void]$sb.Append(",`n      `"min`": " + (ConvertTo-AdminJsonString ([string]$g.min))) }
         [void]$sb.Append("`n    }")
     }
     [void]$sb.Append("`n  ]`n}`n")
@@ -422,7 +442,19 @@ function Send-AdminLibPieces([string]$Fkey, [string]$Fapi, [string]$Frepo, $RelO
 #      repo's library\art\. A picture that fails never stops the game.
 #   5. add the game to the PUBLIC library\library.json (replacing one with
 #      the same id), its file written as "private:<name>"
-function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '') {
+#
+# 3.2 (2026-10-26, Steven: "psx games ... folders" could not go up):
+#   $Extra   the other files of a game that is several files (a .cue and its
+#            .bin tracks, a .gdi and its tracks, an .m3u and its discs):
+#            @(@{ Path; Name }), Name being the path inside the console
+#            folder with / between folders. $File is then the main file and
+#            $MainName its own path inside the console folder.
+#   $Bundle  a game that is a whole folder (PS3, Wii U ...): $File is that
+#            folder packed into one .zip (New-AdminFolderZip) and $Bundle the
+#            folder's name. The wizard that downloads it unpacks it again.
+# Either kind is left out of the list by wizards older than 3.2 (they do not
+# read a name with / in it, or a "bundle"), so nobody gets half a game.
+function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '', $Extra = $null, [string]$MainName = '', [string]$Bundle = '') {
     $res = @{ Ok = $false; Message = '' }
     $key = Get-AdminLibKey $Ws
     if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
@@ -436,6 +468,18 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $leaf = [System.IO.Path]::GetFileName($File)
     if ($leaf -match '[^\x20-\x7E]' -or $leaf -match '[\\/:*?"<>|]') { $res.Message = 'Rename the file to plain letters and numbers first.'; return $res }
     $len = (Get-Item -LiteralPath $File).Length
+    $extras = @(@($Extra) | Where-Object { $null -ne $_ })
+    $mainName = $(if ($extras.Count -gt 0 -and $MainName -ne '') { $MainName } else { $leaf })
+    foreach ($nm in @(@($mainName) + @($extras | ForEach-Object { [string]$_.Name }))) {
+        if (-not (Test-AdminLibRelName $nm)) { $res.Message = "Rename '$nm' to plain letters and numbers first (no folder or file name may start with a dot)."; return $res }
+    }
+    if ($Bundle -ne '' -and -not (Test-AdminLibRelName $Bundle)) { $res.Message = "Rename the folder '$Bundle' to plain letters and numbers first."; return $res }
+    foreach ($ex in $extras) {
+        if (-not (Test-Path -LiteralPath ([string]$ex.Path) -PathType Leaf)) { $res.Message = "$($ex.Name) is gone."; return $res }
+        if ((Get-Item -LiteralPath ([string]$ex.Path)).Length -gt $script:AdminPieceSize) { $res.Message = "$($ex.Name) is over 1.9 GB. A game made of several files can go up only when each file is under that."; return $res }
+    }
+    if ($extras.Count -gt 0 -and $len -gt $script:AdminPieceSize) { $res.Message = "$mainName is over 1.9 GB. A game made of several files can go up only when each file is under that."; return $res }
+    if ($extras.Count -gt 60) { $res.Message = 'That game has too many files (over 60). Pack it as a folder game instead.'; return $res }
     # GitHub takes files under 2 GB. A bigger game goes up in pieces of
     # $script:AdminPieceSize and is glued back together by the wizard that
     # downloads it (2026-10-13). Nothing about it looks different anywhere.
@@ -506,6 +550,32 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     if (-not $split -and $upName -notmatch '^[A-Za-z0-9._\-]{1,200}$') { $res.Message = 'GitHub took the file but answered with an odd name. Press Publish again: a file that is already up is not sent twice.'; return $res }
     $dlUrl = 'private:' + $upName
 
+    # The rest of a game made of several files, each as its own private file.
+    $extraOut = @()
+    $relNow = $null
+    foreach ($ex in $extras) {
+        $ep = [string]$ex.Path
+        $Sync.Stage = ('Fingerprinting {0}...' -f $ex.Name); $Sync.Percent = 0
+        $esha = (Get-FileHash -LiteralPath $ep -Algorithm SHA256).Hash.ToLower()
+        $elen = (Get-Item -LiteralPath $ep).Length
+        $eAsset = Get-AdminLibAssetName $id ([string]$ex.Name)
+        if ($eAsset -eq $asset) { $eAsset = Get-AdminLibAssetName $id ('x.' + [string]$ex.Name) }
+        if ($null -eq $relNow) { $rr = Invoke-AdminLibApi $fkey 'GET' "$fapi/releases/tags/library"; $relNow = $(if ($rr.Status -eq 200) { $rr.Body | ConvertFrom-Json } else { $relObj }) }
+        $eUp = ''
+        foreach ($a in (Get-AdminLibAssets $relNow)) {
+            if ([string]$a.name -ne $eAsset) { continue }
+            if ([string]$a.state -eq 'uploaded' -and [string]$a.digest -eq ('sha256:' + $esha) -and [long]$a.size -eq $elen) { $eUp = [string]$a.name }
+            else { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)") }
+        }
+        if ($eUp -eq '') {
+            $u = Send-AdminUpload $fkey $fapi $frepo $relObj.id $eAsset $ep 0 $elen $esha $Sync ('Uploading ' + [string]$ex.Name)
+            if (-not $u.Ok) { $res.Message = $u.Message + ' Press Publish again: files already up are not sent twice.'; return $res }
+            $eUp = $u.Name
+        }
+        if ($eUp -notmatch '^[A-Za-z0-9._\-]{1,200}$') { $res.Message = 'GitHub took a file but answered with an odd name. Press Publish again.'; return $res }
+        $extraOut += [pscustomobject]@{ name = ([string]$ex.Name); url = ('private:' + $eUp); size = $elen; sha256 = $esha }
+    }
+
     $artPath = ''
     if ($Art -ne '') {
         $Sync.Stage = 'Adding the box art...'
@@ -521,7 +591,19 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $old = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -eq $id })
     if ($artPath -eq '' -and $old.Count -gt 0) { $artPath = [string]$old[0].art }
     $games = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -ne $id })
-    if ($split) {
+    if ($Bundle -ne '') {
+        # a folder game: one packed file (maybe in pieces), unpacked on download
+        $bz = [ordered]@{ folder = $Bundle; name = $leaf; size = $len; sha256 = $sha }
+        if ($split) { $bz.pieces = @($pieces | ForEach-Object { [pscustomobject]@{ name = ($leaf + ('.part{0:D2}' -f $_.Index)); url = ('private:' + $_.UpName); size = $_.Size; sha256 = $_.Sha } }) }
+        else { $bz.url = $dlUrl }
+        $games += [pscustomobject]@{
+            id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
+            added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
+            files = @(); min = '3.2.0'
+            bundle = [pscustomobject]$bz
+        }
+    }
+    elseif ($split) {
         $games += [pscustomobject]@{
             id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
             added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
@@ -534,8 +616,9 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $games += [pscustomobject]@{
         id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
         added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
-        files = @([pscustomobject]@{ name = $leaf; url = $dlUrl; size = $len; sha256 = $sha })
+        files = @(@([pscustomobject]@{ name = $mainName; url = $dlUrl; size = $len; sha256 = $sha }) + $extraOut)
     }
+    if ($extras.Count -gt 0) { $games[-1] | Add-Member -NotePropertyName min -NotePropertyValue '3.2.0' }
     }
     $games = @($games | Sort-Object @{ Expression = { [string]$_.system } }, @{ Expression = { ([string]$_.title).ToLower() } })
     $json = ConvertTo-AdminLibraryJson ([string]$cur.note) $games
@@ -548,6 +631,7 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     if ($again.Status -eq 200) {
         $keepNames = @{ $upName = $true }
         if ($split) { foreach ($pc in $pieces) { $keepNames[$pc.UpName] = $true } }
+        foreach ($xo in $extraOut) { $keepNames[([string]$xo.url).Substring(8)] = $true }
         foreach ($a in (Get-AdminLibAssets ($again.Body | ConvertFrom-Json))) {
             if (-not $keepNames.ContainsKey([string]$a.name) -and ([string]$a.name).StartsWith($id + '__')) { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)") }
         }
@@ -555,6 +639,54 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $Sync.Percent = 100
     $res.Ok = $true
     $res.Message = "$($Title.Trim()) is in the online library. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)."
+    return $res
+}
+
+# A name inside a console folder, / between folders: plain letters only, no
+# part empty or starting with a dot, nothing that climbs out (..).
+function Test-AdminLibRelName([string]$Name) {
+    if ($Name -eq '' -or $Name.Length -gt 200 -or $Name -match '[^\x20-\x7E]' -or $Name -match '[\\:*?"<>|]') { return $false }
+    foreach ($seg in ($Name -split '/')) { if ($seg -eq '' -or $seg.StartsWith('.') -or $seg.Trim() -ne $seg) { return $false } }
+    return $true
+}
+
+# Packs a folder game into one .zip, stored as is (no squeezing: disc data
+# barely shrinks and this is much faster). Names inside use /. $Sync shows
+# how far it has got. Returns @{ Ok; Message }.
+function New-AdminFolderZip([string]$Folder, [string]$OutZip, $Sync) {
+    $res = @{ Ok = $false; Message = '' }
+    try {
+        Add-Type -AssemblyName System.IO.Compression -ErrorAction SilentlyContinue
+        Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+        $base = (Get-Item -LiteralPath $Folder).FullName.TrimEnd('\', '/')
+        $all = @(Get-ChildItem -LiteralPath $base -Recurse -File -Force -ErrorAction Stop)
+        if ($all.Count -eq 0) { $res.Message = 'That folder is empty.'; return $res }
+        $total = [double](($all | Measure-Object -Property Length -Sum).Sum); $done = 0.0
+        $dir = Split-Path $OutZip -Parent
+        if (-not (Test-Path -LiteralPath $dir)) { [void](New-Item -ItemType Directory -Path $dir -Force) }
+        if (Test-Path -LiteralPath $OutZip) { Remove-Item -LiteralPath $OutZip -Force }
+        $fs = [System.IO.File]::Open($OutZip, 'CreateNew')
+        $zip = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Create)
+        try {
+            $buf = New-Object byte[] (4MB)
+            foreach ($f in $all) {
+                $rel = $f.FullName.Substring($base.Length).TrimStart('\', '/') -replace '\\', '/'
+                $e = $zip.CreateEntry($rel, [System.IO.Compression.CompressionLevel]::NoCompression)
+                $out = $e.Open(); $in = [System.IO.File]::OpenRead($f.FullName)
+                try {
+                    while (($n = $in.Read($buf, 0, $buf.Length)) -gt 0) {
+                        $out.Write($buf, 0, $n); $done += $n
+                        if ($null -ne $Sync -and $total -gt 0) { $Sync.Percent = [int](100 * $done / $total) }
+                    }
+                } finally { $in.Close(); $out.Close() }
+            }
+        } finally { $zip.Dispose(); $fs.Close() }
+        $res.Ok = $true
+    }
+    catch {
+        $res.Message = 'Packing the folder failed: ' + $_.Exception.Message
+        try { if (Test-Path -LiteralPath $OutZip) { Remove-Item -LiteralPath $OutZip -Force } } catch { }
+    }
     return $res
 }
 
@@ -585,25 +717,47 @@ function Send-AdminLibArt([string]$Key, [string]$Api, [string]$Id, [string]$Art)
 # @{ File; System; Title; Players; Description; Art }. Each one is published
 # on its own, so one that fails never stops the rest. $Sync.Prefix says which
 # game it is on ("Game 2 of 5: "). Returns @{ Ok; Message; Done; Failed }.
+#
+# 3.2: $Items may be a (synchronized) ArrayList the window keeps adding to
+# while this runs (Steven: "add games on to a current queue"); every pass
+# looks at how long it is now. An item may also carry Extra + MainName (a
+# game of several files) or Folder (a folder game, packed here first into
+# Cache\library\packing and the pack deleted afterwards).
 function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
-    $list = @($Items | Where-Object { $null -ne $_ })
     $done = @(); $failed = @(); $lastMsg = ''
     $n = 0
     $skipped = @()
-    foreach ($it in $list) {
+    while ($n -lt @($Items).Count) {
+        $it = $Items[$n]
         $n++
+        $list = @($Items)
+        if ($null -eq $it) { continue }
         # (2026-10-17) A game crossed off the queue while others upload.
         if ($null -ne $Sync.Skip -and $Sync.Skip.ContainsKey([string]$n)) { $skipped += [string]$it.Title; continue }
         $Sync.Current = $n
         $Sync.Prefix = $(if ($list.Count -gt 1) { "Game $n of $($list.Count): " } else { '' })
         $Sync.Percent = 0
-        $r = Publish-AdminLibraryGame $Ws ([string]$it.File) ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art)
+        if ([string]$it.Folder -ne '') {
+            $packDir = Join-Path $Ws 'Cache\library\packing'
+            $zipPath = Join-Path $packDir ((Get-AdminLibId ([string]$it.Title)) + '.zip')
+            $Sync.Stage = 'Packing the folder into one file...'
+            $pk = New-AdminFolderZip ([string]$it.Folder) $zipPath $Sync
+            if ($pk.Ok) {
+                $r = Publish-AdminLibraryGame $Ws $zipPath ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art) $null '' (Split-Path ([string]$it.Folder) -Leaf)
+            }
+            else { $r = @{ Ok = $false; Message = $pk.Message } }
+            try { if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force } } catch { }
+        }
+        else {
+            $r = Publish-AdminLibraryGame $Ws ([string]$it.File) ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art) $it.Extra ([string]$it.MainName)
+        }
         if ($r.Ok) { $done += [string]$it.Title } else { $failed += ('{0}: {1}' -f $it.Title, $r.Message); if ($lastMsg -eq '') { $lastMsg = [string]$r.Message } }
         # A missing key stops every game the same way: say it once.
         if (-not $r.Ok -and ($r.Message -like '*library key*' -or $r.Message -like '*friends key*')) { break }
     }
     $Sync.Prefix = ''
     $Sync.Current = 0
+    $list = @($Items | Where-Object { $null -ne $_ })
     $res = @{ Ok = ($failed.Count -eq 0 -and $done.Count -gt 0); Done = $done; Failed = $failed; Message = '' }
     if ($list.Count -eq 1) {
         $res.Message = $(if ($res.Ok) { "$($done[0]) is in the online library, and GitHub's copy was checked against the file here. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)." } elseif ($skipped.Count -gt 0) { 'Crossed off, nothing was sent.' } else { $lastMsg })
@@ -629,6 +783,7 @@ function Get-AdminLibUsedNames($Games) {
         if ($null -eq $g) { continue }
         $all = @($g.files)
         if ($null -ne $g.parts) { $all += @($g.parts.pieces) }
+        if ($null -ne $g.bundle) { $all += @($g.bundle); $all += @($g.bundle.pieces) }
         foreach ($f in $all) {
             if ($null -eq $f) { continue }
             $u = [string]$f.url
