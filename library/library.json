@@ -417,6 +417,18 @@
       ] }
     },
     {
+      "id": "scribblenauts-unlimited",
+      "title": "Scribblenauts Unlimited",
+      "system": "3ds",
+      "players": "1",
+      "description": "Created and developed by 5TH Cell, Scribblenauts Unlimited features a huge side-scrolling open world with new, high-definition hand-drawn scenery and objects where players can help the game's hero, Maxwell, solve robust puzzles and challenges by summoning any object they can...",
+      "added": "2026-10-26",
+      "art": "library/art/scribblenauts-unlimited.png",
+      "files": [
+        { "name": "Scribblenauts Unlimited (USA) (En,Fr,Es,Pt).cci", "url": "private:scribblenauts-unlimited__Scribblenauts.Unlimited.USA.En.Fr.Es.Pt.cci", "size": 536870912, "sha256": "2b80a8f0df8629cef55d4d870f529293cab0497dbbb32e2e1c52fd60a4aabca8" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
@@ -2830,18 +2842,6 @@
         { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part04", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part04", "size": 1992294400, "sha256": "b13549aec735ab582d5f7554ba89dea7a1af6fde3c7240b060fb8e742f3ab6d1" },
         { "name": "Rayman Legends (USA) (En,Fr,Es).wux.part05", "url": "private:rayman-legends__Rayman.Legends.USA.En.Fr.Es.wux.part05", "size": 339542016, "sha256": "799a25e8e3bc80059d03614093d013ad483096d4ced21762c0b220005aa709af" }
       ] }
-    },
-    {
-      "id": "scribblenauts-unlimited",
-      "title": "Scribblenauts Unlimited",
-      "system": "wiiu",
-      "players": "1-4",
-      "description": "Scribblenauts Unlimited features a huge side-scrolling open world with new, high-definition hand-drawn scenery and objects where players can help the game's hero, Maxwell, solve robust puzzles and challenges by summoning any object they can imagine. And for the first time,...",
-      "added": "2026-10-25",
-      "art": "library/art/scribblenauts-unlimited.jpg",
-      "files": [
-        { "name": "Scribblenauts Unlimited (USA) (En,Fr,Es,Pt).wux", "url": "private:scribblenauts-unlimited__Scribblenauts.Unlimited.USA.En.Fr.Es.Pt.wux", "size": 1543438336, "sha256": "2b429bd29a305ff32da5411042ce9cdf63d0e2952c6d99c78424a8c51fd74a24" }
-      ]
     },
     {
       "id": "shovel-knight",
