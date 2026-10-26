@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "double-dragon-ii-the-revenge",
+      "title": "Double Dragon II : The Revenge",
+      "system": "nes",
+      "players": "1-2",
+      "description": "The lovely Marian was rescued from the clutches of the Black Warriors gang by Billy & Jimmy Lee in the first Double Dragon game, but now the gang has killed her in retaliation of their early defeat. The Dragons must now embark on a mission to avenge her death and defeat the...",
+      "added": "2026-10-26",
+      "art": "library/art/double-dragon-ii-the-revenge.png",
+      "video": "library/video/double-dragon-ii-the-revenge.mp4",
+      "files": [
+        { "name": "Double Dragon II - The Revenge (USA) (Rev 1).nes", "url": "private:double-dragon-ii-the-revenge__Double.Dragon.II.-.The.Revenge.USA.Rev.1.nes", "size": 262160, "sha256": "3e08783757936ddcf4a6ad3f8dd901dda227269e34a56608237172f480702752" }
+      ]
+    },
+    {
       "id": "dr-mario",
       "title": "Dr. Mario",
       "system": "nes",
