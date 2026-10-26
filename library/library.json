@@ -2969,6 +2969,23 @@
       "min": "3.2.0"
     },
     {
+      "id": "the-legend-of-zelda-twilight-princess-hd",
+      "title": "The Legend of Zelda Twilight Princess HD [AZAP01]",
+      "system": "wiiu",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/the-legend-of-zelda-twilight-princess-hd.jpg",
+      "files": [
+      ],
+      "bundle": { "folder": "The Legend of Zelda Twilight Princess HD [AZAP01]", "name": "the-legend-of-zelda-twilight-princess-hd.zip", "size": 4631802305, "sha256": "7d80234f8cc8490057888acc31612ae1e228dd1725bd577ba5eccfbce6402030", "pieces": [
+        { "name": "the-legend-of-zelda-twilight-princess-hd.zip.part01", "url": "private:the-legend-of-zelda-twilight-princess-hd__the-legend-of-zelda-twilight-princess-hd.zip.part01", "size": 1992294400, "sha256": "a9c1a8a2cce1f871d300c1be267d7df1cb928c4aa1e6c43f3bf229adcbbe54ff" },
+        { "name": "the-legend-of-zelda-twilight-princess-hd.zip.part02", "url": "private:the-legend-of-zelda-twilight-princess-hd__the-legend-of-zelda-twilight-princess-hd.zip.part02", "size": 1992294400, "sha256": "bf352ac0fd8a359003878b6c71b1b65ae9c2f03f8f9e6e43a6e1f80e472d2998" },
+        { "name": "the-legend-of-zelda-twilight-princess-hd.zip.part03", "url": "private:the-legend-of-zelda-twilight-princess-hd__the-legend-of-zelda-twilight-princess-hd.zip.part03", "size": 647213505, "sha256": "c1c0fc8c650d554884ecc5caa8010658ec6fd02c48e027a780a19819f15e2ebc" }
+      ] },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
