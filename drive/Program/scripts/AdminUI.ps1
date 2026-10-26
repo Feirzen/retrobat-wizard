@@ -242,14 +242,11 @@ function Render-Admin {
         [void]$panel.Children.Add($kb)
     }
     else {
-        $t = New-Text 'Pick one or more games from your roms folder and they go online by themselves. The name, players, description and box art come from what RetroBat already knows; it only asks for a picture when a game has none. The details and art show on the public list and website; the files stay private, so only a wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own. Any size: a game over 2 GB goes up in pieces and comes back down as one. A game made of several files (.cue and .bin, .gdi, .m3u) takes its other files with it; a game that is a whole folder (PS3, Wii U) uses A folder game. You can add more games while the queue runs.' $ColDim 13
+        $t = New-Text 'Pick one or more games from your roms folder and they go online by themselves. The name, players, description and box art come from what RetroBat already knows; it only asks for a picture when a game has none. The details and art show on the public list and website; the files stay private, so only a wizard can download them. Only games that may be shared: homebrew, freeware, fan-made, your own. Any size: a game over 2 GB goes up in pieces and comes back down as one. Files and folder games (PS3, Wii U, PlayStation folders) are picked from the same list; a game made of several files (.cue and .bin, .gdi, .m3u) takes its other files with it. You can add more games while the queue runs.' $ColDim 13
         [void]$panel.Children.Add($t)
         $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
         $pb = New-SocialButton $(if ($null -ne $script:adminLibJob) { 'Add more games...' } else { 'Publish games...' }) { Invoke-AdminPublish }; $pb.Margin = '0'; $pb.FontWeight = 'Bold'
         [void]$row.Children.Add($pb)
-        $fb = New-SocialButton 'A folder game...' { Invoke-AdminPublishFolder }
-        $fb.ToolTip = 'For a game that is a whole folder (PS3, Wii U ...). Pick its folder.'
-        [void]$row.Children.Add($fb)
         $xb = New-SocialButton 'Remove games...' { Invoke-AdminRemove }
         $xb.IsEnabled = ($null -eq $script:adminLibJob)
         [void]$row.Children.Add($xb)
@@ -524,7 +521,7 @@ function New-AdminPublishItem($Sys, [string]$Path, $Set, [long]$Bytes) {
             } catch { }
         }
     }
-    $it = @{ File = $Path; System = $Sys.Name; Title = $title; Players = ([string]$info.Players).Trim(); Description = $desc; Art = $art }
+    $it = @{ File = $Path; System = $Sys.Name; Title = $title; Players = ([string]$info.Players).Trim(); Description = $desc; Art = $art; Video = [string]$info.Video }
     $kind = ''
     if ($null -eq $Set) { $it.Folder = $Path; $kind = ', folder' }
     elseif (@($Set.Files).Count -gt 1) {
@@ -532,24 +529,121 @@ function New-AdminPublishItem($Sys, [string]$Path, $Set, [long]$Bytes) {
         $it.Extra = @($Set.Files | Select-Object -Skip 1 | ForEach-Object { @{ Path = [string]$_.Path; Name = [string]$_.Name } })
         $kind = (', {0} files' -f @($Set.Files).Count)
     }
-    $line = ('{0} ({1}, {2} MB{3}{4})' -f $title, $Sys.FullName, [math]::Round($Bytes / 1MB, 1), $kind, $(if ($art -eq '') { ', no art' } else { '' }))
+    $line = ('{0} ({1}, {2} MB{3}{4}{5})' -f $title, $Sys.FullName, [math]::Round($Bytes / 1MB, 1), $kind, $(if ($art -eq '') { ', no art' } else { '' }), $(if ([string]$info.Video -ne '') { ', with video' } else { '' }))
     return @{ Item = $it; Line = $line }
+}
+
+# The publish picker (3.2, Steven: "the window to choose a folder game is
+# itty bitty"; "select a normal file OR a folder game from the same button";
+# more than one folder at a time). Consoles on the left; on the right that
+# console's games, files and folders alike, each with a tick box. Ticks are
+# kept while moving between consoles. Returns @{ Files; Folders } or $null.
+function Show-PublishPicker {
+    Close-Splash
+    $script:ppTicked = [ordered]@{}
+    $script:ppSystems = @(Get-GamesSystems | Where-Object { Test-Path -LiteralPath ([string]$_.Folder) } | Sort-Object FullName)
+    if ($script:ppSystems.Count -eq 0) { [void](Show-Choice $WizardName 'No console folders were found in roms.' @('OK')); return $null }
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 1000; $w.Height = 700; $w.MinWidth = 700; $w.MinHeight = 480
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+    $hd = New-Text 'Pick games for the online library: files and folder games alike, from any console. Tick as many as you like. Only games that may be shared: homebrew, freeware, fan-made, your own.' $ColText 14
+    $hd.Margin = '0,0,0,10'; $hd.TextWrapping = 'Wrap'
+    [System.Windows.Controls.DockPanel]::SetDock($hd, 'Top'); [void]$dp.Children.Add($hd)
+    $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($row, 'Bottom')
+    $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
+    [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right')
+    $script:ppOk = $false; $script:ppWin = $w
+    $cn = New-Object System.Windows.Controls.Button; $cn.Content = 'Cancel'; $cn.Padding = '16,7'; $cn.FontSize = 14
+    $cn.Add_Click({ $script:ppWin.Close() })
+    $script:ppGo = New-Object System.Windows.Controls.Button; $script:ppGo.Content = 'Next'; $script:ppGo.Padding = '16,7'; $script:ppGo.FontSize = 14; $script:ppGo.Margin = '8,0,0,0'; $script:ppGo.IsEnabled = $false
+    $script:ppGo.Add_Click({ $script:ppOk = $true; $script:ppWin.Close() })
+    [void]$btns.Children.Add($cn); [void]$btns.Children.Add($script:ppGo)
+    [void]$row.Children.Add($btns)
+    $script:ppCount = New-Text 'Nothing ticked yet.' $ColDim 13; $script:ppCount.VerticalAlignment = 'Center'
+    [void]$row.Children.Add($script:ppCount)
+    [void]$dp.Children.Add($row)
+    $g = New-Object System.Windows.Controls.Grid
+    $c1 = New-Object System.Windows.Controls.ColumnDefinition; $c1.Width = '260'
+    $c2 = New-Object System.Windows.Controls.ColumnDefinition
+    [void]$g.ColumnDefinitions.Add($c1); [void]$g.ColumnDefinitions.Add($c2)
+    $script:ppCons = New-Object System.Windows.Controls.ListBox; $script:ppCons.FontSize = 14
+    $script:ppCons.Background = (New-Brush $ColPanel); $script:ppCons.Foreground = (New-Brush $ColText); $script:ppCons.BorderThickness = '0'; $script:ppCons.Margin = '0,0,12,0'
+    foreach ($sy in $script:ppSystems) { $li = New-Object System.Windows.Controls.ListBoxItem; $li.Content = [string]$sy.FullName; $li.Tag = $sy; $li.Padding = '8,4'; [void]$script:ppCons.Items.Add($li) }
+    [System.Windows.Controls.Grid]::SetColumn($script:ppCons, 0); [void]$g.Children.Add($script:ppCons)
+    $right = New-Object System.Windows.Controls.DockPanel
+    $script:ppFilter = New-Object System.Windows.Controls.TextBox; $script:ppFilter.FontSize = 14; $script:ppFilter.Padding = '6,3'; $script:ppFilter.Margin = '0,0,0,8'; $script:ppFilter.ToolTip = 'Type to narrow the list'
+    [System.Windows.Controls.DockPanel]::SetDock($script:ppFilter, 'Top'); [void]$right.Children.Add($script:ppFilter)
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
+    $script:ppList = New-Object System.Windows.Controls.StackPanel
+    $sv.Content = $script:ppList; [void]$right.Children.Add($sv)
+    [System.Windows.Controls.Grid]::SetColumn($right, 1); [void]$g.Children.Add($right)
+    [void]$dp.Children.Add($g)
+    $script:ppCons.Add_SelectionChanged({ Update-PublishPickerList })
+    $script:ppFilter.Add_TextChanged({ Update-PublishPickerList })
+    $w.Content = $dp
+    $script:ppCons.SelectedIndex = 0
+    [void]$w.ShowDialog()
+    if (-not $script:ppOk -or $script:ppTicked.Count -eq 0) { return $null }
+    $files = @(); $folders = @()
+    foreach ($k in $script:ppTicked.Keys) { if ($script:ppTicked[$k]) { $folders += $k } else { $files += $k } }
+    return @{ Files = $files; Folders = $folders }
+}
+
+function Update-PublishPickerList {
+    $script:ppList.Children.Clear()
+    $sel = $script:ppCons.SelectedItem
+    if ($null -eq $sel) { return }
+    $dir = [string]$sel.Tag.Folder
+    $q = ([string]$script:ppFilter.Text).Trim().ToLower()
+    $skip = @('images', 'videos', 'manuals', 'media', 'downloaded_images', 'downloaded_videos', 'marquees', 'thumbnails', 'screenshots', 'saves')
+    $noGame = @('.xml', '.txt', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.mp4', '.pdf', '.nfo', '.ini', '.cfg', '.srm', '.sav')
+    $n = 0
+    foreach ($it in @(Get-ChildItem -LiteralPath $dir -Force -ErrorAction SilentlyContinue | Sort-Object Name)) {
+        if ($it.Name.StartsWith('.')) { continue }
+        if ($it.PSIsContainer -and $skip -contains $it.Name.ToLower()) { continue }
+        if (-not $it.PSIsContainer -and $noGame -contains $it.Extension.ToLower()) { continue }
+        if ($q -ne '' -and -not $it.Name.ToLower().Contains($q)) { continue }
+        $n++
+        if ($n -gt 400) { [void]$script:ppList.Children.Add((New-Text 'Showing the first 400. Type in the box above to narrow it down.' $ColDim 12)); break }
+        $cb = New-Object System.Windows.Controls.CheckBox
+        $cb.Foreground = (New-Brush $ColText); $cb.FontSize = 14; $cb.Margin = '0,3,0,3'
+        $cb.Content = $(if ($it.PSIsContainer) { '[folder]  ' + $it.Name } else { '{0}   ({1:N0} MB)' -f $it.Name, ($it.Length / 1MB) })
+        $cb.Tag = @($it.FullName, [bool]$it.PSIsContainer)
+        $cb.IsChecked = $script:ppTicked.Contains($it.FullName)
+        $cb.Add_Checked({ param($s2, $e2) $script:ppTicked[[string]$s2.Tag[0]] = [bool]$s2.Tag[1]; Update-PublishPickerCount })
+        $cb.Add_Unchecked({ param($s2, $e2) if ($script:ppTicked.Contains([string]$s2.Tag[0])) { $script:ppTicked.Remove([string]$s2.Tag[0]) }; Update-PublishPickerCount })
+        [void]$script:ppList.Children.Add($cb)
+    }
+    if ($n -eq 0) { [void]$script:ppList.Children.Add((New-Text 'Nothing here.' $ColDim 13)) }
+}
+
+function Update-PublishPickerCount {
+    $c = $script:ppTicked.Count
+    $script:ppCount.Text = $(if ($c -eq 0) { 'Nothing ticked yet.' } elseif ($c -eq 1) { '1 game ticked.' } else { ('{0} games ticked.' -f $c) })
+    $script:ppGo.IsEnabled = ($c -gt 0)
 }
 
 function Invoke-AdminPublish {
     if (-not $script:gamesOk) { return }
-    try {
-        Add-Type -AssemblyName PresentationFramework
-        $dlg = New-Object Microsoft.Win32.OpenFileDialog
-        $dlg.Title = $(if ($null -ne $script:adminLibJob) { 'Add games to the queue (pick as many as you like)' } else { 'Choose games for the online library (pick as many as you like)' })
-        $dlg.Multiselect = $true
-        $dlg.InitialDirectory = (Join-Path $Root 'roms')
-        if (-not $dlg.ShowDialog()) { return }
-    } catch { return }
+    # (3.2) one big picker for files AND folder games, as many as you like
+    $pick = Show-PublishPicker
+    if ($null -eq $pick) { return }
     # Work out each game's files first, so a .bin picked together with its
     # .cue is not sent twice.
     $sets = @(); $covered = @{}; $problems = @()
-    foreach ($f in @($dlg.FileNames)) {
+    $folderItems = @(); $folderLines = @()
+    foreach ($d in @($pick.Folders)) {
+        $sys = Get-AdminPickSystem $d
+        if ($null -eq $sys) { $problems += ('{0}: not in a console folder' -f (Split-Path $d -Leaf)); continue }
+        $bytes = [long]0; try { $bytes = [long]((Get-ChildItem -LiteralPath $d -Recurse -File -Force | Measure-Object -Property Length -Sum).Sum) } catch { }
+        if ($bytes -le 0) { $problems += ('{0}: the folder is empty' -f (Split-Path $d -Leaf)); continue }
+        $n0 = New-AdminPublishItem $sys $d $null $bytes
+        $folderItems += $n0.Item; $folderLines += ($n0.Line + '  -  packed on this drive first')
+    }
+    foreach ($f in @($pick.Files)) {
         $sys = Get-AdminPickSystem $f
         if ($null -eq $sys) { $problems += ('{0}: not in a console folder' -f [System.IO.Path]::GetFileName($f)); continue }
         $gs = Get-LibGameSet $f ([string]$sys.Folder)
@@ -564,6 +658,7 @@ function Invoke-AdminPublish {
         $n = New-AdminPublishItem $e.Sys $e.File $e.Set $bytes
         $items += $n.Item; $lines += $n.Line
     }
+    $items += $folderItems; $lines += $folderLines
     if ($problems.Count -gt 0) { [void](Show-Choice $WizardName ("These cannot go up as they are:`n`n" + ($problems -join "`n")) @('OK')) }
     if ($items.Count -eq 0) { return }
     Add-AdminPublishItems $items $lines

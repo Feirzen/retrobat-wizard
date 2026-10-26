@@ -40,7 +40,7 @@ try {
     Assert ($by.ContainsKey('snes\Odd.qqq') -and $by['snes\Odd.qqq'].Fix -eq '' -and $by['snes\Odd.qqq'].Reason -like '*reads .sfc*') 'unknown type: found, says what the console reads, no fix'
     Assert (-not $by.ContainsKey('snes\readme.txt') -and -not $by.ContainsKey('snes\images\Good-image.png')) 'notes and art are not games'
     Assert ($by['snes\Secret.sfc'].Kind -eq 'hidden' -and $by['snes\Secret.sfc'].Fix -eq 'unhide') 'hidden by hand: can be shown'
-    Assert ($by['snes\Bad Game.sfc'].Kind -eq 'family' -and $by['snes\Bad Game.sfc'].Fix -eq '') 'hidden by family-friendly: left alone'
+    Assert (-not $by.ContainsKey('snes\Bad Game.sfc') -and $found.Family -eq 1) 'hidden by family-friendly: counted, not listed'
     Assert (-not $by.ContainsKey('psx\Hero.bin')) 'a cue''s track is part of its game'
     Assert (-not $by.ContainsKey('ps3\Quest.ps3\PS3_GAME\USRDIR\EBOOT.BIN')) 'the inside of a folder game is not looked at'
     Assert ($by['Loose.n64'].Kind -eq 'loose' -and $by['Loose.n64'].To -eq 'n64') 'loose in roms: found, moves to n64'

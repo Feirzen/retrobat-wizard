@@ -74,6 +74,14 @@ try {
     $used = Get-AdminLibUsedNames $st.library.games
     Assert (@($st.assets | Where-Object { -not $used.ContainsKey($_) }).Count -eq 0) ('every upload is in use, none left over: ' + (@($st.assets) -join ','))
 
+    # (3.2) a video preview: sent once, listed, kept on a republish without one
+    $vid = Join-Path $tmp 'hero.mp4'; [IO.File]::WriteAllBytes($vid, [byte[]](0,0,0,24,102,116,121,112,1,2,3))
+    $rv = Publish-AdminLibraryGame $ws "$psx/Hero.cue" 'psx' 'Hero' '1' 'Cue.' $sync '' @($gs.Files | Select-Object -Skip 1) 'Hero.cue' '' $vid
+    $stv = Invoke-RestMethod "http://127.0.0.1:$port/state"
+    Assert ($rv.Ok -and (@($stv.library.games | Where-Object id -eq 'hero')[0]).video -eq 'library/video/hero.mp4' -and $stv.art.'library/video/hero.mp4' -eq 11) 'video preview uploaded and listed'
+    $rv2 = Publish-AdminLibraryGame $ws "$psx/Hero.cue" 'psx' 'Hero' '1' 'Cue.' $sync '' @($gs.Files | Select-Object -Skip 1) 'Hero.cue'
+    $stv = Invoke-RestMethod "http://127.0.0.1:$port/state"
+    Assert ((@($stv.library.games | Where-Object id -eq 'hero')[0]).video -eq 'library/video/hero.mp4') 'republish without a video keeps the old one'
     # publishing the cue game again sends nothing twice
     $up0 = $st.uploads
     $r2 = Publish-AdminLibraryGame $ws "$psx/Hero.cue" 'psx' 'Hero' '1' 'Cue.' $sync '' @($gs.Files | Select-Object -Skip 1) 'Hero.cue'

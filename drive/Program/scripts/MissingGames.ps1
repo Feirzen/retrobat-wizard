@@ -44,20 +44,25 @@ function Get-MgReferenced([string]$Folder) {
 # Every game file under a folder, skipping RetroBat's art folders and the
 # inside of folder games (a .ps3 folder is one game). @(FileInfo/DirInfo).
 function Get-MgCandidates([string]$Folder, $Exts) {
-    $out = New-Object System.Collections.ArrayList
-    $stack = New-Object System.Collections.Stack
-    $stack.Push($Folder)
-    while ($stack.Count -gt 0) {
-        $d = [string]$stack.Pop()
-        foreach ($sub in @(Get-ChildItem -LiteralPath $d -Directory -Force -ErrorAction SilentlyContinue)) {
-            if ($sub.Name.StartsWith('.') -or $script:MgSkipDirs -contains $sub.Name.ToLower()) { continue }
-            $sx = [System.IO.Path]::GetExtension($sub.Name).ToLower()
-            if ($sx -ne '' -and $Exts -contains $sx) { continue }   # a folder game: RetroBat lists the folder itself
-            $stack.Push($sub.FullName)
-        }
-        foreach ($f in @(Get-ChildItem -LiteralPath $d -File -Force -ErrorAction SilentlyContinue)) { [void]$out.Add($f) }
+    # 3.2 (Steven's test found 7316 "missing" things): a game's own folder
+    # is full of data files (PC ports, Xbox 360 and PS3 games, Half-Life).
+    # So: files at the console's top level are each looked at; a sub-folder
+    # holding at least one game file is looked at for its game files only;
+    # a sub-folder with no game file at all is ONE find, not one per file.
+    $files = New-Object System.Collections.ArrayList
+    $folders = New-Object System.Collections.ArrayList
+    foreach ($f in @(Get-ChildItem -LiteralPath $Folder -File -Force -ErrorAction SilentlyContinue)) { [void]$files.Add($f) }
+    foreach ($sub in @(Get-ChildItem -LiteralPath $Folder -Directory -Force -ErrorAction SilentlyContinue)) {
+        if ($sub.Name.StartsWith('.') -or $script:MgSkipDirs -contains $sub.Name.ToLower()) { continue }
+        $sx = [System.IO.Path]::GetExtension($sub.Name).ToLower()
+        if ($sx -ne '' -and $Exts -contains $sx) { continue }   # a folder game: RetroBat lists the folder itself
+        $all = @(Get-ChildItem -LiteralPath $sub.FullName -Recurse -File -Force -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '[\\/](images|videos|manuals|media)[\\/]' })
+        $game = @($all | Where-Object { $Exts -contains $_.Extension.ToLower() })
+        if ($game.Count -gt 0) { foreach ($g in $game) { [void]$files.Add($g) }; continue }
+        $other = @($all | Where-Object { $script:MgNotGames -notcontains $_.Extension.ToLower() })
+        if ($other.Count -gt 0) { [void]$folders.Add(@{ Dir = $sub; Count = $other.Count }) }
     }
-    return @($out)
+    return @{ Files = @($files); Folders = @($folders) }
 }
 
 # Paths (as the game list writes them, "./x.iso") hidden in a console's
@@ -78,7 +83,7 @@ function Get-MgHiddenPaths([string]$GameList) {
 #   @{ Path; Show (the path from roms\); Console; Kind; Reason; Fix; To }
 #   Fix is '' (nothing to press), 'move' (To = the console folder) or 'unhide'.
 function Find-MissingGames([string]$Root, [string]$Ws) {
-    $res = @{ Items = @(); Consoles = 0; Message = '' }
+    $res = @{ Items = @(); Consoles = 0; Message = ''; Family = 0 }
     $roms = Join-LibPath $Root 'roms'
     if (-not (Test-Path -LiteralPath $roms)) { $res.Message = 'There is no roms folder.'; return $res }
     $systems = @(Get-LibSystems $Root)
@@ -125,7 +130,12 @@ function Find-MissingGames([string]$Root, [string]$Ws) {
         $exts = @($sys.Extensions)
         $ref = Get-MgReferenced $d.FullName
         $hidden = Get-MgHiddenPaths (Join-Path $d.FullName 'gamelist.xml')
-        foreach ($f in @(Get-MgCandidates $d.FullName $exts)) {
+        $cand = Get-MgCandidates $d.FullName $exts
+        foreach ($fd in @($cand.Folders)) {
+            [void]$items.Add(@{ Path = $fd.Dir.FullName; Show = ((& $show $fd.Dir.FullName) + '\'); Console = $sys.Name; Kind = 'nogame'
+                Reason = ('A folder with {0} file(s), none of a type {1} reads ({2}).' -f $fd.Count, $sys.FullName, (($exts | Select-Object -First 8) -join ' ')); Fix = ''; To = ''; ToFolder = '' })
+        }
+        foreach ($f in @($cand.Files)) {
             if ($f.Name -eq 'gamelist.xml' -or $f.Name.StartsWith('.')) { continue }
             $ext = $f.Extension.ToLower()
             $low = $f.FullName.ToLower()
@@ -134,7 +144,7 @@ function Find-MissingGames([string]$Root, [string]$Ws) {
             if ($exts -contains $ext) {
                 if ($hidden.ContainsKey($glPath.ToLower())) {
                     if ($family.ContainsKey(($d.Name + '|' + $glPath).ToLower())) {
-                        [void]$items.Add(@{ Path = $f.FullName; Show = (& $show $f.FullName); Console = $sys.Name; Kind = 'family'; Reason = 'Hidden by family-friendly, on purpose. Switch family-friendly off (Features page) to see it.'; Fix = ''; To = ''; ToFolder = '' })
+                        $res.Family++   # hidden on purpose: counted, not listed
                     }
                     else {
                         [void]$items.Add(@{ Path = $f.FullName; Show = (& $show $f.FullName); Console = $sys.Name; Kind = 'hidden'; Reason = 'Hidden in RetroBat''s game list (someone hid it).'; Fix = 'unhide'; To = $glPath; ToFolder = '' })
@@ -143,6 +153,11 @@ function Find-MissingGames([string]$Root, [string]$Ws) {
                 continue
             }
             if ($script:MgNotGames -contains $ext) { continue }
+            if ($sys.Name -eq 'scummvm' -and @('.iso', '.bin', '.cue') -contains $ext) {
+                [void]$items.Add(@{ Path = $f.FullName; Show = (& $show $f.FullName); Console = $sys.Name; Kind = 'scummvm'
+                    Reason = 'A ScummVM disc needs a small .scummvm file beside it saying which game it is. Drag the disc onto _Wizard\Buttons\Add-ScummVM-Disc.bat and it makes one.'; Fix = ''; To = ''; ToFolder = '' })
+                continue
+            }
             $to = & $guess $f.FullName
             if ($null -ne $to -and $to.Name -eq $sys.Name) { $to = $null }
             [void]$items.Add(@{ Path = $f.FullName; Show = (& $show $f.FullName); Console = $sys.Name; Kind = 'wrongtype'
@@ -151,7 +166,8 @@ function Find-MissingGames([string]$Root, [string]$Ws) {
         }
     }
     $res.Items = @($items)
-    $res.Message = $(if ($items.Count -eq 0) { ('Every game in {0} console folders shows in RetroBat.' -f $res.Consoles) } else { ('{0} thing(s) RetroBat is not showing.' -f $items.Count) })
+    $fam = $(if ($res.Family -gt 0) { (' ({0} more hidden by family-friendly on purpose, not listed.)' -f $res.Family) } else { '' })
+    $res.Message = $(if ($items.Count -eq 0) { ('Every game in {0} console folders shows in RetroBat.{1}' -f $res.Consoles, $fam) } else { ('{0} thing(s) RetroBat is not showing.{1}' -f $items.Count, $fam) })
     return $res
 }
 

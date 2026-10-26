@@ -34,7 +34,7 @@ class H(BaseHTTPRequestHandler):
         if not self.auth(): return
         if self.path.endswith('/releases/tags/library'):
             return self.send(404, {}) if state['release'] is None else self.send(200, self.rel())
-        if '/contents/library/art/' in self.path:
+        if ('/contents/library/art/' in self.path or '/contents/library/video/' in self.path):
             a = state['art'].get(self.path.split('/contents/')[1])
             return self.send(404, {}) if a is None else self.send(200, {'sha': a['sha']})
         if self.path.endswith('/contents/library/library.json'):
@@ -71,7 +71,7 @@ class H(BaseHTTPRequestHandler):
         self.send(404, {})
     def do_DELETE(self):
         if not self.auth(): return
-        if '/contents/library/art/' in self.path:
+        if ('/contents/library/art/' in self.path or '/contents/library/video/' in self.path):
             path = self.path.split('/contents/')[1]
             old = state['art'].get(path)
             if old is None: return self.send(404, {})
@@ -84,7 +84,7 @@ class H(BaseHTTPRequestHandler):
     def do_PUT(self):
         if not self.auth(): return
         b = json.loads(self.body())
-        if '/contents/library/art/' in self.path:
+        if ('/contents/library/art/' in self.path or '/contents/library/video/' in self.path):
             path = self.path.split('/contents/')[1]
             old = state['art'].get(path)
             if old is not None and b.get('sha') != old['sha']: return self.send(422, {})

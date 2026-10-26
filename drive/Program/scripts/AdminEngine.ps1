@@ -220,6 +220,7 @@ function ConvertTo-AdminLibraryJson($Note, $Games) {
         [void]$sb.Append('      "description": ' + (ConvertTo-AdminJsonString $g.description) + ",`n")
         [void]$sb.Append('      "added": ' + (ConvertTo-AdminJsonString $g.added) + ",`n")
         if ([string]$g.art -ne '') { [void]$sb.Append('      "art": ' + (ConvertTo-AdminJsonString $g.art) + ",`n") }
+        if ([string]$g.video -ne '') { [void]$sb.Append('      "video": ' + (ConvertTo-AdminJsonString $g.video) + ",`n") }
         [void]$sb.Append('      "files": [')
         $ff = $true
         foreach ($f in @($g.files)) {
@@ -454,7 +455,7 @@ function Send-AdminLibPieces([string]$Fkey, [string]$Fapi, [string]$Frepo, $RelO
 #            folder's name. The wizard that downloads it unpacks it again.
 # Either kind is left out of the list by wizards older than 3.2 (they do not
 # read a name with / in it, or a "bundle"), so nobody gets half a game.
-function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '', $Extra = $null, [string]$MainName = '', [string]$Bundle = '') {
+function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [string]$Title, [string]$Players, [string]$Description, $Sync, [string]$Art = '', $Extra = $null, [string]$MainName = '', [string]$Bundle = '', [string]$Video = '') {
     $res = @{ Ok = $false; Message = '' }
     $key = Get-AdminLibKey $Ws
     if ($key -eq '') { $res.Message = 'There is no library key in this setup yet.'; return $res }
@@ -582,6 +583,14 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
         $artPath = Send-AdminLibArt $key $api $id $Art
     }
 
+    # (3.2) its scraped video, public beside the art. Publishing a game that
+    # is already up sends only this when the video was missing.
+    $vidPath = ''
+    if ($Video -ne '') {
+        $Sync.Stage = 'Adding the video preview...'
+        $vidPath = Send-AdminLibVideo $key $api $id $Video
+    }
+
     $Sync.Stage = 'Adding it to the library list...'
     $lib = Invoke-AdminLibApi $key 'GET' "$api/contents/library/library.json"
     if ($lib.Status -ne 200) { $res.Message = "The file is up, but the library list could not be read ($($lib.Status)). Try Publish again."; return $res }
@@ -590,6 +599,7 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     # No new picture this time: keep the one it already had.
     $old = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -eq $id })
     if ($artPath -eq '' -and $old.Count -gt 0) { $artPath = [string]$old[0].art }
+    if ($vidPath -eq '' -and $old.Count -gt 0) { $vidPath = [string]$old[0].video }
     $games = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -ne $id })
     if ($Bundle -ne '') {
         # a folder game: one packed file (maybe in pieces), unpacked on download
@@ -598,7 +608,7 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
         else { $bz.url = $dlUrl }
         $games += [pscustomobject]@{
             id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
-            added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
+            added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath; video = $vidPath
             files = @(); min = '3.2.0'
             bundle = [pscustomobject]$bz
         }
@@ -606,7 +616,7 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     elseif ($split) {
         $games += [pscustomobject]@{
             id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
-            added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
+            added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath; video = $vidPath
             files = @()
             parts = [pscustomobject]@{ name = $leaf; size = $len; sha256 = $sha
                 pieces = @($pieces | ForEach-Object { [pscustomobject]@{ name = ($leaf + ('.part{0:D2}' -f $_.Index)); url = ('private:' + $_.UpName); size = $_.Size; sha256 = $_.Sha } }) }
@@ -615,7 +625,7 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     else {
     $games += [pscustomobject]@{
         id = $id; title = $Title.Trim(); system = $System; players = $Players.Trim(); description = $Description.Trim()
-        added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath
+        added = (Get-Date -Format 'yyyy-MM-dd'); art = $artPath; video = $vidPath
         files = @(@([pscustomobject]@{ name = $mainName; url = $dlUrl; size = $len; sha256 = $sha }) + $extraOut)
     }
     if ($extras.Count -gt 0) { $games[-1] | Add-Member -NotePropertyName min -NotePropertyValue '3.2.0' }
@@ -640,6 +650,35 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     $res.Ok = $true
     $res.Message = "$($Title.Trim()) is in the online library. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)."
     return $res
+}
+
+# A game's video preview in the PUBLIC repo at library/video/<id>.mp4 (3.2).
+# Returns that path, or '' (missing, not an .mp4, over 40 MB, or refused).
+# The same video already up is not sent again.
+function Send-AdminLibVideo([string]$Key, [string]$Api, [string]$Id, [string]$Video) {
+    try {
+        if (-not (Test-Path -LiteralPath $Video)) { return '' }
+        if (([System.IO.Path]::GetExtension($Video)).ToLower() -ne '.mp4') { return '' }
+        $bytes = [System.IO.File]::ReadAllBytes($Video)
+        if ($bytes.Length -eq 0 -or $bytes.Length -gt 40MB) { return '' }
+        $rel = 'library/video/' + $Id + '.mp4'
+        $shaPart = ''
+        $have = Invoke-AdminLibApi $Key 'GET' "$Api/contents/$rel"
+        if ($have.Status -eq 200) {
+            $ho = $have.Body | ConvertFrom-Json
+            # git's own fingerprint of the file: same bytes, nothing to send
+            $hdr = [System.Text.Encoding]::ASCII.GetBytes('blob ' + $bytes.Length + [char]0)
+            $sha1 = [System.Security.Cryptography.SHA1]::Create()
+            [void]$sha1.TransformBlock($hdr, 0, $hdr.Length, $null, 0); [void]$sha1.TransformFinalBlock($bytes, 0, $bytes.Length)
+            $git = (($sha1.Hash | ForEach-Object { $_.ToString('x2') }) -join '')
+            if ([string]$ho.sha -eq $git) { return $rel }
+            $shaPart = ',"sha":"' + [string]$ho.sha + '"'
+        }
+        $body = '{"message":' + (ConvertTo-AdminJsonString ('library: video for ' + $Id)) + ',"content":"' + [Convert]::ToBase64String($bytes) + '"' + $shaPart + '}'
+        $put = Invoke-AdminLibApi $Key 'PUT' "$Api/contents/$rel" $body
+        if ($put.Status -eq 200 -or $put.Status -eq 201) { return $rel }
+    } catch { }
+    return ''
 }
 
 # A name inside a console folder, / between folders: plain letters only, no
@@ -743,13 +782,13 @@ function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
             $Sync.Stage = 'Packing the folder into one file...'
             $pk = New-AdminFolderZip ([string]$it.Folder) $zipPath $Sync
             if ($pk.Ok) {
-                $r = Publish-AdminLibraryGame $Ws $zipPath ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art) $null '' (Split-Path ([string]$it.Folder) -Leaf)
+                $r = Publish-AdminLibraryGame $Ws $zipPath ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art) $null '' (Split-Path ([string]$it.Folder) -Leaf) ([string]$it.Video)
             }
             else { $r = @{ Ok = $false; Message = $pk.Message } }
             try { if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force } } catch { }
         }
         else {
-            $r = Publish-AdminLibraryGame $Ws ([string]$it.File) ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art) $it.Extra ([string]$it.MainName)
+            $r = Publish-AdminLibraryGame $Ws ([string]$it.File) ([string]$it.System) ([string]$it.Title) ([string]$it.Players) ([string]$it.Description) $Sync ([string]$it.Art) $it.Extra ([string]$it.MainName) '' ([string]$it.Video)
         }
         if ($r.Ok) { $done += [string]$it.Title } else { $failed += ('{0}: {1}' -f $it.Title, $r.Message); if ($lastMsg -eq '') { $lastMsg = [string]$r.Message } }
         # A missing key stops every game the same way: say it once.
@@ -854,13 +893,15 @@ function Remove-AdminLibraryGames([string]$Ws, [string[]]$GameIds, $Leftovers = 
     $problems = 0
     # their box art (only ever our own library/art/ files)
     foreach ($g in $gone) {
-        $art = [string]$g.art
-        if ($art -notmatch '^library/art/[A-Za-z0-9._\-]+$') { continue }
-        $have = Invoke-AdminLibApi $key 'GET' "$api/contents/$art"
-        if ($have.Status -ne 200) { continue }
-        $body = '{"message":' + (ConvertTo-AdminJsonString ('library: remove art for ' + [string]$g.id)) + ',"sha":"' + [string](($have.Body | ConvertFrom-Json).sha) + '"}'
-        $d = Invoke-AdminLibApi $key 'DELETE' "$api/contents/$art" $body
-        if ($d.Status -ne 200) { $problems++ }
+        # (3.2) and its video preview
+        foreach ($art in @([string]$g.art, [string]$g.video)) {
+            if ($art -notmatch '^library/(art|video)/[A-Za-z0-9._\-]+$') { continue }
+            $have = Invoke-AdminLibApi $key 'GET' "$api/contents/$art"
+            if ($have.Status -ne 200) { continue }
+            $body = '{"message":' + (ConvertTo-AdminJsonString ('library: remove ' + $art)) + ',"sha":"' + [string](($have.Body | ConvertFrom-Json).sha) + '"}'
+            $d = Invoke-AdminLibApi $key 'DELETE' "$api/contents/$art" $body
+            if ($d.Status -ne 200) { $problems++ }
+        }
     }
 
     # their private files, any older copy of them, and the leftovers

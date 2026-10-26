@@ -564,7 +564,7 @@ function New-LibPublishEntry([string]$Ws, [string]$File, [string]$System, [strin
 # description, and its box art (Art: a full path, or '' when there is none).
 # Works for games in sub-folders too (2026-10-11, for the multi-upload).
 function Get-LibGamelistInfo($System, [string]$File) {
-    $out = @{ Title = [System.IO.Path]::GetFileNameWithoutExtension($File); Players = ''; Description = ''; Art = '' }
+    $out = @{ Title = [System.IO.Path]::GetFileNameWithoutExtension($File); Players = ''; Description = ''; Art = ''; Video = '' }
     $gl = Join-LibPath $System.Folder 'gamelist.xml'
     if (-not (Test-Path -LiteralPath $gl)) { return $out }
     try {
@@ -585,6 +585,12 @@ function Get-LibGamelistInfo($System, [string]$File) {
                     if ($rel -eq '') { continue }
                     $full = $(if ($rel.StartsWith('./') -or $rel.StartsWith('.\')) { Join-LibPath $System.Folder $rel.Substring(2) } else { $rel })
                     if (Test-Path -LiteralPath $full) { $out.Art = $full; break }
+                }
+                # (3.2) the scraped video, for the library's preview
+                $vr = [string]$g.video
+                if ($vr -ne '') {
+                    $vf = $(if ($vr.StartsWith('./') -or $vr.StartsWith('.\')) { Join-LibPath $System.Folder $vr.Substring(2) } else { $vr })
+                    if (Test-Path -LiteralPath $vf) { $out.Video = $vf }
                 }
                 break
             }

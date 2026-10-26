@@ -197,3 +197,16 @@ Doom 3: BFG Edition
 ;
 ; --- PC and Steam ----------------------------------------------------------------------
 Helldivers 2
+; --- added 3.2 (2026-10-26): M-rated games found on Steven's setup ---
+Metal Gear Solid*
+Mortal Kombat*
+Tom Clancy's Rainbow Six*
+Tom Clancy's Splinter Cell: Chaos Theory
+Ninja Gaiden Black
+Fable
+Fable II
+Fable III
+Dead or Alive: Ultimate
+Jade Empire
+The Elder Scrolls V: Skyrim*
+Natural Selection 2

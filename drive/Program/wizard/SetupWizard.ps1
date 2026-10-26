@@ -4031,12 +4031,14 @@ function Get-PadWords([int]$Bits) {
 function Update-ControllerRows {
     try {
         [void][RBPad]::Poll()
-        $list = @([RBPad]::List())
-        $sig = ($list -join ';')
+        $list = @(@([RBPad]::List()) | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })
+        # (3.2) never '' : with nothing plugged in the list used to match the
+        # starting value and the "No controllers" line was never drawn
+        $sig = 'pads:' + ($list -join ';')
         if ($sig -ne $script:ctlSig) {
             $script:ctlSig = $sig; $script:ctlRows = @{}
             $script:ctlList.Children.Clear()
-            if ($list.Count -eq 0) { [void]$script:ctlList.Children.Add((New-Text 'No controllers found. Plug one in or switch it on; it shows up here by itself.' $ColAway 14)) }
+            if ($list.Count -eq 0) { [void]$script:ctlList.Children.Add((New-Text 'No controller connected. Plug one in or switch it on, and it shows up here by itself.' $ColAway 15)) }
             $n = 0
             foreach ($ln in $list) {
                 $n++
@@ -4138,6 +4140,9 @@ function Initialize-TitleBar {
         [System.Windows.Controls.DockPanel]::SetDock($bar, 'Top')
         $dp = New-Object System.Windows.Controls.DockPanel
         $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
+        # 3.2 (Steven): the buttons belong on the right. Being the panel's only
+        # child it filled the bar and sat left, whatever its dock said.
+        $btns.HorizontalAlignment = 'Right'
         [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right')
         $script:tbMax = $null
         # Windows' own button shapes (the Segoe MDL2 Assets font every
@@ -4149,7 +4154,8 @@ function Initialize-TitleBar {
             $b = New-Object System.Windows.Controls.Button
             $b.Content = $b0[1]; $b.Tag = $b0[0]; $b.ToolTip = $b0[2]; $b.Uid = 'busy-ok'
             $b.Width = 46; $b.Height = $barH; $b.FontSize = 11; $b.FontFamily = $glyphFont; $b.BorderThickness = '0'; $b.Padding = '0'
-            $b.Background = [System.Windows.Media.Brushes]::Transparent; $b.Foreground = (New-Brush $gold); $b.Focusable = $false
+            # the X is red all the time, with a red glow (3.2, Steven)
+            $b.Background = [System.Windows.Media.Brushes]::Transparent; $b.Foreground = (New-Brush $(if ($b0[0] -eq 'close') { '#FFE0524D' } else { $gold })); $b.Focusable = $false
             $glow = $(if ($b0[0] -eq 'close') { '#FFFF4A3D' } else { $gold })
             $tint = $(if ($b0[0] -eq 'close') { '#33FF4A3D' } else { '#26' + $gold.Substring(3) })
             $fg = $(if ($b0[0] -eq 'close') { '#FFFF6B5E' } else { $gold })
@@ -4208,7 +4214,8 @@ function Initialize-NewLook {
             RailHome = @('home', 'play', 1, ''); RailGames = @('games', 'games', 1, ''); RailSocial = @('social', 'profile', 1, '')
             RailOnline = @('online', 'netplay', 1, ''); RailSaves = @('saves', 'saves', 1, ''); RailSettings = @('settings', 'settings', 1, '')
             RailHelp = @('help', 'help', 1, ''); RailAdmin = @('admin', 'admin', 1, ''); RailControllers = @('', '', 1, '')
-            TileGames = @('', 'games', 2, 'home'); TileSocial = @('', 'profile', 2, 'home'); TileSaves = @('', 'saves', 2, 'home'); TileSettings = @('', 'settings', 2, 'home')
+            TileGames = @('', 'games', 2, 'home'); TileSocial = @('', 'profile', 2, 'home'); TileSaves = @('', 'saves', 2, 'home'); TileOnline = @('', 'netplay', 2, 'home')
+            HomeGear = @('', 'settings', 1, '')
             HubMachine = @('', 'machine', 2, 'hub'); HubFeatures = @('', 'features', 2, 'hub'); HubHealth = @('', 'health', 2, 'hub'); HubHelp = @('', 'help', 2, 'hub')
         }
         foreach ($name in $map.Keys) {
@@ -4232,6 +4239,12 @@ function Initialize-NewLook {
                 if ($m[3] -eq 'hub')  { [void]$script:hubIcons.Add($img) }
             }
             if ($m[0] -ne '') { $script:railButtons[$m[0]] = $b; $script:railIcons[$m[0]] = $img }
+            # 3.2 (Steven): the cursor over a tile or tab keeps its picture
+            # moving; leaving lets it finish its loop and rest.
+            if ($null -ne $img) {
+                $b.Add_MouseEnter({ param($s2, $e2) try { $i2 = $script:win.FindName([string]$s2.Name + 'Icon'); $lp = $script:iconLoops[[string]$i2.GetHashCode()]; if ($null -ne $lp) { $lp.Mode = 'always' } } catch { } })
+                $b.Add_MouseLeave({ param($s2, $e2) try { $i2 = $script:win.FindName([string]$s2.Name + 'Icon'); $lp = $script:iconLoops[[string]$i2.GetHashCode()]; $on = $false; try { $pg = Get-RailArea; $on = ($pg -ne 'play' -and $script:RailOf.ContainsKey($pg) -and $script:railButtons[$script:RailOf[$pg]] -eq $s2) } catch { }; if ($null -ne $lp -and -not $on) { $lp.Mode = 'once' } } catch { } })
+            }
         }
         # "< Settings" on the settings pages
         foreach ($bn in @('BackMachine', 'BackFeatures', 'BackHealth')) {
@@ -4288,6 +4301,15 @@ function Initialize-NewLook {
         $script:footMachineText = $script:win.FindName('FootMachineText')
         $script:footVersion    = $script:win.FindName('FootVersion')
         $script:footVersionText = $script:win.FindName('FootVersionText')
+        # 3.2: the controller list lives as a small chip here, not on the side tabs
+        $fp = $script:win.FindName('FootPad')
+        if ($null -ne $fp) {
+            $fp.Uid = 'busy-ok'
+            $fp.Add_Click({ Open-ControllerList })
+            $fpi = $script:win.FindName('FootPadIcon')
+            $fpb = Get-PixelBitmap (Join-Path $WizardDir 'icon-controller.png')
+            if ($null -ne $fpi -and $null -ne $fpb) { $fpi.Source = $fpb }
+        }
         $script:footAlert      = $script:win.FindName('FootAlert')
         $script:footAlertText  = $script:win.FindName('FootAlertText')
         foreach ($pair in @(@($script:footHealth, 'health'), @($script:footWho, 'profile'), @($script:footMachine, 'machine'), @($script:footVersion, 'help'))) {
@@ -4534,6 +4556,9 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
           <Button x:Name="FootAlert" Style="{StaticResource FootChip}" Visibility="Collapsed">
             <TextBlock x:Name="FootAlertText" Foreground="#FFE5B83B" FontWeight="Bold"/>
           </Button>
+          <Button x:Name="FootPad" Style="{StaticResource FootChip}" ToolTip="Controllers">
+            <Image x:Name="FootPadIcon" Width="16" Height="16" Stretch="Fill" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+          </Button>
           <Button x:Name="FootVersion" Style="{StaticResource FootChip}" ToolTip="Help, updates and what changed">
             <TextBlock x:Name="FootVersionText"/>
           </Button>
@@ -4645,7 +4670,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             <TextBlock Text="Settings" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>
-        <Button x:Name="RailControllers" Style="{StaticResource RailButton}">
+        <Button x:Name="RailControllers" Style="{StaticResource RailButton}" Visibility="Collapsed">
           <StackPanel Orientation="Horizontal">
             <Image x:Name="RailControllersIcon" Stretch="None" Margin="0,0,12,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-controller"/>
             <TextBlock Text="Controllers" VerticalAlignment="Center"/>
@@ -4809,13 +4834,13 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                   <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Backups, and going back to an earlier save." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
-              <Button x:Name="TileSettings" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
+              <Button x:Name="TileOnline" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
                 <Grid>
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                  <Image x:Name="TileSettingsIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-gears"/>
-                  <TextBlock Grid.Column="1" Text="Settings" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="This computer, this setup, health checks." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                  <Image x:Name="TileOnlineIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-mirror"/>
+                  <TextBlock Grid.Column="1" Text="Play online" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Play with friends over the internet." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
             </UniformGrid>
@@ -4839,9 +4864,15 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
           <StackPanel x:Name="LightsPanel" Grid.Row="2" Margin="110,0,160,20" Visibility="Collapsed"/>
           <!-- One way to say something (Steven, 2026-10-14): bugs, ideas and
                game requests all start here. -->
-          <TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,28,18" FontSize="14">
-            <Hyperlink x:Name="FeedbackLink" Foreground="#FFE5B83B" FontWeight="Bold">Send feedback</Hyperlink>
-          </TextBlock>
+          <!-- 3.2: Settings is a gear here, beside Send feedback (Steven). -->
+          <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,22,8">
+            <TextBlock VerticalAlignment="Center" Margin="0,0,14,0" FontSize="14">
+              <Hyperlink x:Name="FeedbackLink" Foreground="#FFE5B83B" FontWeight="Bold">Send feedback</Hyperlink>
+            </TextBlock>
+            <Button x:Name="HomeGear" Style="{StaticResource IconButton}" ToolTip="Settings">
+              <Image x:Name="HomeGearIcon" Stretch="None" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-gears"/>
+            </Button>
+          </StackPanel>
         </Grid>
       </TabItem>
       <!-- The tab's own pixel icon. Stretch="None" keeps it at its real
@@ -5125,7 +5156,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                   <Image x:Name="HubFeaturesIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-floppy"/>
-                  <TextBlock Grid.Column="1" Text="This setup" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Column="1" Text="Features" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
                   <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="The extras this setup adds on top of RetroBat." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
@@ -10686,7 +10717,11 @@ function Get-KeyboardGames {
         $out += [pscustomobject]@{ Label = $(if ($nm) { $nm } else { $f.BaseName }) + '   (Flash)'; Leaf = $f.Name; Ini = 'flash-games.ini'; Name = $(if ($nm) { $nm } else { $f.BaseName }) }
     }
     $wl = Join-Path $Root 'roms\windows'
-    foreach ($f in @(Get-ChildItem -LiteralPath $wl -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -match '^\.(bat|url|lnk)$' })) {
+    # (3.2) plus any other PC game that has been given keys ("Add a game")
+    $wIni = Join-Path $Ws 'Settings\browser-games.ini'
+    $wHas = @{}
+    if (Test-Path -LiteralPath $wIni) { foreach ($ln in [System.IO.File]::ReadAllLines($wIni)) { if ($ln.Trim() -match '^\[(.+)\]$') { $wHas[$Matches[1].Trim().ToLower()] = $true } } }
+    foreach ($f in @(Get-ChildItem -LiteralPath $wl -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -match '^\.(bat|url|lnk)$' -or $wHas.ContainsKey($_.Name.ToLower()) })) {
         $nm = Get-IniSectionValue (Join-Path $Ws 'Settings\browser-games.ini') $f.Name 'name'
         $out += [pscustomobject]@{ Label = $(if ($nm) { $nm } else { $f.BaseName }) + '   (PC)'; Leaf = $f.Name; Ini = 'browser-games.ini'; Name = $(if ($nm) { $nm } else { $f.BaseName }) }
     }
@@ -10729,7 +10764,15 @@ function Show-KeyLayoutPicker {
     $close = New-Object System.Windows.Controls.Button; $close.Content = 'Done'; $close.Padding = '16,7'; $close.FontSize = 14; $close.HorizontalAlignment = 'Right'; $close.Margin = '0,12,0,0'
     [System.Windows.Controls.DockPanel]::SetDock($close, 'Bottom'); $script:klWin = $w
     $close.Add_Click({ $script:klWin.Close() })
-    [void]$dp.Children.Add($close)
+    # (3.2, Steven) a game that is not listed yet
+    $addRow = New-Object System.Windows.Controls.DockPanel; $addRow.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($addRow, 'Bottom')
+    $add = New-Object System.Windows.Controls.Button; $add.Content = 'Add a game...'; $add.Padding = '16,7'; $add.FontSize = 14; $add.HorizontalAlignment = 'Left'
+    $add.Add_Click({ Add-KeyLayoutGame })
+    $close.Margin = '0'
+    [System.Windows.Controls.DockPanel]::SetDock($close, 'Right')
+    [void]$addRow.Children.Add($close); [void]$addRow.Children.Add($add)
+    [void]$dp.Children.Add($addRow)
     $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
     $script:klList = New-Object System.Windows.Controls.StackPanel
     $sv.Content = $script:klList
@@ -10738,6 +10781,29 @@ function Show-KeyLayoutPicker {
     Update-KeyLayoutList
     $w.Content = $dp
     [void]$w.ShowDialog()
+}
+
+# Pick a Flash or PC game that is not on the list and set its keys.
+function Add-KeyLayoutGame {
+    try {
+        $dlg = New-Object Microsoft.Win32.OpenFileDialog
+        $dlg.Title = 'Pick a Flash or PC game'
+        $dlg.InitialDirectory = (Join-Path $Root 'roms\windows')
+        if (-not $dlg.ShowDialog()) { return }
+        $f = $dlg.FileName
+    } catch { return }
+    $dir = (Split-Path $f -Parent).TrimEnd('\')
+    $isFlash = ($dir -ieq (Join-Path $Root 'roms\flash').TrimEnd('\'))
+    $isPc = ($dir -ieq (Join-Path $Root 'roms\windows').TrimEnd('\'))
+    if (-not $isFlash -and -not $isPc) { [void](Show-Choice $WizardName 'Controller keys work for Flash games (roms\flash) and PC games (roms\windows). Pick a game from one of those folders.' @('OK')); return }
+    $leaf = [System.IO.Path]::GetFileName($f)
+    $have = @($script:klGames | Where-Object { $_.Leaf -ieq $leaf })
+    $g = $(if ($have.Count -gt 0) { $have[0] } else { [pscustomobject]@{ Label = [System.IO.Path]::GetFileNameWithoutExtension($leaf) + $(if ($isFlash) { '   (Flash)' } else { '   (PC)' }); Leaf = $leaf; Ini = $(if ($isFlash) { 'flash-games.ini' } else { 'browser-games.ini' }); Name = [System.IO.Path]::GetFileNameWithoutExtension($leaf) } })
+    Log ("keys: add a game - {0}" -f $leaf)
+    Show-KeyLayoutEditor $g
+    $script:klGames = @(Get-KeyboardGames)
+    if (@($script:klGames | Where-Object { $_.Leaf -ieq $leaf }).Count -eq 0) { $script:klGames = @($script:klGames) + @($g) }
+    Update-KeyLayoutList
 }
 
 function Update-KeyLayoutList {
@@ -10828,6 +10894,54 @@ function Show-FamilyPick([string]$Message, [bool]$Allow) {
     $w.Add_ContentRendered({ $script:fpBox.Focus() })
     [void]$w.ShowDialog()
     return $script:fpResult
+}
+
+# (3.2, Steven: "Open my list only shows the ones I've added") Everything
+# family-friendly hides right now, by console, and below it the person's own
+# additions with a button to edit them.
+function Show-FamilyList {
+    Close-Splash
+    $hidden = @()
+    $recF = Join-Path $Ws 'Settings\family-hidden.txt'
+    if (Test-Path -LiteralPath $recF) {
+        foreach ($l in [System.IO.File]::ReadAllLines($recF)) {
+            if ($l -eq '' -or $l.StartsWith(';')) { continue }
+            $pp = $l.Split('|', 2)
+            if ($pp.Count -lt 2) { continue }
+            $hidden += ('{0}   ({1})' -f [System.IO.Path]::GetFileNameWithoutExtension($pp[1].Replace('/', '\')), $pp[0])
+        }
+    }
+    $mine = @()
+    $own = Join-Path $Ws 'Settings\family-hide.txt'
+    if (Test-Path -LiteralPath $own) { $mine = @([System.IO.File]::ReadAllLines($own) | Where-Object { $_.Trim() -ne '' -and -not $_.StartsWith(';') } | ForEach-Object { $(if ($_.StartsWith('!')) { $_.Substring(1) + '   (let through)' } else { $_ }) }) }
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 620; $w.Height = 640
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($row, 'Bottom')
+    $script:flWin = $w
+    $eb = New-Object System.Windows.Controls.Button; $eb.Content = 'Edit my own list'; $eb.Padding = '16,7'; $eb.FontSize = 14; $eb.Margin = '0,0,8,0'
+    $eb.Add_Click({ Open-FamilyList })
+    $cb = New-Object System.Windows.Controls.Button; $cb.Content = 'Close'; $cb.Padding = '16,7'; $cb.FontSize = 14
+    $cb.Add_Click({ $script:flWin.Close() })
+    [void]$row.Children.Add($eb); [void]$row.Children.Add($cb)
+    [void]$dp.Children.Add($row)
+    $sp = New-Object System.Windows.Controls.StackPanel
+    $on = Test-FamilyOn
+    [void]$sp.Children.Add((New-Text $(if ($on) { ('Hidden right now: {0} game(s)' -f $hidden.Count) } else { 'Family-friendly is off, so nothing is hidden right now.' }) $ColText 16 $true))
+    $n1 = New-Text 'M-rated games on this setup, and any game on your own list. It follows the list from the next PLAY.' $ColDim 12; $n1.Margin = '0,2,0,8'; $n1.TextWrapping = 'Wrap'
+    [void]$sp.Children.Add($n1)
+    foreach ($h in ($hidden | Sort-Object)) { $t = New-Text $h $ColText 13; $t.Margin = '8,1,0,1'; [void]$sp.Children.Add($t) }
+    $h2 = New-Text ('Your own list: {0}' -f $mine.Count) $ColText 16 $true; $h2.Margin = '0,16,0,6'
+    [void]$sp.Children.Add($h2)
+    if ($mine.Count -eq 0) { [void]$sp.Children.Add((New-Text 'Nothing added yet.' $ColDim 13)) }
+    foreach ($m in $mine) { $t = New-Text $m $ColText 13; $t.Margin = '8,1,0,1'; [void]$sp.Children.Add($t) }
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'; $sv.Content = $sp
+    [void]$dp.Children.Add($sv)
+    $w.Content = $dp
+    [void]$w.ShowDialog()
 }
 
 function Open-FamilyList {
@@ -11134,8 +11248,8 @@ function Render-Features {
         $fb1.Add_Click({ Invoke-FamilyAdd $false })
         $fb2 = New-Object System.Windows.Controls.Button; $fb2.Content = 'Let a game through...'; $fb2.Padding = '12,4'; $fb2.FontSize = 13; $fb2.Margin = '0,0,8,0'
         $fb2.Add_Click({ Invoke-FamilyAdd $true })
-        $fb3 = New-Object System.Windows.Controls.Button; $fb3.Content = 'Open my list'; $fb3.Padding = '12,4'; $fb3.FontSize = 13
-        $fb3.Add_Click({ Open-FamilyList })
+        $fb3 = New-Object System.Windows.Controls.Button; $fb3.Content = 'Show the list'; $fb3.Padding = '12,4'; $fb3.FontSize = 13
+        $fb3.Add_Click({ Show-FamilyList })
         foreach ($x in @($fb1, $fb2, $fb3)) { [void]$frow.Children.Add($x) }
         [void]$panel.Children.Add($frow)
     }
