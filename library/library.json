@@ -1825,6 +1825,19 @@
       ]
     },
     {
+      "id": "ice-climber",
+      "title": "Ice Climber",
+      "system": "nes",
+      "players": "1-2",
+      "description": "In Ice Climber one or two players need to climb their way to the top of 32 different mountains. Each mountain is broken up into eight levels of platforms along with a bonus stage at the top. Attempting to stop you from making upward progress are different creatures ranging from...",
+      "added": "2026-10-26",
+      "art": "library/art/ice-climber.png",
+      "video": "library/video/ice-climber.mp4",
+      "files": [
+        { "name": "Ice Climber (USA, Europe, Asia) (En).nes", "url": "private:ice-climber__Ice.Climber.USA.Europe.Asia.En.nes", "size": 24592, "sha256": "491898c9b0bf6b242d08bb0841141ca404f8e54383a1814cdb7feab451da8701" }
+      ]
+    },
+    {
       "id": "mega-man-2",
       "title": "Mega Man 2",
       "system": "nes",
