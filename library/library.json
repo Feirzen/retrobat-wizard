@@ -1269,8 +1269,9 @@
       "system": "n64",
       "players": "1-4",
       "description": "In this 3D action game, you control James Bond from a first-person perspective, using a variety of weapons (from knuckles to grenade launcher) to eliminate your foes. However, many parts require you to be careful, to stay unnoticed or to snipe guards from distance, since they...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/goldeneye-007.png",
+      "video": "library/video/goldeneye-007.mp4",
       "files": [
         { "name": "GoldenEye 007 (USA).zip", "url": "private:goldeneye-007__GoldenEye.007.USA.zip", "size": 10705648, "sha256": "4b057b7172be7f9b08ab0658209f0f83d466dd5a3651ff5c03ec519761b4b9c6" }
       ]
