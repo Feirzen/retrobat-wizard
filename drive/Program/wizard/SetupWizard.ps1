@@ -1930,7 +1930,12 @@ function Start-SetupFlow {
             # the All games / 2 / 4 player collections, grid views, the
             # scraper login). Once, here, never on updates.
             if ($script:frdOk) {
-                $fr = Set-FirstRunDefaults $Root $Ws
+                # the shared ScreenScraper login, locked, from the friends store
+                $frKey = ''
+                if ($script:socialOk) {
+                    try { if (Get-SocialSharedScraper $Ws) { Log 'setup: shared scraper login fetched' }; $frKey = Get-SocialToken $Ws } catch { }
+                }
+                $fr = Set-FirstRunDefaults $Root $Ws $frKey
                 Log ('setup: first-run defaults - ' + $fr.Message)
             }
             $np = @{ Private = $true }

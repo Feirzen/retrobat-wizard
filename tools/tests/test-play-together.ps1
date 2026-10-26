@@ -1,6 +1,6 @@
 # Favourites, play-together invites, incognito, more than one person per drive
 # (SocialEngine.ps1 + Social-Helper.ps1, 2026-10-12). PowerShell 7, Linux.
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 $script:pass = 0; $script:fail = 0
 function Assert($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" -ForegroundColor Red } }
@@ -8,7 +8,7 @@ function Assert($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail
 
 $base = Join-Path ([IO.Path]::GetTempPath()) ('ptg-' + [guid]::NewGuid().ToString('N'))
 $Root = Join-Path $base 'RetroBat'
-$Ws = Join-Path $Root '_ClaudeWorkspace'
+$Ws = Join-Path $Root '_Wizard'
 New-Item -ItemType Directory -Force $Ws | Out-Null
 function W([string]$p, [string]$t) { $d = Split-Path -Parent $p; if (-not (Test-Path $d)) { [void](New-Item -ItemType Directory -Path $d -Force) }; [IO.File]::WriteAllText($p, $t) }
 
@@ -46,8 +46,8 @@ Assert (@($back.Favs).Count -eq 3 -and $back.Favs[0] -like 'n64|*' -and $back.Fa
 Assert ($back.Reach -eq $false) 'reach off round trips'
 $favs = @(Get-SocialFavs $Root $back)
 Assert ($favs.Count -eq 3 -and $null -eq $favs[1] -and $favs[2].Name -eq 'Melee') 'Get-SocialFavs keeps slot positions'
-W (Join-Path $Ws 'profile/old.ini') "id = abcdefghij`nusername = Old`n"
-Assert ((Read-SocialProfile $Ws (Join-Path $Ws 'profile/old.ini')).Reach -eq $true) 'old profile: reach defaults on'
+W (Join-Path $Ws 'People/old.ini') "id = abcdefghij`nusername = Old`n"
+Assert ((Read-SocialProfile $Ws (Join-Path $Ws 'People/old.ini')).Reach -eq $true) 'old profile: reach defaults on'
 
 # --- the online record: favs, invite, reply ------------------------------------------
 $inv = [pscustomobject]@{ Id = 'abc12345'; To = @('frienda001', 'bad id'); Game = 'Mario Kart 64'; System = 'n64'; Note = 'cups!'; Code = ''; At = (Format-SocialTime (Get-SocialNowUtc)) }
@@ -100,7 +100,7 @@ Clear-SocialInvite $Ws
 Assert ($null -eq (Read-SocialInvite $Ws (Get-SocialNowUtc)) -and $null -eq (Read-SocialReply $Ws (Get-SocialNowUtc))) 'cleared'
 Assert (-not (Test-SocialSeen $Ws 'inv:x:1')) 'not seen yet'
 Add-SocialSeen $Ws 'inv:x:1'; Add-SocialSeen $Ws 'inv:x:1'
-Assert ((Test-SocialSeen $Ws 'inv:x:1') -and @([IO.File]::ReadAllLines((Join-Path $Ws 'social/invites-seen.txt'))).Count -eq 1) 'seen once, kept once'
+Assert ((Test-SocialSeen $Ws 'inv:x:1') -and @([IO.File]::ReadAllLines((Join-Path $Ws 'People/social/invites-seen.txt'))).Count -eq 1) 'seen once, kept once'
 
 # --- incognito ---------------------------------------------------------------------------
 Assert (-not (Test-SocialIncognito $Ws)) 'not incognito by default'
@@ -121,7 +121,7 @@ Add-SocialLogin $Ws $p2 $true
 Assert (Test-SocialLoginTrusted $Ws $p2.Id) 'trusted after typing'
 Add-SocialLogin $Ws $p2
 Assert (Test-SocialLoginTrusted $Ws $p2.Id) 'logging in again keeps the trust date'
-$lf = Join-Path $Ws 'profile/logins.txt'
+$lf = Join-Path $Ws 'People/logins.txt'
 [IO.File]::WriteAllText($lf, ([IO.File]::ReadAllText($lf) -replace '\d{4}-\d{2}-\d{2}', '2020-01-01'))
 Assert (-not (Test-SocialLoginTrusted $Ws $p2.Id)) 'trust runs out after 60 days'
 Set-SocialLoginTrusted $Ws $p2.Id
@@ -136,7 +136,7 @@ Set-SocialHiddenGame $Ws 'n64' './secret.z64' $true
 Assert (Save-SocialPersonCopy $Ws) 'Anna put away'
 $pb = New-SocialProfile 'Ben' 'icon:snes'
 Write-SocialProfile $Ws $pb
-Remove-Item (Join-Path $Ws 'profile/hidden-games.txt')
+Remove-Item (Join-Path $Ws 'People/hidden-games.txt')
 Assert ($null -eq (Read-SocialPersonCopy $Ws $pb.Id)) 'Ben has no copy yet'
 Assert ((Read-SocialPersonCopy $Ws $pa.Id).Username -eq 'Anna') 'Anna''s copy reads'
 Assert (Save-SocialPersonCopy $Ws) 'Ben put away'
@@ -145,7 +145,7 @@ $now2 = Read-SocialProfile $Ws
 Assert ($now2.Id -eq $pa.Id -and $now2.ShowGame -eq $false -and $now2.Favs[0] -like 'n64|*') 'Anna''s own switches and favourites came back'
 Assert ((Get-SocialHiddenGames $Ws).ContainsKey('n64|./secret.z64')) 'Anna''s hidden games came back'
 Assert (Restore-SocialPersonCopy $Ws $pb.Id) 'Ben back'
-Assert ((Read-SocialProfile $Ws).Username -eq 'Ben' -and -not (Test-Path (Join-Path $Ws 'profile/hidden-games.txt'))) 'Ben has no hidden games (Anna''s did not leak)'
+Assert ((Read-SocialProfile $Ws).Username -eq 'Ben' -and -not (Test-Path (Join-Path $Ws 'People/hidden-games.txt'))) 'Ben has no hidden games (Anna''s did not leak)'
 Assert (-not (Restore-SocialPersonCopy $Ws 'nobodyxxxx')) 'nobody to bring back'
 Assert (-not (Restore-SocialPersonCopy $Ws '../../../x')) 'a bad id is refused'
 

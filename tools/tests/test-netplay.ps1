@@ -1,8 +1,8 @@
 $ErrorActionPreference='Stop'
-. /home/claude/work/new/_ClaudeWorkspace/scripts/NetplayEngine.ps1
+. (Join-Path $PSScriptRoot '../../drive/Program/scripts/NetplayEngine.ps1')
 $pass=0;$fail=0; function A($c,$n){ if($c){$script:pass++}else{$script:fail++;"FAIL $n"} }
 $R = Join-Path ([IO.Path]::GetTempPath()) ('np-'+[guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Force "$R/emulationstation/.emulationstation","$R/emulators/dolphin-emu/User/Config","$R/_ClaudeWorkspace/archive" | Out-Null
+New-Item -ItemType Directory -Force "$R/emulationstation/.emulationstation","$R/emulators/dolphin-emu/User/Config","$R/_Wizard/Backups/Archive" | Out-Null
 Copy-Item /mnt/user-data/uploads/RetroBat/emulationstation/.emulationstation/es_settings.cfg "$R/emulationstation/.emulationstation/"
 Copy-Item /mnt/user-data/uploads/RetroBat/emulators/dolphin-emu/User/Config/Dolphin.ini "$R/emulators/dolphin-emu/User/Config/"
 $before = [IO.File]::ReadAllText("$R/emulationstation/.emulationstation/es_settings.cfg")
@@ -14,7 +14,7 @@ $s = Get-NetplaySettings $R
 A ($s.Nickname -eq 'Naverog' -and $s.Private -and $s.Relay -eq '') 'read back'
 $res = Set-NetplaySettings $R @{ Nickname = 'Naverog'; Relay = $false; Private = $true }
 A ($res.Ok -and $res.Changed -eq 0) 'second time changes nothing'
-A (@(Get-ChildItem "$R/_ClaudeWorkspace/archive" -Directory).Count -eq 1) 'one backup only'
+A (@(Get-ChildItem "$R/_Wizard/Backups/Archive" -Directory).Count -eq 1) 'one backup only'
 $res = Set-NetplaySettings $R @{ Relay = $true; Private = $false }
 $s = Get-NetplaySettings $R
 A ($s.Relay -eq 'nyc' -and -not $s.Private) 'relay on, public'

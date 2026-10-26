@@ -1,13 +1,13 @@
 $ErrorActionPreference='Stop'
-. /home/claude/work/new/_ClaudeWorkspace/scripts/UpdateEngine.ps1
+. (Join-Path $PSScriptRoot '../../drive/Program/scripts/UpdateEngine.ps1')
 $m = Read-UpdManifest '/home/claude/retrobat-wizard/manifest.txt'
 "manifest ok: $($m.Ok) $($m.Problem) entries=$($m.Entries.Count)"
 # the other drive: a copy of the ORIGINAL 2.1 tree
 $base = '/tmp/e2e'; if (Test-Path $base) { Remove-Item -Recurse -Force $base }
 New-Item -ItemType Directory $base | Out-Null
-Copy-Item -Recurse /home/claude/work/orig/_ClaudeWorkspace "$base/_ClaudeWorkspace"
-Remove-Item -Recurse -Force "$base/_ClaudeWorkspace/archive"
-$ws = "$base/_ClaudeWorkspace"
+Copy-Item -Recurse /home/claude/work/orig/_Wizard "$base/_Wizard"
+Remove-Item -Recurse -Force "$base/_Wizard/Backups/Archive"
+$ws = "$base/_Wizard"
 $script:UpdFetchOverride = {
     param($Url, $OutFile)
     $u = $Url -replace '\?t=\d+$', ''
@@ -33,11 +33,11 @@ $g = Invoke-UpdateGoBack -Ws $ws; "go back: $($g.Ok) $($g.Message)"
 "profiles back: " + (Test-Path "$ws/profiles/machines") + "  version: " + (Get-UpdLocalVersion $ws)
 # after go back, the drive's files equal the original 2.1 tree?
 $diff = 0
-Get-ChildItem -Recurse -File /home/claude/work/orig/_ClaudeWorkspace | Where-Object { $_.FullName -notmatch '/archive/' } | ForEach-Object {
-  $rel = $_.FullName.Substring('/home/claude/work/orig/_ClaudeWorkspace/'.Length)
+Get-ChildItem -Recurse -File /home/claude/work/orig/_Wizard | Where-Object { $_.FullName -notmatch '/archive/' } | ForEach-Object {
+  $rel = $_.FullName.Substring('/home/claude/work/orig/_Wizard/'.Length)
   $p = Join-Path $ws $rel
   if (-not (Test-Path -LiteralPath $p)) { $diff++; "missing after go back: $rel" } elseif ((Get-UpdHash $p) -ne (Get-UpdHash $_.FullName)) { $diff++; "differs after go back: $rel" }
 }
 "files differing from original after go back: $diff"
-$extra = Get-ChildItem -Recurse -File $ws | Where-Object { $_.FullName -notmatch '/(update|_SAFE TO DELETE)/' } | Where-Object { -not (Test-Path -LiteralPath (Join-Path /home/claude/work/orig/_ClaudeWorkspace $_.FullName.Substring($ws.Length+1))) }
+$extra = Get-ChildItem -Recurse -File $ws | Where-Object { $_.FullName -notmatch '/(update|_SAFE TO DELETE)/' } | Where-Object { -not (Test-Path -LiteralPath (Join-Path /home/claude/work/orig/_Wizard $_.FullName.Substring($ws.Length+1))) }
 "extra files left after go back: $(@($extra).Count)"; $extra | Select-Object -First 5 | ForEach-Object FullName

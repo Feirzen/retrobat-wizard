@@ -1,13 +1,13 @@
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 $pass = 0; $fail = 0; function A($c, $n) { if ($c) { $script:pass++ } else { $script:fail++; "FAIL: $n" } }
 . (Join-Path $Scripts 'SteamArtwork.ps1')
 . (Join-Path $Scripts 'FlashArtwork.ps1')
 $R = Join-Path ([IO.Path]::GetTempPath()) ('fa' + [guid]::NewGuid().ToString('N').Substring(0, 6))
-New-Item -ItemType Directory -Force "$R/roms/flash", "$R/_ClaudeWorkspace" | Out-Null
-Copy-Item /home/claude/work/new/_ClaudeWorkspace/flash-games.ini "$R/_ClaudeWorkspace/"
+New-Item -ItemType Directory -Force "$R/roms/flash", "$R/_Wizard/Settings" | Out-Null
+Copy-Item /home/claude/work/new/_ClaudeWorkspace/flash-games.ini "$R/_Wizard/Settings/"
 foreach ($f in @('Age_of War.swf', 'Bloons TD5.swf', 'Raft Wars.swf', 'Duck Life 4.swf', "Bob's Game.swf")) { [IO.File]::WriteAllBytes("$R/roms/flash/$f", [byte[]](1..10)) }
-$g = @(Read-FlashGames "$R/_ClaudeWorkspace/flash-games.ini")
+$g = @(Read-FlashGames "$R/_Wizard/Settings/flash-games.ini")
 A ($g.Count -eq 11) "11 games read ($($g.Count))"
 A (($g | Where-Object File -eq 'Bloons TD5.swf').Steam -eq 'Bloons TD 5') 'steam name read'
 $png = [byte[]](0x89, 0x50, 0x4E, 0x47) + [byte[]](1..200); $jpg = [byte[]](0xFF, 0xD8) + [byte[]](1..200)
@@ -41,7 +41,7 @@ $res = Invoke-FlashArtwork -Root $R
 [xml]$x = Get-Content "$R/roms/flash/gamelist.xml" -Raw
 A ((@($x.gameList.game) | Where-Object { $_.path -eq './Bloons TD5.swf' }).name -eq 'My BTD') 'hand-typed name kept'
 A (@($script:urls).Count -eq 0) "second run fetches nothing ($(@($script:urls).Count))"
-A (@(Get-ChildItem "$R/_ClaudeWorkspace/archive" -Directory).Count -ge 1) 'game list backed up'
+A (@(Get-ChildItem "$R/_Wizard/Backups/Archive" -Directory).Count -ge 1) 'game list backed up'
 $res = Invoke-FlashArtwork -Root $R -Force $true
 [xml]$x = Get-Content "$R/roms/flash/gamelist.xml" -Raw
 A ((@($x.gameList.game) | Where-Object { $_.path -eq './Bloons TD5.swf' }).name -eq 'Bloons TD 5') 'force replaces'

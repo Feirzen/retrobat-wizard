@@ -170,6 +170,21 @@ function Get-SocialRepo([string]$Ws) {
     return $script:SocialDefaultRepo
 }
 
+# The shared ScreenScraper login (3.2): the admin's locked copy in the
+# friends store, fetched into People\social\scraper.txt for the first-run
+# setup to unlock with the friends key. $true when one arrived.
+function Get-SocialSharedScraper([string]$Ws) {
+    try {
+        $repo = Get-SocialRepo $Ws
+        $r = Invoke-SocialApi $Ws 'GET' "https://api.github.com/repos/$repo/contents/shared/scraper.txt" '' 'application/vnd.github.raw'
+        if ($r.Status -ne 200 -or [string]$r.Body -notmatch 'user\s*=\s*rb2:') { return $false }
+        $P = Get-SocialPaths $Ws
+        New-SocialDir $P.SocialDir
+        [System.IO.File]::WriteAllText((Join-SocialPath $Ws 'People\social\scraper.txt'), [string]$r.Body)
+        return $true
+    } catch { return $false }
+}
+
 # ---------------------------------------------------------------------------
 #  The local profile
 # ---------------------------------------------------------------------------

@@ -125,8 +125,10 @@ function Add-AdminChannelCard($panel) {
 }
 
 # New setups scrape box art by themselves with a shared ScreenScraper login
-# (Steven's choice, 2026-10-17). This copies the login saved in RetroBat on
-# THIS setup into defaults\scraper.txt, which ships with the next update.
+# (Steven's choice, 2026-10-17). Since 3.2 (2026-10-26) it never goes in the
+# public download: this keeps the login in Owner\scraper.txt and puts a copy
+# LOCKED with the friends key in the private friends store
+# (shared/scraper.txt), which every new setup fetches during its setup.
 function Add-AdminScraperCard($panel) {
     if (-not $script:frdOk) { return }
     $card = New-Object System.Windows.Controls.Border
@@ -138,11 +140,18 @@ function Add-AdminScraperCard($panel) {
     $t.Margin = '0,4,0,8'
     [void]$sp.Children.Add($t)
     $b = New-SocialButton $(if ($has) { 'Share my login again' } else { 'Share my ScreenScraper login' }) {
-        $pick = Show-Choice $WizardName "Share the ScreenScraper login saved in RetroBat on this setup with every new setup?`n`nIt goes out with the next published update, in a file anyone could read (scrambled, not locked). ScreenScraper may slow down an account many people use at once." @('Share it', 'Cancel')
+        $pick = Show-Choice $WizardName "Share the ScreenScraper login saved in RetroBat on this setup with every new setup?`n`nIt goes to the private friends store, locked with the friends key, never into the public download. Every new setup signs in with it during its setup. ScreenScraper may slow down an account many people use at once." @('Share it', 'Cancel')
         if ($pick -ne 'Share it') { return }
         $r = Save-FrdScraperFromThisSetup $Root $Ws
         Log ('admin: scraper login - ' + $r.Message)
-        [void](Show-Choice $WizardName $r.Message @('OK'))
+        if ($r.Ok) {
+            $txt = Get-FrdSharedScraperText $Ws (Get-SocialToken $Ws)
+            $ok = ($txt -ne '') -and (Set-AdminRepoFile $Ws 'shared/scraper.txt' $txt 'Shared ScreenScraper login (locked with the friends key)')
+            $msg = $(if ($ok) { 'Shared. Every new setup signs in to ScreenScraper with it during its setup.' } else { 'Saved on this drive, but it could not be sent to the friends store (no internet, or no friends key). Try again later.' })
+            Log ('admin: scraper login shared - ' + $ok)
+            [void](Show-Choice $WizardName $msg @('OK'))
+        }
+        else { [void](Show-Choice $WizardName $r.Message @('OK')) }
         Render-Admin
     }
     $b.HorizontalAlignment = 'Left'; $b.Margin = '0'

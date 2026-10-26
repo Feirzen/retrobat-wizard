@@ -2,7 +2,7 @@
 # on a fake RetroBat folder built from the drive's REAL es_savestates.cfg,
 # es_systems.cfg, retroarch.cfg and Dolphin Hotkeys.ini.
 param(
-    [string]$Scripts = '/mnt/user-data/outputs/save-revamp/scripts',
+    [string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'),
     [string]$Real    = '/mnt/user-data/uploads/RetroBat'
 )
 $ErrorActionPreference = 'Stop'
@@ -64,7 +64,7 @@ A (Test-Path (Join-SsPath $TR 'saves/n64/Super Smash Bros. (USA).srm')) 'ordinar
 A (Test-Path (Join-SsPath $TR 'saves/nds/Spirit Tracks.sav')) 'DS save left alone'
 A (Test-Path (Join-SsPath $TR 'saves/psx/duckstation/Crash.mcd')) 'memory card left alone'
 A (Test-Path (Join-SsPath $TR 'emulators/dolphin-emu/User/StateSaves/lastState.sav')) 'Dolphin lastState.sav left alone'
-A ($sw.Retired -eq 1 -and -not (Test-Path (Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and (Test-Path (Join-SsPath $TR '_ClaudeWorkspace/_SAFE TO DELETE/retroarch-placeholders/saves/n64/libretro.mupen64plus_next'))) 'old placeholder retired to _SAFE TO DELETE (2026-10-12), not deleted'
+A ($sw.Retired -eq 1 -and -not (Test-Path (Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and (Test-Path (Join-SsPath $TR '_Wizard/Cache/Trash/retroarch-placeholders/saves/n64/libretro.mupen64plus_next'))) 'old placeholder retired to _SAFE TO DELETE (2026-10-12), not deleted'
 $org = [IO.File]::ReadAllLines((Join-Path $day.FullName 'origins.txt'))
 A ($org.Count -eq 9) 'every file has an origin line'
 A (@($org | Where-Object { $_ -like "*Super Smash Bros. (USA).state1`temulators\retroarch\states\*" }).Count -eq 1) 'origin recorded'
@@ -100,7 +100,7 @@ A $j.Ok ('jump in placed: ' + $j.Message)
 $placed = Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next/Super Smash Bros. (USA).state1'
 A ([IO.Directory]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next'))) 'placeholder moved aside, real folder made'
 A ((Test-Path $placed) -and (Test-Path ($placed + '.png'))) 'state and picture where the launch menu looks'
-A (Test-Path (Join-SsPath $TR '_ClaudeWorkspace/SaveBackups/jump-in-placeholders/n64/libretro.mupen64plus_next')) 'placeholder waiting'
+A (Test-Path (Join-SsPath $TR '_Wizard/Backups/Saves/jump-in-placeholders/n64/libretro.mupen64plus_next')) 'placeholder waiting'
 $h = @(Get-SsHolds $TR)
 A ($h.Count -eq 4) ("hold list: 2 files + 1 placeholder + the game ($($h.Count))")
 A (@($h | Where-Object Type -eq 'game')[0].Other -like 'Super Smash Bros. (USA)|*|Smash') 'hold remembers which game'
@@ -120,7 +120,7 @@ Set-SsLastGame $TR 'R:/RetroBat/roms/n64/Super Smash Bros. (USA).z64'
 $e1 = Invoke-SavestateSweep -Root $TR
 A ($e1.Dropped -eq 2 -and -not (Test-Path $placed)) 'game end: unchanged held copy and picture removed'
 A ($e1.Restored -eq 1) 'game end: placeholder back'
-A ($e1.Retired -eq 1 -and -not [IO.File]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and (Test-Path (Join-SsPath $TR '_ClaudeWorkspace/_SAFE TO DELETE/retroarch-placeholders/saves/n64/libretro.mupen64plus_next.2'))) 'then retired, nothing overwritten'
+A ($e1.Retired -eq 1 -and -not [IO.File]::Exists((Join-SsPath $TR 'saves/n64/libretro.mupen64plus_next')) -and (Test-Path (Join-SsPath $TR '_Wizard/Cache/Trash/retroarch-placeholders/saves/n64/libretro.mupen64plus_next.2'))) 'then retired, nothing overwritten'
 A (@(Get-SsHolds $TR).Count -eq 0) 'hold list cleared'
 A ((Test-Path $smash.Path)) 'archived original kept'
 $states2 = @(Get-QuarantinedSavestates $arch)
@@ -165,8 +165,8 @@ A (Test-SavestateJumpIn $psx 'psx') 'DuckStation (RetroBat reads its folder): ju
 
 # --- old archives (Dolphin, no origins.txt) --------------------------------
 $old = Join-SsPath $arch '2026-09-17'
-F '_ClaudeWorkspace/archive/quarantined-savestates/2026-09-17/101010__GALE01.s02' 'OLD' | Out-Null
-F '_ClaudeWorkspace/archive/quarantined-savestates/2026-09-17/101010__Melee.s02' 'OLD' | Out-Null
+F '_Wizard/Backups/Archive/quarantined-savestates/2026-09-17/101010__GALE01.s02' 'OLD' | Out-Null
+F '_Wizard/Backups/Archive/quarantined-savestates/2026-09-17/101010__Melee.s02' 'OLD' | Out-Null
 $st3 = @(Get-QuarantinedSavestates $arch)
 $o1 = @($st3 | Where-Object Key -eq 'GALE')[0]
 A ($null -ne $o1 -and $o1.Kind -eq 'dolphin-legacy') 'old Dolphin archive still read'
@@ -188,12 +188,12 @@ Remove-Item -Recurse -Force $TR
 
 # --- the backup: PC ports' own save folders, and the storage limit (2026-10-11)
 $B = Join-Path ([IO.Path]::GetTempPath()) ('bk' + [guid]::NewGuid().ToString('N').Substring(0, 6))
-New-Item -ItemType Directory -Force "$B/_ClaudeWorkspace/scripts", "$B/saves/n64", "$B/emulators/soh/Save" | Out-Null
-Copy-Item (Join-Path $Scripts 'Backup-RetroBatSaves.ps1'), (Join-Path $Scripts 'SaveIndex.ps1') "$B/_ClaudeWorkspace/scripts/"
+New-Item -ItemType Directory -Force "$B/_Wizard/Program/scripts", "$B/saves/n64", "$B/emulators/soh/Save" | Out-Null
+Copy-Item (Join-Path $Scripts 'Backup-RetroBatSaves.ps1'), (Join-Path $Scripts 'SaveIndex.ps1') "$B/_Wizard/Program/scripts/"
 [IO.File]::WriteAllText("$B/saves/n64/Paper Mario.srm", 'v1')
 [IO.File]::WriteAllText("$B/emulators/soh/Save/file1.sav", 'link1')
-& pwsh -NoProfile -File "$B/_ClaudeWorkspace/scripts/Backup-RetroBatSaves.ps1" -Quiet | Out-Null
-$ix = Get-Content "$B/_ClaudeWorkspace/SaveBackups/index.json" -Raw | ConvertFrom-Json
+& pwsh -NoProfile -File "$B/_Wizard/Program/scripts/Backup-RetroBatSaves.ps1" -Quiet | Out-Null
+$ix = Get-Content "$B/_Wizard/Backups/Saves/index.json" -Raw | ConvertFrom-Json
 # (keys use \ on Windows; this test also runs on Linux, where / sneaks in)
 $keys = @($ix.PSObject.Properties.Name)
 A (@($keys | Where-Object { $_ -match '^soh\\_port\\[\\/]?file1\.sav$' }).Count -eq 1) 'Ship of Harkinian save backed up'
@@ -203,24 +203,24 @@ A ($gi.Category -eq 'game' -and $gi.GameId -eq 'Ship of Harkinian') 'port save l
 A ((Resolve-SaveTarget "$B/saves" 'soh\_port\file1.sav') -eq (Join-Path "$B" 'emulators\soh\Save' | Join-Path -ChildPath 'file1.sav')) 'port save goes back to its own folder'
 A ((Resolve-SaveTarget "$B/saves" 'n64\Paper Mario.srm') -eq (Join-Path "$B/saves" 'n64\Paper Mario.srm')) 'ordinary save goes back to saves'
 # storage: keep 2 versions, whatever their age
-[IO.File]::WriteAllText("$B/_ClaudeWorkspace/SaveBackups/storage.ini", "versions = 2`r`nstates = 0`r`n")
+[IO.File]::WriteAllText("$B/_Wizard/Backups/Saves/storage.ini", "versions = 2`r`nstates = 0`r`n")
 foreach ($v in 2..5) {
     Start-Sleep -Milliseconds 1100
     [IO.File]::WriteAllText("$B/saves/n64/Paper Mario.srm", "v$v")
-    & pwsh -NoProfile -File "$B/_ClaudeWorkspace/scripts/Backup-RetroBatSaves.ps1" -Quiet | Out-Null
+    & pwsh -NoProfile -File "$B/_Wizard/Program/scripts/Backup-RetroBatSaves.ps1" -Quiet | Out-Null
 }
-$hist = @(Get-ChildItem -Recurse -File "$B/_ClaudeWorkspace/SaveBackups/Versions" | Where-Object Name -like '*Paper Mario.srm')
+$hist = @(Get-ChildItem -Recurse -File "$B/_Wizard/Backups/Saves/Versions" | Where-Object Name -like '*Paper Mario.srm')
 A ($hist.Count -eq 2) ("storage limit keeps the newest 2 versions ($($hist.Count))")
 Remove-Item -Recurse -Force $B
 
 # --- trimming save states (states = N) --------------------------------------
 $P = Join-Path ([IO.Path]::GetTempPath()) ('pr' + [guid]::NewGuid().ToString('N').Substring(0, 6))
-foreach ($i in 1..4) { $d = "$P/_ClaudeWorkspace/archive/quarantined-savestates/2026-10-0$i"; New-Item -ItemType Directory -Force $d | Out-Null
+foreach ($i in 1..4) { $d = "$P/_Wizard/Backups/Archive/quarantined-savestates/2026-10-0$i"; New-Item -ItemType Directory -Force $d | Out-Null
     [IO.File]::WriteAllText("$d/120000__Mario World.state$i", 's'); [IO.File]::WriteAllText("$d/120000__Mario World.state$i.png", 'p')
     [IO.File]::WriteAllText("$d/120000__Zelda.state1", 'z') }
 $gone = Invoke-SsStatePrune $P 2
 A ($gone -eq 4) ("keeps the newest 2 per game ($gone trimmed)")
-A ((Test-Path "$P/_ClaudeWorkspace/archive/quarantined-savestates/2026-10-04/120000__Mario World.state4") -and -not (Test-Path "$P/_ClaudeWorkspace/archive/quarantined-savestates/2026-10-01/120000__Mario World.state1.png")) 'newest kept, old picture gone too'
+A ((Test-Path "$P/_Wizard/Backups/Archive/quarantined-savestates/2026-10-04/120000__Mario World.state4") -and -not (Test-Path "$P/_Wizard/Backups/Archive/quarantined-savestates/2026-10-01/120000__Mario World.state1.png")) 'newest kept, old picture gone too'
 Set-SsStorage $P 10 3
 $st = Get-SsStorage $P
 A ($st.Versions -eq 10 -and $st.States -eq 3) 'storage settings round trip'

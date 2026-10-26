@@ -1,5 +1,5 @@
 # Box art in the wizard's online library (GameLibrary.ps1 Get-LibCatalog, 2026-10-12).
-param([string]$Scripts = '/mnt/user-data/outputs/r2/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 $script:pass = 0; $script:fail = 0
 function A($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" -ForegroundColor Red } }

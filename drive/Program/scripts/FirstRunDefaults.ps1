@@ -14,11 +14,13 @@
         string CollectionSystemsAuto  = 2players,4players,all
     so it can be changed without touching this file.
 
-    THE SCRAPER LOGIN. defaults\scraper.txt, when it exists, holds a
-    ScreenScraper user and password (scrambled the same way as the friends
-    key: not secret, just not plain text). The Admin page makes it from the
-    owner's own login, on purpose, after a warning that it ships to everybody.
-    A setup that already has a login keeps its own.
+    THE SCRAPER LOGIN (moved 2026-10-26, wizard 3.2). The admin presses
+    Share my ScreenScraper login on the Admin page. That keeps the owner's
+    copy in Owner\scraper.txt and puts a LOCKED copy (AES, keyed with the
+    friends key) in the private friends store, shared/scraper.txt - never in
+    the public download. A new setup fetches it into People\social\
+    scraper.txt during its first-run setup and unlocks it with its friends
+    key. A setup that already has a login keeps its own.
 
     RetroBat must be closed (es_settings.cfg is rewritten when it exits). One
     backup of es_settings.cfg goes into archive\ first.
@@ -45,7 +47,7 @@ function ConvertTo-FrdScrambled([string]$T) {
 
 # The list: @( @{ Kind; Name; Value } ... ), in file order.
 function Read-FrdList([string]$Ws) {
-    $f = [System.IO.Path]::Combine($Ws, 'defaults', 'retrobat-defaults.ini')
+    $f = [System.IO.Path]::Combine($Ws, 'Program', 'defaults', 'retrobat-defaults.ini')
     $out = @()
     if (-not (Test-Path -LiteralPath $f)) { return $out }
     foreach ($l in [System.IO.File]::ReadAllLines($f)) {
@@ -58,15 +60,69 @@ function Read-FrdList([string]$Ws) {
     return $out
 }
 
-function Read-FrdScraper([string]$Ws) {
-    $f = [System.IO.Path]::Combine($Ws, 'defaults', 'scraper.txt')
+# Locks a short text with the friends key: "rb2:" + base64(IV + AES-256-CBC).
+# Anyone with a friends key can open it; the public download never has it.
+function Get-FrdKeyBytes([string]$Key) {
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try { return $sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes('rbw-scraper:' + $Key)) } finally { $sha.Dispose() }
+}
+function Protect-FrdText([string]$Text, [string]$Key) {
+    $aes = [System.Security.Cryptography.Aes]::Create()
+    try {
+        $aes.Key = Get-FrdKeyBytes $Key; $aes.GenerateIV()
+        $enc = $aes.CreateEncryptor()
+        $plain = [System.Text.Encoding]::UTF8.GetBytes($Text)
+        $c = $enc.TransformFinalBlock($plain, 0, $plain.Length)
+        $all = New-Object byte[] ($aes.IV.Length + $c.Length)
+        [Array]::Copy($aes.IV, 0, $all, 0, $aes.IV.Length); [Array]::Copy($c, 0, $all, $aes.IV.Length, $c.Length)
+        return ('rb2:' + [Convert]::ToBase64String($all))
+    } finally { $aes.Dispose() }
+}
+function Unprotect-FrdText([string]$T, [string]$Key) {
+    if (-not $T.StartsWith('rb2:') -or $Key -eq '') { return '' }
+    try {
+        $all = [Convert]::FromBase64String($T.Substring(4))
+        $aes = [System.Security.Cryptography.Aes]::Create()
+        try {
+            $aes.Key = Get-FrdKeyBytes $Key
+            $iv = New-Object byte[] 16; [Array]::Copy($all, 0, $iv, 0, 16); $aes.IV = $iv
+            $dec = $aes.CreateDecryptor()
+            $p = $dec.TransformFinalBlock($all, 16, $all.Length - 16)
+            return [System.Text.Encoding]::UTF8.GetString($p)
+        } finally { $aes.Dispose() }
+    } catch { return '' }
+}
+
+# The login to start with: the owner's own (Owner\scraper.txt), else the
+# shared one fetched from the friends store (People\social\scraper.txt),
+# unlocked with $Key (the friends key).
+function Read-FrdScraper([string]$Ws, [string]$Key = '') {
     $r = @{ User = ''; Pass = '' }
-    if (-not (Test-Path -LiteralPath $f)) { return $r }
-    foreach ($l in [System.IO.File]::ReadAllLines($f)) {
-        if ($l -match '^\s*user\s*=\s*(\S+)') { $r.User = ConvertFrom-FrdScrambled $Matches[1] }
-        if ($l -match '^\s*pass\s*=\s*(\S+)') { $r.Pass = ConvertFrom-FrdScrambled $Matches[1] }
+    foreach ($rel in @(@('Owner', 'scraper.txt'), @('People', 'social', 'scraper.txt'))) {
+        $f = $Ws; foreach ($seg in $rel) { $f = [System.IO.Path]::Combine($f, $seg) }
+        if (-not (Test-Path -LiteralPath $f)) { continue }
+        foreach ($l in [System.IO.File]::ReadAllLines($f)) {
+            foreach ($k in @('user', 'pass')) {
+                if ($l -match ('^\s*' + $k + '\s*=\s*(\S+)')) {
+                    $v = $Matches[1]
+                    $v = $(if ($v.StartsWith('rb2:')) { Unprotect-FrdText $v $Key } else { ConvertFrom-FrdScrambled $v })
+                    if ($k -eq 'user') { $r.User = $v } else { $r.Pass = $v }
+                }
+            }
+        }
+        if ($r.User -ne '' -and $r.Pass -ne '') { return $r }
+        $r = @{ User = ''; Pass = '' }
     }
     return $r
+}
+
+# The locked copy for the friends store, from the owner's Owner\scraper.txt.
+function Get-FrdSharedScraperText([string]$Ws, [string]$Key) {
+    $sc = Read-FrdScraper $Ws ''
+    if ($sc.User -eq '' -or $Key -eq '') { return '' }
+    return ((@('; The shared ScreenScraper login, locked with the friends key. Made by the Admin page.',
+               ('user = ' + (Protect-FrdText $sc.User $Key)),
+               ('pass = ' + (Protect-FrdText $sc.Pass $Key)))) -join "`n") + "`n"
 }
 
 function Set-FrdNode($Xml, $Config, [string]$Kind, [string]$Name, [string]$Value) {
@@ -111,7 +167,7 @@ function Set-FrdRetroBatIni([string]$Root, [string]$Name, [string]$Value) {
 
 # Writes the list (and the scraper login, if there is one and none is set).
 # Returns @{ Ok; Changed; Message }.
-function Set-FirstRunDefaults([string]$Root, [string]$Ws) {
+function Set-FirstRunDefaults([string]$Root, [string]$Ws, [string]$Key = '') {
     $p = Get-FrdEsPath $Root
     if (-not (Test-Path -LiteralPath $p)) {
         # RetroBat never opened yet: start the file; RetroBat fills in the rest.
@@ -129,7 +185,7 @@ function Set-FirstRunDefaults([string]$Root, [string]$Ws) {
         # 'ini Section.Key = value' lines go to retrobat.ini (2026-10-25: the
         # language switch lives there).
         foreach ($e in @($all | Where-Object { $_.Kind -eq 'ini' })) { try { if (Set-FrdRetroBatIni $Root $e.Name $e.Value) { $n++ } } catch { } }
-        $sc = Read-FrdScraper $Ws
+        $sc = Read-FrdScraper $Ws $Key
         $have = $c.SelectSingleNode("string[@name='ScreenScraperUser']")
         $haveUser = ($null -ne $have -and [string]$have.GetAttribute('value') -ne '')
         if (-not $haveUser -and $sc.User -ne '' -and $sc.Pass -ne '') {
@@ -138,7 +194,7 @@ function Set-FirstRunDefaults([string]$Root, [string]$Ws) {
             if (Set-FrdNode $x $c 'string' 'Scraper' 'ScreenScraper') { $n++ }
         }
         if ($n -eq 0) { return @{ Ok = $true; Changed = 0; Message = 'RetroBat already had these settings.' } }
-        $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($Ws, 'archive'), ('settings-firstrun_' + (Get-Date -Format 'yyyy-MM-dd_HHmmss')))
+        $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($Ws, 'Backups', 'Archive'), ('settings-firstrun_' + (Get-Date -Format 'yyyy-MM-dd_HHmmss')))
         [void](New-Item -ItemType Directory -Path $bak -Force)
         Copy-Item -LiteralPath $p -Destination ([System.IO.Path]::Combine($bak, 'es_settings.cfg')) -Force
         $set = New-Object System.Xml.XmlWriterSettings
@@ -162,14 +218,15 @@ function Save-FrdScraperFromThisSetup([string]$Root, [string]$Ws) {
         if ($null -eq $u -or $null -eq $pw -or [string]$u.GetAttribute('value') -eq '' -or [string]$pw.GetAttribute('value') -eq '') {
             return @{ Ok = $false; Message = 'No ScreenScraper login is saved in RetroBat on this setup. Sign in first: open RetroBat, press START, SCRAPER, then your ScreenScraper user and password.' }
         }
-        $f = [System.IO.Path]::Combine($Ws, 'defaults', 'scraper.txt')
-        $lines = @('; The ScreenScraper login every new setup starts with. Made by the Admin',
-                   '; page from the owner''s own login. Scrambled, NOT secret: it ships to',
-                   '; everybody with the next published update. Delete this file to stop.',
+        $od = [System.IO.Path]::Combine($Ws, 'Owner')
+        if (-not (Test-Path -LiteralPath $od)) { [void](New-Item -ItemType Directory -Path $od -Force) }
+        $f = [System.IO.Path]::Combine($od, 'scraper.txt')
+        $lines = @('; The owner''s ScreenScraper login, kept on this drive only. The Admin',
+                   '; page puts a LOCKED copy in the private friends store for new setups.',
                    ('user = ' + (ConvertTo-FrdScrambled ([string]$u.GetAttribute('value')))),
                    ('pass = ' + (ConvertTo-FrdScrambled ([string]$pw.GetAttribute('value')))))
         [System.IO.File]::WriteAllLines($f, [string[]]$lines)
-        return @{ Ok = $true; Message = 'Saved. New setups will scrape with this login once the next update is published.' }
+        return @{ Ok = $true; Message = 'Saved on this drive.' }
     }
     catch { return @{ Ok = $false; Message = ('Could not save it: ' + $_.Exception.Message) } }
 }

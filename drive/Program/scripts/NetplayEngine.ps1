@@ -96,7 +96,7 @@ function Set-NetplaySettings([string]$Root, [hashtable]$Changes) {
             $ws = [System.IO.Path]::Combine($Root, '_Wizard')
             # One copy a day, the first one: the settings as they were before
             # the Netplay tab touched them that day (not a folder per click).
-            $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($ws, 'archive'), ('netplay_' + (Get-Date -Format 'yyyy-MM-dd')))
+            $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($ws, 'Backups', 'Archive'), ('netplay_' + (Get-Date -Format 'yyyy-MM-dd')))
             $bakFile = [System.IO.Path]::Combine($bak, 'es_settings.cfg')
             if (-not (Test-Path -LiteralPath $bakFile)) {
                 [void](New-Item -ItemType Directory -Path $bak -Force)
@@ -189,7 +189,7 @@ function Set-EsStringSetting([string]$Root, [string]$Name, [string]$Value) {
     }
     $node.SetAttribute('value', $Value)
     $ws = [System.IO.Path]::Combine($Root, '_Wizard')
-    $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($ws, 'archive'), ('settings-setup_' + (Get-Date -Format 'yyyy-MM-dd_HHmmss')))
+    $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($ws, 'Backups', 'Archive'), ('settings-setup_' + (Get-Date -Format 'yyyy-MM-dd_HHmmss')))
     [void](New-Item -ItemType Directory -Path $bak -Force)
     Copy-Item -LiteralPath $p -Destination ([System.IO.Path]::Combine($bak, 'es_settings.cfg')) -Force
     $settings = New-Object System.Xml.XmlWriterSettings

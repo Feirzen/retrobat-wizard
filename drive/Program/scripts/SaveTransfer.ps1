@@ -99,7 +99,7 @@ function Import-RetroBatSaves([string]$Root, [string]$Ws, [string]$ZipFile) {
     try {
         if ($null -eq $zip.GetEntry('retrobat-saves.txt')) { return @{ Ok = $false; Files = 0; Undo = ''; Message = 'That .zip was not made by the wizard''s Export saves, so nothing was changed.' } }
         # safety copy of what is here now
-        $arch = [System.IO.Path]::Combine($Ws, 'archive')
+        $arch = [System.IO.Path]::Combine($Ws, 'Backups', 'Archive')
         if (-not (Test-Path -LiteralPath $arch)) { [void](New-Item -ItemType Directory -Path $arch -Force) }
         $undo = [System.IO.Path]::Combine($arch, ('saves-before-import_' + (Get-Date -Format 'yyyy-MM-dd_HHmmss') + '.zip'))
         if (Test-Path -LiteralPath (Get-StSavesDir $Root)) {

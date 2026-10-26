@@ -1,13 +1,13 @@
 # FamilyFilter.ps1 (2026-10-25): M-rated games hidden from RetroBat's lists.
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 . (Join-Path $Scripts 'FamilyFilter.ps1')
 $pass = 0; $fail = 0
 function Check([string]$n, [bool]$ok) { if ($ok) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" } }
 function Put([string]$p, [string]$t) { New-Item -ItemType Directory -Path (Split-Path $p -Parent) -Force | Out-Null; [System.IO.File]::WriteAllText($p, $t) }
 $Base = Join-Path ([System.IO.Path]::GetTempPath()) ('ff-' + [guid]::NewGuid().ToString('N'))
-$Root = $Base; $Ws = Join-Path $Base '_ClaudeWorkspace'
-Copy-Item -LiteralPath (Join-Path (Split-Path $Scripts -Parent) 'defaults') -Destination (Join-Path $Ws 'defaults') -Recurse
+$Root = $Base; $Ws = Join-Path $Base '_Wizard'
+Copy-Item -LiteralPath (Join-Path (Split-Path $Scripts -Parent) 'defaults') -Destination (Join-Path $Ws 'Program\defaults') -Recurse
 # names, loosely
 Check 'zelda style' ((ConvertTo-FfKey 'Legend of Zelda, The - Twilight Princess (USA) [!]') -eq (ConvertTo-FfKey 'The Legend of Zelda: Twilight Princess'))
 Check 'file name' ((ConvertTo-FfKey 'Call of Duty - Black Ops II (USA) (En,Fr).wux') -eq 'call of duty black ops ii')
@@ -28,7 +28,7 @@ Put "$Root/emulationstation/.emulationstation/es_settings.cfg" "<?xml version=`"
 $gl = "$Root/roms/wiiu/gamelist.xml"
 $r = Sync-FamilyFilter $Root $Ws
 Check 'off: nothing hidden' ($r.Hidden -eq 0 -and ([System.IO.File]::ReadAllText($gl) -split '<hidden>').Count -eq 2)
-Put "$Ws/features.ini" "familyfilter = on`n"
+Put "$Ws/Settings/features.ini" "familyfilter = on`n"
 $r = Sync-FamilyFilter $Root $Ws
 $t = [System.IO.File]::ReadAllText($gl)
 Check 'on: one hidden' ($r.Hidden -eq 1)
@@ -37,7 +37,7 @@ Check 'mario not hidden' ($t -notmatch '(?s)Mario Kart 8</name>\s*<hidden>')
 Check 'indent kept' ($t -match "`r`n`t`t<hidden>true</hidden>`r`n`t</game>")
 Check 'xml still reads' ($null -ne ([xml]$t).gameList)
 Check 'show hidden switched off' ([System.IO.File]::ReadAllText("$Root/emulationstation/.emulationstation/es_settings.cfg") -match 'ShowHiddenGames" value="false"')
-Check 'recorded' ((Get-Content "$Ws/family-hidden.txt" -Raw) -match 'wiiu\|\./Call of Duty')
+Check 'recorded' ((Get-Content "$Ws/Settings/family-hidden.txt" -Raw) -match 'wiiu\|\./Call of Duty')
 $r = Sync-FamilyFilter $Root $Ws
 Check 'again: nothing new' ($r.Hidden -eq 0 -and ([System.IO.File]::ReadAllText($gl) -split '<hidden>').Count -eq 3)
 # own list
@@ -48,15 +48,15 @@ $t = [System.IO.File]::ReadAllText($gl)
 Check 'let through: cod shown again' ($t -notmatch '(?s)Black Ops II</name>\s*<hidden>')
 Check 'hand-hidden yoshi still hidden' ($t -match "(?s)Woolly World</name>\s*<hidden>true</hidden>")
 # off: shows exactly what it hid
-[System.IO.File]::WriteAllText("$Ws/family-hide.txt", "; mine`n")
-Put "$Ws/features.ini" "familyfilter = on`n"
+[System.IO.File]::WriteAllText("$Ws/Settings/family-hide.txt", "; mine`n")
+Put "$Ws/Settings/features.ini" "familyfilter = on`n"
 [void](Sync-FamilyFilter $Root $Ws)
-Put "$Ws/features.ini" "familyfilter = off`n"
+Put "$Ws/Settings/features.ini" "familyfilter = off`n"
 $r = Sync-FamilyFilter $Root $Ws
 $t = [System.IO.File]::ReadAllText($gl)
 Check 'off: cod shown' ($t -notmatch '(?s)Black Ops II</name>\s*<hidden>' -and $r.Shown -eq 1)
 Check 'off: yoshi (hidden by hand) left hidden' ($t -match "(?s)Woolly World</name>\s*<hidden>true</hidden>")
-Check 'off: record gone' (-not (Test-Path "$Ws/family-hidden.txt"))
+Check 'off: record gone' (-not (Test-Path "$Ws/Settings/family-hidden.txt"))
 Remove-Item $Base -Recurse -Force
 Write-Host ("family filter tests: {0} passed, {1} failed" -f $pass, $fail)
 if ($fail -gt 0) { exit 1 }

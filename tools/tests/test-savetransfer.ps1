@@ -1,5 +1,5 @@
 # SaveTransfer.ps1 (2026-10-17): export all saves to one file, import them back.
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 . (Join-Path $Scripts 'SaveTransfer.ps1')
 $pass = 0; $fail = 0
@@ -32,7 +32,7 @@ Check '3DS save inside' (@($names -match '0012AB00/data').Count -eq 1)
 # B has an older zelda save and one of its own
 Put "$B/saves/n64/zelda.srm" 'old'
 Put "$B/saves/gba/pokemon.sav" 'mine'
-$WsB = Join-Path $B '_ClaudeWorkspace'
+$WsB = Join-Path $B '_Wizard'
 $i = Import-RetroBatSaves $B $WsB $zipF
 Check 'import ok' $i.Ok
 Check 'zelda replaced' ([System.IO.File]::ReadAllText("$B/saves/n64/zelda.srm") -eq 'link')
