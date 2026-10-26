@@ -263,6 +263,18 @@
       ]
     },
     {
+      "id": "the-oregon-trail",
+      "title": "The Oregon Trail",
+      "system": "3ds",
+      "players": "1",
+      "description": "Become a pioneer and make the famous crossing across America! Travel with fellow pioneers as you make your way across the Oregon Trail, encountering settlers, river crossings, hunting and other hardships. Manage your supplies or you just might find that your trip will end early!...",
+      "added": "2026-10-26",
+      "art": "library/art/the-oregon-trail.png",
+      "files": [
+        { "name": "Oregon Trail, The (USA).cci", "url": "private:the-oregon-trail__Oregon.Trail.The.USA.cci", "size": 134217728, "sha256": "64bb7e84aab726c3d2c77dc2f12409bd0ac04dbbce78637be1b0eba10fb5b321" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
