@@ -2751,6 +2751,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "tekken-3",
+      "title": "Tekken 3",
+      "system": "psx",
+      "players": "1-2",
+      "description": "An ancient evil force has reawakened, attacking in secret and feeding on the souls of mighty warriors. To lure it out of hiding will take the greatest fighting contest the world has ever seen... Tekken 3. Some are fighting for revenge, some for honor, ultimately, all are...",
+      "added": "2026-10-26",
+      "art": "library/art/tekken-3.png",
+      "video": "library/video/tekken-3.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Tekken 3 (USA)", "name": "tekken-3.zip", "size": 688383406, "sha256": "566db09d36206dd2b88a1d7957ffc87e716b690c0d896bfe7a1538f665f5cf46", "url": "private:tekken-3__tekken-3.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
