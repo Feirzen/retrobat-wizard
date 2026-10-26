@@ -1,0 +1,80 @@
+; ===========================================================================
+;  WHAT AN UPDATE OWNS - the ship list                         (2026-10-10)
+; ===========================================================================
+;  Every file the public repo (github.com/Feirzen/retrobat-wizard) carries,
+;  and so every file an update is allowed to write. Paths are relative to
+;  _Wizard, with / between folders.
+;
+;    code   the update owns it, and replaces it whenever it differs
+;    seed   the PERSON owns it. Written only when it is missing, never after.
+;           "seed X <- Y" ships the file at Y in X's place, for a file whose
+;           copy on this drive is personal (wizard.ini holds Steven's name).
+;    skip   never shipped, even if a line above matches it
+;    admin  the admin tools: shipped, but listed in admin-manifest.txt instead
+;           of manifest.txt, so only an admin's setup downloads them
+;
+;  *  matches inside one folder, ** matches any depth.
+;
+;  THE ROOMS (3.2, 2026-10-26). An update writes Program\ and Buttons\, and
+;  only SEEDS (files that are missing) into Settings\. People\, Backups\,
+;  Apps\, Owner\ and Cache\ are never the update's business: the engine
+;  refuses any path into them.
+;
+;  Read by the publishing step, never by the drive at run time. The manifest
+;  the drive reads is built from this list.
+; ---------------------------------------------------------------------------
+
+code  version.txt
+code  START HERE.txt
+code  Program/ship-list.txt
+
+; The admin tools are a download of their own (2026-10-17). These two
+; lines must stay ABOVE Program/scripts/*.ps1: the first matching line wins.
+admin Program/scripts/AdminEngine.ps1
+admin Program/scripts/AdminUI.ps1
+code  Program/scripts/*.ps1
+code  Program/scripts/*.vbs
+
+code  Program/wizard/*.ps1
+code  Program/wizard/*.vbs
+code  Program/wizard/*.ico
+code  Program/wizard/*.png
+skip  Program/wizard/SetupWizard-v3.ps1
+skip  Program/wizard/SetupWizard-legacy*.ps1
+skip  Program/wizard/icon-potions.png
+skip  Program/wizard/icon-potions-anim.png
+skip  Program/wizard/profile-wiimote.png
+code  Program/defaults/Setup Wizard.bat
+code  Program/defaults/retrobat-defaults.ini
+code  Program/defaults/mature-games.txt
+code  Program/defaults/wizard.ini
+
+code  Program/restore/**
+; The owner's own wizard button, whatever it is called (it follows the
+; name in wizard.ini). Everybody else's drive has its own.
+skip  Program/restore/*Wizard*.bat
+code  Program/restore-off/**
+code  Program/drive-root/**
+code  Program/machine/README.txt
+code  Program/machine/tiers/*
+code  Program/machine/rules/*
+code  Program/docs/PER-GAME-SETTINGS.md
+code  Program/docs/art/**
+skip  Program/docs/art/sources/**
+code  Program/theme-assets/steam.mp4
+
+code  Buttons/*.bat
+
+seed  Settings/wizard.ini  <-  Program/defaults/wizard.ini
+seed  Settings/features.ini
+seed  Settings/controllers.ini
+seed  Settings/couch-mouse.txt
+seed  Settings/game-settings.ini
+seed  Settings/maximize-windows.txt
+
+; THE BRIDGE (3.2). A drive updating from 3.1 still has every launcher
+; (PLAY, the wizard button, desktop icons) pointing at
+; _ClaudeWorkspace\wizard\Launch-Wizard.vbs. This one file stays at that old
+; place so the first start after the update can run the move to _Wizard.
+; The 3.2 engine never puts it back on a drive that has moved.
+code  wizard/Launch-Wizard.vbs  <-  Program/scripts/Bridge-Launch.vbs

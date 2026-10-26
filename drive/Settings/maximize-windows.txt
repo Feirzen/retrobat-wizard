@@ -1,0 +1,4 @@
+# Programs whose window is maximized when they open from RetroBat.
+# One program name per line (the .exe name, with or without ".exe").
+# Read by _Wizard\Program\scripts\Maximize-GameWindow.ps1.
+The Jackbox Megapicker.exe

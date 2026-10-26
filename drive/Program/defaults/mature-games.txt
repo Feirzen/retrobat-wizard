@@ -1,0 +1,199 @@
+; Games rated M (Mature 17+) by the ESRB, for the family-friendly filter
+; (scripts\FamilyFilter.ps1). One name per line; case, punctuation and
+; "(USA)" style tags do not matter. A name ending in * covers every game whose
+; name starts that way (only used for series where every game is M).
+; This setup's own additions go in _Wizard\Settings\family-hide.txt, not here
+; (this file is replaced by updates).
+;
+; --- whole series, every game M --------------------------------------------
+Grand Theft Auto*
+Resident Evil*
+Silent Hill*
+God of War*
+Gears of War*
+Dead Space*
+Fallout 3
+Fallout: New Vegas
+Fallout 4
+Fallout 76
+Turok*
+Duke Nukem*
+No More Heroes*
+Manhunt*
+Saints Row*
+Red Dead*
+Hitman*
+Max Payne*
+Condemned*
+F.E.A.R.*
+Borderlands*
+BioShock*
+Left 4 Dead*
+Dead Rising*
+House of the Dead*
+Devil May Cry*
+Ninja Gaiden 3*
+Darksiders
+Darksiders II
+Darksiders: Warmastered Edition
+Darksiders II: Deathinitive Edition
+Darksiders III
+Wolfenstein II*
+Doom Eternal
+Mortal Kombat 11*
+Splatterhouse*
+Postal*
+Leisure Suit Larry*
+Senran Kagura*
+Persona 5
+Persona 5 Royal
+Persona 5 Strikers
+Shin Megami Tensei IV*
+Shin Megami Tensei V*
+Catherine*
+Bayonetta 2
+Bayonetta 3
+;
+; --- Nintendo 64 --------------------------------------------------------------
+Conker's Bad Fur Day
+Perfect Dark
+Doom 64
+Quake
+Quake 64
+Quake II
+Mortal Kombat 4
+Mortal Kombat Trilogy
+Mortal Kombat Mythologies: Sub-Zero
+Shadow Man
+Hexen
+South Park
+Carmageddon 64
+Mace: The Dark Age
+War Gods
+Killer Instinct Gold
+Forsaken 64
+Daikatana
+Armorines: Project S.W.A.R.M.
+;
+; --- GameCube --------------------------------------------------------------------
+Eternal Darkness: Sanity's Requiem
+Metal Gear Solid: The Twin Snakes
+Killer7
+Geist
+BloodRayne
+Mortal Kombat: Deadly Alliance
+Mortal Kombat: Deception
+TimeSplitters: Future Perfect
+Second Sight
+True Crime: Streets of LA
+Freedom Fighters
+Hunter: The Reckoning - Wayward
+Spawn: Armageddon
+BMX XXX
+Gun
+Dead to Rights
+Red Faction II
+Prince of Persia: Warrior Within
+;
+; --- Wii --------------------------------------------------------------------------
+MadWorld
+Call of Duty: World at War
+Call of Duty: Modern Warfare - Reflex Edition
+Call of Duty: Black Ops
+Call of Duty: Modern Warfare 3
+Scarface: The World Is Yours
+The Godfather: Blackhand Edition
+Mortal Kombat: Armageddon
+Tenchu: Shadow Assassins
+Far Cry Vengeance
+Cursed Mountain
+Obscure: The Aftermath
+Rogue Trooper: Quartz Zone Massacre
+Driver: Parallel Lines
+;
+; --- Wii U -------------------------------------------------------------------------
+ZombiU
+Bayonetta
+Devil's Third
+Call of Duty: Black Ops II
+Call of Duty: Ghosts
+Assassin's Creed III
+Assassin's Creed IV: Black Flag
+Mass Effect 3: Special Edition
+Ninja Gaiden 3: Razor's Edge
+Tom Clancy's Splinter Cell: Blacklist
+Watch Dogs
+Deus Ex: Human Revolution - Director's Cut
+Sniper Elite V2
+Fatal Frame: Maiden of Black Water
+;
+; --- DS and 3DS, Game Boy Advance --------------------------------------------------
+Grand Theft Auto: Chinatown Wars
+Dementium: The Ward
+Dementium II
+Corpse Party
+Metal Gear Solid: Snake Eater 3D
+Doom
+Doom II
+Wolfenstein 3D
+Mortal Kombat Advance
+Mortal Kombat: Tournament Edition
+Ecks vs. Sever
+Ecks vs. Sever II: Ballistic
+;
+; --- SNES ---------------------------------------------------------------------------
+Mortal Kombat 3
+Ultimate Mortal Kombat 3
+;
+; --- Switch ---------------------------------------------------------------------------
+The Witcher 3: Wild Hunt
+The Elder Scrolls V: Skyrim
+Doom 3
+Diablo III: Eternal Collection
+Dead by Daylight
+Alien: Isolation
+L.A. Noire
+Dark Souls: Remastered
+Hotline Miami Collection
+Travis Strikes Again: No More Heroes
+Divinity: Original Sin 2
+The Outer Worlds
+Crysis Remastered
+Hellblade: Senua's Sacrifice
+Mortal Kombat 1
+South Park: The Stick of Truth
+South Park: The Fractured but Whole
+Dying Light
+Persona 4 Golden
+Persona 3 Reload
+Ninja Gaiden: Master Collection
+Wolfenstein: Youngblood
+;
+; --- Xbox, Xbox 360, PlayStation -----------------------------------------------------
+Halo: Combat Evolved
+Halo 2
+Halo 3
+Halo 3: ODST
+Halo: Reach
+Halo 4
+Halo 5: Guardians
+Halo: The Master Chief Collection
+Call of Duty 4: Modern Warfare
+Call of Duty: Modern Warfare 2
+Call of Duty: Black Ops III
+Mass Effect
+Mass Effect 2
+Assassin's Creed
+Assassin's Creed II
+Assassin's Creed: Brotherhood
+Assassin's Creed: Revelations
+The Elder Scrolls IV: Oblivion
+Metal Gear Solid 2: Sons of Liberty
+Metal Gear Solid 3: Snake Eater
+Metal Gear Solid 4: Guns of the Patriots
+Mortal Kombat
+Prey
+Doom 3: BFG Edition
+;
+; --- PC and Steam ----------------------------------------------------------------------
+Helldivers 2
