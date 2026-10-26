@@ -2499,6 +2499,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "crash-team-racing",
+      "title": "Crash Team Racing",
+      "system": "psx",
+      "players": "1-4",
+      "description": "It's a multi-player kart racing game starring your favorite bandicoot CRASH and a host of his friends...and foes! The stakes are high and the competition is fierce. Ready...Set...GO!!!",
+      "added": "2026-10-26",
+      "art": "library/art/crash-team-racing.png",
+      "video": "library/video/crash-team-racing.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "CTR - Crash Team Racing (USA)", "name": "crash-team-racing.zip", "size": 605791646, "sha256": "cc9a29cfaff5c711b03f64a8bed6b93409f40d5e18473eb37323e37ec42e6bbc", "url": "private:crash-team-racing__crash-team-racing.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
