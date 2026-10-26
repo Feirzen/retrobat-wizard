@@ -1830,8 +1830,9 @@
       "system": "nes",
       "players": "1",
       "description": "Dr. Cossack, humbled by his defeat and his allowing of Dr. Wily to influence his ways, decides to help Dr. Light by providing him and Rockman with tools and weapons to help foil Dr. Wily for good. All seems calm and peaceful, until... A sudden rampage breaks out, and the cause...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/mega-man-5.png",
+      "video": "library/video/mega-man-5.mp4",
       "files": [
         { "name": "Mega Man 5 (USA).nes", "url": "private:mega-man-5__Mega.Man.5.USA.nes", "size": 524304, "sha256": "010673ff28a6e9e29857260a5acaaff20b44dd09487a48900f6ab71fbcc66d13" }
       ]
