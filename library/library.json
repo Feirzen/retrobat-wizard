@@ -1588,6 +1588,19 @@
       ]
     },
     {
+      "id": "rayman-2-the-great-escape-usa-en-fr-de-e",
+      "title": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/rayman-2-the-great-escape-usa-en-fr-de-e.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)", "name": "rayman-2-the-great-escape-usa-en-fr-de-e.zip", "size": 33560168, "sha256": "0738ff7db44f90b53bda095788b7079e8481c65f6265e96150bef564aeba6a87", "url": "private:rayman-2-the-great-escape-usa-en-fr-de-e__rayman-2-the-great-escape-usa-en-fr-de-e.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "rugrats-scavenger-hunt",
       "title": "Rugrats : Scavenger Hunt",
       "system": "n64",
