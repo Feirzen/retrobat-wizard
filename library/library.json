@@ -2175,6 +2175,19 @@
       ]
     },
     {
+      "id": "kirby-s-dream-course",
+      "title": "Kirby's Dream Course",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Kirby's Dream Course is an innovative SNES game featuring everyone's favourite pink blob, Kirby. After his adventures in Dream Land we find him in this mini golf game where Kirby himself is the ball, and you must guide him around each hole using the sort of bar system that you...",
+      "added": "2026-10-26",
+      "art": "library/art/kirby-s-dream-course.png",
+      "video": "library/video/kirby-s-dream-course.mp4",
+      "files": [
+        { "name": "Kirby's Dream Course (USA).sfc", "url": "private:kirby-s-dream-course__Kirby.s.Dream.Course.USA.sfc", "size": 1048576, "sha256": "0f984dc5fe8293f75e3b8fad98b0cb564706d9b1e3902b56415aa399c2d4df2b" }
+      ]
+    },
+    {
       "id": "mega-man-x",
       "title": "Mega Man X",
       "system": "snes",
