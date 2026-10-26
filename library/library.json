@@ -2415,6 +2415,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "castlevania-symphony-of-the-night",
+      "title": "Castlevania : Symphony of the Night",
+      "system": "psx",
+      "players": "1",
+      "description": "As a descendant of Dracula, you must end the vampire bloodline. Can you rid the world of this unspeakable terror? Uncover the mystery of Castlevania and challenge an adventure as legendary as its name. Over 140 different enemies, bosses, and ghastly creatures. Awesome magical...",
+      "added": "2026-10-26",
+      "art": "library/art/castlevania-symphony-of-the-night.png",
+      "video": "library/video/castlevania-symphony-of-the-night.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Castlevania - Symphony of the Night (USA)", "name": "castlevania-symphony-of-the-night.zip", "size": 583421152, "sha256": "2e654c4328b2112c1f693bdfe8734843779c979f15f3d69931cf4a31a8d5b2db", "url": "private:castlevania-symphony-of-the-night__castlevania-symphony-of-the-night.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
