@@ -1890,8 +1890,9 @@
       "system": "nes",
       "players": "1",
       "description": "The land of Hyrule is in chaos. As Link, you'll be sent on a treacherous journey to return six precious Crystals to their origins in six stone statues. Only by defeating the guardians of the six palaces will you gain passage to the seventh palace, take on the ultimate challenge...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/zelda-ii-the-adventure-of-link.png",
+      "video": "library/video/zelda-ii-the-adventure-of-link.mp4",
       "files": [
         { "name": "Zelda II - The Adventure of Link (USA).nes", "url": "private:zelda-ii-the-adventure-of-link__Zelda.II.-.The.Adventure.of.Link.USA.nes", "size": 262160, "sha256": "9fca03064a5113e6a92f550d9f42bac9ac1ae248a84df1f653d7cd7f76a1803d" }
       ]
