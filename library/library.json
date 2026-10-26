@@ -1873,6 +1873,19 @@
       ]
     },
     {
+      "id": "tecmo-bowl",
+      "title": "Tecmo Bowl",
+      "system": "nes",
+      "players": "1-2",
+      "description": "Tecmo Bowl pits the player vs. the computer in 11 game single-elimination playoff action, or you can go head-to-head with a human opponent in action or coach mode. There are 12 teams of real NFL players (circa 1988) to choose from, but don't look for official NFL team logos or...",
+      "added": "2026-10-26",
+      "art": "library/art/tecmo-bowl.png",
+      "video": "library/video/tecmo-bowl.mp4",
+      "files": [
+        { "name": "Tecmo Bowl (USA) (Rev 1).nes", "url": "private:tecmo-bowl__Tecmo.Bowl.USA.Rev.1.nes", "size": 262160, "sha256": "b3ff470a057fa4b60bbc50a2f4d857da2f8701235c7283470a242c3ebcb56b9b" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda",
       "title": "The Legend of Zelda",
       "system": "nes",
