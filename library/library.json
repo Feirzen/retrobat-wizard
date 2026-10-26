@@ -2318,6 +2318,19 @@
       ]
     },
     {
+      "id": "super-mario-rpg-legend-of-the-seven-star",
+      "title": "Super Mario RPG : Legend of the Seven Stars",
+      "system": "snes",
+      "players": "1",
+      "description": "Super Mario RPG is a console RPG starring none other than Nintendo's popular character Mario. This game starts off like almost every other Mario game, with Bowser kidnapping Princess Toadstool. However, when Mario goes to Bowser's Keep to save her, a giant sword made by the evil...",
+      "added": "2026-10-26",
+      "art": "library/art/super-mario-rpg-legend-of-the-seven-star.png",
+      "video": "library/video/super-mario-rpg-legend-of-the-seven-star.mp4",
+      "files": [
+        { "name": "Super Mario RPG - Legend of the Seven Stars (USA).sfc", "url": "private:super-mario-rpg-legend-of-the-seven-star__Super.Mario.RPG.-.Legend.of.the.Seven.Stars.USA.sfc", "size": 4194304, "sha256": "740646f3535bfb365ca44e70d46ab433467b142bd84010393070bd0b141af853" }
+      ]
+    },
+    {
       "id": "super-mario-world",
       "title": "Super Mario World",
       "system": "snes",
