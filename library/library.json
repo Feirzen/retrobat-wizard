@@ -1225,6 +1225,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "1080-teneighty-snowboarding",
+      "title": "1080 TenEighty Snowboarding",
+      "system": "n64",
+      "players": "1-2",
+      "description": "1080 Snowboarding is a snowboard racing game. The player will find 6 downhill slopes and a half-pipe as courses, several characters to choose from, and be able to perform more than 25 tricks. After choosing a character and a board among the available eight, the player can...",
+      "added": "2026-10-26",
+      "art": "library/art/1080-teneighty-snowboarding.png",
+      "video": "library/video/1080-teneighty-snowboarding.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "1080 Snowboarding (Japan, USA) (En,Ja)", "name": "1080-teneighty-snowboarding.zip", "size": 16780356, "sha256": "3689670d6ea9f6bcaae209d798a628253d14a1b66223c46e12d4544e4fb9296c", "url": "private:1080-teneighty-snowboarding__1080-teneighty-snowboarding.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
