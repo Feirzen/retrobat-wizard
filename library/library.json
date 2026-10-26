@@ -1734,6 +1734,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "pokemon-puzzle-league-usa",
+      "title": "Pokemon Puzzle League (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/pokemon-puzzle-league-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Pokemon Puzzle League (USA)", "name": "pokemon-puzzle-league-usa.zip", "size": 33560099, "sha256": "ba32f615fbaf0cd86b1cdf3cd56c54a4dbcddbdb654c83a7db4e78e64afc5228", "url": "private:pokemon-puzzle-league-usa__pokemon-puzzle-league-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "pok-mon-puzzle-league",
       "title": "Pokmon Puzzle League",
       "system": "n64",
@@ -1745,19 +1758,6 @@
       "files": [
       ],
       "bundle": { "folder": "Pokemon Puzzle League (USA)", "name": "pok-mon-puzzle-league.zip", "size": 33560099, "sha256": "38b6928bfb08249caf80ce173444071097cdc66e46f280b20a9d80204b0e0d94", "url": "private:pok-mon-puzzle-league__pok-mon-puzzle-league.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "pokemon-puzzle-league-usa",
-      "title": "Pokemon Puzzle League (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/pokemon-puzzle-league-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Pokemon Puzzle League (USA)", "name": "pokemon-puzzle-league-usa.zip", "size": 33560099, "sha256": "ba32f615fbaf0cd86b1cdf3cd56c54a4dbcddbdb654c83a7db4e78e64afc5228", "url": "private:pokemon-puzzle-league-usa__pokemon-puzzle-league-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1810,6 +1810,20 @@
       "files": [
       ],
       "bundle": { "folder": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)", "name": "rayman-2-the-great-escape-usa-en-fr-de-e.zip", "size": 33560168, "sha256": "0738ff7db44f90b53bda095788b7079e8481c65f6265e96150bef564aeba6a87", "url": "private:rayman-2-the-great-escape-usa-en-fr-de-e__rayman-2-the-great-escape-usa-en-fr-de-e.zip" },
+      "min": "3.2.0"
+    },
+    {
+      "id": "rayman-2-the-great-escape",
+      "title": "Rayman 2 : The Great Escape",
+      "system": "n64",
+      "players": "1",
+      "description": "Enter a massive 3-D action adventure of amazing beauty and challenge. The pirate terror has enslaved the world and only Rayman's speed, agility, and magical powers can save all. Race and battle across 45 intricately designed areas - rainforests, jungles, narrow canyon passes,...",
+      "added": "2026-10-26",
+      "art": "library/art/rayman-2-the-great-escape.png",
+      "video": "library/video/rayman-2-the-great-escape.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)", "name": "rayman-2-the-great-escape.zip", "size": 33560168, "sha256": "2e1639bc4de12e932a5e73cb45109418817629214a3c8432af687c7c1aa14532", "url": "private:rayman-2-the-great-escape__rayman-2-the-great-escape.zip" },
       "min": "3.2.0"
     },
     {
