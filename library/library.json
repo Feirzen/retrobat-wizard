@@ -151,6 +151,18 @@
       ]
     },
     {
+      "id": "mario-luigi-bowser-s-inside-story-bowser",
+      "title": "Mario & Luigi: Bowser's Inside Story + Bowser Jr.'s Journey",
+      "system": "3ds",
+      "players": "1",
+      "description": "Laugh your way through a hilarious story told from three perspectives! Search the Mushroom Kingdom for a cure as Bowser, explore his innards as the Mario Bros., and discover the untold story of Bowser Jr.?s Journey. Overcome the fury of Fawful, action-packed battles, puzzling...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-luigi-bowser-s-inside-story-bowser.png",
+      "files": [
+        { "name": "Mario & Luigi - Bowser's Inside Story + Bowser Jr.'s Journey (USA).cci", "url": "private:mario-luigi-bowser-s-inside-story-bowser__Mario.Luigi.-.Bowser.s.Inside.Story.Bowser.Jr.s.Journey.USA.cci", "size": 1073741824, "sha256": "a4a5f33cb3d7b1cfd01a12450f94a000e9891e2de955c3ec6e3784d13915b3ab" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
