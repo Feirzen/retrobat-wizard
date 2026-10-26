@@ -1523,6 +1523,19 @@
       ]
     },
     {
+      "id": "perfect-dark-usa-rev-1",
+      "title": "Perfect Dark (USA) (Rev 1)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/perfect-dark-usa-rev-1.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Perfect Dark (USA) (Rev 1)", "name": "perfect-dark-usa-rev-1.zip", "size": 33560096, "sha256": "ff232c597366c3879e11c8d91e73a66cc736c88f4a4d3e6c104c23956dd4854e", "url": "private:perfect-dark-usa-rev-1__perfect-dark-usa-rev-1.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "pok-mon-snap",
       "title": "Pokmon Snap",
       "system": "n64",
