@@ -1413,6 +1413,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "gauntlet-legends",
+      "title": "Gauntlet Legends",
+      "system": "n64",
+      "players": "1-4",
+      "description": "In ages past, a corrupt mage named Garm used a set of Runestones to summon a demon named Skorne (It is not stated what Garm intended to use Skorne for; however, as Gauntlet Legends introduces Garm as a \"greedy young mage\", it can be assumed he wanted Skorne for his own personal...",
+      "added": "2026-10-26",
+      "art": "library/art/gauntlet-legends.png",
+      "video": "library/video/gauntlet-legends.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Gauntlet Legends (USA)", "name": "gauntlet-legends.zip", "size": 16780308, "sha256": "c10dbb41f2d20779a326cb444cb548d6ad0f50f2fe623eabca6893a40e2e8020", "url": "private:gauntlet-legends__gauntlet-legends.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "gauntlet-legends-usa",
       "title": "Gauntlet Legends (USA)",
       "system": "n64",
