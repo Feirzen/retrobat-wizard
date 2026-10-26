@@ -1,5 +1,5 @@
 # Publish a game (Admin tab) against a fake GitHub on this computer.
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 $script:pass = 0; $script:fail = 0
 function Assert($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" -ForegroundColor Red } }
@@ -18,8 +18,8 @@ try {
 
     $r = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '1-2' 'A test.' $sync
     Assert (-not $r.Ok -and $r.Message -like '*no library key*') 'no key: stops'
-    New-Item -ItemType Directory -Path (Join-Path $ws 'social') -Force | Out-Null
-    [IO.File]::WriteAllText((Join-Path $ws 'social/social-token.txt'), 'github_pat_SOCIAL')
+    New-Item -ItemType Directory -Path (Join-Path $ws 'People/social') -Force | Out-Null
+    [IO.File]::WriteAllText((Join-Path $ws 'People/social/social-token.txt'), 'github_pat_SOCIAL')
     Assert (-not (Set-AdminLibKey $ws 'nonsense')) 'bad key refused'
     Assert (Set-AdminLibKey $ws 'github_pat_WRONG') 'key saved'
     $r = Publish-AdminLibraryGame $ws $game 'snes' 'My Game' '1-2' 'A test.' $sync

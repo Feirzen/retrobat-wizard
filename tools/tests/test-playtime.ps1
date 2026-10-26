@@ -1,11 +1,11 @@
 # Play time per person (2026-10-17): SocialEngine Update-SocialPlayLedger.
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 . (Join-Path $Scripts 'SocialEngine.ps1')
 $pass = 0; $fail = 0
 function Check([string]$n, [bool]$ok) { if ($ok) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" } }
 $T = Join-Path ([System.IO.Path]::GetTempPath()) ('pt-' + [guid]::NewGuid().ToString('N'))
-$Root = $T; $Ws = Join-Path $T '_ClaudeWorkspace'
+$Root = $T; $Ws = Join-Path $T '_Wizard'
 New-Item -ItemType Directory -Path (Join-Path $Root 'roms/snes') -Force | Out-Null
 New-Item -ItemType Directory -Path $Ws -Force | Out-Null
 function Set-Game([int]$secsA, [string]$lastA, [int]$secsB) {

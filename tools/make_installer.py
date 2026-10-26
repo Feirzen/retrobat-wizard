@@ -17,7 +17,7 @@ Written in:
   @@TOKEN@@  the friends-list key, as scrambled in token.txt ("rb1:" + base64
              of it backwards, so GitHub's secret scanner leaves it alone).
              Taken from <token.txt>, or from the zip being replaced.
-  @@MAGE@@   the mage riding the bars: drive/wizard/mage.png brought back to
+  @@MAGE@@   the mage riding the bars: drive/Program/wizard/mage.png brought back to
              its own pixels (18 x 26), as a base64 PNG.
 """
 import base64, io, os, sys, zipfile
@@ -40,7 +40,7 @@ else:
 assert token.startswith('rb1:') and all(32 < ord(c) < 127 and c != "'" for c in token), 'token.txt is not the scrambled form'
 
 # --- the mage --------------------------------------------------------------
-im = Image.open(os.path.join(repo, 'drive', 'wizard', 'mage.png')).convert('RGBA')
+im = Image.open(os.path.join(repo, 'drive', 'Program', 'wizard', 'mage.png')).convert('RGBA')
 W, H = im.size
 px = im.load()
 best = None

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the public repo tree from a copy of _ClaudeWorkspace and its ship-list.txt.
+"""Builds the public repo tree from a copy of _Wizard (3.2+; _ClaudeWorkspace before) and its ship-list.txt.
 
 usage:
   publish.py build  <ws_dir> <repo_dir> <version>      drive/..., manifest.txt, .gitattributes
@@ -114,7 +114,10 @@ def pat_to_re(p):
 
 
 rules = []
-for raw in open(os.path.join(ws, 'ship-list.txt'), encoding='latin-1'):
+shiplist = os.path.join(ws, 'Program', 'ship-list.txt')       # 3.2 rooms
+if not os.path.exists(shiplist):
+    shiplist = os.path.join(ws, 'ship-list.txt')              # before 3.2
+for raw in open(shiplist, encoding='latin-1'):
     line = raw.strip()
     if not line or line.startswith(';') or line.startswith('#'):
         continue

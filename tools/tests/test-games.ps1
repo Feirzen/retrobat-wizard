@@ -1,8 +1,8 @@
 $ErrorActionPreference='Stop'
-. /home/claude/work/new/_ClaudeWorkspace/scripts/GameLibrary.ps1
+. (Join-Path $PSScriptRoot '../../drive/Program/scripts/GameLibrary.ps1')
 $pass=0;$fail=0; function A($c,$n){ if($c){$script:pass++}else{$script:fail++;"FAIL $n"} }
 $Root = Join-Path ([IO.Path]::GetTempPath()) ('gl-'+[guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Force "$Root/emulationstation/.emulationstation","$Root/_ClaudeWorkspace","$Root/in" | Out-Null
+New-Item -ItemType Directory -Force "$Root/emulationstation/.emulationstation","$Root/_Wizard","$Root/in" | Out-Null
 Copy-Item /mnt/user-data/uploads/RetroBat/emulationstation/.emulationstation/es_systems.cfg "$Root/emulationstation/.emulationstation/"
 $sys = Get-LibSystems $Root
 A ($sys.Count -gt 100) "lots of consoles ($($sys.Count))"
@@ -55,37 +55,37 @@ $lib = @{ version=1; games=@(
 [IO.File]::WriteAllText("$gh/library.json", $lib)
 $script:LibFetchOverride = { param($Url,$Out) if ($script:libDown) { throw 'offline' }; if ($Url -like '*library.json*') { Copy-Item "$gh/library.json" $Out -Force } elseif ($Url -like '*Cool%20Game.nes' -or $Url -eq 'private:priv__Priv.nes') { Copy-Item "$gh/files/Cool Game.nes" $Out -Force } else { throw "404 $Url" } }
 $script:libDown = $false
-$c = Get-LibCatalog "$Root/_ClaudeWorkspace"
+$c = Get-LibCatalog "$Root/_Wizard"
 A ($c.Ok -and @($c.Games).Count -eq 2 -and $c.Games[0].Title -eq 'Cool Game') "only the safe entries kept ($(@($c.Games).Count))"
 $pg = @($c.Games | Where-Object Id -eq 'priv')[0]
 A ($null -ne $pg -and $pg.Files[0].Url -eq 'private:priv__Priv.nes') 'private file listed by name'
-$r = Install-LibGame "$Root/_ClaudeWorkspace" $pg $sys
+$r = Install-LibGame "$Root/_Wizard" $pg $sys
 A ($r.Ok -and (Test-Path "$Root/roms/nes/Priv.nes")) "private game installs: $($r.Message)"
 A (-not (Test-LibGameInstalled $c.Games[0] $sys)) 'not installed yet'
-$r = Install-LibGame "$Root/_ClaudeWorkspace" $c.Games[0] $sys
+$r = Install-LibGame "$Root/_Wizard" $c.Games[0] $sys
 A ($r.Ok -and (Test-Path "$Root/roms/nes/Cool Game.nes")) "installed: $($r.Message)"
 A (Test-LibGameInstalled $c.Games[0] $sys) 'now installed'
 # tampered download refused
 [IO.File]::WriteAllBytes("$gh/files/Cool Game.nes", [byte[]](9..108))
 Remove-Item "$Root/roms/nes/Cool Game.nes"
-$r = Install-LibGame "$Root/_ClaudeWorkspace" $c.Games[0] $sys
+$r = Install-LibGame "$Root/_Wizard" $c.Games[0] $sys
 A (-not $r.Ok -and $r.Message -match 'checksum' -and -not (Test-Path "$Root/roms/nes/Cool Game.nes")) 'bad checksum refused'
 $script:libDown = $true
-$c = Get-LibCatalog "$Root/_ClaudeWorkspace"
+$c = Get-LibCatalog "$Root/_Wizard"
 A ($c.Ok -and $c.FromCache -and @($c.Games).Count -eq 2) 'offline uses cache'
 # a private file with no friends key on the drive: a plain message, no crash
 $script:LibFetchOverride = $null
 $caught = ''
-try { Invoke-LibFetch 'private:x.nes' "$Root/x.part" "$Root/_ClaudeWorkspace" } catch { $caught = $_.Exception.Message }
+try { Invoke-LibFetch 'private:x.nes' "$Root/x.part" "$Root/_Wizard" } catch { $caught = $_.Exception.Message }
 A ($caught -like '*no friends key*') "private without key: plain words ($caught)"
 # publish entry
-New-Item -ItemType Directory "$Root/_ClaudeWorkspace/library-to-publish" | Out-Null
-A (Test-LibCanPublish "$Root/_ClaudeWorkspace") 'owner can publish'
-$r = New-LibPublishEntry "$Root/_ClaudeWorkspace" "$Root/in/Game.gba" 'gba' "Fireboy & Watergirl: Forest Temple!" '1-2' "Co-op`npuzzles"
+New-Item -ItemType Directory "$Root/_Wizard/Owner/library-to-publish" | Out-Null
+A (Test-LibCanPublish "$Root/_Wizard") 'owner can publish'
+$r = New-LibPublishEntry "$Root/_Wizard" "$Root/in/Game.gba" 'gba' "Fireboy & Watergirl: Forest Temple!" '1-2' "Co-op`npuzzles"
 A ($r.Ok -and (Test-Path "$($r.Folder)/Game.gba") -and (Split-Path -Leaf $r.Folder) -eq 'fireboy-watergirl-forest-temple') "publish entry ($(Split-Path -Leaf $r.Folder))"
 $ini = Get-Content "$($r.Folder)/game.ini"
 A (($ini -match '^description = Co-op puzzles$').Count -eq 1) 'description one line'
-$r2 = New-LibPublishEntry "$Root/_ClaudeWorkspace" "$Root/in/Game.gba" 'gba' "Fireboy & Watergirl: Forest Temple!" '' ''
+$r2 = New-LibPublishEntry "$Root/_Wizard" "$Root/in/Game.gba" 'gba' "Fireboy & Watergirl: Forest Temple!" '' ''
 A (-not $r2.Ok) 'no double queue'
 # what RetroBat knows (gamelist.xml): name, players, words, box art; sub-folders too (2026-10-11)
 $wiiS = @($sys | Where-Object Name -eq 'wii')[0]

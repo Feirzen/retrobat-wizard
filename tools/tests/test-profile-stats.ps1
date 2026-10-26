@@ -1,14 +1,14 @@
 # Played games on the profile (SocialEngine.ps1, 2026-10-11): stats from
 # RetroBat's own gamelist.xml, hidden games, per-friend sharing, the record
 # round trip.
-param([string]$Scripts = '/mnt/user-data/outputs/save-revamp/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 $script:pass = 0; $script:fail = 0
 function A($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" -ForegroundColor Red } }
 . (Join-Path $Scripts 'SocialEngine.ps1')
 
 $TR = Join-Path ([IO.Path]::GetTempPath()) ('ps' + [guid]::NewGuid().ToString('N').Substring(0, 6))
-$Ws = Join-Path $TR '_ClaudeWorkspace'
+$Ws = Join-Path $TR '_Wizard'
 New-Item -ItemType Directory -Force (Join-Path $TR 'roms/n64/images'), (Join-Path $TR 'roms/gamecube'), $Ws | Out-Null
 [IO.File]::WriteAllText((Join-Path $TR 'roms/n64/images/smash.png'), 'x')
 [IO.File]::WriteAllText((Join-Path $TR 'roms/n64/gamelist.xml'), @'

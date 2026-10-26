@@ -1,5 +1,5 @@
 $ErrorActionPreference='Stop'
-$S='/home/claude/work/new/_ClaudeWorkspace/scripts'
+$S=(Join-Path $PSScriptRoot '../../drive/Program/scripts')
 . "$S/SocialEngine.ps1"
 # pull the helper's functions and the console table out of the shipping file
 $ast=[System.Management.Automation.Language.Parser]::ParseFile("$S/Social-Helper.ps1",[ref]$null,[ref]$null)

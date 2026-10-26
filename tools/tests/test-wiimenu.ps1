@@ -1,5 +1,5 @@
 # WiiMenu.ps1 (2026-10-17): bring your own Wii Menu files in, never overwriting.
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 . (Join-Path $Scripts 'WiiMenu.ps1')
 $pass = 0; $fail = 0

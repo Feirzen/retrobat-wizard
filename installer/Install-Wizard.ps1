@@ -24,7 +24,7 @@
         wizard's, unchanged).
 
     WHAT IT TOUCHES: only the RetroBat folder it is pointed at. A log of every
-    run goes to _ClaudeWorkspace\update\install.log.
+    run goes to _Wizard\Cache\logs\install.log (TEMP while it runs).
 
     ASCII ONLY, Windows PowerShell 5.1. Run through iex by the .bat, so no
     param() block and no $PSScriptRoot: the .bat hands its own path over in
@@ -172,9 +172,28 @@ try {
     Note ('install: newest is {0} ({1})' -f $ver, $tag)
     $RBI.Version = $ver
 
-    foreach ($d in @($ws, (Join-Rel $ws 'scripts'))) { if (-not (Test-Path -LiteralPath $d)) { [void](New-Item -ItemType Directory -Path $d -Force) } }
-    $engine = Join-Rel $ws 'scripts\UpdateEngine.ps1'
-    [void](Get-Download ('{0}/{1}/{2}/drive/scripts/UpdateEngine.ps1' -f $RBI.RawBase, $RBI.Repo, $tag) $engine 1 100000 0.0 0.02 'The update engine')
+    # --- which layout? (3.2, 2026-10-26) ------------------------------------
+    #  From 3.2 the wizard lives in RetroBat\_Wizard, in rooms (Program\,
+    #  Settings\, People\ ...); before, in RetroBat\_ClaudeWorkspace. Which one
+    #  the newest version uses is told by where its update engine sits.
+    $newLayout = $true
+    $tmpEngine = Join-Rel $RBI.Root '_rbw-engine.ps1'
+    try { [void](Get-Download ('{0}/{1}/{2}/drive/Program/scripts/UpdateEngine.ps1' -f $RBI.RawBase, $RBI.Repo, $tag) $tmpEngine 1 100000 0.0 0.02 'The update engine') }
+    catch {
+        if ($RBI.Cancel) { throw }
+        $newLayout = $false
+        [void](Get-Download ('{0}/{1}/{2}/drive/scripts/UpdateEngine.ps1' -f $RBI.RawBase, $RBI.Repo, $tag) $tmpEngine 1 100000 0.0 0.02 'The update engine')
+    }
+    $oldWs = Join-Rel $RBI.Root '_ClaudeWorkspace'; $newWs = Join-Rel $RBI.Root '_Wizard'
+    if (-not $newLayout) { $ws = $oldWs }
+    elseif ((Test-Path -LiteralPath $oldWs) -and -not (Test-Path -LiteralPath $newWs)) { $ws = $oldWs }   # a 3.1 setup: updated in place, then moved
+    else { $ws = $newWs }
+    $RBI.Ws = $ws; $RBI.NewLayout = $newLayout
+    $engineRel = $(if ($newLayout) { 'Program\scripts\UpdateEngine.ps1' } else { 'scripts\UpdateEngine.ps1' })
+    $engine = Join-Rel $ws $engineRel
+    [void](New-Item -ItemType Directory -Path (Split-Path -Parent $engine) -Force)
+    Move-Item -LiteralPath $tmpEngine -Destination $engine -Force
+    Note ('install: into {0} ({1} layout)' -f $ws, $(if ($newLayout) { '3.2 rooms' } else { 'old' }))
     . $engine
     if ($RBI.RawBase -ne 'https://raw.githubusercontent.com') {
         # tests only: the engine's own downloads go to the test server too
@@ -252,23 +271,46 @@ try {
         Note ('install: version {0} in place, {1} files' -f $r.Version, ($r.Changed + $r.Added))
     }
 
+    # --- a 3.1 setup that just got 3.2: the one-time move to _Wizard ---------
+    if ($newLayout -and $ws -eq $oldWs) {
+        $RBI.T2 = 'Moving to the new _Wizard folder (once)'
+        Note 'install: 3.2 on a _ClaudeWorkspace setup, running the move to _Wizard'
+        $mvDir = Join-Rel ([System.IO.Path]::GetTempPath()) 'RetroBatWizardMove'
+        [void](New-Item -ItemType Directory -Path $mvDir -Force)
+        Copy-Item -LiteralPath (Join-Rel $ws 'Program\scripts\Move-ToWizardLayout.ps1') -Destination $mvDir -Force
+        Copy-Item -LiteralPath (Join-Rel $ws 'Program\scripts\Paths.ps1') -Destination $mvDir -Force
+        $psExe = $(if ($env:SystemRoot) { Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe' } else { [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName })
+        $mvArgs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ('"' + (Join-Rel $mvDir 'Move-ToWizardLayout.ps1') + '"'), '-Root', ('"' + $RBI.Root + '"'), '-Quiet')
+        if ($env:RBW_TEST_RAW) { $mvArgs += '-NoProcessCheck' }
+        $spArgs = @{ FilePath = $psExe; ArgumentList = $mvArgs; WorkingDirectory = $mvDir; Wait = $true; PassThru = $true }
+        if ($env:SystemRoot) { $spArgs.WindowStyle = 'Hidden' }
+        $mvp = Start-Process @spArgs
+        if ($mvp.ExitCode -ne 0 -or -not (Test-Path -LiteralPath $newWs)) { throw 'the move to the new _Wizard folder did not finish. Close RetroBat and every wizard window, then run the installer again' }
+        $ws = $newWs; $RBI.Ws = $ws
+        Note 'install: moved to _Wizard'
+    }
+
     # --- the friends-list key, the wizard's button, the first-run note ----------
-    $tokenDst = Join-Rel $ws 'social\social-token.txt'
+    $Lay = $(if ($newLayout) { @{ Token = 'People\social\social-token.txt'; Ini = 'Settings\wizard.ini'; Tpl = 'Program\defaults\Setup Wizard.bat'; First = 'Settings\first-run.txt'; Prof = 'People\profile.ini' } }
+           else { @{ Token = 'social\social-token.txt'; Ini = 'wizard\wizard.ini'; Tpl = 'defaults\Setup Wizard.bat'; First = 'first-run.txt'; Prof = 'profile' } })
+    $tokenDst = Join-Rel $ws $Lay.Token
     if ($RBI.Token -ne '' -and -not $RBI.Token.StartsWith('@@') -and -not (Test-Path -LiteralPath $tokenDst)) {
         [void](New-Item -ItemType Directory -Path (Split-Path $tokenDst -Parent) -Force)
         [System.IO.File]::WriteAllText($tokenDst, ($RBI.Token + "`n"))
         Note 'install: friends list key in place'
     }
     $name = 'RetroBat Wizard'
-    $ini = Join-Rel $ws 'wizard\wizard.ini'
+    $ini = Join-Rel $ws $Lay.Ini
     if (Test-Path -LiteralPath $ini) {
         foreach ($l in [System.IO.File]::ReadAllLines($ini)) { if ($l -match '^\s*name\s*=\s*(.+?)\s*$') { $name = $Matches[1] } }
     }
     $btn = Join-Path $RBI.Root ($name + '.bat')
-    $tpl = Join-Rel $ws 'defaults\Setup Wizard.bat'
+    $tpl = Join-Rel $ws $Lay.Tpl
     if ((Test-Path -LiteralPath $tpl) -and -not (Test-Path -LiteralPath $btn)) { Copy-Item -LiteralPath $tpl -Destination $btn; Note ('install: made ' + $btn) }
-    if (-not (Test-Path -LiteralPath (Join-Path $ws 'first-run.txt')) -and -not (Test-Path -LiteralPath (Join-Path $ws 'profile'))) {
-        [System.IO.File]::WriteAllText((Join-Path $ws 'first-run.txt'), ("Installed {0}. The wizard's first-run setup reads this and then sets it aside." -f (Get-Date -Format 'yyyy-MM-dd HH:mm')))
+    $first = Join-Rel $ws $Lay.First
+    if (-not (Test-Path -LiteralPath $first) -and -not (Test-Path -LiteralPath (Join-Rel $ws $Lay.Prof))) {
+        [void](New-Item -ItemType Directory -Path (Split-Path $first -Parent) -Force)
+        [System.IO.File]::WriteAllText($first, ("Installed {0}. The wizard's first-run setup reads this and then sets it aside." -f (Get-Date -Format 'yyyy-MM-dd HH:mm')))
     }
     $RBI.F2 = 1.0; $RBI.St2 = 'done'
     if ([string]$RBI.T2 -notmatch 'Nothing') { $RBI.T2 = 'Done' }
@@ -286,9 +328,19 @@ finally { $RBI.ThemeGo = $true }
 
 # --- step 3: the ckau-book theme ------------------------------------------------
 $WorkT = @'
-$mark = Join-Rel $RBI.Ws 'update\theme-downloading.txt'
-$zip = Join-Rel $RBI.Ws 'update\ckau-book.zip'
+# The download and the unpacking happen beside RetroBat, outside the wizard's
+# folder, because a 3.1 setup's folder is renamed to _Wizard while this runs.
+$zip = Join-Path $RBI.Root '_ck.zip'
 $tmp = Join-Path $RBI.Root '_ck'
+$mark = ''
+function Get-MarkPaths {
+    $out = @()
+    foreach ($w in @('_Wizard', '_ClaudeWorkspace')) {
+        $out += (Join-Rel $RBI.Root ($w + '\Program\update\theme-downloading.txt'))
+        $out += (Join-Rel $RBI.Root ($w + '\update\theme-downloading.txt'))
+    }
+    return $out
+}
 try {
     $themes = Join-Rel $RBI.Root 'emulationstation\.emulationstation\themes'
     $ckau = Join-Path $themes 'ckau-book'
@@ -304,6 +356,7 @@ try {
     $free = [long](New-Object System.IO.DriveInfo ([System.IO.Path]::GetPathRoot([System.IO.Path]::GetFullPath($RBI.Root)))).AvailableFreeSpace
     if ($free -gt 0 -and $free -lt 4GB) { throw ('only {0:N1} GB is free on that drive, and the theme needs about 4 GB while it unpacks' -f ($free / 1GB)) }
 
+    $mark = Join-Rel $RBI.Ws $(if ($RBI.NewLayout) { 'Program\update\theme-downloading.txt' } else { 'update\theme-downloading.txt' })
     [void](New-Item -ItemType Directory -Path (Split-Path $mark -Parent) -Force)
     [System.IO.File]::WriteAllText($mark, ('started {0}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
     $RBI.St3 = 'run'; $RBI.T3 = 'Starting the download'
@@ -322,7 +375,7 @@ try {
     # The drive's own collection pictures go into the theme. That script is
     # the wizard's, so wait for step 2 if it is somehow still going.
     while (-not $RBI.ADone -and $RBI.AErr -eq '') { Start-Sleep -Milliseconds 300 }
-    $rs = Join-Rel $RBI.Ws 'scripts\Restore-CkauBookTheme.ps1'
+    $rs = Join-Rel $RBI.Ws $(if ($RBI.NewLayout) { 'Program\scripts\Restore-CkauBookTheme.ps1' } else { 'scripts\Restore-CkauBookTheme.ps1' })
     if ($RBI.ADone -and (Test-Path -LiteralPath $rs) -and $env:SystemRoot) {
         $RBI.T3 = 'Adding the collection pictures'
         $psExe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
@@ -341,7 +394,7 @@ catch {
     try { foreach ($f in @($zip, ($zip + '.part'))) { if (Test-Path -LiteralPath $f) { Remove-Item -LiteralPath $f -Force } } } catch { }
 }
 finally {
-    try { if (Test-Path -LiteralPath $mark) { Remove-Item -LiteralPath $mark -Force } } catch { }
+    foreach ($m in (Get-MarkPaths)) { try { if (Test-Path -LiteralPath $m) { Remove-Item -LiteralPath $m -Force } } catch { } }
     $RBI.TDone = $true
 }
 '@
@@ -420,8 +473,9 @@ try {
         if ((Show-Box 'RetroBat is open. Close it completely, then press Retry.' 'RetryCancel' 'Warning') -ne 'Retry') { exit 0 }
     }
 
-    $ws = Join-Path $root '_ClaudeWorkspace'
-    foreach ($d in @($ws, (Join-Path $ws 'update'))) { if (-not (Test-Path -LiteralPath $d)) { [void](New-Item -ItemType Directory -Path $d -Force) } }
+    # which wizard folder: decided by the first job, once it knows which
+    # version it is putting in (_Wizard from 3.2, _ClaudeWorkspace before)
+    $ws = $(if (Test-Path -LiteralPath (Join-Path $root '_Wizard')) { Join-Path $root '_Wizard' } else { Join-Path $root '_ClaudeWorkspace' })
 }
 catch {
     [void](Show-Box ('The installer could not start: ' + $_.Exception.Message) 'OK' 'Error')
@@ -431,7 +485,8 @@ catch {
 $RBI = [hashtable]::Synchronized(@{})
 $RBI.Root = $root; $RBI.Ws = $ws; $RBI.Repo = $Repo; $RBI.RawBase = $RawBase; $RBI.Token = $Token
 $RBI.ThemeUrl = $ThemeUrl; $RBI.ThemeGuess = $ThemeGuess
-$RBI.LogFile = Join-Path $ws 'update\install.log'; $RBI.LogLock = New-Object object
+$RBI.LogFile = Join-Path ([System.IO.Path]::GetTempPath()) 'RetroBatWizard-install.log'; $RBI.LogLock = New-Object object
+$RBI.NewLayout = $true
 foreach ($i in 1..3) { $RBI["F$i"] = 0.0; $RBI["T$i"] = 'Waiting'; $RBI["St$i"] = 'wait' }
 $RBI.ADone = $false; $RBI.AErr = ''; $RBI.TDone = $false; $RBI.ThemeGo = $false; $RBI.Cancel = $false; $RBI.Version = ''
 
@@ -583,7 +638,7 @@ $timer.Add_Tick({
 
     if ($RBI.ADone -and -not $script:launched) {
         $script:launched = $true
-        $vbs = Join-Path $RBI.Ws 'wizard\Launch-Wizard.vbs'
+        $vbs = Join-Path $RBI.Ws $(if ($RBI.NewLayout) { 'Program\wizard\Launch-Wizard.vbs' } else { 'wizard\Launch-Wizard.vbs' })
         try {
             Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\wscript.exe') -ArgumentList @('//nologo', ('"' + $vbs + '"'), '-Setup')
             $foot.Text = "The wizard's setup is opening in its own window. Go ahead with it (pick Quick setup if you are not sure)."
@@ -595,7 +650,7 @@ $timer.Add_Tick({
         $RBI.Cancel = $true
         $foot.ForeColor = $cRed
         $foot.Text = $(if ($RBI.AErr -eq 'stopped') { 'Stopped. Run the installer again any time; it carries on where it stopped.' }
-                       else { 'It stopped: ' + $RBI.AErr + "`nRun the installer again; it carries on where it stopped. Details: _ClaudeWorkspace\update\install.log" })
+                       else { 'It stopped: ' + $RBI.AErr + "`nRun the installer again; it carries on where it stopped. Details: install.log in the wizard's folder (_Wizard\Cache\logs)" })
         $btn.Visible = $true
     }
     if ($RBI.ADone -and $RBI.TDone -and $null -eq $script:endAt) {
@@ -641,5 +696,12 @@ $form.Add_Shown({
 })
 [void]$form.ShowDialog()
 $timer.Stop()
+# the run's notes go into the wizard's own folder
+try {
+    $dst = Join-Path $RBI.Ws $(if ($RBI.NewLayout) { 'Cache\logs\install.log' } else { 'update\install.log' })
+    [void](New-Item -ItemType Directory -Path (Split-Path -Parent $dst) -Force)
+    [System.IO.File]::AppendAllText($dst, [System.IO.File]::ReadAllText($RBI.LogFile))
+    Remove-Item -LiteralPath $RBI.LogFile -Force
+} catch { }
 # The background threads end with this program.
 [Environment]::Exit(0)
