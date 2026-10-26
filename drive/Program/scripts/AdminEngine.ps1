@@ -601,6 +601,17 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
     if ($artPath -eq '' -and $old.Count -gt 0) { $artPath = [string]$old[0].art }
     if ($vidPath -eq '' -and $old.Count -gt 0) { $vidPath = [string]$old[0].video }
     $games = @(@($cur.games) | Where-Object { $null -ne $_ -and [string]$_.id -ne $id })
+    # (2026-10-26) The same game listed under another id (its name changed,
+    # so its id did too) is replaced, never listed twice. Its picture and
+    # video carry over when this time has none.
+    $dupes = @($games | Where-Object { Test-AdminLibSameGame $_ $System $Bundle $mainName $sha })
+    if ($dupes.Count -gt 0) {
+        $games = @($games | Where-Object { -not (Test-AdminLibSameGame $_ $System $Bundle $mainName $sha) })
+        foreach ($dg in $dupes) {
+            if ($artPath -eq '' -and [string]$dg.art -ne '') { $artPath = [string]$dg.art }
+            if ($vidPath -eq '' -and [string]$dg.video -ne '') { $vidPath = [string]$dg.video }
+        }
+    }
     if ($Bundle -ne '') {
         # a folder game: one packed file (maybe in pieces), unpacked on download
         $bz = [ordered]@{ folder = $Bundle; name = $leaf; size = $len; sha256 = $sha }
@@ -643,13 +654,78 @@ function Publish-AdminLibraryGame([string]$Ws, [string]$File, [string]$System, [
         if ($split) { foreach ($pc in $pieces) { $keepNames[$pc.UpName] = $true } }
         foreach ($xo in $extraOut) { $keepNames[([string]$xo.url).Substring(8)] = $true }
         foreach ($a in (Get-AdminLibAssets ($again.Body | ConvertFrom-Json))) {
-            if (-not $keepNames.ContainsKey([string]$a.name) -and ([string]$a.name).StartsWith($id + '__')) { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)") }
+            if (-not $keepNames.ContainsKey([string]$a.name) -and ([string]$a.name).StartsWith($id + '__')) { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)"); continue }
+            # the replaced copy's file(s)
+            foreach ($dg in $dupes) {
+                if (-not $keepNames.ContainsKey([string]$a.name) -and ([string]$a.name).StartsWith([string]$dg.id + '__')) { [void](Invoke-AdminLibApi $fkey 'DELETE' "$fapi/releases/assets/$($a.id)"); break }
+            }
+        }
+    }
+    # and the replaced copy's own picture and video, unless this one uses them
+    foreach ($dg in $dupes) {
+        foreach ($pub in @([string]$dg.art, [string]$dg.video)) {
+            if ($pub -eq '' -or $pub -eq $artPath -or $pub -eq $vidPath) { continue }
+            if ($pub -notmatch '^library/(art|video)/[A-Za-z0-9._\-]+$') { continue }
+            $have = Invoke-AdminLibApi $key 'GET' "$api/contents/$pub"
+            if ($have.Status -ne 200) { continue }
+            $body = '{"message":' + (ConvertTo-AdminJsonString ('library: remove ' + $pub)) + ',"sha":"' + [string](($have.Body | ConvertFrom-Json).sha) + '"}'
+            [void](Invoke-AdminLibApi $key 'DELETE' "$api/contents/$pub" $body)
         }
     }
     $Sync.Percent = 100
     $res.Ok = $true
     $res.Message = "$($Title.Trim()) is in the online library. The file is private: only a wizard can download it. Friends see it within about 5 minutes (GitHub's copy refreshes)."
     return $res
+}
+
+# (2026-10-26) Is list entry $G the same game as the one being published?
+# A folder game: same console and same folder name (one folder per name in
+# a console folder). A file game: same console, same file name and the very
+# same file (two different games can share a name like game.iso).
+function Test-AdminLibSameGame($G, [string]$System, [string]$Bundle, [string]$MainName, [string]$Sha) {
+    if ($null -eq $G -or [string]$G.system -ne $System) { return $false }
+    if ($Bundle -ne '') { return ($null -ne $G.bundle -and ([string]$G.bundle.folder) -ieq $Bundle) }
+    if ($null -ne $G.bundle) { return $false }
+    if ($null -ne $G.parts) { return (([string]$G.parts.name) -ieq $MainName -and ([string]$G.parts.sha256) -ieq $Sha) }
+    $f0 = @($G.files | Where-Object { $null -ne $_ }) | Select-Object -First 1
+    if ($null -eq $f0) { return $false }
+    return (([string]$f0.name) -ieq $MainName -and ([string]$f0.sha256) -ieq $Sha)
+}
+
+# (2026-10-26) Tidies the list after a publish queue: any game listed twice
+# keeps its best copy (with a video, then with art) and loses the rest, and
+# uploads no game on the list uses are cleared. Returns how many went.
+function Remove-AdminLibDuplicates([string]$Ws) {
+    $out = @{ Dupes = 0; Leftovers = 0 }
+    try {
+        $c = Get-AdminLibraryContents $Ws
+        if (-not $c.Ok) { return $out }
+        $groups = @{}
+        foreach ($g in @($c.Games)) {
+            $k = ''
+            if ($null -ne $g.bundle) { $k = 'b|' + [string]$g.system + '|' + ([string]$g.bundle.folder).ToLower() }
+            elseif ($null -ne $g.parts) { $k = 'f|' + [string]$g.system + '|' + ([string]$g.parts.name).ToLower() + '|' + ([string]$g.parts.sha256).ToLower() }
+            else {
+                $f0 = @($g.files | Where-Object { $null -ne $_ }) | Select-Object -First 1
+                if ($null -ne $f0) { $k = 'f|' + [string]$g.system + '|' + ([string]$f0.name).ToLower() + '|' + ([string]$f0.sha256).ToLower() }
+            }
+            if ($k -eq '') { continue }
+            if (-not $groups.ContainsKey($k)) { $groups[$k] = @() }
+            $groups[$k] += $g
+        }
+        $drop = @()
+        foreach ($k in $groups.Keys) {
+            $list = @($groups[$k])
+            if ($list.Count -lt 2) { continue }
+            $best = $list | Sort-Object @{ Expression = { $(if ([string]$_.video -ne '') { 2 } else { 0 }) + $(if ([string]$_.art -ne '') { 1 } else { 0 }) }; Descending = $true }, @{ Expression = { [string]$_.added }; Descending = $true } | Select-Object -First 1
+            foreach ($g in $list) { if ([string]$g.id -ne [string]$best.id) { $drop += [string]$g.id } }
+        }
+        $left = @($c.Leftovers)
+        if ($drop.Count -eq 0 -and $left.Count -eq 0) { return $out }
+        $r = Remove-AdminLibraryGames $Ws $drop $left
+        $out.Dupes = @($r.Removed).Count; $out.Leftovers = [int]$r.Cleared
+    } catch { }
+    return $out
 }
 
 # A game's video preview in the PUBLIC repo at library/video/<id>.mp4 (3.2).
@@ -698,7 +774,10 @@ function New-AdminFolderZip([string]$Folder, [string]$OutZip, $Sync) {
         Add-Type -AssemblyName System.IO.Compression -ErrorAction SilentlyContinue
         Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
         $base = (Get-Item -LiteralPath $Folder).FullName.TrimEnd('\', '/')
-        $all = @(Get-ChildItem -LiteralPath $base -Recurse -File -Force -ErrorAction Stop)
+        # (2026-10-26) Same order and the files' own dates every time, so the
+        # same folder always packs into the very same file: publishing it
+        # again (to add art or a video) skips the upload.
+        $all = @(Get-ChildItem -LiteralPath $base -Recurse -File -Force -ErrorAction Stop | Sort-Object { $_.FullName.ToLowerInvariant() })
         if ($all.Count -eq 0) { $res.Message = 'That folder is empty.'; return $res }
         $total = [double](($all | Measure-Object -Property Length -Sum).Sum); $done = 0.0
         $dir = Split-Path $OutZip -Parent
@@ -711,6 +790,9 @@ function New-AdminFolderZip([string]$Folder, [string]$OutZip, $Sync) {
             foreach ($f in $all) {
                 $rel = $f.FullName.Substring($base.Length).TrimStart('\', '/') -replace '\\', '/'
                 $e = $zip.CreateEntry($rel, [System.IO.Compression.CompressionLevel]::NoCompression)
+                $wt = $f.LastWriteTime
+                if ($wt.Year -lt 1981 -or $wt.Year -gt 2100) { $wt = [datetime]'2000-01-01' }
+                $e.LastWriteTime = [System.DateTimeOffset]$wt
                 $out = $e.Open(); $in = [System.IO.File]::OpenRead($f.FullName)
                 try {
                     while (($n = $in.Read($buf, 0, $buf.Length)) -gt 0) {
@@ -796,6 +878,9 @@ function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
     }
     $Sync.Prefix = ''
     $Sync.Current = 0
+    # (2026-10-26) a last tidy: no game listed twice, no stray uploads
+    $tidy = @{ Dupes = 0; Leftovers = 0 }
+    if ($done.Count -gt 0) { $Sync.Stage = 'Tidying the library list...'; $tidy = Remove-AdminLibDuplicates $Ws }
     $list = @($Items | Where-Object { $null -ne $_ })
     $res = @{ Ok = ($failed.Count -eq 0 -and $done.Count -gt 0); Done = $done; Failed = $failed; Message = '' }
     if ($list.Count -eq 1) {
@@ -807,6 +892,7 @@ function Publish-AdminLibraryGames([string]$Ws, $Items, $Sync) {
     if ($skipped.Count -gt 0) { $m += ('Crossed off: {0}.' -f ($skipped -join ', ')) }
     if ($failed.Count -gt 0) { $m += ("Did not go up:`n" + ($failed -join "`n")) }
     if ($done.Count -gt 0) { $m += "Friends see them within about 5 minutes (GitHub's copy refreshes)." }
+    if ($tidy.Dupes -gt 0) { $m += ('Took off {0} older duplicate cop{1}.' -f $tidy.Dupes, $(if ($tidy.Dupes -eq 1) { 'y' } else { 'ies' })) }
     $res.Message = ($m -join "`n`n")
     return $res
 }

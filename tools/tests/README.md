@@ -26,3 +26,4 @@ es_systems.cfg, Dolphin.ini).
 | test-adminpack.ps1 | Admin tools as their own download (admin-manifest.txt, checksums, refresh after an update, workshop guard) | 32 |
 | test-family.ps1 | Family-friendly filter (loose name matching, hide and show again, hand-hidden games left alone) | 26 |
 | test-keylayouts.ps1 | Keyboard game layouts (game default plus each person's own) | 12 |
+| test-libdupes.ps1 | No game listed twice: renamed republish replaces, same file name but different game kept, tidy after a queue | 13 |

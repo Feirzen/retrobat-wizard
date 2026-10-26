@@ -2,6 +2,14 @@
 
 Newest first. Written for players: what you will notice.
 
+## Admin tools refresh (2026-10-26) - no player update
+
+Only the Admin tab's files changed, so the wizard stays 3.2.0 and players are offered nothing.
+- Publish games: folder games now find their name, players, description, box art and video preview from RetroBat, like every other game.
+- A game is never listed twice: publishing a game again (even under a new name) replaces its old entry, picture, video and file, and every publish ends with a tidy that clears any duplicate or stray upload.
+- Publishing the same folder game again no longer re-uploads it.
+- The game picker has a console search box and a Select all / Clear all button.
+
 ## 3.2.0 (2026-10-31) - the tidy house
 
 **The wizard's folder**

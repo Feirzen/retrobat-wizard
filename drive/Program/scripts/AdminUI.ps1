@@ -501,10 +501,67 @@ function Get-AdminPickSystem([string]$Path) {
     return $sys
 }
 
+# (2026-10-26) The admin's own copy of GameLibrary's Get-LibGamelistInfo,
+# with folder games matched by the file inside their folder. Kept here so
+# the fix ships with the admin tools and the players' wizard is untouched.
+function Get-AdminGamelistInfo($System, [string]$File) {
+    $out = @{ Title = [System.IO.Path]::GetFileNameWithoutExtension($File); Players = ''; Description = ''; Art = ''; Video = '' }
+    $gl = Join-LibPath $System.Folder 'gamelist.xml'
+    if (-not (Test-Path -LiteralPath $gl)) { return $out }
+    try {
+        [xml]$x = [System.IO.File]::ReadAllText($gl)
+        $want = './' + [System.IO.Path]::GetFileName($File)
+        $base = ([string]$System.Folder).TrimEnd('\', '/')
+        if ($File.Length -gt $base.Length -and $File.StartsWith($base, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $want = './' + ($File.Substring($base.Length).TrimStart('\', '/') -replace '\\', '/')
+        }
+        # (2026-10-26) A folder game (PS1, N64, Dreamcast, Wii U, ScummVM in
+        # its own folder) is usually listed by a file INSIDE its folder
+        # (./Game/Game.cue, ./Game/code/x.rpx), so the folder itself never
+        # matched and its art and video were never found. Exact match first
+        # (a <game> or <folder> entry); else, for a folder, the entry inside
+        # it that sits highest up.
+        $hit = $null
+        $all = @(@($x.gameList.game) + @($x.gameList.folder) | Where-Object { $null -ne $_ })
+        foreach ($g in $all) {
+            if ((([string]$g.path -replace '\\', '/').TrimEnd('/')) -eq $want) { $hit = $g; break }
+        }
+        if ($null -eq $hit -and (Test-Path -LiteralPath $File -PathType Container)) {
+            $depth = 999
+            foreach ($g in @($x.gameList.game | Where-Object { $null -ne $_ })) {
+                $gp = ([string]$g.path -replace '\\', '/')
+                if ($gp.StartsWith($want + '/', [System.StringComparison]::OrdinalIgnoreCase)) {
+                    $dd = ($gp.Split('/')).Count
+                    if ($dd -lt $depth) { $hit = $g; $depth = $dd }
+                }
+            }
+        }
+        if ($null -ne $hit) {
+            $g = $hit
+            if ($g.name) { $out.Title = [string]$g.name }
+            if ($g.players) { $out.Players = [string]$g.players }
+            if ($g.desc) { $out.Description = [string]$g.desc }
+            foreach ($k in @('image', 'thumbnail')) {
+                $rel = [string]$g.$k
+                if ($rel -eq '') { continue }
+                $full = $(if ($rel.StartsWith('./') -or $rel.StartsWith('.\')) { Join-LibPath $System.Folder $rel.Substring(2) } else { $rel })
+                if (Test-Path -LiteralPath $full) { $out.Art = $full; break }
+            }
+            # (3.2) the scraped video, for the library's preview
+            $vr = [string]$g.video
+            if ($vr -ne '') {
+                $vf = $(if ($vr.StartsWith('./') -or $vr.StartsWith('.\')) { Join-LibPath $System.Folder $vr.Substring(2) } else { $vr })
+                if (Test-Path -LiteralPath $vf) { $out.Video = $vf }
+            }
+        }
+    } catch { }
+    return $out
+}
+
 # One picked game -> its queue item and line, asking for box art if it has
 # none. $Set: Get-LibGameSet's answer (files), or $null for a folder game.
 function New-AdminPublishItem($Sys, [string]$Path, $Set, [long]$Bytes) {
-    $info = Get-LibGamelistInfo $Sys $Path
+    $info = Get-AdminGamelistInfo $Sys $Path
     $title = ([string]$info.Title).Trim()
     $desc = (([string]$info.Description) -replace '\s+', ' ').Trim()
     if ($desc.Length -gt 280) { $desc = $desc.Substring(0, 280); $cut = $desc.LastIndexOf(' '); if ($cut -gt 200) { $desc = $desc.Substring(0, $cut) }; $desc += '...' }
@@ -569,13 +626,30 @@ function Show-PublishPicker {
     $c1 = New-Object System.Windows.Controls.ColumnDefinition; $c1.Width = '260'
     $c2 = New-Object System.Windows.Controls.ColumnDefinition
     [void]$g.ColumnDefinitions.Add($c1); [void]$g.ColumnDefinitions.Add($c2)
+    # (2026-10-26, Steven) a search box above the console list ("it's
+    # forever long and I'd rather just search the console")
+    $left = New-Object System.Windows.Controls.DockPanel; $left.Margin = '0,0,12,0'
+    $lcl = New-Text 'Find a console' $ColDim 12; $lcl.Margin = '0,0,0,3'
+    [System.Windows.Controls.DockPanel]::SetDock($lcl, 'Top'); [void]$left.Children.Add($lcl)
+    $script:ppConFind = New-Object System.Windows.Controls.TextBox; $script:ppConFind.FontSize = 14; $script:ppConFind.Padding = '6,3'; $script:ppConFind.Margin = '0,0,0,8'; $script:ppConFind.ToolTip = 'Type part of a console name'
+    [System.Windows.Controls.DockPanel]::SetDock($script:ppConFind, 'Top'); [void]$left.Children.Add($script:ppConFind)
     $script:ppCons = New-Object System.Windows.Controls.ListBox; $script:ppCons.FontSize = 14
-    $script:ppCons.Background = (New-Brush $ColPanel); $script:ppCons.Foreground = (New-Brush $ColText); $script:ppCons.BorderThickness = '0'; $script:ppCons.Margin = '0,0,12,0'
+    $script:ppCons.Background = (New-Brush $ColPanel); $script:ppCons.Foreground = (New-Brush $ColText); $script:ppCons.BorderThickness = '0'
     foreach ($sy in $script:ppSystems) { $li = New-Object System.Windows.Controls.ListBoxItem; $li.Content = [string]$sy.FullName; $li.Tag = $sy; $li.Padding = '8,4'; [void]$script:ppCons.Items.Add($li) }
-    [System.Windows.Controls.Grid]::SetColumn($script:ppCons, 0); [void]$g.Children.Add($script:ppCons)
+    [void]$left.Children.Add($script:ppCons)
+    [System.Windows.Controls.Grid]::SetColumn($left, 0); [void]$g.Children.Add($left)
     $right = New-Object System.Windows.Controls.DockPanel
-    $script:ppFilter = New-Object System.Windows.Controls.TextBox; $script:ppFilter.FontSize = 14; $script:ppFilter.Padding = '6,3'; $script:ppFilter.Margin = '0,0,0,8'; $script:ppFilter.ToolTip = 'Type to narrow the list'
-    [System.Windows.Controls.DockPanel]::SetDock($script:ppFilter, 'Top'); [void]$right.Children.Add($script:ppFilter)
+    $rcl = New-Text 'Find a game' $ColDim 12; $rcl.Margin = '0,0,0,3'
+    [System.Windows.Controls.DockPanel]::SetDock($rcl, 'Top'); [void]$right.Children.Add($rcl)
+    # the game search box with a Select all button beside it (2026-10-26)
+    $frow = New-Object System.Windows.Controls.DockPanel; $frow.Margin = '0,0,0,8'
+    $script:ppAll = New-Object System.Windows.Controls.Button; $script:ppAll.Content = 'Select all'; $script:ppAll.Padding = '12,3'; $script:ppAll.FontSize = 13; $script:ppAll.Margin = '8,0,0,0'
+    $script:ppAll.ToolTip = 'Ticks every game showing in this list (or clears them when they are all ticked)'
+    $script:ppAll.Add_Click({ Invoke-PublishPickerAll })
+    [System.Windows.Controls.DockPanel]::SetDock($script:ppAll, 'Right'); [void]$frow.Children.Add($script:ppAll)
+    $script:ppFilter = New-Object System.Windows.Controls.TextBox; $script:ppFilter.FontSize = 14; $script:ppFilter.Padding = '6,3'; $script:ppFilter.ToolTip = 'Type to narrow the list'
+    [void]$frow.Children.Add($script:ppFilter)
+    [System.Windows.Controls.DockPanel]::SetDock($frow, 'Top'); [void]$right.Children.Add($frow)
     $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
     $script:ppList = New-Object System.Windows.Controls.StackPanel
     $sv.Content = $script:ppList; [void]$right.Children.Add($sv)
@@ -583,6 +657,7 @@ function Show-PublishPicker {
     [void]$dp.Children.Add($g)
     $script:ppCons.Add_SelectionChanged({ Update-PublishPickerList })
     $script:ppFilter.Add_TextChanged({ Update-PublishPickerList })
+    $script:ppConFind.Add_TextChanged({ Update-PublishPickerConsoles })
     $w.Content = $dp
     $script:ppCons.SelectedIndex = 0
     [void]$w.ShowDialog()
@@ -618,12 +693,52 @@ function Update-PublishPickerList {
         [void]$script:ppList.Children.Add($cb)
     }
     if ($n -eq 0) { [void]$script:ppList.Children.Add((New-Text 'Nothing here.' $ColDim 13)) }
+    Update-PublishPickerAllLabel
+}
+
+# The tick boxes showing in the game list right now.
+function Get-PublishPickerBoxes {
+    return @($script:ppList.Children | Where-Object { $_ -is [System.Windows.Controls.CheckBox] })
+}
+
+# Select all: ticks every game showing (the search box narrows what that
+# is); when they are all ticked already, it clears them instead.
+function Invoke-PublishPickerAll {
+    $boxes = @(Get-PublishPickerBoxes)
+    if ($boxes.Count -eq 0) { return }
+    $allOn = (@($boxes | Where-Object { -not $_.IsChecked }).Count -eq 0)
+    foreach ($cb in $boxes) { $cb.IsChecked = (-not $allOn) }
+    Update-PublishPickerAllLabel
+}
+
+function Update-PublishPickerAllLabel {
+    if ($null -eq $script:ppAll) { return }
+    $boxes = @(Get-PublishPickerBoxes)
+    $script:ppAll.IsEnabled = ($boxes.Count -gt 0)
+    $script:ppAll.Content = $(if ($boxes.Count -gt 0 -and @($boxes | Where-Object { -not $_.IsChecked }).Count -eq 0) { 'Clear all' } else { 'Select all' })
+}
+
+# The console search: hides consoles whose name does not match, and moves
+# to the first one left when the one picked is hidden.
+function Update-PublishPickerConsoles {
+    $q = ([string]$script:ppConFind.Text).Trim().ToLower()
+    $first = $null
+    foreach ($li in @($script:ppCons.Items)) {
+        $sy = $li.Tag
+        $hay = ([string]$sy.FullName + ' ' + [string]$sy.Name).ToLower()
+        $show = ($q -eq '' -or $hay.Contains($q))
+        $li.Visibility = $(if ($show) { 'Visible' } else { 'Collapsed' })
+        if ($show -and $null -eq $first) { $first = $li }
+    }
+    $sel = $script:ppCons.SelectedItem
+    if ($null -ne $first -and ($null -eq $sel -or $sel.Visibility -ne 'Visible')) { $script:ppCons.SelectedItem = $first }
 }
 
 function Update-PublishPickerCount {
     $c = $script:ppTicked.Count
     $script:ppCount.Text = $(if ($c -eq 0) { 'Nothing ticked yet.' } elseif ($c -eq 1) { '1 game ticked.' } else { ('{0} games ticked.' -f $c) })
     $script:ppGo.IsEnabled = ($c -gt 0)
+    Update-PublishPickerAllLabel
 }
 
 function Invoke-AdminPublish {
