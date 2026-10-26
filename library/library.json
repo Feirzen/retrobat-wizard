@@ -2695,6 +2695,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "spyro-year-of-the-dragon",
+      "title": "Spyro : Year of the Dragon",
+      "system": "psx",
+      "players": "1",
+      "description": "Thieves have kidnapped a brood of dragon eggs, while, elsewhere in the Dragon Lands, a gateway to the Forgotten World has been uncovered. Sent to recapture the eggs, Spyro the Dragon, and his best friend Sparx, face a journey into uncharted territory against his most fearsome...",
+      "added": "2026-10-26",
+      "art": "library/art/spyro-year-of-the-dragon.png",
+      "video": "library/video/spyro-year-of-the-dragon.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Spyro - Year of the Dragon (USA) (Rev 1)", "name": "spyro-year-of-the-dragon.zip", "size": 1329818385, "sha256": "db5698ea2c87dfea8572d8eb8479489e8fa27b2b8a433bddc5207160b444a8d2", "url": "private:spyro-year-of-the-dragon__spyro-year-of-the-dragon.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
