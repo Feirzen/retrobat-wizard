@@ -2723,6 +2723,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "spyro-the-dragon",
+      "title": "Spyro the Dragon",
+      "system": "psx",
+      "players": "1",
+      "description": "Spyro the Dragon is a platform game developed by Insomniac Games for the PlayStation. It stars the title character, a young purple dragon named Spyro and his dragonfly friend, Sparx, and is the first game in the Spyro the Dragon series. The first game was massively popular at...",
+      "added": "2026-10-26",
+      "art": "library/art/spyro-the-dragon.png",
+      "video": "library/video/spyro-the-dragon.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Spyro the Dragon (USA)", "name": "spyro-the-dragon.zip", "size": 661648371, "sha256": "48e19fa26f07a040a51b7bf9841ead952b1ac989ae376ccbaf1b188d6db69b32", "url": "private:spyro-the-dragon__spyro-the-dragon.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
