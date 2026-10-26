@@ -2625,6 +2625,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "the-legend-of-dragoon",
+      "title": "The Legend of Dragoon",
+      "system": "psx",
+      "players": "1",
+      "description": "Ten thousand years ago, the Divine Tree brought forth all living races. Among them were the powerful Dragons, the resilient humans, and the magical Winglies. For centuries, peace endureduntil the Winglies rose in a brutal rebellion, conquering the world and enslaving humanity....",
+      "added": "2026-10-26",
+      "art": "library/art/the-legend-of-dragoon.png",
+      "video": "library/video/the-legend-of-dragoon.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Legend of Dragoon, The (USA, Canada) (Disc 1)", "name": "the-legend-of-dragoon.zip", "size": 485026320, "sha256": "0e1f274edf12bc400bf2516e3cf005e0e6d3f6a91f901f294c7dec1316711489", "url": "private:the-legend-of-dragoon__the-legend-of-dragoon.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
