@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "dr-mario",
+      "title": "Dr. Mario",
+      "system": "nes",
+      "players": "1-2",
+      "description": "In this Tetris-style game, you play as Dr. Mario, who must drop differently coloured pills onto viruses to remove them from the bottle. Each pill is split into two, with each side a different colour. Match that colour to the colour of the virus, and it will be removed from the...",
+      "added": "2026-10-26",
+      "art": "library/art/dr-mario.png",
+      "video": "library/video/dr-mario.mp4",
+      "files": [
+        { "name": "Dr. Mario (Japan, USA) (En) (Rev 1).nes", "url": "private:dr-mario__Dr.Mario.Japan.USA.En.Rev.1.nes", "size": 65552, "sha256": "5f4849329f0ece227a3c7d6a63c0ecb6c9a1edee424e70e7bc6fa4bfda4a82d8" }
+      ]
+    },
+    {
       "id": "excitebike",
       "title": "Excitebike",
       "system": "nes",
