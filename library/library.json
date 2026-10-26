@@ -2667,6 +2667,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "nickelodeon-rugrats-search-for-reptar",
+      "title": "Nickelodeon Rugrats : Search for Reptar",
+      "system": "psx",
+      "players": "1-4",
+      "description": "Rugrats - Search for Reptar is an adventure video game that was released in 1998 for PlayStation in North America and in the PAL region by THQ. The game is based on the popular Nickelodeon cartoon Rugrats which aired from 1991 until 2004. The game follows the main character of...",
+      "added": "2026-10-26",
+      "art": "library/art/nickelodeon-rugrats-search-for-reptar.png",
+      "video": "library/video/nickelodeon-rugrats-search-for-reptar.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Nickelodeon Rugrats - Search for Reptar (USA)", "name": "nickelodeon-rugrats-search-for-reptar.zip", "size": 608518109, "sha256": "3a93b737e62b7e80c3613149f46b42b10a852c8820ef2eabdbd995fe58a858cf", "url": "private:nickelodeon-rugrats-search-for-reptar__nickelodeon-rugrats-search-for-reptar.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
