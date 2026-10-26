@@ -1200,19 +1200,6 @@
       ]
     },
     {
-      "id": "1080-snowboarding-japan-usa-en-ja",
-      "title": "1080 Snowboarding (Japan, USA) (En,Ja)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/1080-snowboarding-japan-usa-en-ja.png",
-      "files": [
-      ],
-      "bundle": { "folder": "1080 Snowboarding (Japan, USA) (En,Ja)", "name": "1080-snowboarding-japan-usa-en-ja.zip", "size": 16780356, "sha256": "4e6e2130b2865026ed9e911ab73abebb0b2afc07449973c918d84e5de763477e", "url": "private:1080-snowboarding-japan-usa-en-ja__1080-snowboarding-japan-usa-en-ja.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
@@ -1254,19 +1241,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "banjo-tooie-usa",
-      "title": "Banjo-Tooie (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/banjo-tooie-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Banjo-Tooie (USA)", "name": "banjo-tooie-usa.zip", "size": 33560069, "sha256": "f85e3fc7c6dc1c729f682f28048dc355560a4dcabf362eb2d2529a60bf53498b", "url": "private:banjo-tooie-usa__banjo-tooie-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "beetle-adventure-racing",
       "title": "Beetle Adventure Racing!",
       "system": "n64",
@@ -1294,19 +1268,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "bomberman-64-usa",
-      "title": "Bomberman 64 (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/bomberman-64-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Bomberman 64 (USA)", "name": "bomberman-64-usa.zip", "size": 8390408, "sha256": "9128557a1f2163d77f8331ae35aa39c45dc4f22d48f933db1c4a5fb9515f13c8", "url": "private:bomberman-64-usa__bomberman-64-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "conker-s-bad-fur-day",
       "title": "Conker's Bad Fur Day",
       "system": "n64",
@@ -1321,19 +1282,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "conker-s-bad-fur-day-usa",
-      "title": "Conker's Bad Fur Day (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/conker-s-bad-fur-day-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Conker's Bad Fur Day (USA)", "name": "conker-s-bad-fur-day-usa.zip", "size": 67119648, "sha256": "6cc39249caff86cfde5a9b80a65072450f2746f5c5e5e19882476f63f791bbe6", "url": "private:conker-s-bad-fur-day-usa__conker-s-bad-fur-day-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "diddy-kong-racing",
       "title": "Diddy Kong Racing",
       "system": "n64",
@@ -1345,19 +1293,6 @@
       "files": [
       ],
       "bundle": { "folder": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)", "name": "diddy-kong-racing.zip", "size": 12585415, "sha256": "c98bce0588a26a090f10368db4bc8bb59e1ed73915e478d08e1ac24546338cac", "url": "private:diddy-kong-racing__diddy-kong-racing.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "diddy-kong-racing-usa-en-fr-rev-1",
-      "title": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/diddy-kong-racing-usa-en-fr-rev-1.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Diddy Kong Racing (USA) (En,Fr) (Rev 1)", "name": "diddy-kong-racing-usa-en-fr-rev-1.zip", "size": 12585415, "sha256": "1fb239b719266bd2074f63711a4a7783f44d511af979f5be61063808b02382e4", "url": "private:diddy-kong-racing-usa-en-fr-rev-1__diddy-kong-racing-usa-en-fr-rev-1.zip" },
       "min": "3.2.0"
     },
     {
@@ -1388,19 +1323,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "f-zero-x-usa",
-      "title": "F-Zero X (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/f-zero-x-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "F-Zero X (USA)", "name": "f-zero-x-usa.zip", "size": 16780284, "sha256": "024ed508e63e344cb89d15b8ba058aed6639fe3c4cb276637a23c28d1d889d28", "url": "private:f-zero-x-usa__f-zero-x-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "gauntlet-legends",
       "title": "Gauntlet Legends",
       "system": "n64",
@@ -1412,19 +1334,6 @@
       "files": [
       ],
       "bundle": { "folder": "Gauntlet Legends (USA)", "name": "gauntlet-legends.zip", "size": 16780308, "sha256": "c10dbb41f2d20779a326cb444cb548d6ad0f50f2fe623eabca6893a40e2e8020", "url": "private:gauntlet-legends__gauntlet-legends.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "gauntlet-legends-usa",
-      "title": "Gauntlet Legends (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/gauntlet-legends-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Gauntlet Legends (USA)", "name": "gauntlet-legends-usa.zip", "size": 16780308, "sha256": "b8fffc820b463b0d7adc80004ed49077d27ab6537431374c3a9bc6a3860c14c1", "url": "private:gauntlet-legends-usa__gauntlet-legends-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1468,19 +1377,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "harvest-moon-64-usa",
-      "title": "Harvest Moon 64 (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/harvest-moon-64-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Harvest Moon 64 (USA)", "name": "harvest-moon-64-usa.zip", "size": 16780305, "sha256": "fecc9ce29684471488364acb34e46e160de2024d77e5672abfb44053711228e0", "url": "private:harvest-moon-64-usa__harvest-moon-64-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "kirby-64-the-crystal-shards",
       "title": "Kirby 64 : The Crystal Shards",
       "system": "n64",
@@ -1505,18 +1401,6 @@
       "files": [
       ],
       "bundle": { "folder": "Mario Golf (USA)", "name": "mario-golf.zip", "size": 33560066, "sha256": "4b21e973cbb5dd895593b092c6855ed348a90d747b9fd369b421b01de3d9324b", "url": "private:mario-golf__mario-golf.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "mario-golf-usa",
-      "title": "Mario Golf (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "files": [
-      ],
-      "bundle": { "folder": "Mario Golf (USA)", "name": "mario-golf-usa.zip", "size": 33560066, "sha256": "abbd176347986ad7f7bd5ae04f4992941336cd14b4abed426e6b01202dcb28a0", "url": "private:mario-golf-usa__mario-golf-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1547,19 +1431,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "mario-party-usa",
-      "title": "Mario Party (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/mario-party-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Mario Party (USA)", "name": "mario-party-usa.zip", "size": 33560069, "sha256": "12154219adc3f5213976f12a80bd728375a147fd50fdb3c9de6556c6821732a9", "url": "private:mario-party-usa__mario-party-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "mario-party-2",
       "title": "Mario Party 2",
       "system": "n64",
@@ -1571,19 +1442,6 @@
       "files": [
       ],
       "bundle": { "folder": "Mario Party 2 (USA)", "name": "mario-party-2.zip", "size": 33560075, "sha256": "09bf63a316c7beb791d933c3725ac11af4e8dae4c12a4315db76ee3f91a62e86", "url": "private:mario-party-2__mario-party-2.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "mario-party-2-usa",
-      "title": "Mario Party 2 (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/mario-party-2-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Mario Party 2 (USA)", "name": "mario-party-2-usa.zip", "size": 33560075, "sha256": "648e9b747e319c1f0f7a4a0631ea10f3d74f4bf0b529c5020170e344eb8766f5", "url": "private:mario-party-2-usa__mario-party-2-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1601,19 +1459,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "mario-party-3-usa",
-      "title": "Mario Party 3 (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/mario-party-3-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Mario Party 3 (USA)", "name": "mario-party-3-usa.zip", "size": 33560075, "sha256": "bcb6f2c03647e95f152420eedfad777fcc81bf1335742830329458543e58aee7", "url": "private:mario-party-3-usa__mario-party-3-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "mario-tennis",
       "title": "Mario Tennis",
       "system": "n64",
@@ -1625,19 +1470,6 @@
       "files": [
       ],
       "bundle": { "folder": "Mario Tennis (USA)", "name": "mario-tennis.zip", "size": 16780296, "sha256": "ee1f6e9345277774c43a730721119b3aca9070ba19da545be06d335e4e077c3a", "url": "private:mario-tennis__mario-tennis.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "mario-tennis-usa",
-      "title": "Mario Tennis (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/mario-tennis-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Mario Tennis (USA)", "name": "mario-tennis-usa.zip", "size": 16780296, "sha256": "8f96eede1f748966fced665bfe5c5b42208ad17cbd3e916791d1b8909a7e5b86", "url": "private:mario-tennis-usa__mario-tennis-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1665,19 +1497,6 @@
       "files": [
       ],
       "bundle": { "folder": "NFL Blitz 2000 (USA) (Rev 1)", "name": "nfl-blitz-2000.zip", "size": 16780326, "sha256": "7d8d0f1035cfca2076314537ad687976d4ce1c9603123a73e7d9d4760888f31a", "url": "private:nfl-blitz-2000__nfl-blitz-2000.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "nfl-blitz-2000-usa-rev-1",
-      "title": "NFL Blitz 2000 (USA) (Rev 1)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/nfl-blitz-2000-usa-rev-1.png",
-      "files": [
-      ],
-      "bundle": { "folder": "NFL Blitz 2000 (USA) (Rev 1)", "name": "nfl-blitz-2000-usa-rev-1.zip", "size": 16780326, "sha256": "d5ce69282f8efe5e750f0ff8d94cb8b263d770cee72225c46b6d2546f681a9db", "url": "private:nfl-blitz-2000-usa-rev-1__nfl-blitz-2000-usa-rev-1.zip" },
       "min": "3.2.0"
     },
     {
@@ -1718,32 +1537,6 @@
       "files": [
       ],
       "bundle": { "folder": "Perfect Dark (USA) (Rev 1)", "name": "perfect-dark.zip", "size": 33560096, "sha256": "d6faa021d7b61db44a9a1804a600bb8f86c60f9a472226c7f504cccc82d6154d", "url": "private:perfect-dark__perfect-dark.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "perfect-dark-usa-rev-1",
-      "title": "Perfect Dark (USA) (Rev 1)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/perfect-dark-usa-rev-1.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Perfect Dark (USA) (Rev 1)", "name": "perfect-dark-usa-rev-1.zip", "size": 33560096, "sha256": "ff232c597366c3879e11c8d91e73a66cc736c88f4a4d3e6c104c23956dd4854e", "url": "private:perfect-dark-usa-rev-1__perfect-dark-usa-rev-1.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "pokemon-puzzle-league-usa",
-      "title": "Pokemon Puzzle League (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/pokemon-puzzle-league-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Pokemon Puzzle League (USA)", "name": "pokemon-puzzle-league-usa.zip", "size": 33560099, "sha256": "ba32f615fbaf0cd86b1cdf3cd56c54a4dbcddbdb654c83a7db4e78e64afc5228", "url": "private:pokemon-puzzle-league-usa__pokemon-puzzle-league-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1800,19 +1593,6 @@
       ]
     },
     {
-      "id": "rayman-2-the-great-escape-usa-en-fr-de-e",
-      "title": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/rayman-2-the-great-escape-usa-en-fr-de-e.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)", "name": "rayman-2-the-great-escape-usa-en-fr-de-e.zip", "size": 33560168, "sha256": "0738ff7db44f90b53bda095788b7079e8481c65f6265e96150bef564aeba6a87", "url": "private:rayman-2-the-great-escape-usa-en-fr-de-e__rayman-2-the-great-escape-usa-en-fr-de-e.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "rayman-2-the-great-escape",
       "title": "Rayman 2 : The Great Escape",
       "system": "n64",
@@ -1824,19 +1604,6 @@
       "files": [
       ],
       "bundle": { "folder": "Rayman 2 - The Great Escape (USA) (En,Fr,De,Es,It)", "name": "rayman-2-the-great-escape.zip", "size": 33560168, "sha256": "2e1639bc4de12e932a5e73cb45109418817629214a3c8432af687c7c1aa14532", "url": "private:rayman-2-the-great-escape__rayman-2-the-great-escape.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "ready-2-rumble-boxing-usa",
-      "title": "Ready 2 Rumble Boxing (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/ready-2-rumble-boxing-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Ready 2 Rumble Boxing (USA)", "name": "ready-2-rumble-boxing-usa.zip", "size": 33560099, "sha256": "d7fab8afa1723eaf30631762a7b13f2988d5149a8f201424d13ee746f21fbfb9", "url": "private:ready-2-rumble-boxing-usa__ready-2-rumble-boxing-usa.zip" },
       "min": "3.2.0"
     },
     {
@@ -1853,19 +1620,6 @@
       ]
     },
     {
-      "id": "snowboard-kids-usa",
-      "title": "Snowboard Kids (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/snowboard-kids-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Snowboard Kids (USA)", "name": "snowboard-kids-usa.zip", "size": 8390414, "sha256": "6f4c616d648b1abde5edef7e9d044232bfd7c2c3a67d3690225e4099192ed3de", "url": "private:snowboard-kids-usa__snowboard-kids-usa.zip" },
-      "min": "3.2.0"
-    },
-    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
@@ -1877,19 +1631,6 @@
       "files": [
         { "name": "Star Fox 64 (USA) (Rev 1).zip", "url": "private:star-fox-64__Star.Fox.64.USA.Rev.1.zip", "size": 10510321, "sha256": "90b63a8470d999a72d37345d63ab35db7bb8d714009b7970a60d6e2deb3f805c" }
       ]
-    },
-    {
-      "id": "star-wars-episode-i-racer-usa",
-      "title": "Star Wars Episode I - Racer (USA)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/star-wars-episode-i-racer-usa.png",
-      "files": [
-      ],
-      "bundle": { "folder": "Star Wars Episode I - Racer (USA)", "name": "star-wars-episode-i-racer-usa.zip", "size": 33560117, "sha256": "ffcc29e38a078090dae1593df02a5b0f4877989902bf5dd71de3825e3be05155", "url": "private:star-wars-episode-i-racer-usa__star-wars-episode-i-racer-usa.zip" },
-      "min": "3.2.0"
     },
     {
       "id": "super-mario-64",
@@ -1955,19 +1696,6 @@
       "files": [
         { "name": "Wave Race 64 - Kawasaki Jet Ski (USA) (Rev 1).zip", "url": "private:wave-race-64__Wave.Race.64.-.Kawasaki.Jet.Ski.USA.Rev.1.zip", "size": 6052836, "sha256": "63c5af52c4c2c050d386cea1e197b00694e14a8a2b3c8ddc0e84bef9f9e3af96" }
       ]
-    },
-    {
-      "id": "wwf-no-mercy-usa-rev-1",
-      "title": "WWF No Mercy (USA) (Rev 1)",
-      "system": "n64",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/wwf-no-mercy-usa-rev-1.png",
-      "files": [
-      ],
-      "bundle": { "folder": "WWF No Mercy (USA) (Rev 1)", "name": "wwf-no-mercy-usa-rev-1.zip", "size": 33560096, "sha256": "7748d1c995bbad11aa6b9f967c638be357e9558c6181411c1f39631fc3cbd00c", "url": "private:wwf-no-mercy-usa-rev-1__wwf-no-mercy-usa-rev-1.zip" },
-      "min": "3.2.0"
     },
     {
       "id": "yoshi-s-story",
@@ -3916,36 +3644,6 @@
         { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part08", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part08", "size": 1992294400, "sha256": "7d1ad7ca55f116195e7d801a39d1d3b18e5c2c6c7ec0635cde9363d0c83c89b2" },
         { "name": "Super Smash Bros. for Wii U (USA) (En,Fr,Es) (Rev 9).wux.part09", "url": "private:super-smash-bros-for-wii-u__Super.Smash.Bros.for.Wii.U.USA.En.Fr.Es.Rev.9.wux.part09", "size": 297205760, "sha256": "e530766400545860d5d333e01ee657e9996cc9b4f5a7da95ca291a1ae7c99839" }
       ] }
-    },
-    {
-      "id": "the-legend-of-zelda-the-wind-waker-hd",
-      "title": "The Legend of Zelda - The Wind Waker HD",
-      "system": "wiiu",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/the-legend-of-zelda-the-wind-waker-hd.jpg",
-      "files": [
-      ],
-      "bundle": { "folder": "The Legend of Zelda - The Wind Waker HD", "name": "the-legend-of-zelda-the-wind-waker-hd.zip", "size": 1797833987, "sha256": "fbf099bab8bae0f723c34f6f912d5947ae49ce21d950a76edb8f7673a92be004", "url": "private:the-legend-of-zelda-the-wind-waker-hd__the-legend-of-zelda-the-wind-waker-hd.zip" },
-      "min": "3.2.0"
-    },
-    {
-      "id": "the-legend-of-zelda-twilight-princess-hd",
-      "title": "The Legend of Zelda Twilight Princess HD [AZAP01]",
-      "system": "wiiu",
-      "players": "",
-      "description": "",
-      "added": "2026-10-26",
-      "art": "library/art/the-legend-of-zelda-twilight-princess-hd.jpg",
-      "files": [
-      ],
-      "bundle": { "folder": "The Legend of Zelda Twilight Princess HD [AZAP01]", "name": "the-legend-of-zelda-twilight-princess-hd.zip", "size": 4631802305, "sha256": "7d80234f8cc8490057888acc31612ae1e228dd1725bd577ba5eccfbce6402030", "pieces": [
-        { "name": "the-legend-of-zelda-twilight-princess-hd.zip.part01", "url": "private:the-legend-of-zelda-twilight-princess-hd__the-legend-of-zelda-twilight-princess-hd.zip.part01", "size": 1992294400, "sha256": "a9c1a8a2cce1f871d300c1be267d7df1cb928c4aa1e6c43f3bf229adcbbe54ff" },
-        { "name": "the-legend-of-zelda-twilight-princess-hd.zip.part02", "url": "private:the-legend-of-zelda-twilight-princess-hd__the-legend-of-zelda-twilight-princess-hd.zip.part02", "size": 1992294400, "sha256": "bf352ac0fd8a359003878b6c71b1b65ae9c2f03f8f9e6e43a6e1f80e472d2998" },
-        { "name": "the-legend-of-zelda-twilight-princess-hd.zip.part03", "url": "private:the-legend-of-zelda-twilight-princess-hd__the-legend-of-zelda-twilight-princess-hd.zip.part03", "size": 647213505, "sha256": "c1c0fc8c650d554884ecc5caa8010658ec6fd02c48e027a780a19819f15e2ebc" }
-      ] },
-      "min": "3.2.0"
     },
     {
       "id": "the-legend-of-zelda-breath-of-the-wild",
