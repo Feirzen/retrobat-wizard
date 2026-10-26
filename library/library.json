@@ -1386,6 +1386,20 @@
       ]
     },
     {
+      "id": "f-zero-x",
+      "title": "F-Zero X",
+      "system": "n64",
+      "players": "1-4",
+      "description": "In this futuristic racer, the key to winning is speed!Choose from 30 different hover-car racers, including updated versions of the Blue Falcon and other vehicles from the original F-Zero, and get ready to play one of the fastest racers ever! Race to the finish line on tracks...",
+      "added": "2026-10-26",
+      "art": "library/art/f-zero-x.png",
+      "video": "library/video/f-zero-x.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "F-Zero X (USA)", "name": "f-zero-x.zip", "size": 16780284, "sha256": "9e5898156e02a97b287e15f9b32ae62490978d6ba60b3eed4e79ad4c7de421a6", "url": "private:f-zero-x__f-zero-x.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "f-zero-x-usa",
       "title": "F-Zero X (USA)",
       "system": "n64",
