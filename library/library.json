@@ -2681,6 +2681,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "rayman",
+      "title": "Rayman",
+      "system": "psx",
+      "players": "1",
+      "description": "Rayman to the rescue! He must free the Electoons, defeat Mr. Dark, save the Great Protoon from its mysterious kidnapper, and restore harmony to the world.",
+      "added": "2026-10-26",
+      "art": "library/art/rayman.png",
+      "video": "library/video/rayman.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Rayman (USA)", "name": "rayman.zip", "size": 617316007, "sha256": "c22bbdddeaf6178ac7409ac8e4afab0d51dbf0c418c73ce914f163546f1b2d33", "url": "private:rayman__rayman.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
