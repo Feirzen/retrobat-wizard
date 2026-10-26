@@ -227,20 +227,16 @@
       ] }
     },
     {
-      "id": "pok-mon-moon",
-      "title": "Pokmon Moon",
+      "id": "pokemon-mystery-dungeon-gates-to-infinit",
+      "title": "Pokemon Mystery Dungeon - Gates To Infinity",
       "system": "3ds",
       "players": "1",
-      "description": "Pokmon Sun, along with Pokmon Moon, marks the start of the seventh generation of the Pokmon franchise. The game takes place in the Alola region, an archipelago whose culture, geography, and native wildlife are based on those of Hawaii. A number of Alola's native Pokmon have...",
+      "description": "Pokmon Mystery Dungeon: Gates to Infinity is the ninth game in the Pokmon Mystery Dungeon series and the first for the Nintendo 3DS. The player is a human who has a dream about a Munna being chased by a Hydreigon and calling for help. The human then wakes up in a strange world...",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-moon.png",
+      "art": "library/art/pokemon-mystery-dungeon-gates-to-infinit.png",
       "files": [
-      ],
-      "parts": { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "138a0176c036e424a1123c25ad82019724333d36fde3c02d550ed6b574d1b595", "pieces": [
-        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e67d1c52e0c9ef08349bd27f820fe97e20ece552864d393dd36768a47f5f56c8" },
-        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "cb35d11c43799da3952f9bebea120c3d778ba71a8b4fe8ebc126595c2c18633f" },
-        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
-      ] }
+        { "name": "Pokemon Mystery Dungeon - Gates to Infinity (USA).cci", "url": "private:pokemon-mystery-dungeon-gates-to-infinit__Pokemon.Mystery.Dungeon.-.Gates.to.Infinity.USA.cci", "size": 1073741824, "sha256": "581a9d2f3426f979c71ea838aa133f9becb3e321fe2a2ccfd7e655cf63b3bf33" }
+      ]
     },
     {
       "id": "pok-mon-alpha-sapphire",
@@ -255,6 +251,22 @@
       "parts": { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "f349613532dbcc124b11373fc03ed7dbf2addb3c4ac7b15c8674a7628ebafab4", "pieces": [
         { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "d946af351c4d8e2a3c61d0068d62efae8e80730b654deac433ece99d0078c65e" },
         { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
+      "id": "pok-mon-moon",
+      "title": "Pokmon Moon",
+      "system": "3ds",
+      "players": "1",
+      "description": "Pokmon Sun, along with Pokmon Moon, marks the start of the seventh generation of the Pokmon franchise. The game takes place in the Alola region, an archipelago whose culture, geography, and native wildlife are based on those of Hawaii. A number of Alola's native Pokmon have...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-moon.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "138a0176c036e424a1123c25ad82019724333d36fde3c02d550ed6b574d1b595", "pieces": [
+        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e67d1c52e0c9ef08349bd27f820fe97e20ece552864d393dd36768a47f5f56c8" },
+        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "cb35d11c43799da3952f9bebea120c3d778ba71a8b4fe8ebc126595c2c18633f" },
+        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
       ] }
     },
     {
