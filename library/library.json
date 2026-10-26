@@ -4432,8 +4432,9 @@
       "system": "xbox",
       "players": "1",
       "description": "The Elder Scrolls III: Morrowind is an Xbox role-playing game that offers the player a lot of freedom. At the beginning you have to create a character by choosing among 10 races. Then you can decide whether to embark on the main quest or one of the many side quests offered....",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/the-elder-scrolls-iii-morrowind.png",
+      "video": "library/video/the-elder-scrolls-iii-morrowind.mp4",
       "files": [
         { "name": "Elder Scrolls III, The - Morrowind - Game of the Year Edition (USA).xiso.iso", "url": "private:the-elder-scrolls-iii-morrowind__Elder.Scrolls.III.The.-.Morrowind.-.Game.of.the.Year.Edition.USA.xiso.iso", "size": 1015808000, "sha256": "d719c4d89eb7145b5aa8230b27598254b0ae95a73b36a9d51bd84edfdc1941bd" }
       ]
