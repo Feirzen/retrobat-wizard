@@ -2266,6 +2266,19 @@
       ]
     },
     {
+      "id": "star-fox",
+      "title": "Star Fox",
+      "system": "snes",
+      "players": "1",
+      "description": "This is the first SNES title using the Super FX chip; you are flying ace Fox McCloud, who with his trusted wingmen and his powerful Arwing starfighter, must rid the Lylat System of the evil that surrounds it. Wave after wave of enemies will fly towards you, and with the advice...",
+      "added": "2026-10-26",
+      "art": "library/art/star-fox.png",
+      "video": "library/video/star-fox.mp4",
+      "files": [
+        { "name": "Star Fox (USA) (Rev 2).sfc", "url": "private:star-fox__Star.Fox.USA.Rev.2.sfc", "size": 1048576, "sha256": "82e39dfbb3e4fe5c28044e80878392070c618b298dd5a267e5ea53c8f72cc548" }
+      ]
+    },
+    {
       "id": "street-fighter-ii-turbo",
       "title": "Street Fighter II Turbo",
       "system": "snes",
