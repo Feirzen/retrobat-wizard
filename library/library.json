@@ -227,6 +227,22 @@
       ] }
     },
     {
+      "id": "pok-mon-moon",
+      "title": "Pokmon Moon",
+      "system": "3ds",
+      "players": "1",
+      "description": "Pokmon Sun, along with Pokmon Moon, marks the start of the seventh generation of the Pokmon franchise. The game takes place in the Alola region, an archipelago whose culture, geography, and native wildlife are based on those of Hawaii. A number of Alola's native Pokmon have...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-moon.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "138a0176c036e424a1123c25ad82019724333d36fde3c02d550ed6b574d1b595", "pieces": [
+        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e67d1c52e0c9ef08349bd27f820fe97e20ece552864d393dd36768a47f5f56c8" },
+        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "cb35d11c43799da3952f9bebea120c3d778ba71a8b4fe8ebc126595c2c18633f" },
+        { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
       "id": "pok-mon-alpha-sapphire",
       "title": "Pokmon Alpha Sapphire",
       "system": "3ds",
