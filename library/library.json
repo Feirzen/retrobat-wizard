@@ -1818,8 +1818,9 @@
       "system": "nes",
       "players": "1-2",
       "description": "Galaga is a vertical arcade shooter from Namco. You control a space fighter at the bottom of the screen, scrolling left and right in order to avoid oncoming bombs and kamikaze attacks from alien invaders--and to fire your own missiles to fight back! There are an infinite number...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/galaga-demons-of-death.png",
+      "video": "library/video/galaga-demons-of-death.mp4",
       "files": [
         { "name": "Galaga - Demons of Death (USA).nes", "url": "private:galaga-demons-of-death__Galaga.-.Demons.of.Death.USA.nes", "size": 40976, "sha256": "116ff51eabad94da0c3bf32de9d50cc84becf73814fa2bf5574676b058a0a09a" }
       ]
