@@ -139,6 +139,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-majora-s-mask-3d",
+      "title": "The Legend of Zelda : Majora's Mask 3D",
+      "system": "3ds",
+      "players": "1",
+      "description": "Following in the footsteps of The Legend of Zelda: Ocarina of Time 3D, Majora's Mask 3D is an enhanced remake of the Nintendo 64 game The Legend of Zelda: Majora's Mask. It keeps the same story as the original: while riding Epona through the Lost Woods in search of an invaluable...",
+      "added": "2026-10-26",
+      "art": "library/art/the-legend-of-zelda-majora-s-mask-3d.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Majora's Mask 3D (USA) (En,Fr,Es) (Rev 1).cci", "url": "private:the-legend-of-zelda-majora-s-mask-3d__Legend.of.Zelda.The.-.Majora.s.Mask.3D.USA.En.Fr.Es.Rev.1.cci", "size": 1073741824, "sha256": "d206718df048e91361913b22f8dcb15f6e8733cfb65c3e72c2af0b3b3b338bb8" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
