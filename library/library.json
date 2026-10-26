@@ -1329,6 +1329,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "gauntlet-legends-usa",
+      "title": "Gauntlet Legends (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/gauntlet-legends-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Gauntlet Legends (USA)", "name": "gauntlet-legends-usa.zip", "size": 16780308, "sha256": "b8fffc820b463b0d7adc80004ed49077d27ab6537431374c3a9bc6a3860c14c1", "url": "private:gauntlet-legends-usa__gauntlet-legends-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "goemon-s-great-adventure",
       "title": "Goemon's Great Adventure",
       "system": "n64",
