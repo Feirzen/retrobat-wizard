@@ -2737,6 +2737,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "street-fighter-alpha-3",
+      "title": "Street Fighter Alpha 3",
+      "system": "psx",
+      "players": "1-2",
+      "description": "Street Fighter Alpha 3, the third game in the Alpha series, has a total of 31 fighters, the most in the series so far. New characters include old favorites E. Honda, Blanka, Vega, Cammy, T. Hawk, Dee Jay, Juni and Juli. Some of the newest fighters on the block include a former...",
+      "added": "2026-10-26",
+      "art": "library/art/street-fighter-alpha-3.png",
+      "video": "library/video/street-fighter-alpha-3.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Street Fighter Alpha 3 (USA)", "name": "street-fighter-alpha-3.zip", "size": 527411363, "sha256": "84238d0ce51ff69a52df6fd4cd7b33c40b8941f94ce67e7e00044e3c3f4a7c02", "url": "private:street-fighter-alpha-3__street-fighter-alpha-3.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
