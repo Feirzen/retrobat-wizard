@@ -1734,6 +1734,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "pok-mon-puzzle-league",
+      "title": "Pokmon Puzzle League",
+      "system": "n64",
+      "players": "1-2",
+      "description": "Discover the most frantic, frenzied, fun-filled Pokmon challenge ever--Pokmon Puzzle League! Line up three or more blocks of the same type to clear them off the screen. Create chains and combos to send garbage to your opponent. Collect badges from other Pokmon trainers to...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-puzzle-league.png",
+      "video": "library/video/pok-mon-puzzle-league.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Pokemon Puzzle League (USA)", "name": "pok-mon-puzzle-league.zip", "size": 33560099, "sha256": "38b6928bfb08249caf80ce173444071097cdc66e46f280b20a9d80204b0e0d94", "url": "private:pok-mon-puzzle-league__pok-mon-puzzle-league.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "pokemon-puzzle-league-usa",
       "title": "Pokemon Puzzle League (USA)",
       "system": "n64",
