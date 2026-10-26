@@ -2541,6 +2541,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "final-fantasy-tactics",
+      "title": "Final Fantasy Tactics",
+      "system": "psx",
+      "players": "1",
+      "description": "Final Fantasy Tactics is a tactical role-playing game developed and published by Square (now Square Enix) for the Sony PlayStation video game console. It is the first game of the Final Fantasy Tactics series and was released in Japan in June 1997 and in the United States in...",
+      "added": "2026-10-26",
+      "art": "library/art/final-fantasy-tactics.png",
+      "video": "library/video/final-fantasy-tactics.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Final Fantasy Tactics (USA)", "name": "final-fantasy-tactics.zip", "size": 541398163, "sha256": "4f8217f04e2003090b3d64f51b0bd91d789eb93c064d9572db07110767289b3f", "url": "private:final-fantasy-tactics__final-fantasy-tactics.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
