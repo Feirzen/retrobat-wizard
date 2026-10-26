@@ -11,8 +11,8 @@
     house watching a black window. What changed:
       - A real window with three bars, a mage riding each one, and how long
         is left.
-      - Step 1 is ONE download (package/wizard-package.zip at the published
-        commit, about 17 MB) instead of 263 separate ones. Its files go where
+      - Step 1 is ONE download (package/wizard-package.zip on main, about
+        17 MB) instead of 263 separate ones. Its files go where
         the update engine keeps a download, and the engine then checks every
         one against its SHA-256 exactly as before, fetching only anything the
         package did not have. If the package is missing it falls back to one
@@ -186,12 +186,27 @@ try {
     New-UpdDir $P.Dir
     $inDir = Join-UpdPath $P.Incoming (Get-UpdIncomingName $ver $tag $cfg)
 
+    # --- a half-finished install from before -------------------------------
+    #  (2026-10-25) A download that is READY but still waiting means the last
+    #  install never finished. Older engines put version.txt in place early,
+    #  so that drive says it is up to date with half its files missing.
+    #  Setting version.txt aside makes the engine finish the job; every file
+    #  already in place is skipped by its checksum.
+    $vt = Join-UpdPath $ws 'version.txt'
+    if ((Test-Path -LiteralPath (Join-UpdPath $inDir 'READY.txt')) -and (Test-Path -LiteralPath $vt)) {
+        Move-Item -LiteralPath $vt -Destination (Join-UpdPath $P.Dir ('version-unfinished-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.txt')) -Force
+        Note 'install: the last install never finished, finishing it now'
+    }
+
     # --- the whole wizard in one download ---------------------------------
+    #  From main, not from the version's own commit: the package does not have
+    #  to be the newest (the engine checks every file and fetches whatever it
+    #  lacks or has older), so the website can get a new package any time.
     $pkg = Join-UpdPath $P.Dir 'wizard-package.zip'
     $havePkg = $false
     $RBI.T1 = 'Downloading the wizard'
     try {
-        $bytes = Get-Download ('{0}/{1}/{2}/package/wizard-package.zip' -f $RBI.RawBase, $RBI.Repo, $tag) $pkg 1 ([long]20 * 1MB) 0.02 0.80 'Downloading'
+        $bytes = Get-Download ('{0}/{1}/main/package/wizard-package.zip' -f $RBI.RawBase, $RBI.Repo) $pkg 1 ([long]20 * 1MB) 0.02 0.80 'Downloading'
         $havePkg = $true
         Note ('install: package downloaded, {0:N1} MB' -f ($bytes / 1MB))
     }

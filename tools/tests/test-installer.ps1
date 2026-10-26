@@ -35,12 +35,14 @@ function Publish([string]$tag, [string]$ver, [hashtable]$files, [string]$pkgMode
         $lines += ("code`t{0}`t{1}`t{2}" -f (Sha $p), (Get-Item $p).Length, $k)
     }
     W (Join-Path (Join-Path $ghRepo $tag) 'manifest.txt') (($lines -join "`n") + "`n")
+    $mp = Join-Path $ghRepo 'main/package/wizard-package.zip'
+    if ($pkgMode -eq 'none' -and (Test-Path $mp)) { Remove-Item $mp }
     if ($pkgMode -ne 'none') {
         $pk = @{}
         foreach ($k in $files.Keys) { $pk[$k] = [IO.File]::ReadAllText((Join-Path (Join-Path (Join-Path $ghRepo $tag) 'drive') $k)) }
         if ($pkgMode -eq 'stale') { $pk['scripts/Base.ps1'] = 'an older Base' }
         if ($pkgMode -eq 'evil') { $pk['../../evil.txt'] = 'x' }
-        Zip (Join-Path (Join-Path $ghRepo $tag) 'package/wizard-package.zip') $pk
+        Zip (Join-Path $ghRepo 'main/package/wizard-package.zip') $pk
     }
     W (Join-Path $ghRepo 'main/latest.ini') "version = $ver`ntag = $tag`nnotes = n`n"
 }
@@ -158,6 +160,25 @@ Assert ($r.T.ADone) '6: wizard installed'
 Assert ($r.T.St3 -eq 'fail' -and $r.T.T3 -match 'Could not get it') "6: theme failed, says so ($($r.T.T3))"
 Assert (-not (Test-Path (J $r.Ws 'update/theme-downloading.txt'))) '6: marker removed'
 Assert (-not (Test-Path (Join-Path $r.Root '_ck'))) '6: no _ck left'
+
+# 6b. a drive where the last install stopped halfway (the friend's laptop):
+#     the download is READY, version.txt already says the new version, the
+#     rest of the files never landed. The installer must finish it.
+$root7 = Join-Path $base 'seven'; $ws7 = Join-Path $root7 '_ClaudeWorkspace'
+W (Join-Path $root7 'retrobat.ini') ''; W (Join-Path $root7 'RetroBat.exe') ''
+W (J $ws7 'version.txt') "3.2.4`n"
+$in7 = J $ws7 'update/incoming/3.2.4'
+[void](New-Item -ItemType Directory -Path (J $in7 'files') -Force)
+Copy-Item -Path (Join-Path (Join-Path (Join-Path $ghRepo 'eeeeeee5') 'drive') '*') -Destination (J $in7 'files') -Recurse
+Copy-Item (Join-Path (Join-Path $ghRepo 'eeeeeee5') 'manifest.txt') (J $in7 'manifest.txt')
+W (J $in7 'target.ini') "version = 3.2.4`ntag = eeeeeee5`nchannel = stable`n"
+W (J $in7 'READY.txt') 'ready'
+$r = Run-Install 'seven'
+Assert ($r.T.ADone) "6b: half install: finished ($($r.T.AErr))"
+Assert ([IO.File]::ReadAllText((J $ws7 'scripts/Base.ps1')) -eq 'base 3.2') '6b: the missing files landed'
+Assert ([IO.File]::ReadAllText((J $ws7 'version.txt')).Trim() -eq '3.2.4') '6b: version.txt back'
+Assert ([IO.File]::ReadAllText((J $ws7 'update/install.log')) -match 'never finished') '6b: log says it finished an old install'
+Assert (Test-Path (J $ws7 'update/installed-manifest.txt')) '6b: installed manifest written'
 
 # 7. the built one-file installer: batch head, ASCII, key and mage written in
 $zip = Join-Path $PSScriptRoot '../../installer/RetroBat-Wizard-Installer.zip'
