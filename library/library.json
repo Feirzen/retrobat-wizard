@@ -2284,8 +2284,9 @@
       "system": "snes",
       "players": "1-2",
       "description": "Choose from twelve street fighters from around the world, skilled in a variety of martial arts -- for instance, a character named E.Honda is a sumo wrestler from Japan, while Ken is a master of Tae Kwon Do from the United States. Journey to different countries to defeat other...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/street-fighter-ii-turbo.png",
+      "video": "library/video/street-fighter-ii-turbo.mp4",
       "files": [
         { "name": "Street Fighter II Turbo (USA) (Rev 1).sfc", "url": "private:street-fighter-ii-turbo__Street.Fighter.II.Turbo.USA.Rev.1.sfc", "size": 2621440, "sha256": "09083869afdc353da7addea88b191b859f11f79ff655f221cbc581d21d2dd8c3" }
       ]
