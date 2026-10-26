@@ -1484,6 +1484,19 @@
       ]
     },
     {
+      "id": "nfl-blitz-2000-usa-rev-1",
+      "title": "NFL Blitz 2000 (USA) (Rev 1)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/nfl-blitz-2000-usa-rev-1.png",
+      "files": [
+      ],
+      "bundle": { "folder": "NFL Blitz 2000 (USA) (Rev 1)", "name": "nfl-blitz-2000-usa-rev-1.zip", "size": 16780326, "sha256": "d5ce69282f8efe5e750f0ff8d94cb8b263d770cee72225c46b6d2546f681a9db", "url": "private:nfl-blitz-2000-usa-rev-1__nfl-blitz-2000-usa-rev-1.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "paper-mario",
       "title": "Paper Mario",
       "system": "n64",
