@@ -582,6 +582,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "marvel-vs-capcom-2",
+      "title": "Marvel vs. Capcom 2",
+      "system": "dreamcast",
+      "players": "1-2",
+      "description": "Marvel vs. Capcom 2: New Age of Heroes is the sequel to the 2D fighting game Marvel vs. Capcom: Clash of Super Heroes. The game allows you to tag in all three players (instead of two, while the third is only used for special attacks, in the predecessor). There are now up to 56...",
+      "added": "2026-10-26",
+      "art": "library/art/marvel-vs-capcom-2.png",
+      "video": "library/video/marvel-vs-capcom-2.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Marvel vs. Capcom 2 (USA)", "name": "marvel-vs-capcom-2.zip", "size": 1188238664, "sha256": "f73ca4d2294f4a6a5d483acb90b063a498c593327aefc96ec379f6d87246aaab", "url": "private:marvel-vs-capcom-2__marvel-vs-capcom-2.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
