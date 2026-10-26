@@ -57,6 +57,21 @@
       ] }
     },
     {
+      "id": "fire-emblem-awakening",
+      "title": "Fire Emblem : Awakening",
+      "system": "3ds",
+      "players": "1",
+      "description": "In the visually stunning world of the Fire Emblem Awakening game, you command and fight alongside an army of spirited heroes standing against an enemy with the power to destroy empires; a dark dragon whose agents include armies of the undead.Plan your attack, customize your...",
+      "added": "2026-10-26",
+      "art": "library/art/fire-emblem-awakening.png",
+      "files": [
+      ],
+      "parts": { "name": "Fire Emblem - Awakening (USA).cci", "size": 2147483648, "sha256": "85fd5f5e904fa13fa7b5883ac589d28bf913d07f569fb109aeb6aa328928eaf4", "pieces": [
+        { "name": "Fire Emblem - Awakening (USA).cci.part01", "url": "private:fire-emblem-awakening__Fire.Emblem.-.Awakening.USA.cci.part01", "size": 1992294400, "sha256": "3a8be9177dc1f06aab23986940b4f705014fcce1d75f5208a74fdf8ae096a320" },
+        { "name": "Fire Emblem - Awakening (USA).cci.part02", "url": "private:fire-emblem-awakening__Fire.Emblem.-.Awakening.USA.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
