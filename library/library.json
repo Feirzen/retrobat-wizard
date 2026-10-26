@@ -2779,6 +2779,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "tony-hawk-s-pro-skater-2",
+      "title": "Tony Hawk's Pro Skater 2",
+      "system": "psx",
+      "players": "1-2",
+      "description": "Tony Hawk's Pro Skater 2 features the series' trademark open-ended gameplay, in which the player (playing as a professional skateboarder) completes a number of tasks which result in cash rewards. With money gained, the player can then purchase skill improvements and better...",
+      "added": "2026-10-26",
+      "art": "library/art/tony-hawk-s-pro-skater-2.png",
+      "video": "library/video/tony-hawk-s-pro-skater-2.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Tony Hawk's Pro Skater 2 (USA)", "name": "tony-hawk-s-pro-skater-2.zip", "size": 748151707, "sha256": "0cba687271567ea15f06e0ea71b83e1c637ec64e7306dd2809407968752bb4ce", "url": "private:tony-hawk-s-pro-skater-2__tony-hawk-s-pro-skater-2.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
