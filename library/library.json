@@ -1316,6 +1316,19 @@
       ]
     },
     {
+      "id": "f-zero-x-usa",
+      "title": "F-Zero X (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/f-zero-x-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "F-Zero X (USA)", "name": "f-zero-x-usa.zip", "size": 16780284, "sha256": "024ed508e63e344cb89d15b8ba058aed6639fe3c4cb276637a23c28d1d889d28", "url": "private:f-zero-x-usa__f-zero-x-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "goemon-s-great-adventure",
       "title": "Goemon's Great Adventure",
       "system": "n64",
