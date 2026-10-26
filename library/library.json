@@ -1212,6 +1212,19 @@
       ]
     },
     {
+      "id": "1080-snowboarding-japan-usa-en-ja",
+      "title": "1080 Snowboarding (Japan, USA) (En,Ja)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/1080-snowboarding-japan-usa-en-ja.png",
+      "files": [
+      ],
+      "bundle": { "folder": "1080 Snowboarding (Japan, USA) (En,Ja)", "name": "1080-snowboarding-japan-usa-en-ja.zip", "size": 16780356, "sha256": "4e6e2130b2865026ed9e911ab73abebb0b2afc07449973c918d84e5de763477e", "url": "private:1080-snowboarding-japan-usa-en-ja__1080-snowboarding-japan-usa-en-ja.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "banjo-kazooie",
       "title": "Banjo-Kazooie",
       "system": "n64",
