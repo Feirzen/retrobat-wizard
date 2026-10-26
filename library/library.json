@@ -554,6 +554,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "hydro-thunder",
+      "title": "Hydro Thunder",
+      "system": "dreamcast",
+      "players": "1-2",
+      "description": "Port of Midway's arcade boat-racer. The premise is non-existent, you simply rev up the engines and go on 13 water courses set in Antarctica, the far east, the Greek isles, etc. on different types of futuristic boats. Races use the usual arcade checkpoint system and scattered...",
+      "added": "2026-10-26",
+      "art": "library/art/hydro-thunder.png",
+      "video": "library/video/hydro-thunder.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Hydro Thunder (USA) (Rev 1)", "name": "hydro-thunder.zip", "size": 1188808184, "sha256": "4e58fb100f59258c89ec2180103175ec4a04600004fe402fc47646ec191c03cf", "url": "private:hydro-thunder__hydro-thunder.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
