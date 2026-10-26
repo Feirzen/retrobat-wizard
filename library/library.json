@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "contra",
+      "title": "Contra",
+      "system": "nes",
+      "players": "1-2",
+      "description": "In the year 2631, a small meteorite has fallen into the Galuga archipelago, located 20km northeast off the coast of New Zealand. Two years later, a terrorist group known as Red Falcon has seized the island in preparation for an alien invasion. The earth's marines sent two...",
+      "added": "2026-10-26",
+      "art": "library/art/contra.png",
+      "video": "library/video/contra.mp4",
+      "files": [
+        { "name": "Contra (USA).nes", "url": "private:contra__Contra.USA.nes", "size": 131088, "sha256": "1f4a9b3f04e2f828688512c0b83611a87c3fc1bd4f85ed91da1b19abc5816d73" }
+      ]
+    },
+    {
       "id": "double-dragon-ii-the-revenge",
       "title": "Double Dragon II : The Revenge",
       "system": "nes",
