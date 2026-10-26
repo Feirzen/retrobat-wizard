@@ -2124,6 +2124,18 @@
       ]
     },
     {
+      "id": "earthbound",
+      "title": "EarthBound",
+      "system": "snes",
+      "players": "1",
+      "description": "EarthBound begins in the quiet town of Onett, where a meteor crash shatters young Ness's ordinary life. A strange being named Buzz Buzz warns him of Giygas, a monstrous alien set to destroy the world, and reveals that only four children can stop him. Ness must find Paula, Jeff,...",
+      "added": "2026-10-26",
+      "video": "library/video/earthbound.mp4",
+      "files": [
+        { "name": "EarthBound (USA).sfc", "url": "private:earthbound__EarthBound.USA.sfc", "size": 3145728, "sha256": "a8fe2226728002786d68c27ddddf0b90a894db52e4dfe268fdf72a68cae5f02e" }
+      ]
+    },
+    {
       "id": "final-fantasy-iii",
       "title": "Final Fantasy III",
       "system": "snes",
