@@ -72,14 +72,17 @@ function Get-FeatureCatalogue {
         reverts = $true
     }
 
-    # 2026-10-17 ("streaming profiles"): a friend logged in on this setup
-    # plays with their own saves; the owner's are put aside, then back.
-    $c['separatesaves'] = @{
-        title   = 'Separate saves for each person'
-        desc    = 'When someone else picks their profile at PLAY, they get their own saves and yours are kept aside until you play again. Guests use whatever saves are in place.'
-        off     = 'Off: everybody shares the same saves.'
+    # separatesaves: held back to the next update (2026-10-25), see
+    # SocialEngine.ps1. Off unless features.ini says on.
+
+    # 2026-10-25: M-rated games out of sight (scripts\FamilyFilter.ps1).
+    $c['familyfilter'] = @{
+        title   = 'Family-friendly'
+        desc    = 'Hides M-rated games: from RetroBat''s menus (from the next PLAY), from the online library, and from Jump in on the Saves page. Add your own games to the list on Settings, This setup.'
+        off     = 'Off: every game shows.'
         scripts = @()
         reverts = $false
+        default = $false
     }
 
     $c['wiichooser'] = @{
@@ -265,7 +268,9 @@ function Get-FeaturesPath([string]$Root) {
 function Get-Features([string]$Root) {
     $cat    = Get-FeatureCatalogue
     $result = [ordered]@{}
-    foreach ($k in $cat.Keys) { $result[$k] = $true }
+    # On unless the catalogue says a switch starts off (default = $false,
+    # 2026-10-25: the family-friendly filter is opt-in).
+    foreach ($k in $cat.Keys) { $result[$k] = $(if ($cat[$k].ContainsKey('default')) { [bool]$cat[$k]['default'] } else { $true }) }
 
     # Set by the loop below the moment a real 'fixed3dsframe' line is seen,
     # so an old 'hidedecorations' line cannot then overrule it whichever

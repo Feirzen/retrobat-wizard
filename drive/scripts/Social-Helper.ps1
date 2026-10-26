@@ -450,7 +450,16 @@ try {
                 $incoming = @{}
                 foreach ($f in @($view.Incoming)) { $incoming[$f.Id] = $f }
                 if (-not $baseline -and $prof.Popups) {
+                    # Never about somebody who signs in on THIS setup (2026-10-25:
+                    # switching between Steven and Phtephen here popped up
+                    # "Phtephen is online"): that is just the setup changing hands.
+                    $local = @{ ([string]$prof.Id) = $true }
+                    try {
+                        $lf = Join-SocialPath $Ws 'profile\logins.txt'
+                        if (Test-Path -LiteralPath $lf) { foreach ($l in [System.IO.File]::ReadAllLines($lf)) { $lid = ($l.Split('|'))[0].Trim(); if ($lid -ne '') { $local[$lid] = $true } } }
+                    } catch { }
                     foreach ($id in $online.Keys) {
+                        if ($local.ContainsKey([string]$id)) { continue }
                         if (-not $prevOnline.ContainsKey($id)) {
                             $f = $online[$id]
                             Show-Popup $f ("{0} is online" -f $f.Username) (Get-SocialPresence $f (Get-SocialNowUtc)).Line

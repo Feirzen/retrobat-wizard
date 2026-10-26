@@ -132,6 +132,13 @@ function Set-AdminNameAnswer([string]$Ws, [string]$Id, [string]$Name, [bool]$App
     return (Set-AdminRepoFile $Ws "names/$Id.txt" ($word + ':' + (Get-SocialClean $Name 20)) "name $word for $Id")
 }
 
+# A password reset (2026-10-25): they can log in once without it and are
+# asked for a new one. Their wizard picks it up the next time it looks.
+function Set-AdminPwReset([string]$Ws, [string]$Id) {
+    if ($Id -notmatch '^[a-z0-9]{10}$') { return $false }
+    return (Set-AdminRepoFile $Ws "names/$Id-pw.txt" ('reset:' + (Format-SocialTime (Get-SocialNowUtc))) "password reset for $Id")
+}
+
 function Set-AdminList([string]$Ws, [string[]]$Ids) {
     $clean = @($Ids | Where-Object { $_ -match '^[a-z0-9]{10}$' } | Select-Object -Unique)
     if ($clean.Count -eq 0) { return $false }      # never leave nobody in charge

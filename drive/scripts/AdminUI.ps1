@@ -287,6 +287,13 @@ function Render-Admin {
     }
     $ad = New-SocialButton 'Make someone an admin...' { Invoke-AdminAdd }; $ad.Margin = '0,8,0,0'; $ad.HorizontalAlignment = 'Left'
     [void]$panel.Children.Add($ad)
+
+    # --- forgotten passwords (2026-10-25) -------------------------------------------
+    [void]$panel.Children.Add((New-SectionHeader 'Forgotten passwords'))
+    $pt = New-Text 'Somebody forgot theirs? A request shows up in Reports above. Reset it here: they log in once without it and pick a new one.' $ColDim 13
+    $pt.TextWrapping = 'Wrap'; [void]$panel.Children.Add($pt)
+    $rp = New-SocialButton 'Reset someone''s password...' { Invoke-AdminPwReset }; $rp.Margin = '0,8,0,0'; $rp.HorizontalAlignment = 'Left'
+    [void]$panel.Children.Add($rp)
     $d = New-Text 'A light lock like the rest of the friends system: the shared key could change these lists, so keep admins to people you trust.' '#FF777780' 11
     $d.Margin = '0,14,0,0'
     [void]$panel.Children.Add($d)
@@ -333,6 +340,17 @@ function Invoke-AdminAdd {
     if ($null -eq $who) { [void](Show-Choice $WizardName "Nobody called '$name'. Press Refresh first if they are new." @('OK')); return }
     if ((Show-Choice $WizardName "Make $($who.Username) an admin?`n`nThey get the Admin tab: reports, name requests, publishing to the library (with their own library key), and the admins list." @('Make admin', 'Cancel')) -ne 'Make admin') { return }
     Invoke-AdminSetAdmin $who.Id $true
+}
+
+function Invoke-AdminPwReset {
+    $name = (Show-TextInput $WizardName 'Their username, exactly as it shows on the Social page:' '').Trim()
+    if ($name -eq '') { return }
+    $who = @(Get-SocialPlayersNow | Where-Object { $null -ne $_ -and $_.Username -eq $name }) | Select-Object -First 1
+    if ($null -eq $who) { [void](Show-Choice $WizardName "Nobody called '$name'. Press Refresh first if they are new." @('OK')); return }
+    if ((Show-Choice $WizardName "Reset $($who.Username)'s password?`n`nThey can log in once without it, on any setup, and are asked to pick a new one straight away." @('Reset it', 'Cancel')) -ne 'Reset it') { return }
+    if (Set-AdminPwReset $Ws $who.Id) { $script:adminNote = "Reset. $($who.Username) can log in without a password now (give it a minute)."; Log ("admin: password reset for {0}" -f $who.Username); Start-SocialFetch }
+    else { $script:adminNote = 'GitHub would not take it. Try again.' }
+    Render-Admin
 }
 
 function Invoke-AdminTopic {
@@ -515,6 +533,7 @@ function Invoke-AdminPublish {
         [void]$ps.AddArgument($items); [void]$ps.AddArgument($sync)
         $label = $(if ($items.Count -eq 1) { $items[0].Title } else { "$($items.Count) games" })
         $script:adminLibJob = [pscustomobject]@{ Ps = $ps; Handle = $ps.BeginInvoke(); Sync = $sync; Title = $label; Items = $items; Shown = -1 }
+        try { Start-WorkWatch } catch { }
         Log ("admin: publishing {0}: {1}" -f $label, ((@($items | ForEach-Object { '{0} ({1})' -f $_.Title, $_.System })) -join ', '))
         $script:adminLibTimer = New-Object System.Windows.Threading.DispatcherTimer
         $script:adminLibTimer.Interval = [TimeSpan]::FromMilliseconds(800)
@@ -594,10 +613,7 @@ function Invoke-AdminPublishTick {
         # Kept in the taskbar so the upload could finish (see Add_Closing): no
         # pop-up that could jump in front of a game. The note is on the Admin page.
         $down = $false; try { $down = ([string]$script:win.WindowState -eq 'Minimized') } catch { }
-        if (-not $down) { [void](Show-Choice $WizardName $r.Message @('OK')) }
-        # Kept alive only so the upload could finish, and still down in the
-        # taskbar: its job is done, so it closes itself (Claude, 2026-10-24).
-        # Opened back up by then, it stays open.
-        elseif ($script:closeAfterUpload) { $script:closeAfterUpload = $false; Log 'admin: upload finished in the taskbar, closing'; try { $script:win.Close() } catch { } }
+        # (The wizard's own work watch closes it, if it was only kept open for this.)
+        if (-not $down -and $script:afterWork -eq '') { [void](Show-Choice $WizardName $r.Message @('OK')) }
     } catch { Log "admin: publish tick - $_" }
 }

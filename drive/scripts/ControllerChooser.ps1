@@ -126,44 +126,53 @@ try {
         $seenF = Join-Path $Root '_ClaudeWorkspace\wizard\howtoplay-seen.txt'
         $leaf = [System.IO.Path]::GetFileName($rel).ToLowerInvariant()
         if ((Test-Path -LiteralPath $seenF) -and (@([System.IO.File]::ReadAllLines($seenF) | ForEach-Object { $_.Trim().ToLowerInvariant() }) -contains ($System + '/' + $leaf))) { exit $CODE_ASIS }
-        # The game's own key layout, and whether it is a browser game.
-        $keys = ''; $stick = ''; $isBrowser = $false
+        # The game's layout (KeyLayouts.ps1: the person's own, else the
+        # game's default), and whether it is a browser game.
+        $script:kWs = Join-Path $Root '_ClaudeWorkspace'
+        . (Join-Path $script:kWs 'scripts\KeyLayouts.ps1')
+        $script:kLeaf = [System.IO.Path]::GetFileName($rel)
+        $isBrowser = (Read-KlSection (Join-Path $script:kWs 'browser-games.ini') $script:kLeaf).Found
+        # its name, when one of the lists gives it one
         foreach ($ini in @('flash-games.ini', 'browser-games.ini')) {
-            $fi = Join-Path $Root ('_ClaudeWorkspace\' + $ini)
+            if ($title -ne '') { break }
+            $fi = Join-Path $script:kWs $ini
             if (-not (Test-Path -LiteralPath $fi)) { continue }
             $in = $false
             foreach ($raw in [System.IO.File]::ReadAllLines($fi)) {
                 $t = $raw.Trim()
-                if ($t -match '^\[(.+)\]$') { if ($in) { break }; $in = ($Matches[1].Trim().ToLowerInvariant() -eq $leaf); if ($in -and $ini -eq 'browser-games.ini') { $isBrowser = $true }; continue }
-                if (-not $in -or $t.StartsWith(';')) { continue }
-                if ($t -match '^keys\s*=\s*(.+)$') { $keys = $Matches[1].Trim() }
-                if ($t -match '^stick\s*=\s*(.+)$') { $stick = $Matches[1].Trim().ToLowerInvariant() }
-                if ($t -match '^name\s*=\s*(.+)$' -and $title -eq '') { $title = $Matches[1].Trim() }
+                if ($t -match '^\[(.+)\]$') { if ($in) { break }; $in = ($Matches[1].Trim() -ieq $script:kLeaf); continue }
+                if ($in -and $t -match '^name\s*=\s*(.+)$') { $title = $Matches[1].Trim(); break }
             }
         }
+        $lay = Get-KlLayout $script:kWs $script:kLeaf
         # A PC game only when the couch mouse runs in it: a browser game
         # (its .bat goes through Launch-Browser) or one with a key layout.
-        if ($System -eq 'windows' -and $keys -eq '') {
+        if ($System -eq 'windows' -and $lay.Keys -eq '' -and $lay.Stick -eq '') {
             $cmOn = $false
             try { if ((Get-Item -LiteralPath $Rom).Length -lt 16KB) { $cmOn = ([System.IO.File]::ReadAllText($Rom) -match 'Launch-Browser|(?i)couch\s*mouse\s*=\s*on') } } catch { }
             if (-not $cmOn) { exit $CODE_ASIS }
         }
         $script:infoMode = $true; $script:keysMode = $true
-        $script:infoLines += $(if ($System -eq 'scummvm') { 'A point-and-click game, made for a mouse.' } else { 'Made for a mouse and keyboard.' })
-        if ($keys -ne '' -or $stick -eq 'arrows') {
-            $parts = @()
-            foreach ($pr in $keys.Split(',')) { $kv = $pr.Split(':'); if ($kv.Count -eq 2) { $parts += ('{0} = {1}' -f $kv[0].Trim().ToUpperInvariant(), $kv[1].Trim()) } }
-            if ($stick -eq 'arrows') { $parts += 'left stick = the arrow keys' }
-            $script:infoLines += ('Your controller is set up for this game:  ' + ($parts -join ',   '))
-            $script:infoLines += 'Need the mouse too? Push in the left stick; push it in again to go back to the keys.'
+        # (Steven, 2026-10-25) say it is a keyboard game, but that the
+        # controller is set up, and let them change the buttons right here.
+        function Set-KeyLines {
+            $l2 = Get-KlLayout $script:kWs $script:kLeaf
+            $what = $(if ($System -eq 'scummvm') { 'This game is made for a mouse' } else { 'This game is made for a mouse and keyboard' })
+            $script:infoLines = @()
+            if ($l2.Keys -ne '' -or $l2.Stick -eq 'arrows') {
+                $script:infoLines += ($what + ', but your controller is set up for it:')
+                $script:infoLines += (Format-KlLayout $l2) + $(if ($l2.From -eq 'mine') { '   (your own layout)' } else { '' })
+                $script:infoLines += 'Need the mouse too? Push in the left stick; push it in again to go back to the keys.'
+            }
+            elseif ($System -eq 'scummvm') {
+                $script:infoLines += ($what + ', but your controller works as one: the left stick moves the pointer, A clicks, B is the right click.')
+            }
+            else {
+                $script:infoLines += ($what + ', but your controller works as the mouse: push in the left stick to switch it on (the stick moves the pointer, A clicks), and again to switch it off.')
+            }
+            $script:infoLines += 'X: change which key each button presses.     Y: do not show this again for this game.'
         }
-        elseif ($System -eq 'scummvm') {
-            $script:infoLines += 'Your controller works as the mouse in ScummVM: the left stick moves the pointer, A clicks, B is the right click.'
-        }
-        else {
-            $script:infoLines += 'Your controller works as the mouse: push in the left stick to switch it on (the stick moves the pointer, A clicks), and again to switch it off.'
-        }
-        $script:infoLines += 'Y: do not show this again for this game.'
+        Set-KeyLines
     }
     elseif ($System -eq 'wiiu' -and $kind -ne '' -and $kind -ne 'party-wiimotes' -and $kind -ne 'pro') {
         $script:infoMode = $true
@@ -371,7 +380,7 @@ try {
                     else { $g.DrawImage($script:proImg, $dst, 0, 0, $script:proImg.Width, $script:proImg.Height, [System.Drawing.GraphicsUnit]::Pixel, $script:dimAttr) }
                 } else { Draw-Pro $g ($tx + $tw / 2) ($icy + 4 * $sc) (1.2 * $sc) $ic }
                 $label = $(if ($script:wiiMode) { 'LAUNCH WITH A CONTROLLER' } else { 'LAUNCH WITH A PRO CONTROLLER' })
-                if ($script:infoMode) { $label = 'PLAY' }
+                if ($script:infoMode) { $label = $(if ($script:keysMode) { 'CONTINUE TO THE GAME' } else { 'PLAY' }) }
             }
             $lc = $cDim; if ($on) { $lc = $cText }
             $ly = $ty + $th - 80 * $sc; if ($script:infoMode) { $ly = $ty + $th - 62 * $sc }
@@ -393,7 +402,7 @@ try {
             if ($script:sel -eq 1) { $sub = $(if ($script:wiiMode) { 'Xbox, PlayStation and other controllers, as GameCube controllers. Straight into the game.' } else { 'Xbox, PlayStation, Switch Pro and other controllers.' }) }
             $g.DrawString($sub, $fSub, (New-Object System.Drawing.SolidBrush($cDim)), (New-Object System.Drawing.RectangleF($px, ($ty + $th + 18 * $sc), $pw, (34 * $sc))), $center)
         }
-        $hint = $(if ($script:keysMode) { 'A  play          B  back          Y  do not show this again' } else { 'A  launch          B  back' })
+        $hint = $(if ($script:keysMode) { 'A  continue          B  back          X  change buttons          Y  do not show this again' } else { 'A  launch          B  back' })
         $g.DrawString($hint, $fHint, (New-Object System.Drawing.SolidBrush($cDim)), (New-Object System.Drawing.RectangleF($px, ($py + $ph - 52 * $sc), $pw, (34 * $sc))), $center)
     })
 
@@ -404,6 +413,20 @@ try {
             Add-Content -LiteralPath $sf -Value ($System + '/' + [System.IO.Path]::GetFileName($rel).ToLowerInvariant())
             Log ("{0}: how-to-play switched off for this game" -f $key)
         } catch { }
+    }
+    # X: the wizard's layout editor for this game, then back here with the
+    # new layout on screen (2026-10-25).
+    function Edit-Keys {
+        try {
+            $timer.Stop(); $form.Hide()
+            $wiz = Join-Path $Root '_ClaudeWorkspace\wizard\SetupWizard.ps1'
+            $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+            $p = Start-Process -FilePath $ps -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', ('"' + $wiz + '"'), '-EditKeys', ('"' + $script:kLeaf + '"')) -WindowStyle Hidden -PassThru
+            $p.WaitForExit()
+            Set-KeyLines
+            Log ("{0}: layout edited from the how-to-play screen" -f $key)
+        } catch { Log ('edit keys: ' + $_.Exception.Message) }
+        finally { $script:prev = -1; $form.Show(); $form.Activate(); $form.Invalidate(); $timer.Start() }
     }
     function Finish([int]$code) {
         $script:result = $code
@@ -434,6 +457,7 @@ try {
             'Space'  { Pick }
             'Escape' { Finish $CODE_BACK }
             'D'      { if ($script:keysMode) { Save-Seen; Finish $CODE_ASIS } }
+            'X'      { if ($script:keysMode) { Edit-Keys } }
             'Back'   { Finish $CODE_BACK }
         }
     })
@@ -476,6 +500,7 @@ try {
         if ($down -band ((1 -shl 0) -bor (1 -shl 6))) { Pick; return }
         if ($down -band (1 -shl 1)) { Finish $CODE_BACK }
         if ($script:keysMode -and ($down -band (1 -shl 3))) { Save-Seen; Finish $CODE_ASIS }
+        if ($script:keysMode -and ($down -band (1 -shl 2))) { Edit-Keys }
     })
 
     $form.Add_Shown({

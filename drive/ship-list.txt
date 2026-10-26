@@ -51,6 +51,7 @@ skip  wizard/profile-wiimote.png
 seed  wizard/wizard.ini  <-  defaults/wizard.ini
 code  defaults/Setup Wizard.bat
 code  defaults/retrobat-defaults.ini
+code  defaults/mature-games.txt
 code  defaults/scraper*.txt
 
 code  Maintenance Steps/*.bat

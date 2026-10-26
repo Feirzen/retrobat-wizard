@@ -60,7 +60,10 @@ param(
     # full screen with the controller hints showing. Added 2026-09-23.
     [switch]$Pad,
     # -Tab: open on this tab (the helper's Join opens 'netplay'). 2026-10-12.
-    [string]$Tab = ''
+    [string]$Tab = '',
+    # -EditKeys: only the controller-keys editor for this one game (its file
+    # name), from the "how this game plays" screen. 2026-10-25.
+    [string]$EditKeys = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -337,6 +340,13 @@ if ($script:adminOk -and (Test-Path -LiteralPath $adminUiLib)) {
     try { . $adminUiLib; $script:adminUiOk = $true }
     catch { Log "could not load AdminUI.ps1: $_" }
 }
+
+#  FamilyFilter.ps1: the family-friendly filter (2026-10-25). Without it,
+#  every game simply shows.
+$script:familyOk = $false
+$ffLib = Join-Path $ScriptsDir 'FamilyFilter.ps1'
+if (Test-Path -LiteralPath $ffLib) { try { . $ffLib; $script:familyOk = $true } catch { Log "could not load FamilyFilter.ps1: $_" } }
+function Test-FamilyOn { if (-not $script:familyOk) { return $false }; try { return (Test-FfOn $Ws) } catch { return $false } }
 
 #  GameLibrary.ps1 is the Games tab: add a game, the online library.
 $script:gamesOk = $false
@@ -697,7 +707,8 @@ function Show-Choice([string]$Title, [string]$Message, [string[]]$Buttons) {
     Close-Splash
     $w = New-Object System.Windows.Window
     Start-PadForDialogs   # a controller works in this box even with no main window open
-    $w.Title = $Title; $w.Width = 480; $w.SizeToContent = 'Height'
+    # Wider for four choices, so their labels fit on one row.
+    $w.Title = $Title; $w.Width = $(if (@($Buttons).Count -ge 4) { 680 } else { 480 }); $w.SizeToContent = 'Height'
     $w.WindowStartupLocation = 'CenterScreen'; $w.ResizeMode = 'NoResize'
     $w.Background = (New-Brush $ColBg); $w.Topmost = $true
     $sp = New-Object System.Windows.Controls.StackPanel
@@ -1321,6 +1332,14 @@ function Invoke-WhoGuest {
     $script:whoWin.Close()
 }
 
+# PLAY started with the wizard kept open for work in the background: bring
+# that same window back instead of opening a second one.
+function Show-WizardBack([string]$Area) {
+    if (-not $script:playKeptOpen -or $null -eq $script:win) { return $false }
+    try { $script:afterWork = ''; $script:win.WindowState = 'Normal'; [void]$script:win.Activate(); Show-Area $Area } catch { }
+    return $true
+}
+
 function Start-PlayFlow {
     Log '--- Play flow ---'
     if (Test-RetroBatRunning) { Log 'RetroBat already running, nothing to do'; Close-Splash; return }
@@ -1330,10 +1349,10 @@ function Start-PlayFlow {
     $who = 'play'
     try { $who = Show-WhoIsPlaying } catch { Log ("who's playing: {0}" -f $_.Exception.Message); $who = 'play' }
     if ($who -eq 'cancel') { Log 'PLAY cancelled at Who''s playing'; return }
-    if ($who -eq 'wizard') { Show-MainWindow $null 'profile'; return }
+    if ($who -eq 'wizard') { if (-not (Show-WizardBack 'profile')) { Show-MainWindow $null 'profile' }; return }
     # Play time from here on belongs to whoever just picked (2026-10-17).
     if ($script:socialOk) {
-        try { $me = Read-SocialProfile $Ws; [void](Update-SocialPlayLedger $Root $Ws $(if ($null -ne $me -and -not $me.Guest) { [string]$me.Id } else { 'guest' })) } catch { Log ('play time: ' + $_.Exception.Message) }
+        try { $me = Read-SocialProfile $Ws; [void](Update-SocialPlayLedger $Root $Ws $(if ($null -ne $me -and -not $me.Guest) { [string]$me.Id } else { 'guest' }) -Switch) } catch { Log ('play time: ' + $_.Exception.Message) }
     }
 
     # RetroBat update detection
@@ -1373,7 +1392,7 @@ function Start-PlayFlow {
             if ($p.Value.status -eq 'bad') { $firstBad = "$($p.Value.title): $($p.Value.summary)"; break }
         }
         $pick = Show-Choice $WizardName ("Something needs attention:`n`n$firstBad") @('Open the wizard', 'Play anyway')
-        if ($pick -eq 'Open the wizard') { Show-MainWindow $status 'health'; return }
+        if ($pick -eq 'Open the wizard') { if (-not (Show-WizardBack 'health')) { Show-MainWindow $status 'health' }; return }
     }
 
     # --- the Steam shelf, before RetroBat reads its game lists -------------
@@ -1425,6 +1444,14 @@ function Start-PlayFlow {
         else { Log 'game lists: GameInfo.ps1 and PlayerCounts.ps1 not found, skipped' }
     }
     catch { Log ('game lists: could not apply - ' + $_.Exception.Message) }
+
+    # --- family-friendly: M-rated games hidden (or shown again) ------------
+    #  Same reason: RetroBat reads the game lists as it starts. Runs on and
+    #  off, so switching it off shows exactly what it hid. (2026-10-25)
+    if ($script:familyOk) {
+        try { $ff = Sync-FamilyFilter $Root $Ws; Log ('family filter: ' + $ff.Message) }
+        catch { Log ('family filter: could not apply - ' + $_.Exception.Message) }
+    }
 
     # --- ckau-book, once it has arrived (2026-10-10) --------------------------
     #  A fresh install asks friends to fetch the ckau-book theme through
@@ -3322,6 +3349,84 @@ function Test-CanWorkInBackground {
     try { return ($script:qolOk -and $null -ne $script:win -and $script:win.IsVisible) } catch { return $false }
 }
 
+# ---------------------------------------------------------------------------
+#  WHAT IS GOING ON RIGHT NOW                                   (2026-10-25)
+# ---------------------------------------------------------------------------
+#  Steven: stop me closing while anything is going, show it in the banner
+#  with how far along it is, and let me move around the wizard meanwhile.
+#  Each item: @{ Label; Detail; Safe }. Safe = touches nothing RetroBat uses,
+#  so it may carry on while RetroBat runs (uploads, game downloads).
+$script:workSync = [hashtable]::Synchronized(@{ Detail = '' })
+$script:afterWork = ''
+$script:closeNow = $false
+
+function Get-RunningWork {
+    $out = @()
+    if ($script:busyDepth -gt 0) {
+        $d = ''; try { $d = [string]$script:workSync.Detail } catch { }
+        $out += @{ Label = [string]$script:busyLabel; Detail = $d; Safe = $false }
+    }
+    try {
+        $j = $script:adminLibJob
+        if ($null -ne $j -and -not $j.Handle.IsCompleted) {
+            $st = [string]$j.Sync.Stage
+            if ($st -eq 'Uploading...') { $st = 'Uploading... {0}%' -f $j.Sync.Percent }
+            $out += @{ Label = ('Uploading ' + [string]$j.Title); Detail = ([string]$j.Sync.Prefix + $st); Safe = $true }
+        }
+    } catch { }
+    try {
+        foreach ($lj in @($script:libJobs)) {
+            if ($null -eq $lj -or $lj.Kind -ne 'install' -or $lj.Handle.IsCompleted) { continue }
+            $d = ''; try { $d = Get-LibJobProgress $lj.Game } catch { }
+            $out += @{ Label = ('Downloading ' + [string]$lj.Game.Title); Detail = $d; Safe = $true }
+        }
+    } catch { }
+    return $out
+}
+
+function Format-RunningWork($Work) {
+    return ((@($Work) | ForEach-Object { if ([string]$_.Detail -ne '') { '- {0}: {1}' -f $_.Label, $_.Detail } else { '- ' + $_.Label } }) -join "`n")
+}
+
+# What happens when everything is done: 'close', 'play' or nothing.
+function Set-AfterWork([string]$What) {
+    $script:afterWork = $What
+    Log ("when the work is done: {0}" -f $What)
+    if ($What -eq 'close') { try { $script:win.WindowState = 'Minimized' } catch { } }
+    Start-WorkWatch
+}
+
+# PLAY on the home page.
+function Invoke-PlayButton {
+    $work = @(Get-RunningWork)
+    if ($work.Count -eq 0) { $script:closeNow = $true; $script:win.Close(); Start-PlayFlow; return }
+    $list = Format-RunningWork $work
+    if (@($work | Where-Object { -not $_.Safe }).Count -gt 0) {
+        $pick = Show-Choice $WizardName ("RetroBat starts as soon as this is done:`n`n{0}" -f $list) @('PLAY when it is done', 'Cancel')
+        if ($pick -eq 'PLAY when it is done') { Set-AfterWork 'play' }
+        return
+    }
+    $pick = Show-Choice $WizardName ("Still going:`n`n{0}`n`nIt carries on in the background while you play, and the wizard closes itself when it is done." -f $list) @('PLAY, keep it going', 'Cancel')
+    if ($pick -eq 'PLAY, keep it going') { Set-AfterWork 'close'; Start-PlayKeepWorking }
+}
+
+# PLAY with the wizard kept open (down in the taskbar) for work that carries on.
+function Start-PlayKeepWorking {
+    try { $script:win.WindowState = 'Minimized' } catch { }
+    $script:playKeptOpen = $true
+    try { Start-PlayFlow } finally { $script:playKeptOpen = $false }
+}
+
+# Twice a second: the banner, and whatever was waiting for the work to end.
+function Start-WorkWatch {
+    if ($null -eq $script:busyTimer) {
+        $script:busyTimer = New-Object System.Windows.Threading.DispatcherTimer
+        $script:busyTimer.Interval = [TimeSpan]::FromMilliseconds(500)
+        $script:busyTimer.Add_Tick({ Update-WorkingBar })
+    }
+    if (-not $script:busyTimer.IsEnabled) { $script:busyTimer.Start() }
+}
+
 function Enter-Working([string]$Label) {
     $script:busyDepth++
     if ($script:busyDepth -gt 1) { return }
@@ -3336,13 +3441,9 @@ function Enter-Working([string]$Label) {
             $script:workingBar.Visibility = 'Visible'
             if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $true }
         }
-        if ($null -eq $script:busyTimer) {
-            $script:busyTimer = New-Object System.Windows.Threading.DispatcherTimer
-            $script:busyTimer.Interval = [TimeSpan]::FromMilliseconds(250)
-            $script:busyTimer.Add_Tick({ Update-WorkingBar })
-        }
         $script:busyNudge = 0
-        $script:busyTimer.Start()
+        try { $script:workSync.Detail = '' } catch { }
+        Start-WorkWatch
     } catch { }
 }
 
@@ -3350,35 +3451,54 @@ function Exit-Working {
     if ($script:busyDepth -gt 0) { $script:busyDepth-- }
     if ($script:busyDepth -gt 0) { return }
     try { if ($script:qolOk) { [RBQol]::Busy = $false } } catch { }
-    try {
-        if ($null -ne $script:busyTimer) { $script:busyTimer.Stop() }
-        if ($null -ne $script:workingBar) {
-            if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $false }
-            $script:workingBar.Visibility = 'Collapsed'
-        }
-    } catch { }
+    try { $script:workSync.Detail = '' } catch { }
+    Start-WorkWatch     # the next tick tidies the banner and does what was waiting
 }
 
 # Every quarter second while working: somebody pressed a held-back button?
 # Say so for two seconds, in a brighter bar, then go back to the label.
 function Update-WorkingBar {
     try {
+        $work = @(Get-RunningWork)
+        # Waiting for the work to end?
+        if ($work.Count -eq 0 -and $script:afterWork -ne '') {
+            $what = $script:afterWork; $script:afterWork = ''
+            Log ("the work is done: {0}" -f $what)
+            if ($what -eq 'close') {
+                # Kept open only for the work, and still down in the taskbar:
+                # done, so it closes. Opened back up meanwhile: it stays.
+                if ([string]$script:win.WindowState -eq 'Minimized') { $script:closeNow = $true; $script:win.Close(); return }
+            }
+            elseif ($what -eq 'play') { $script:closeNow = $true; $script:win.Close(); Start-PlayFlow; return }
+        }
         if ($null -eq $script:workingBar) { return }
+        if ($work.Count -eq 0) {
+            if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $false }
+            $script:workingBar.Visibility = 'Collapsed'
+            if ($null -ne $script:busyTimer -and $script:afterWork -eq '') { $script:busyTimer.Stop() }
+            return
+        }
         $b = 0
         if ($script:qolOk) { $b = [RBQol]::Blocked }
         if ($b -ne $script:busyBlockedSeen) {
             $script:busyBlockedSeen = $b
-            $script:busyNudge = 8
-            $script:workingText.Text = ('One thing at a time - still working on: {0}' -f $script:busyLabel)
+            $script:busyNudge = 4
+        }
+        $parts = @($work | ForEach-Object { if ([string]$_.Detail -ne '') { '{0} - {1}' -f $_.Label, $_.Detail } else { [string]$_.Label } })
+        $text = ($parts -join '     |     ')
+        if ($script:afterWork -eq 'play') { $text += '     (PLAY starts when this is done)' }
+        elseif ($script:afterWork -eq 'close') { $text += '     (the wizard closes when this is done)' }
+        if ($script:busyNudge -gt 0) {
+            $script:busyNudge--
+            $script:workingText.Text = ('That has to wait until this is done: ' + $text)
             $script:workingBar.Background = (New-Brush '#FF5A3A10')
         }
-        elseif ($script:busyNudge -gt 0) {
-            $script:busyNudge--
-            if ($script:busyNudge -eq 0) {
-                $script:workingText.Text = ('Working: {0}' -f $script:busyLabel)
-                $script:workingBar.Background = (New-Brush '#FF2A2440')
-            }
+        else {
+            $script:workingText.Text = $text
+            $script:workingBar.Background = (New-Brush '#FF2A2440')
         }
+        if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $true }
+        $script:workingBar.Visibility = 'Visible'
     } catch { }
 }
 
@@ -3445,8 +3565,9 @@ function Invoke-EngineWork([string]$Label, [string[]]$Libs, [string]$Code, [obje
         foreach ($p in $paths) { . $p }
         return (& ([scriptblock]::Create($Code)) @ArgList)
     }
-    $wrap = 'param($libs, $code, $rest) $ErrorActionPreference = ''Stop''; foreach ($l in $libs) { . $l }; & ([scriptblock]::Create($code)) @rest'
-    $al = @($paths, $Code, @($ArgList))
+    # $WorkSync.Detail, set by the work as it goes, shows in the banner.
+    $wrap = 'param($libs, $code, $rest, $sync) $ErrorActionPreference = ''Stop''; $global:WorkSync = $sync; foreach ($l in $libs) { . $l }; & ([scriptblock]::Create($code)) @rest'
+    $al = @($paths, $Code, @($ArgList), $script:workSync)
     Enter-Working $Label
     try { return (Invoke-InBackground $wrap $al) }
     finally { Exit-Working }
@@ -3830,6 +3951,10 @@ function Open-ControllerList {
     $exp.Content = $how
     [void]$outer.Children.Add($exp)
     $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,16,0,0'
+    $kb = New-Object System.Windows.Controls.Button; $kb.Content = 'Keyboard game buttons'; $kb.Padding = '14,6'; $kb.FontSize = 13; $kb.Margin = '0,0,8,0'
+    $kb.ToolTip = 'Which key each button presses in Flash, browser and PC games'
+    $kb.Add_Click({ Show-KeyLayoutPicker })
+    [void]$row.Children.Add($kb)
     $wb = New-Object System.Windows.Controls.Button; $wb.Content = 'Windows'' own list'; $wb.Padding = '14,6'; $wb.FontSize = 13
     $wb.Add_Click({ Open-WindowsControllerList })
     $cb = New-Object System.Windows.Controls.Button; $cb.Content = 'Close'; $cb.Padding = '14,6'; $cb.FontSize = 13; $cb.Margin = '8,0,0,0'
@@ -3965,18 +4090,28 @@ function Initialize-TitleBar {
         $shell = New-Object System.Windows.Controls.DockPanel
         $script:win.Content = $null
         $bar = New-Object System.Windows.Controls.Border
-        $bar.Height = $barH; $bar.Background = (New-Brush '#FF14141A'); $bar.BorderBrush = (New-Brush '#FF2A2A34'); $bar.BorderThickness = '0,0,0,1'
+        # 2026-10-25 (Steven): "almost invisible" - no band of its own, just
+        # the window's own background, and gold buttons that glow.
+        $bar.Height = $barH; $bar.Background = $(if ($null -ne $script:win.Background) { $script:win.Background } else { New-Brush $ColBg }); $bar.BorderThickness = '0'
         [System.Windows.Controls.DockPanel]::SetDock($bar, 'Top')
         $dp = New-Object System.Windows.Controls.DockPanel
         $btns = New-Object System.Windows.Controls.StackPanel; $btns.Orientation = 'Horizontal'
         [System.Windows.Controls.DockPanel]::SetDock($btns, 'Right')
         $script:tbMax = $null
-        foreach ($b0 in @(@('min', [string][char]0x2014, 'Minimise'), @('max', [string][char]0x25A1, 'Full screen / window'), @('close', [string][char]0x2715, 'Close'))) {
+        # Windows' own button shapes (the Segoe MDL2 Assets font every
+        # Windows 10 and 11 PC has), in the accent gold. Hover: a soft gold
+        # glow, red for the X.
+        $gold = Convert-ThemeHex '#FFE8B84A'
+        $glyphFont = New-Object System.Windows.Media.FontFamily('Segoe MDL2 Assets')
+        foreach ($b0 in @(@('min', [string][char]0xE921, 'Minimise'), @('max', [string][char]0xE922, 'Full screen / window'), @('close', [string][char]0xE8BB, 'Close'))) {
             $b = New-Object System.Windows.Controls.Button
-            $b.Content = $b0[1]; $b.Tag = $b0[0]; $b.ToolTip = $b0[2]
-            $b.Width = 46; $b.Height = $barH; $b.FontSize = 14; $b.BorderThickness = '0'; $b.Padding = '0'
-            $b.Background = [System.Windows.Media.Brushes]::Transparent; $b.Foreground = (New-Brush $ColText); $b.Focusable = $false
-            $b.Template = [System.Windows.Markup.XamlReader]::Parse('<ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="Button"><Border x:Name="Bd" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="{TemplateBinding Background}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="' + $(if ($b0[0] -eq 'close') { '#FFC42B1C' } else { (Convert-ThemeHex '#FF2A2A34') }) + '"/></Trigger></ControlTemplate.Triggers></ControlTemplate>')
+            $b.Content = $b0[1]; $b.Tag = $b0[0]; $b.ToolTip = $b0[2]; $b.Uid = 'busy-ok'
+            $b.Width = 46; $b.Height = $barH; $b.FontSize = 11; $b.FontFamily = $glyphFont; $b.BorderThickness = '0'; $b.Padding = '0'
+            $b.Background = [System.Windows.Media.Brushes]::Transparent; $b.Foreground = (New-Brush $gold); $b.Focusable = $false
+            $glow = $(if ($b0[0] -eq 'close') { '#FFFF4A3D' } else { $gold })
+            $tint = $(if ($b0[0] -eq 'close') { '#33FF4A3D' } else { '#26' + $gold.Substring(3) })
+            $fg = $(if ($b0[0] -eq 'close') { '#FFFF6B5E' } else { $gold })
+            $b.Template = [System.Windows.Markup.XamlReader]::Parse('<ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="Button"><Border x:Name="Bd" Background="{TemplateBinding Background}"><ContentPresenter x:Name="Cp" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="' + $tint + '"/><Setter Property="Foreground" Value="' + $fg + '"/><Setter TargetName="Cp" Property="Effect"><Setter.Value><DropShadowEffect Color="' + $glow + '" BlurRadius="10" ShadowDepth="0" Opacity="0.95"/></Setter.Value></Setter></Trigger></ControlTemplate.Triggers></ControlTemplate>')
             [System.Windows.Shell.WindowChrome]::SetIsHitTestVisibleInChrome($b, $true)
             $b.Add_Click({ param($s2, $e2)
                 switch ([string]$s2.Tag) {
@@ -3989,10 +4124,7 @@ function Initialize-TitleBar {
             [void]$btns.Children.Add($b)
         }
         [void]$dp.Children.Add($btns)
-        $ttl = New-Object System.Windows.Controls.TextBlock
-        $ttl.Text = $script:win.Title; $ttl.Foreground = (New-Brush $ColDim); $ttl.FontSize = 13; $ttl.VerticalAlignment = 'Center'; $ttl.Margin = '14,0,0,0'
-        $script:tbTitle = $ttl
-        [void]$dp.Children.Add($ttl)
+        $script:tbTitle = $null   # no title text: the window says who it is
         $bar.Child = $dp
         [void]$shell.Children.Add($bar)
         [void]$shell.Children.Add($root)
@@ -4007,8 +4139,8 @@ function Initialize-TitleBar {
         # every edge; this pulls the inside back in, and swaps the button.
         $script:win.Add_StateChanged({
             try {
-                if ($script:win.WindowState -eq 'Maximized') { $script:tbShell.Margin = New-Object System.Windows.Thickness(7); $script:tbMax.Content = [string][char]0x2750 }
-                else { $script:tbShell.Margin = New-Object System.Windows.Thickness(0); $script:tbMax.Content = [string][char]0x25A1 }
+                if ($script:win.WindowState -eq 'Maximized') { $script:tbShell.Margin = New-Object System.Windows.Thickness(7); $script:tbMax.Content = [string][char]0xE923 }
+                else { $script:tbShell.Margin = New-Object System.Windows.Thickness(0); $script:tbMax.Content = [string][char]0xE922 }
             } catch { }
         })
         Log 'title bar: our own'
@@ -4041,6 +4173,7 @@ function Initialize-NewLook {
             $b = $script:win.FindName($name)
             if ($null -eq $b) { continue }
             $m = $map[$name]
+            $b.Uid = 'busy-ok'     # moving around is fine while something works (2026-10-25)
             if ($name -eq 'RailControllers') { $b.Add_Click({ Open-ControllerList }) }
             else {
                 $b.Tag = $m[1]
@@ -4061,7 +4194,7 @@ function Initialize-NewLook {
         # "< Settings" on the settings pages
         foreach ($bn in @('BackMachine', 'BackFeatures', 'BackHealth')) {
             $bb = $script:win.FindName($bn)
-            if ($null -ne $bb) { $bb.Add_Click({ Show-Area 'settings' }) }
+            if ($null -ne $bb) { $bb.Uid = 'busy-ok'; $bb.Add_Click({ Show-Area 'settings' }) }
         }
         # the theme: pick, then it reloads
         $script:themePick = $script:win.FindName('ThemePick')
@@ -5144,10 +5277,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
         $script:win.FindName('AdminBarLaterBtn').Add_Click({ $script:adminBar.Visibility = 'Collapsed'; $script:adminBarLater = $true })
     } catch { Log ('admin bar: ' + $_.Exception.Message) }
 
-    $script:playButton.Add_Click({
-        $script:win.Close()
-        Start-PlayFlow
-    })
+    $script:playButton.Uid = 'busy-ok'
+    $script:playButton.Add_Click({ Invoke-PlayButton })
     # Windows' own controller panel. control.exe is called by its full path
     # for the same reason PowerShell always is here: whatever launched the
     # wizard may not have handed down a normal PATH.
@@ -5205,29 +5336,33 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
     $script:win.Add_SizeChanged({ Update-PlayScale })
     # Closing while something is still working: ask, because a half-done
     # repair or backup is worse than waiting a few seconds (2026-10-12).
+    # Closing while something is still going (2026-10-25, one rule for all
+    # of it): ask first. Work that touches nothing RetroBat uses (uploads,
+    # downloads) can carry on in the taskbar, even while you play; anything
+    # else is waited for. Get-RunningWork lists what is going.
     $script:win.Add_Closing({
         param($s2, $e2)
         try {
-            if ($script:busyDepth -gt 0) {
-                $pick = Show-Choice $WizardName ("Still working on: {0}`n`nClosing now could leave it half done." -f $script:busyLabel) @('Keep waiting', 'Close anyway')
-                if ($pick -ne 'Close anyway') { $e2.Cancel = $true }
-                else { Log ("closed while still working on: {0}" -f $script:busyLabel) }
+            if ($script:closeNow) { return }
+            $work = @(Get-RunningWork)
+            if ($work.Count -eq 0) { return }
+            $list = Format-RunningWork $work
+            $unsafe = @($work | Where-Object { -not $_.Safe })
+            if ($unsafe.Count -gt 0) {
+                $pick = Show-Choice $WizardName ("Still working on:`n`n{0}`n`nClosing now could leave it half done." -f $list) @('Close when it is done', 'Keep the wizard open')
+                $e2.Cancel = $true
+                if ($pick -eq 'Close when it is done') { Set-AfterWork 'close' }
             }
-            # A library upload runs in its own runspace and is not counted in
-            # busyDepth, so closing (X, or PLAY, which closes first) used to end
-            # it without a word. Offer to keep the wizard down in the taskbar
-            # until it finishes instead (Steven, 2026-10-21).
-            elseif ($null -ne $script:adminLibJob -and -not $script:adminLibJob.Handle.IsCompleted) {
-                $pick = Show-Choice $WizardName ("Games are still uploading to the online library ({0}).`n`nClosing the wizard stops the upload. Keep it running in the taskbar and it finishes by itself, even while you play." -f $script:adminLibJob.Title) @('Keep uploading', 'Stop the upload and close')
-                if ($pick -ne 'Stop the upload and close') {
-                    $e2.Cancel = $true
-                    try { $script:win.WindowState = 'Minimized' } catch { }
-                    $script:closeAfterUpload = $true
-                    Log ("kept open in the taskbar: still uploading {0}" -f $script:adminLibJob.Title)
+            else {
+                $pick = Show-Choice $WizardName ("Still going:`n`n{0}`n`nThe wizard can wait in the taskbar and finish this by itself, even while you play." -f $list) @('PLAY, keep it going', 'Close when it is done', 'Stop it and close', 'Keep the wizard open')
+                switch ($pick) {
+                    'Stop it and close' { Log ("closed and stopped: {0}" -f (($work | ForEach-Object { $_.Label }) -join ', ')) }
+                    'PLAY, keep it going' { $e2.Cancel = $true; Set-AfterWork 'close'; [void]$script:win.Dispatcher.BeginInvoke([action]{ Start-PlayKeepWorking }) }
+                    'Close when it is done' { $e2.Cancel = $true; Set-AfterWork 'close' }
+                    default { $e2.Cancel = $true }
                 }
-                else { Log ("closed while uploading: {0}" -f $script:adminLibJob.Title) }
             }
-        } catch { }
+        } catch { Log ('closing: ' + $_.Exception.Message) }
     })
 
     Close-Splash
@@ -5286,11 +5421,15 @@ function Get-PixelBitmap([string]$Path) {
     if ([string]::IsNullOrWhiteSpace($Path)) { return $null }
     if (-not (Test-Path -LiteralPath $Path)) { return $null }
     try {
+        # Read from the file's bytes, not its path: WPF keeps pictures it has
+        # loaded by path and hands back the OLD one when the file changes
+        # (2026-10-25: Phtephen showed Steven's picture until a restart).
         $b = New-Object System.Windows.Media.Imaging.BitmapImage
         $b.BeginInit()
-        $b.UriSource = New-Object System.Uri($Path)
+        $b.StreamSource = New-Object System.IO.MemoryStream(,[System.IO.File]::ReadAllBytes($Path))
         $b.CacheOption = 'OnLoad'
         $b.EndInit()
+        $b.Freeze()
         return $b
     }
     catch {
@@ -6170,6 +6309,7 @@ function Start-LibraryJob([string]$Kind, $Game = $null) {
             [void]$ps.AddScript('param($se, $lib, $ws, $root, $game) . $se; . $lib; $s = @(Get-LibSystems $root); Install-LibGame $ws $game $s').AddArgument($se).AddArgument($lib).AddArgument($Ws).AddArgument($Root).AddArgument($Game)
         }
         $script:libJobs += [pscustomobject]@{ Kind = $Kind; Game = $Game; Ps = $ps; Handle = $ps.BeginInvoke() }
+        if ($Kind -eq 'install') { Start-WorkWatch }
         if ($null -eq $script:libTimer) {
             $script:libTimer = New-Object System.Windows.Threading.DispatcherTimer
             $script:libTimer.Interval = [TimeSpan]::FromMilliseconds(700)
@@ -6331,6 +6471,14 @@ function Render-Games {
     $lt.TextWrapping = 'Wrap'
     [void]$panel.Children.Add($lt)
     $cat = $script:libCatalog
+    # Family-friendly on: M-rated games are left out of the list (2026-10-25).
+    if ($null -ne $cat -and $cat.Ok -and (Test-FamilyOn)) {
+        $ffl = Get-FfList $Ws
+        $kept = @(@($cat.Games) | Where-Object { -not (Test-FfMature $ffl ([string]$_.Title)) })
+        $gone = @($cat.Games).Count - $kept.Count
+        $cat = [pscustomobject]@{ Ok = $true; Message = $cat.Message; Games = $kept }
+        if ($gone -gt 0) { $fn = New-Text ('Family-friendly is on: {0} game(s) are left out.' -f $gone) $ColDim 12; $fn.Margin = '0,4,0,0'; [void]$panel.Children.Add($fn) }
+    }
     if ($null -eq $cat) {
         [void]$panel.Children.Add((New-Text 'Loading...' $ColDim 13))
         if (@($script:libJobs | Where-Object Kind -eq 'catalog').Count -eq 0) { Start-LibraryJob 'catalog' }
@@ -8013,20 +8161,46 @@ function Invoke-SocialLogin([string]$Id) {
     if (-not $all.Ok) { [void](Show-Choice $WizardName "Logging in needs the internet, and GitHub could not be reached.`n`n$($all.Message)" @('OK')); return }
     $rec = @($all.Players | Where-Object { $null -ne $_ -and $_.Id -eq $Id }) | Select-Object -First 1
     if ($null -eq $rec) { [void](Show-Choice $WizardName 'That profile is not online any more.' @('OK')); return }
-    if ($rec.Pw -ne '') {
-        $pw = Show-PasswordDialog 'Log in' ("Password for {0}:" -f $rec.Username) $false
-        if ($null -eq $pw) { return }
-        if (-not (Test-SocialPassword $rec $pw)) { [void](Show-Choice $WizardName 'That password is not right.' @('OK')); return }
+    $wasReset = Test-SocialPwReset $rec $all.Resets
+    if ($rec.Pw -ne '' -and -not $wasReset) {
+        while ($true) {
+            $pw = Show-PasswordDialog 'Log in' ("Password for {0}:" -f $rec.Username) $false
+            if ($null -eq $pw) { return }
+            if (Test-SocialPassword $rec $pw) { break }
+            # Forgot it? (Steven, 2026-10-25: "we need a password recovery option")
+            $c = Show-Choice $WizardName 'That password is not right.' @('Try again', 'I forgot it', 'Cancel')
+            if ($c -eq 'Try again') { continue }
+            if ($c -eq 'I forgot it') { Invoke-SocialForgotPassword $rec }
+            return
+        }
     }
     $prof = Enter-SocialPerson $rec.Id $rec $true
     if ($null -eq $prof) { return }
     Log ("profile: logged in as {0} ({1})" -f $prof.Username, $prof.Id)
+    Sync-SocialPersonSaves $prof.Id
+    if ($wasReset -and $rec.Pw -ne '') {
+        [void](Show-Choice $WizardName "An admin reset your password, so you got in without it.`n`nPick a new one now." @('OK'))
+        Invoke-SocialPassword
+    }
     $script:socialFetched = @($all.Players)
     $script:loginHits = $null; $script:socialSearch = ''; $script:loginNote = ''
     $script:socialNote = "Welcome back, $($prof.Username)!"
     Start-SocialSession
     Sync-AdminTab
     Render-Social
+}
+
+# Their saves and favourite stars come into place as they sign in, so the
+# Saves page shows their own (2026-10-25). In the background: a switch can
+# move hundreds of folders. RetroBat open: it waits for the next PLAY.
+function Sync-SocialPersonSaves([string]$Id) {
+    if (-not $script:socialOk -or $Id -eq '') { return }
+    try {
+        $r = Invoke-EngineWork 'putting your saves in place' @('SocialEngine.ps1') 'Update-SocialPlayLedger $args[0] $args[1] $args[2] -Switch | Out-Null; Get-Content -LiteralPath (Join-SocialPath $args[1] ''profile\saves-of\owner.txt'') -ErrorAction SilentlyContinue' @($Root, $Ws, $Id)
+        Log ("profile: saves and favourites now belong to {0}" -f [string]$r)
+        $script:myGameStats = $null
+        try { Initialize-Saves; Render-SaveConsoleList; Render-SaveGames } catch { }
+    } catch { Log ('profile: could not switch saves - ' + $_.Exception.Message) }
 }
 
 # Makes $Id the person using this drive. The one who was here is put away in
@@ -8230,6 +8404,20 @@ function Invoke-SocialNameRequest {
         [void](Send-SocialNotify $Ws 'Name request' ("{0} wants to be called {1}" -f $prof.Username, $new))
     }
     Render-Social
+}
+
+# Sends the admins a request to reset this person's password. It shows up
+# on their Admin page under Reports, and as a phone alert if they set one up.
+function Invoke-SocialForgotPassword($Rec) {
+    if (-not $script:bugOk) { [void](Show-Choice $WizardName 'Ask the person who runs this setup to reset your password on their Admin page.' @('OK')); return }
+    $who = [string]$Rec.Username
+    $body = "## Forgotten password`n`n**$who** ($($Rec.Id)) asked for a password reset from a setup's login screen.`n`nReset it on the Admin page: Forgotten passwords, Reset someone's password, then type **$who**."
+    $r = $null
+    try { $r = Send-BugReport $Ws ("[password] $who forgot their password") $body } catch { }
+    try { Send-SocialNotify $Ws 'Password reset' "$who forgot their password" | Out-Null } catch { }
+    $msg = $(if ($null -ne $r -and $r.Ok) { "Sent. An admin will reset it; then you can log in without a password once and pick a new one." } else { "Saved, and it goes to the admins the next time there is internet. An admin will reset it; then you can log in without a password once and pick a new one." })
+    Log ("profile: password reset asked for {0}" -f $who)
+    [void](Show-Choice $WizardName $msg @('OK'))
 }
 
 function Invoke-SocialPassword {
@@ -10253,54 +10441,103 @@ function Get-IniSectionValue([string]$Path, [string]$Section, [string]$Key) {
     return ''
 }
 
-# Writes (or clears, with '' and '') a game's keys and stick lines. The rest
-# of its section, and the rest of the file, stay exactly as they were.
-function Set-GameKeyLayout([string]$IniName, [string]$Leaf, [string]$Name, [string]$Keys, [string]$Stick) {
-    $p = Join-Path $Ws $IniName
-    $lines = New-Object System.Collections.ArrayList
-    if (Test-Path -LiteralPath $p) { foreach ($l in [System.IO.File]::ReadAllLines($p)) { [void]$lines.Add($l) } }
-    $start = -1; $end = $lines.Count
-    for ($i = 0; $i -lt $lines.Count; $i++) {
-        $t = ([string]$lines[$i]).Trim()
-        if ($t -match '^\[(.+)\]$') {
-            if ($start -ge 0) { $end = $i; break }
-            if ($Matches[1].Trim() -ieq $Leaf) { $start = $i }
-        }
-    }
-    $add = @()
-    if ($Keys -ne '') { $add += ('keys      = ' + $Keys) }
-    if ($Stick -ne '') { $add += ('stick     = ' + $Stick) }
-    if ($start -lt 0) {
-        if ($add.Count -eq 0) { return }
-        if ($lines.Count -gt 0 -and ([string]$lines[$lines.Count - 1]).Trim() -ne '') { [void]$lines.Add('') }
-        [void]$lines.Add('[' + $Leaf + ']'); [void]$lines.Add('name      = ' + $Name)
-        foreach ($a in $add) { [void]$lines.Add($a) }
-    }
-    else {
-        for ($i = $end - 1; $i -gt $start; $i--) { if (([string]$lines[$i]).Trim() -match '^(keys|stick)\s*=') { $lines.RemoveAt($i) } }
-        $at = $start + 1
-        while ($at -lt $lines.Count -and ([string]$lines[$at]).Trim() -ne '' -and ([string]$lines[$at]).Trim() -notmatch '^\[') { $at++ }
-        foreach ($a in $add) { $lines.Insert($at, $a); $at++ }
-    }
-    [System.IO.File]::WriteAllLines($p, [string[]]$lines.ToArray())
-}
+# (Set-GameKeyLayout moved to scripts\KeyLayouts.ps1 as Set-KlLayout, 2026-10-25.)
 
+# Every keyboard game with what the controller does in it, and an Edit
+# button for each (Steven, 2026-10-25: "a button somewhere where we can show
+# every game, add keybindings to new games").
 function Show-KeyLayoutPicker {
+    if (-not (Get-Command Get-KlLayout -ErrorAction SilentlyContinue)) { . (Join-Path $ScriptsDir 'KeyLayouts.ps1') }
     $games = @(Get-KeyboardGames)
     if ($games.Count -eq 0) { [void](Show-Choice $WizardName 'No Flash or PC games on this setup yet.' @('OK')); return }
-    $pick = Show-ListPick $WizardName 'Which game?' ([string[]]@($games | ForEach-Object { $_.Label }))
-    if ($pick -eq '' -or $pick -eq '?') { return }
-    $g = @($games | Where-Object { $_.Label -eq $pick }) | Select-Object -First 1
-    if ($null -ne $g) { Show-KeyLayoutEditor $g }
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 760; $w.Height = 640
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '22'
+    $hd = New-Object System.Windows.Controls.StackPanel; [System.Windows.Controls.DockPanel]::SetDock($hd, 'Top')
+    [void]$hd.Children.Add((New-Text 'Controller keys for keyboard games' $ColText 18 $true))
+    $me = ''; try { $pr = Read-SocialProfile $Ws; if ($null -ne $pr -and -not $pr.Guest) { $me = [string]$pr.Id } } catch { }
+    $sub = New-Text 'What each controller button presses in each game. "Yours" is your own layout; "default" is what everybody else gets. Edit sets either.' $ColDim 13
+    $sub.TextWrapping = 'Wrap'; $sub.Margin = '0,4,0,12'
+    [void]$hd.Children.Add($sub)
+    [void]$dp.Children.Add($hd)
+    $close = New-Object System.Windows.Controls.Button; $close.Content = 'Done'; $close.Padding = '16,7'; $close.FontSize = 14; $close.HorizontalAlignment = 'Right'; $close.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($close, 'Bottom'); $script:klWin = $w
+    $close.Add_Click({ $script:klWin.Close() })
+    [void]$dp.Children.Add($close)
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
+    $script:klList = New-Object System.Windows.Controls.StackPanel
+    $sv.Content = $script:klList
+    [void]$dp.Children.Add($sv)
+    $script:klGames = $games; $script:klMe = $me
+    Update-KeyLayoutList
+    $w.Content = $dp
+    [void]$w.ShowDialog()
+}
+
+function Update-KeyLayoutList {
+    $script:klList.Children.Clear()
+    foreach ($g in $script:klGames) {
+        $lay = Get-KlLayout $Ws $g.Leaf $script:klMe
+        $bd = New-Object System.Windows.Controls.Border; $bd.Background = (New-Brush $ColPanel); $bd.CornerRadius = '6'; $bd.Padding = '12,8'; $bd.Margin = '0,0,0,6'
+        $row = New-Object System.Windows.Controls.DockPanel
+        $eb = New-Object System.Windows.Controls.Button; $eb.Content = 'Edit'; $eb.Padding = '14,4'; $eb.FontSize = 13; $eb.VerticalAlignment = 'Center'; $eb.Tag = $g
+        $eb.Add_Click({ param($s2, $e2) Show-KeyLayoutEditor $s2.Tag; Update-KeyLayoutList })
+        [System.Windows.Controls.DockPanel]::SetDock($eb, 'Right'); [void]$row.Children.Add($eb)
+        $info = New-Object System.Windows.Controls.StackPanel
+        [void]$info.Children.Add((New-Text $g.Label $ColText 14 $true))
+        $txt = Format-KlLayout $lay
+        $line = $(switch ($lay.From) { 'mine' { 'Yours: ' + $txt } 'default' { 'Default: ' + $txt } default { 'No keys: the controller works as the mouse' } })
+        $lt = New-Text $line $(if ($lay.From -eq '') { $ColDim } else { $ColAway }) 12; $lt.TextWrapping = 'Wrap'
+        [void]$info.Children.Add($lt)
+        [void]$row.Children.Add($info)
+        $bd.Child = $row
+        [void]$script:klList.Children.Add($bd)
+    }
+}
+
+# -EditKeys: just the editor for one game, then the wizard closes.
+function Invoke-FamilyAdd([bool]$Allow) {
+    $q = $(if ($Allow) { 'The name of the game to let through (it shows even with family-friendly on):' } else { 'The name of the game to hide (as it shows in RetroBat, or its file name). End it with * to hide a whole series:' })
+    $n = ([string](Show-TextInput $WizardName $q '')).Trim()
+    if ($n -eq '') { return }
+    try {
+        Add-FfName $Ws $n $Allow
+        Log ("family filter: {0} '{1}'" -f $(if ($Allow) { 'let through' } else { 'hide' }), $n)
+        [void](Show-Choice $WizardName ("Added. {0}" -f $(if (Test-FamilyOn) { 'RetroBat follows it from the next PLAY.' } else { 'It counts once family-friendly is switched on (Features page).' })) @('OK'))
+    } catch { [void](Show-Choice $WizardName ('That could not be saved: ' + $_.Exception.Message) @('OK')) }
+}
+
+function Open-FamilyList {
+    $f = Join-Path $Ws 'family-hide.txt'
+    if (-not (Test-Path -LiteralPath $f)) { try { Add-FfName $Ws '' $false; [System.IO.File]::WriteAllLines($f, [string[]]@([System.IO.File]::ReadAllLines($f) | Where-Object { $_.Trim() -ne '' })) } catch { } }
+    try { Start-Process -FilePath (Join-Path $env:SystemRoot 'notepad.exe') -ArgumentList ('"' + $f + '"') } catch { Log ('family list: ' + $_.Exception.Message) }
+}
+
+function Show-KeyLayoutFor([string]$Leaf) {
+    $g = @(Get-KeyboardGames | Where-Object { $_.Leaf -ieq $Leaf }) | Select-Object -First 1
+    if ($null -eq $g) {
+        $ini = $(if ($Leaf -match '\.swf$') { 'flash-games.ini' } else { 'browser-games.ini' })
+        $g = [pscustomobject]@{ Label = $Leaf; Leaf = $Leaf; Ini = $ini; Name = [System.IO.Path]::GetFileNameWithoutExtension($Leaf) }
+    }
+    Log ("keys: editor opened for {0} from the how-to-play screen" -f $Leaf)
+    Show-KeyLayoutEditor $g
 }
 
 function Show-KeyLayoutEditor($Game) {
-    $iniPath = Join-Path $Ws $Game.Ini
+    # (2026-10-25) a default for everybody, and each person's own on top.
+    if (-not (Get-Command Get-KlLayout -ErrorAction SilentlyContinue)) { . (Join-Path $ScriptsDir 'KeyLayouts.ps1') }
+    $me = ''; $meName = ''
+    try { $pr = Read-SocialProfile $Ws; if ($null -ne $pr -and -not $pr.Guest) { $me = [string]$pr.Id; $meName = [string]$pr.Username } } catch { }
+    $canDefault = ($me -eq '')
+    try { if (-not $canDefault) { $canDefault = (Test-SocialIsAdmin $pr (Get-SocialCachedExtras $Ws)) } } catch { }
+    $lay = Get-KlLayout $Ws $Game.Leaf $me
     $cur = @{}
-    foreach ($pr in (Get-IniSectionValue $iniPath $Game.Leaf 'keys').Split(',')) {
-        $kv = $pr.Split(':'); if ($kv.Count -eq 2) { $cur[$kv[0].Trim().ToLower()] = $kv[1].Trim() }
+    foreach ($pr2 in ([string]$lay.Keys).Split(',')) {
+        $kv = $pr2.Split(':'); if ($kv.Count -eq 2) { $cur[$kv[0].Trim().ToLower()] = $kv[1].Trim() }
     }
-    $stickNow = ((Get-IniSectionValue $iniPath $Game.Leaf 'stick') -ieq 'arrows')
+    $stickNow = ([string]$lay.Stick -ieq 'arrows')
     $w = New-Object System.Windows.Window
     Start-PadForDialogs
     $w.Title = $WizardName; $w.Width = 560; $w.SizeToContent = 'Height'
@@ -10309,6 +10546,9 @@ function Show-KeyLayoutEditor($Game) {
     [void]$sp.Children.Add((New-Text ($Game.Name) $ColText 18 $true))
     $h = New-Text 'Which key each controller button presses in this game. Leave a button on (nothing) to keep it free.' $ColDim 13; $h.Margin = '0,4,0,12'
     [void]$sp.Children.Add($h)
+    $src = $(switch ($lay.From) { 'mine' { "Showing your own layout, $meName." } 'default' { "Showing the game's default layout." } default { 'No layout yet: the controller works as the mouse.' } })
+    $hs = New-Text $src $ColAway 12; $hs.Margin = '0,0,0,10'
+    [void]$sp.Children.Add($hs)
     $grid = New-Object System.Windows.Controls.Grid
     foreach ($cw in @('Auto', '*', 'Auto', '*')) { $cd = New-Object System.Windows.Controls.ColumnDefinition; $cd.Width = $cw; [void]$grid.ColumnDefinitions.Add($cd) }
     $script:keyBoxes = @{}
@@ -10335,9 +10575,28 @@ function Show-KeyLayoutEditor($Game) {
     $script:keyStick.Content = 'The left stick presses the arrow keys too'; $script:keyStick.FontSize = 14; $script:keyStick.Foreground = (New-Brush $ColText)
     $script:keyStick.Margin = '0,12,0,0'; $script:keyStick.IsChecked = $stickNow
     [void]$sp.Children.Add($script:keyStick)
+    # who it is for
+    $script:keyForMe = $null; $script:keyForAll = $null
+    $fr = New-Object System.Windows.Controls.StackPanel; $fr.Margin = '0,14,0,0'
+    [void]$fr.Children.Add((New-Text 'Save it for:' $ColText 14 $true))
+    if ($me -ne '') {
+        $script:keyForMe = New-Object System.Windows.Controls.RadioButton; $script:keyForMe.GroupName = 'keyfor'; $script:keyForMe.FontSize = 14; $script:keyForMe.Foreground = (New-Brush $ColText); $script:keyForMe.Margin = '0,4,0,0'
+        $script:keyForMe.Content = "Just me ($meName): everybody else keeps the default"
+        [void]$fr.Children.Add($script:keyForMe)
+    }
+    if ($canDefault) {
+        $script:keyForAll = New-Object System.Windows.Controls.RadioButton; $script:keyForAll.GroupName = 'keyfor'; $script:keyForAll.FontSize = 14; $script:keyForAll.Foreground = (New-Brush $ColText); $script:keyForAll.Margin = '0,4,0,0'
+        $script:keyForAll.Content = "Everybody: the game's default" + $(if ($me -ne '') { ' (anyone with their own keeps theirs)' } else { '' })
+        [void]$fr.Children.Add($script:keyForAll)
+    }
+    if ($null -ne $script:keyForMe -and ($lay.From -eq 'mine' -or -not $canDefault)) { $script:keyForMe.IsChecked = $true }
+    elseif ($null -ne $script:keyForAll) { $script:keyForAll.IsChecked = $true }
+    [void]$sp.Children.Add($fr)
     $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,18,0,0'
     $script:keyWin = $w; $script:keyResult = ''
-    foreach ($pair in @(@('Clear all', 'clear'), @('Cancel', ''), @('Save', 'save'))) {
+    $btns = @(@('Clear all', 'clear'), @('Cancel', ''), @('Save', 'save'))
+    if ($lay.From -eq 'mine') { $btns = @(@('Use the default', 'mine-off')) + $btns }
+    foreach ($pair in $btns) {
         $bt = New-Object System.Windows.Controls.Button; $bt.Content = $pair[0]; $bt.Tag = $pair[1]; $bt.Padding = '16,7'; $bt.FontSize = 14; $bt.Margin = '8,0,0,0'
         $bt.Add_Click({ param($s2, $e2) $script:keyResult = [string]$s2.Tag; $script:keyWin.Close() })
         [void]$row.Children.Add($bt)
@@ -10346,8 +10605,10 @@ function Show-KeyLayoutEditor($Game) {
     $w.Content = $sp
     [void]$w.ShowDialog()
     if ($script:keyResult -eq '') { return }
+    $for = $(if ($null -ne $script:keyForMe -and $script:keyForMe.IsChecked) { $me } elseif ($null -ne $script:keyForAll -and $script:keyForAll.IsChecked) { 'default' } elseif ($me -ne '') { $me } else { 'default' })
     try {
-        if ($script:keyResult -eq 'clear') { Set-GameKeyLayout $Game.Ini $Game.Leaf $Game.Name '' ''; $msg = 'Cleared. The game goes back to the mouse only.' }
+        if ($script:keyResult -eq 'mine-off') { Set-KlLayout $Ws $Game.Leaf $Game.Name '' '' $me; $msg = 'Your own layout is gone; you get the game''s default again.' }
+        elseif ($script:keyResult -eq 'clear') { Set-KlLayout $Ws $Game.Leaf $Game.Name '' '' $for; $msg = $(if ($for -eq 'default') { 'Cleared. The game goes back to the mouse only (anyone with their own layout keeps it).' } else { 'Your own layout is cleared; you get the game''s default.' }) }
         else {
             $parts = @()
             foreach ($b in $script:KeyButtons) {
@@ -10357,10 +10618,10 @@ function Show-KeyLayoutEditor($Game) {
                 $parts += ($b + ':' + $k)
             }
             $stick = $(if ($script:keyStick.IsChecked) { 'arrows' } else { '' })
-            Set-GameKeyLayout $Game.Ini $Game.Leaf $Game.Name ($parts -join ', ') $stick
-            $msg = $(if ($parts.Count -eq 0 -and $stick -eq '') { 'Saved with no keys, so the game uses the mouse only.' } else { 'Saved. The next time the game starts, the controller presses these keys.' })
+            Set-KlLayout $Ws $Game.Leaf $Game.Name ($parts -join ', ') $stick $for
+            $msg = $(if ($parts.Count -eq 0 -and $stick -eq '') { 'Saved with no keys, so the game uses the mouse only.' } elseif ($for -eq 'default') { 'Saved as the game''s default. The next time it starts, the controller presses these keys.' } else { "Saved for you, $meName. The next time you play it, the controller presses these keys." })
         }
-        Log ("keys: {0} -> {1}" -f $Game.Leaf, $script:keyResult)
+        Log ("keys: {0} -> {1} for {2}" -f $Game.Leaf, $script:keyResult, $for)
         [void](Show-Choice $WizardName $msg @('OK'))
     }
     catch { Log ('keys: could not save - ' + $_.Exception.Message); [void](Show-Choice $WizardName ('That could not be saved: ' + $_.Exception.Message) @('OK')) }
@@ -10535,6 +10796,27 @@ function Render-Features {
 
     # --- the Wii Menu, from the person's own Wii (2026-10-17) ---------------
     Add-WiiMenuCard $panel
+
+    # --- family-friendly (2026-10-25) -------------------------------------------
+    if ($script:familyOk) {
+        [void]$panel.Children.Add((New-SectionHeader 'Family-friendly'))
+        $fon = Test-FamilyOn
+        $ft = New-Text $(if ($fon) { 'On: M-rated games are hidden from RetroBat (from the next PLAY), the online library and Jump in. Switch it on or off on the Features page.' } else { 'Off. Switch it on on the Features page to hide M-rated games from RetroBat, the online library and Jump in.' }) $ColDim 13
+        $ft.TextWrapping = 'Wrap'
+        [void]$panel.Children.Add($ft)
+        $ft2 = New-Text 'A list of M-rated games comes with the wizard. Add your own games (custom games, ROM hacks) or let one through:' $ColDim 13
+        $ft2.TextWrapping = 'Wrap'; $ft2.Margin = '0,4,0,0'
+        [void]$panel.Children.Add($ft2)
+        $frow = New-Object System.Windows.Controls.WrapPanel; $frow.Margin = '0,8,0,0'
+        $fb1 = New-Object System.Windows.Controls.Button; $fb1.Content = 'Hide a game...'; $fb1.Padding = '12,4'; $fb1.FontSize = 13; $fb1.Margin = '0,0,8,0'
+        $fb1.Add_Click({ Invoke-FamilyAdd $false })
+        $fb2 = New-Object System.Windows.Controls.Button; $fb2.Content = 'Let a game through...'; $fb2.Padding = '12,4'; $fb2.FontSize = 13; $fb2.Margin = '0,0,8,0'
+        $fb2.Add_Click({ Invoke-FamilyAdd $true })
+        $fb3 = New-Object System.Windows.Controls.Button; $fb3.Content = 'Open my list'; $fb3.Padding = '12,4'; $fb3.FontSize = 13
+        $fb3.Add_Click({ Open-FamilyList })
+        foreach ($x in @($fb1, $fb2, $fb3)) { [void]$frow.Children.Add($x) }
+        [void]$panel.Children.Add($frow)
+    }
 
     # --- controller keys for keyboard games (2026-10-17) --------------------
     [void]$panel.Children.Add((New-SectionHeader 'Controller keys for keyboard games'))
@@ -11560,7 +11842,7 @@ function Invoke-SaveExport {
         if (-not $dlg.ShowDialog()) { return }
         $out = $dlg.FileName
     } catch { return }
-    $r = Invoke-EngineWork 'packing your saves' @('SaveTransfer.ps1') 'Export-RetroBatSaves $args[0] $args[1]' @($Root, $out)
+    $r = Invoke-EngineWork 'packing your saves' @('SaveTransfer.ps1') 'Export-RetroBatSaves $args[0] $args[1] '''' { param($n, $of) $global:WorkSync.Detail = (''{0:N0} of {1:N0} files'' -f $n, $of) }' @($Root, $out)
     if ($null -eq $r) { $r = @{ Ok = $false; Message = 'That did not finish. Details are in wizard.log.' } }
     Log ('saves: export - ' + $r.Message)
     $msg = [string]$r.Message
@@ -11855,6 +12137,8 @@ function Add-SavestateSection($p, $g) {
 
         $can = $false
         if ($script:saveStatesOk) { try { $can = Test-SavestateJumpIn $st ([string]$g.System) } catch { $can = $false } }
+        # Family-friendly on: no jumping into an M-rated game (2026-10-25).
+        if ($can -and (Test-FamilyOn)) { try { if (Test-FfMature (Get-FfList $Ws) ([string]$g.DisplayName)) { $can = $false } } catch { } }
         if ($can) {
             $b = New-Object System.Windows.Controls.Button
             $b.Content = 'Jump in here'; $b.Padding = '10,3'; $b.FontSize = 12; $b.Width = 100
@@ -11950,6 +12234,9 @@ function Invoke-SaveNameGame([string]$Code) {
 function Invoke-SavestateJumpIn([string]$Ident) {
     $g = $script:saveSelected
     if ($null -eq $g -or -not $Ident -or -not $script:saveStatesOk) { return }
+    if (Test-FamilyOn) {
+        try { if (Test-FfMature (Get-FfList $Ws) ([string]$g.DisplayName)) { [void](Show-Choice $WizardName 'Family-friendly is on, and this game is rated M, so it cannot be started from here.' @('OK')); return } } catch { }
+    }
 
     $st = $null
     foreach ($x in @($g.Savestates)) {
@@ -12128,7 +12415,8 @@ if ($script:shortcutsOk -and -not $Play) {
     [void](Update-RootFiles -Root $Root -Logger { param($m) Log $m })
 }
 
-if     ($Setup) { Start-SetupFlow }
+if     ($EditKeys -ne '') { Show-KeyLayoutFor $EditKeys }
+elseif ($Setup) { Start-SetupFlow }
 elseif ($Play)  { Start-PlayFlow }
 else            { Show-MainWindow $null $(if ($Tab -match '^[a-z]{2,12}$') { $Tab } else { 'play' }) }
 # Belt and braces: whatever path was taken, the splash is gone by now.

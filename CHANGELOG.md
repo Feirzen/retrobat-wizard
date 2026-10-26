@@ -11,20 +11,24 @@ Newest first. Written for players: what you will notice.
 - A new setup starts with good RetroBat settings: no menu music, only the All games, 2-player and 4-player collections, grid views, and box art found by itself.
 
 **Playing**
-- Flash, point-and-click and browser games show how the controller works in them first, with PLAY or Back.
-- Set which key each controller button presses in a keyboard game: Settings, This setup.
+- Flash, point-and-click and browser games say first how the controller works in them, with Continue to the game, Back, or X to change the buttons right there.
+- Which key each controller button presses in a keyboard game: a default for everybody, and each person can have their own. Every keyboard game in one list: Controllers, Keyboard game buttons.
+- Family-friendly (Features page): hides M-rated games from RetroBat, the online library and Jump in. Add your own games or let one through on Settings, This setup.
 - Wii games that also work with a normal controller ask first; a controller skips the Wii Menu.
-- The couch mouse pop-up has new pictures.
+- The couch mouse pop-up has new pictures, says Controller, and sits in the corner out of the way.
 - Bring your own Wii Menu: Settings, This setup, Wii Menu.
-- A Controllers window: every controller, what it is pressing, and a Buzz button to find it.
+- A Controllers window: every controller, what it is pressing, and a Buzz button that shakes it so you can find it.
 
 **The wizard**
-- Its own title bar, with minimise, full screen and close.
+- Its own title bar that blends into the window, with gold minimise, full screen and close buttons that glow (red for close).
+- New page pictures: a chest that tries to open, two friends who shake hands, a spinning star globe, crisper gears, a key that spins, and rune switches that light up.
+- Move around the wizard while it works. A bar at the top shows everything that is going, with how far along it is. Closing or PLAY asks first; uploads and downloads can carry on while you play, and the wizard closes itself when they finish.
+- Forgot your password? Ask from the login box, and an admin can reset it.
 - New pictures for profiles and machines: Wii Remote, Wii U GamePad, Xbox, PlayStation and more.
 - Zoom and move your own profile picture.
-- Play time, favourite stars and saves follow the person who is playing, not the drive. (Saves for 3DS, Switch and PC games stay shared. Turn it off under Features: Separate saves.)
+- Play time and favourite stars follow the person who is playing, not the drive.
 - Pick an accent colour (gold, blue, violet or rose) under Theme.
-- Saves: Export saves packs every save into one file; Import saves brings them back (with a safety copy first).
+- Saves: Export saves packs every save into one file; Import saves brings them back (with a safety copy first). Installed game updates and DLC are left out, so it is quick.
 - The online library is grouped by company, each game opens for a closer look, there is a Request a game button, and downloads show how far they have got.
 - Stable or Dev: the page says which one this setup runs, and one press switches.
 

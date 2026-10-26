@@ -210,10 +210,37 @@ public static class RBPad
         }
         catch { return 0; }
     }
+    // Buzz (2026-10-25: SDL said yes but nothing shook on Steven's pads).
+    // Xbox-style pads are buzzed through Windows' own XInput too, by their
+    // player light, which works whether or not this window is in front;
+    // SDL's rumble is kept for every other kind. The motors are switched
+    // off again by a timer.
+    [StructLayout(LayoutKind.Sequential)] struct XVib { public ushort L; public ushort R; }
+    [DllImport("xinput1_4.dll", EntryPoint = "XInputSetState")] static extern int XSet14(int user, ref XVib v);
+    [DllImport("xinput9_1_0.dll", EntryPoint = "XInputSetState")] static extern int XSet910(int user, ref XVib v);
+    static bool XBuzz(int slot, ushort strength)
+    {
+        if (slot < 0 || slot > 3) return false;
+        XVib v = new XVib(); v.L = strength; v.R = strength;
+        try { return XSet14(slot, ref v) == 0; } catch { }
+        try { return XSet910(slot, ref v) == 0; } catch { }
+        return false;
+    }
+    static System.Threading.Timer buzzStop;
     public static bool Rumble(int id, int ms)
     {
         if (!ok || !pads.ContainsKey(id)) return false;
-        try { return SDL_GameControllerRumble(pads[id], 0xC000, 0xC000, (uint)ms) == 0; } catch { return false; }
+        bool done = false;
+        int slot = -1;
+        try { slot = SDL_GameControllerGetPlayerIndex(pads[id]); } catch { slot = -1; }
+        if (XBuzz(slot, 0xC000))
+        {
+            done = true;
+            int s2 = slot;
+            buzzStop = new System.Threading.Timer(delegate (object o) { XBuzz(s2, 0); }, null, ms, System.Threading.Timeout.Infinite);
+        }
+        try { if (SDL_GameControllerRumble(pads[id], 0xC000, 0xC000, (uint)ms) == 0) done = true; SDL_GameControllerUpdate(); } catch { }
+        return done;
     }
 
     public static void Quit()

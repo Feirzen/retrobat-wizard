@@ -11,14 +11,24 @@ Put "$A/saves/n64/zelda.srm" 'link'
 Put "$A/saves/wii/dolphin-emu/User/Wii/title/00010000/abcd/data/save.bin" 'wii save'
 Put "$A/saves/wii/dolphin-emu/User/Wii/title/00000001/00000002/content/title.tmd" 'NINTENDO MENU'
 Put "$A/saves/psx/Cache/junk.bin" 'cache'
+Put "$A/saves/wiiu/cemu/mlc01/usr/title/0005000e/101c9400/content/big.bin" 'MK8 UPDATE'
+Put "$A/saves/wiiu/cemu/mlc01/usr/save/00050000/101c9400/user/80000001/save.dat" 'mk8 save'
+Put "$A/saves/3ds/azahar/sdmc/Nintendo 3DS/0000/1111/title/00040000/0012AB00/content/00000000.app" 'GAME'
+Put "$A/saves/3ds/azahar/sdmc/Nintendo 3DS/0000/1111/title/00040000/0012AB00/data/00000001/save" '3ds save'
 $zipF = Join-Path $T 'mine.zip'
-$r = Export-RetroBatSaves $A $zipF
+$script:prog = @()
+$r = Export-RetroBatSaves $A $zipF '' { param($n, $of) $script:prog += "$n/$of" }
 Check 'export ok' $r.Ok
-Check 'two files packed (no Wii Menu, no cache)' ($r.Files -eq 2)
+Check 'four files packed (no Wii Menu, no cache, no installed games)' ($r.Files -eq 4)
+Check 'progress reported' ($script:prog.Count -ge 1 -and $script:prog[0] -eq '0/4')
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $z = [System.IO.Compression.ZipFile]::OpenRead($zipF); $names = @($z.Entries | ForEach-Object FullName); $z.Dispose()
 Check 'has the label file' ($names -contains 'retrobat-saves.txt')
-Check 'no Wii Menu inside' (-not ($names -match '00000001'))
+Check 'no Wii Menu inside' (-not ($names -match 'title/00000001'))
+Check 'no Wii U update inside' (-not ($names -match 'usr/title'))
+Check 'Wii U save inside' (@($names -match 'usr/save/00050000').Count -eq 1)
+Check 'no 3DS game inside' (-not ($names -match '\.app$'))
+Check '3DS save inside' (@($names -match '0012AB00/data').Count -eq 1)
 # B has an older zelda save and one of its own
 Put "$B/saves/n64/zelda.srm" 'old'
 Put "$B/saves/gba/pokemon.sav" 'mine'

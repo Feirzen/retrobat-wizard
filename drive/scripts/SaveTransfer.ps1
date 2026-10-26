@@ -19,17 +19,31 @@
 #>
 
 $script:StSkip = @('wii\dolphin-emu\User\Wii\title\00000001\', '\Cache\', '\cache\', '\ShaderCache\', '\shadercache\')
+# Installed games, updates and DLC that some consoles keep beside their saves
+# (2026-10-25: Steven's Wii U folder held 37,867 files of a game update, so
+# the export took over ten minutes). Not saves, never packed. Matched against
+# the path inside saves\, with \ between folders.
+$script:StSkipRe = @(
+    '^wiiu\\cemu\\mlc01\\usr\\title\\',          # Wii U updates and DLC
+    '^wiiu\\cemu\\mlc01\\sys\\',                    # Wii U system files
+    '^ps3\\rpcs3\\dev_hdd0\\(game|disc|data|tmp)\\', # PS3 installed games
+    '^ps3\\rpcs3\\dev_flash',                           # PS3 system files
+    '^psvita\\vita3k\\ux0\\(app|patch|addcont)\\',   # Vita installed games
+    '\\nand\\system\\', '\\nand\\user\\Contents\\', '\\registered\\',   # Switch system and installed games
+    '\\Nintendo 3DS\\.*\\title\\[0-9a-fA-F]{8}\\[0-9a-fA-F]{8}\\content\\'  # 3DS installed games (saves are in ...\data)
+)
 
 function Get-StSavesDir([string]$Root) { return [System.IO.Path]::Combine($Root, 'saves') }
 
 function Test-StSkip([string]$Rel) {
     $r = $Rel.Replace('/', '\')
+    foreach ($re in $script:StSkipRe) { if ($r -match $re) { return $true } }
     foreach ($s in $script:StSkip) { if (('\' + $r).IndexOf($s, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or $r.StartsWith($s, [System.StringComparison]::OrdinalIgnoreCase)) { return $true } }
     return $false
 }
 
 # Packs the saves into $OutFile. Returns @{ Ok; Message; Files; Bytes }.
-function Export-RetroBatSaves([string]$Root, [string]$OutFile, [string]$Note = '') {
+function Export-RetroBatSaves([string]$Root, [string]$OutFile, [string]$Note = '', $Progress = $null) {
     $src = Get-StSavesDir $Root
     if (-not (Test-Path -LiteralPath $src)) { return @{ Ok = $false; Files = 0; Bytes = 0; Message = 'There is no saves folder in this setup yet.' } }
     Add-Type -AssemblyName System.IO.Compression
@@ -42,10 +56,18 @@ function Export-RetroBatSaves([string]$Root, [string]$OutFile, [string]$Note = '
         $zip = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Create)
         try {
             $base = $src.TrimEnd('\', '/')
+            # The list first, so the bar can say how far along it is.
+            $todo = New-Object System.Collections.ArrayList
             foreach ($f in @(Get-ChildItem -LiteralPath $src -Recurse -File -Force -ErrorAction SilentlyContinue)) {
                 $rel = $f.FullName.Substring($base.Length).TrimStart('\', '/')
-                if (Test-StSkip $rel) { continue }
-                $entry = $zip.CreateEntry(('saves/' + $rel.Replace('\', '/')), [System.IO.Compression.CompressionLevel]::Optimal)
+                if (-not (Test-StSkip $rel)) { [void]$todo.Add(@($f, $rel)) }
+            }
+            foreach ($pair in $todo) {
+                $f = $pair[0]; $rel = $pair[1]
+                if ($null -ne $Progress -and ($n % 25 -eq 0)) { try { & $Progress $n $todo.Count } catch { } }
+                # Fastest: saves are small and mostly already packed; the
+                # slower setting saved almost no space for a lot more time.
+                $entry = $zip.CreateEntry(('saves/' + $rel.Replace('\', '/')), [System.IO.Compression.CompressionLevel]::Fastest)
                 $entry.LastWriteTime = $f.LastWriteTime
                 $es = $entry.Open()
                 try { $in = [System.IO.File]::Open($f.FullName, 'Open', 'Read', 'ReadWrite'); try { $in.CopyTo($es) } finally { $in.Close() } } finally { $es.Close() }

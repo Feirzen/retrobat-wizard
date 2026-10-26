@@ -452,7 +452,7 @@ function ConvertFrom-SocialRecord([string]$Text, [string]$BlobId) {
 # list is also saved to social\cache\players.json, so the wizard can draw the
 # friend list straight away next time, before the network answers.
 function Get-SocialPlayers([string]$Ws) {
-    $res = @{ Ok = $false; Players = @(); Message = ''; Names = @{}; Admins = @() }
+    $res = @{ Ok = $false; Players = @(); Message = ''; Names = @{}; Admins = @(); Resets = @{} }
     $repo = Get-SocialRepo $Ws
     $owner, $name = $repo.Split('/')
     # One request for everything: players\ (the people), names\ (the admins'
@@ -480,7 +480,7 @@ function Get-SocialPlayers([string]$Ws) {
     $res.Ok = $true
     $res.Players = $list.ToArray()
     $x = ConvertFrom-SocialExtras $d
-    $res.Names = $x.Names; $res.Admins = $x.Admins
+    $res.Names = $x.Names; $res.Admins = $x.Admins; $res.Resets = $x.Resets
     try {
         $P = Get-SocialPaths $Ws
         New-SocialDir $P.Cache
@@ -672,10 +672,17 @@ function Test-SocialNameTaken($Players, [string]$Name, [string]$MyId) {
 #  names\<id>.txt: an admin's answer to that person's name request, either
 #  "approved:<name>" or "declined:<name>". The person's own wizard reads it
 #  and changes (or keeps) the name, because only they write their own file.
+#  names\<id>-pw.txt (2026-10-25): "reset:<time>", an admin's password reset.
+#  Until that person sets a new password, they can log in without one.
 function ConvertFrom-SocialExtras($Data) {
-    $out = @{ Names = @{}; Admins = @() }
+    $out = @{ Names = @{}; Admins = @(); Resets = @{} }
     try {
         foreach ($e in @($Data.data.repository.names.entries)) {
+            if ([string]$e.name -match '^([a-z0-9]{10})-pw\.txt$') {
+                $rid = $Matches[1]
+                if ($null -ne $e.object -and [int]$e.object.byteSize -le 100 -and ([string]$e.object.text).Trim() -match '^reset:(\S+)$') { $out.Resets[$rid] = $Matches[1] }
+                continue
+            }
             if ([string]$e.name -notmatch '^([a-z0-9]{10})\.txt$') { continue }
             $id = $Matches[1]
             if ($null -eq $e.object -or [int]$e.object.byteSize -gt 200) { continue }
@@ -692,9 +699,9 @@ function ConvertFrom-SocialExtras($Data) {
 
 function Get-SocialCachedExtras([string]$Ws) {
     $P = Get-SocialPaths $Ws
-    if (-not (Test-Path -LiteralPath $P.Players)) { return @{ Names = @{}; Admins = @() } }
+    if (-not (Test-Path -LiteralPath $P.Players)) { return @{ Names = @{}; Admins = @(); Resets = @{} } }
     try { return (ConvertFrom-SocialExtras ([System.IO.File]::ReadAllText($P.Players) | ConvertFrom-Json)) }
-    catch { return @{ Names = @{}; Admins = @() } }
+    catch { return @{ Names = @{}; Admins = @(); Resets = @{} } }
 }
 
 function Test-SocialIsAdmin($Prof, $Extras) {
@@ -737,6 +744,12 @@ function Get-SocialPasswordHash([string]$Id, [string]$Password) {
     $sha = [System.Security.Cryptography.SHA256]::Create()
     $b = $sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes('rbw-pw:' + $Id + ':' + $Password))
     return (($b | ForEach-Object { $_.ToString('x2') }) -join '')
+}
+
+# An admin reset this person's password after they last set one?
+function Test-SocialPwReset($Record, $Resets) {
+    if ($null -eq $Record -or $null -eq $Resets -or -not $Resets.ContainsKey([string]$Record.Id)) { return $false }
+    return ([string]$Resets[[string]$Record.Id] -gt [string]$Record.PwSet)
 }
 
 function Test-SocialPassword($Record, [string]$Password) {
@@ -1087,17 +1100,38 @@ function Switch-SocialFavorites([string]$Root, [string]$Ws, [string]$FromId, [st
 #  A JOURNAL (profile\saves-of\switch.txt) lists every move before it starts
 #  and is deleted when all are done, so a switch cut short (power, unplugged
 #  drive) is finished the next time, never half-done for good.
+#
+#  REBUILT 2026-10-25 after it went wrong on Steven's drive: the background
+#  helper and the wizard both ran a switch at the same moment, and the two
+#  tripped over each other (saves renamed aside, nothing lost; all put back
+#  by hand). Now:
+#    - ONE place decides: Switch-SocialPerson, called only when someone signs
+#      in to the wizard or picks at PLAY. Reading play time never switches.
+#    - ONE at a time: a lock file held for the whole switch, across programs.
+#    - WHOSE SAVES ARE IN PLACE is written down (profile\saves-of\owner.txt),
+#      not guessed from the play-time records.
+#    - A folder that has saves in it is NEVER moved aside or replaced: that
+#      place is skipped and logged instead.
 $script:SwapShared = @('3ds', 'switch', 'xbox', 'xbox360', 'psp', 'flash', 'windows', 'steam', 'ports', 'mame', 'hbmame', 'psxmame',
                        'wii', 'wiiu', 'gamecube', 'dolphin', 'ps2', 'ps3', 'ps4', 'psvita', 'teknoparrot', 'epic', 'gog', 'eagames', 'amazon')
 $script:SwapInner = @('wii\dolphin-emu\User\Wii\title\00010000', 'gamecube\dolphin-emu\User\GC', 'dolphin\User\GC',
                       'wiiu\cemu\mlc01\usr\save\00050000', 'ps2\pcsx2\memcards', 'ps2\pcsx2-16\memcards',
                       'ps3\rpcs3\dev_hdd0\home', 'psvita\vita3k\ux0\user')
 
+# OFF unless features.ini says "separatesaves = on" (2026-10-25: held back
+# from 3.1 after the mix-up on Steven's drive; ready, tested, not yet tried
+# on real hardware). Not on the Features page until then.
 function Test-SocialSeparateSaves([string]$Ws) {
     $f = Join-SocialPath $Ws 'features.ini'
-    if (-not (Test-Path -LiteralPath $f)) { return $true }
-    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*separatesaves\s*=\s*(off|false|no|0)\b') { return $false } }
-    return $true
+    if (-not (Test-Path -LiteralPath $f)) { return $false }
+    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*separatesaves\s*=\s*(on|true|yes|1)\b') { return $true } }
+    return $false
+}
+
+function Test-SocialHasFiles([string]$Dir) {
+    if (-not (Test-Path -LiteralPath $Dir)) { return $false }
+    try { foreach ($f in [System.IO.Directory]::EnumerateFiles($Dir, '*', [System.IO.SearchOption]::AllDirectories)) { return $true } } catch { return $true }
+    return $false
 }
 
 function Get-SocialSavePlaces([string]$Root, [string]$Ws, [string]$Ids) {
@@ -1109,43 +1143,64 @@ function Get-SocialSavePlaces([string]$Root, [string]$Ws, [string]$Ids) {
         $st = Join-SocialPath $Ws ('profile\saves-of\' + $id)
         if (Test-Path -LiteralPath $st) { foreach ($d in [System.IO.Directory]::GetDirectories($st)) { $n = [System.IO.Path]::GetFileName($d); if (-not $tops.ContainsKey($n.ToLower())) { $tops[$n.ToLower()] = $n } } }
     }
-    foreach ($k in @($tops.Keys | Sort-Object)) { if ($script:SwapShared -notcontains $k) { [void]$places.Add($tops[$k]) } }
+    foreach ($k in @($tops.Keys | Sort-Object)) {
+        if ($script:SwapShared -contains $k) { continue }
+        if ($k -match '\.kept-\d') { continue }   # never treat a set-aside folder as a console
+        [void]$places.Add($tops[$k])
+    }
     foreach ($p in $script:SwapInner) { [void]$places.Add($p) }
     return @($places)
 }
 
+# Moves a save folder. The place it goes to must be missing or EMPTY (an
+# empty one is cleared first); one with files in it is never touched.
 function Move-SocialPlace([string]$From, [string]$To) {
-    if (-not (Test-Path -LiteralPath $From)) { return }
+    if (-not (Test-Path -LiteralPath $From)) { return $true }
     if (Test-Path -LiteralPath $To) {
-        # never overwrite: anything already there is put aside, kept
-        $aside = $To + '.kept-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
-        Move-Item -LiteralPath $To -Destination $aside
+        if (Test-SocialHasFiles $To) { return $false }
+        Remove-Item -LiteralPath $To -Recurse -Force
     }
     $parent = Split-Path $To -Parent
     if (-not (Test-Path -LiteralPath $parent)) { [void](New-Item -ItemType Directory -Path $parent -Force) }
     Move-Item -LiteralPath $From -Destination $To
+    return $true
 }
 
-# Runs (or finishes) the moves in the journal. Each line: from|to|mkdir
+# Runs (or finishes) the moves in the journal. Each line: from|to, or mkdir|path.
+# Call only while holding the lock.
 function Invoke-SocialSwapJournal([string]$Ws) {
     $j = Join-SocialPath $Ws 'profile\saves-of\switch.txt'
-    if (-not (Test-Path -LiteralPath $j)) { return }
+    if (-not (Test-Path -LiteralPath $j)) { return 0 }
+    $skipped = 0
     foreach ($l in [System.IO.File]::ReadAllLines($j)) {
         if ($l -eq '' -or $l.StartsWith(';')) { continue }
         $p = $l.Split('|')
         if ($p.Count -lt 2) { continue }
         if ($p[0] -eq 'mkdir') { if (-not (Test-Path -LiteralPath $p[1])) { [void](New-Item -ItemType Directory -Path $p[1] -Force) }; continue }
-        if (Test-Path -LiteralPath $p[0]) { Move-SocialPlace $p[0] $p[1] }   # already moved (a resumed switch): nothing to do
+        if (-not (Move-SocialPlace $p[0] $p[1])) { $skipped++; Write-SocialLog $Ws ('saves switch: left alone, it already has saves in it: ' + $p[1]) }
     }
-    Remove-Item -LiteralPath $j -Force
+    if (Test-Path -LiteralPath $j) { Remove-Item -LiteralPath $j -Force }
+    return $skipped
 }
 
+function Get-SocialSavesOwner([string]$Ws) {
+    $f = Join-SocialPath $Ws 'profile\saves-of\owner.txt'
+    if (-not (Test-Path -LiteralPath $f)) { return '' }
+    $t = ([System.IO.File]::ReadAllText($f)).Trim()
+    if ($t -match '^[A-Za-z0-9_\-]{1,40}$') { return $t }
+    return ''
+}
+function Set-SocialSavesOwner([string]$Ws, [string]$Id) {
+    New-SocialDir (Join-SocialPath $Ws 'profile\saves-of')
+    [System.IO.File]::WriteAllText((Join-SocialPath $Ws 'profile\saves-of\owner.txt'), $Id)
+}
+
+# The saves of $FromId go to profile\saves-of\<FromId>, those of $ToId come in.
+# Call only while holding the lock (Switch-SocialPerson does).
 function Switch-SocialSaves([string]$Root, [string]$Ws, [string]$FromId, [string]$ToId) {
-    Invoke-SocialSwapJournal $Ws     # a switch cut short last time is finished first
-    if ($FromId -eq $ToId -or $FromId -eq 'guest' -or $ToId -eq 'guest' -or $FromId -eq '' -or $ToId -eq '') { return $false }
+    [void](Invoke-SocialSwapJournal $Ws)     # a switch cut short last time is finished first
+    if ($FromId -eq $ToId -or $FromId -eq '' -or $ToId -eq '') { return $false }
     if ($FromId -notmatch '^[A-Za-z0-9_\-]{1,40}$' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return $false }
-    if (-not (Test-SocialSeparateSaves $Ws)) { return $false }
-    if (Test-SocialRetroBatOpen) { return $false }
     $saves = Join-SocialPath $Root 'saves'
     if (-not (Test-Path -LiteralPath $saves)) { return $false }
     $out = Join-SocialPath $Ws ('profile\saves-of\' + $FromId)
@@ -1157,21 +1212,56 @@ function Switch-SocialSaves([string]$Root, [string]$Ws, [string]$FromId, [string
         $live = Join-SocialPath $saves $pl
         $mineOut = Join-SocialPath $out $pl
         $theirs = Join-SocialPath $in $pl
-        $isInner = ($script:SwapInner -contains $pl)
-        if (-not (Test-Path -LiteralPath $live) -and -not (Test-Path -LiteralPath $theirs)) { continue }
-        if (Test-Path -LiteralPath $live) { [void]$lines.Add(($live + '|' + $mineOut)) }
-        if (Test-Path -LiteralPath $theirs) { [void]$lines.Add(($theirs + '|' + $live)) }
+        $liveHas = Test-SocialHasFiles $live
+        $theirsHas = Test-SocialHasFiles $theirs
+        if (-not $liveHas -and -not $theirsHas) { continue }   # nothing either way
+        if ($liveHas) { [void]$lines.Add(($live + '|' + $mineOut)) }
+        if ($theirsHas) { [void]$lines.Add(($theirs + '|' + $live)) }
         else { [void]$lines.Add(('mkdir|' + $live)) }
     }
     New-SocialDir (Join-SocialPath $Ws 'profile\saves-of')
     [System.IO.File]::WriteAllLines((Join-SocialPath $Ws 'profile\saves-of\switch.txt'), [string[]]$lines.ToArray())
-    Invoke-SocialSwapJournal $Ws
+    $sk = Invoke-SocialSwapJournal $Ws
+    if ($sk -gt 0) { Write-SocialLog $Ws ("saves switch: {0} place(s) left as they were" -f $sk) }
     return $true
+}
+
+# THE one entry point (2026-10-25). $ToId is now using this setup: their
+# favourite stars, and their saves (when 'separatesaves' is on), are put in
+# place. Guests use whatever is in place. Returns 'switched', 'same', 'skip'
+# or 'busy'.
+function Switch-SocialPerson([string]$Root, [string]$Ws, [string]$ToId) {
+    if ($ToId -eq '' -or $ToId -eq 'guest' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return 'skip' }
+    if (Test-SocialRetroBatOpen) { return 'skip' }
+    $dir = Join-SocialPath $Ws 'profile\saves-of'
+    New-SocialDir $dir
+    $lockF = Join-SocialPath $dir 'switch.lock'
+    $lock = $null
+    try { $lock = [System.IO.File]::Open($lockF, 'OpenOrCreate', 'ReadWrite', 'None') }
+    catch { Write-SocialLog $Ws 'saves switch: another switch is running, this one is skipped'; return 'busy' }
+    try {
+        $owner = Get-SocialSavesOwner $Ws
+        if ($owner -eq '') {
+            # the first time: whoever was playing last owns what is in place
+            $openF = Join-SocialPath (Get-SocialPlayDir $Ws) 'open.txt'
+            if (Test-Path -LiteralPath $openF) { foreach ($l in [System.IO.File]::ReadAllLines($openF)) { if ($l -match '^id = ([A-Za-z0-9_\-]{1,40})$' -and $Matches[1] -ne 'guest') { $owner = $Matches[1] } } }
+            if ($owner -eq '') { $owner = $ToId }
+            Set-SocialSavesOwner $Ws $owner
+        }
+        if ($owner -eq $ToId) { [void](Invoke-SocialSwapJournal $Ws); return 'same' }
+        try { Switch-SocialFavorites $Root $Ws $owner $ToId } catch { Write-SocialLog $Ws ('favourites switch: ' + $_.Exception.Message) }
+        if (Test-SocialSeparateSaves $Ws) { [void](Switch-SocialSaves $Root $Ws $owner $ToId) }
+        Set-SocialSavesOwner $Ws $ToId
+        Write-SocialLog $Ws ("switched this setup from {0} to {1}" -f $owner, $ToId)
+        return 'switched'
+    }
+    catch { Write-SocialLog $Ws ('saves switch: ' + $_.Exception.Message); return 'skip' }
+    finally { try { $lock.Close() } catch { } }
 }
 
 # Settles the open moment and opens a new one for $PersonId ('' = keep
 # whoever is open). Returns that person's ledger (key -> @{ Secs; Last }).
-function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId = '') {
+function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId = '', [switch]$Switch) {
     $dir = Get-SocialPlayDir $Ws
     New-SocialDir $dir
     $openF = Join-SocialPath $dir 'open.txt'
@@ -1201,8 +1291,9 @@ function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId =
         Write-SocialTimesFile (Join-SocialPath $dir ($PersonId + '.txt')) $now ''
     }
     $who = $(if ($PersonId -ne '') { $PersonId } elseif ($openId -ne '') { $openId } else { 'guest' })
-    try { Switch-SocialFavorites $Root $Ws $openId $who } catch { }
-    try { [void](Switch-SocialSaves $Root $Ws $openId $who) } catch { Write-SocialLog $Ws ('saves switch: ' + $_.Exception.Message) }
+    # Saves and favourite stars move ONLY when asked (sign-in, PLAY), never
+    # because play time was read (2026-10-25: that ran two switches at once).
+    if ($Switch) { [void](Switch-SocialPerson $Root $Ws $who) }
     Write-SocialTimesFile $openF $now ('id = ' + $who)
     if ($who -match '^[A-Za-z0-9_\-]{1,40}$') { return (Read-SocialTimesFile (Join-SocialPath $dir ($who + '.txt'))) }
     return @{}
