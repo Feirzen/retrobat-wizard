@@ -468,6 +468,18 @@
       ] }
     },
     {
+      "id": "terraria",
+      "title": "Terraria",
+      "system": "3ds",
+      "players": "1",
+      "description": "The world is yours. Fight for your survival, explore for your fortune and dig for your glory. Explore the underground, test your combat skills or build your own city! Terraria is a 2D exploration and crafting platform game. Players can collect a variety of items from the world,...",
+      "added": "2026-10-26",
+      "art": "library/art/terraria.png",
+      "files": [
+        { "name": "Terraria (USA) (Rev 1).cci", "url": "private:terraria__Terraria.USA.Rev.1.cci", "size": 134217728, "sha256": "65f61079b997d69cf82d46a664f1047f31db2ccc7790e6906024db0858e52b62" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
