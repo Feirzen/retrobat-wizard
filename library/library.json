@@ -4263,8 +4263,9 @@
       "system": "xbox",
       "players": "1-4",
       "description": "Halo 2 is the sequel to the highly successful and critically acclaimed Halo: Combat Evolved. In Halo 2, the saga continues as Master Chief?a genetically enhanced super-soldier?is the only thing standing between the relentless Covenant and the destruction of all humankind.",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/halo-2.png",
+      "video": "library/video/halo-2.mp4",
       "files": [
       ],
       "parts": { "name": "Halo 2 (USA, Europe) (En,Ja,Fr,De,Es,It,Zh,Ko).xiso.iso", "size": 4721410048, "sha256": "a5b99c1ce2ee650f12caf342118c716cedd4a797fc369b3f0eba82382734f05c", "pieces": [
