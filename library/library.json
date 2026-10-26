@@ -127,6 +127,18 @@
       ]
     },
     {
+      "id": "luigi-s-mansion-dark-moon",
+      "title": "Luigi's Mansion : Dark Moon",
+      "system": "3ds",
+      "players": "1",
+      "description": "Luigi is back on a mission to removea bunch of stubborn ghosts from somesuper-spooky mansions in LuigisMansion 2 for Nintendo 3DS. Armedwith his trusty Poltergustghost-grabbing vacuum cleaner,Marios brother takes centre stage tocapture those pesky phantoms. Sure,Luigis the...",
+      "added": "2026-10-26",
+      "art": "library/art/luigi-s-mansion-dark-moon.png",
+      "files": [
+        { "name": "Luigi's Mansion - Dark Moon (USA) (En,Fr,Es).cci", "url": "private:luigi-s-mansion-dark-moon__Luigi.s.Mansion.-.Dark.Moon.USA.En.Fr.Es.cci", "size": 1073741824, "sha256": "e1c69aa34aa8fe4d95ca1a174f9ceb0485f596775cdba94205559c6de809a07a" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
