@@ -171,7 +171,7 @@ function Get-ShortcutRecord {
 
 
 # Anything we wrote before and are not writing now is moved into
-# _SAFE TO DELETE, never deleted. Nothing on this drive deletes anything, it
+# Cache\Trash, never deleted. Nothing on this drive deletes anything, it
 # moves things instead, and that rule applies to our own leftovers too.
 function Move-RetiredShortcut {
     [CmdletBinding()]
@@ -341,7 +341,7 @@ function Update-RootShortcuts {
 #  THE FILES THAT BELONG AT THE TOP OF THE DRIVE
 # ===========================================================================
 #  Everything else this drive protects lives INSIDE the RetroBat folder, and
-#  update-restore\ puts it back after an update. The drive root is one level
+#  Program\restore\ puts it back after an update. The drive root is one level
 #  above that, so nothing was watching it - and SETUP RETROBAT.bat, the one
 #  button somebody presses on a computer that has never seen this drive,
 #  lives exactly there.

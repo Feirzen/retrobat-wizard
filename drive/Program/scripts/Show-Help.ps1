@@ -9,7 +9,7 @@
     console. This is that button for Help. It and the wizard's Help tab both
     read scripts\HelpText.ps1, so they cannot drift apart.
 
-    Run it from:  Maintenance Steps\Show Help.bat
+    Run it from:  Buttons\Show Help.bat
 #>
 
 [CmdletBinding()]

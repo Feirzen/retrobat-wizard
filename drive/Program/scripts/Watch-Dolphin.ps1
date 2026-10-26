@@ -22,13 +22,13 @@
          in features.ini (the Features tab).
 
     3. WHICH GAME (2026-10-12): every game it sees start is written to
-         SaveBackups\last-game.txt. A "Jump in here" waits for that one game,
+         Backups\Saves\last-game.txt. A "Jump in here" waits for that one game,
          and the game-end sweep reads this to know if it was the one. While
          a jump in is waiting it checks every 5 seconds, so even a quick look
          at a game counts.
 
     When no game is running it checks twice a minute, which costs nothing.
-    When RetroBat closes, this exits. Log: SaveBackups\watcher.log.
+    When RetroBat closes, this exits. Log: Backups\Saves\watcher.log.
 
     Started by scripts\start\zz-backup-watcher.bat. Runs hidden.
 #>

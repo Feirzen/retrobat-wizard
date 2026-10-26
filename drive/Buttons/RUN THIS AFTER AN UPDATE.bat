@@ -17,7 +17,7 @@ REM
 REM  Step 1 has to come before step 2: fixing the Wii launch command is
 REM  skipped if the wrapper script it points at is not there yet.
 REM
-REM  Each step still lives in its own file under "Maintenance Steps" and can
+REM  Each step still lives in its own file under "Buttons" and can
 REM  still be run on its own if something goes wrong and you want to look at
 REM  just that one.
 REM

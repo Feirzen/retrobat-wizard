@@ -2,7 +2,7 @@
     Show-SaveHistory.ps1   (v1)
     ---------------------------------------------------------------------------
     Browse your saves by GAME, and put a whole game back the way it was on a
-    given day. Use the SaveBackups\Browse My Saves.bat button rather than
+    given day. Use the Buttons\Browse My Saves.bat button rather than
     calling this directly.
 
     This is the console version of the wizard's Saves tab, and it exists on

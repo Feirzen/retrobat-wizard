@@ -9,15 +9,15 @@
         Steven the Setup Wizard.bat      opens the full window on purpose
 
     Tabs: Play, Health, Profiles, Saves, Features, Help. Saves (added 2026-08-29)
-    is a window over SaveBackups\ and shares scripts\SaveIndex.ps1 with the
-    SaveBackups\Browse My Saves.bat button. Features (added 2026-08-31) is a
+    is a window over Backups\Saves\ and shares scripts\SaveIndex.ps1 with the
+    Buttons\Browse My Saves.bat button. Features (added 2026-08-31) is a
     window over _Wizard\Settings\features.ini and shares scripts\Features.ps1
-    with the Maintenance Steps\Show My Features.bat button.
+    with the Buttons\Show My Features.bat button.
 
     The window is a convenience layer over the engines that already exist -
     it reads _Wizard\Cache\status.json (written by Check-DriveHealth.ps1)
     and the profile system, and its Fix buttons run the same scripts the
-    Maintenance Steps buttons run. If this window ever breaks, everything
+    Buttons run. If this window ever breaks, everything
     still works from those buttons.
 
     THE PLAY FLOW (-Play):
@@ -36,7 +36,7 @@
     record warns about).
 
     Help (added 2026-09-02, Phase 7) is a window over scripts\HelpText.ps1,
-    which is also what Maintenance Steps\Show Help.bat prints. The Play tab
+    which is also what Buttons\Show Help.bat prints. The Play tab
     was rebuilt at the same time: the drive's own logo and name at the top,
     an 8-bit Play button in the middle, and ONE summary light instead of
     seven. The seven did not go anywhere - they are the Health tab, which is
@@ -985,7 +985,7 @@ function Show-CheckPick([string]$Title, [string]$Message, [string[]]$Items, [boo
 
 # --- engines ----------------------------------------------------------------
 . (Join-Path $ScriptsDir 'ProfileEngine.ps1')
-# The saves engine, shared with SaveBackups\Browse My Saves.bat so that button
+# The saves engine, shared with Buttons\Browse My Saves.bat so that button
 # and this window can never disagree about what counts as a game.
 . (Join-Path $ScriptsDir 'SaveIndex.ps1')
 # The save-state rules (the sweep, "Jump in here", the auto-save timer), shared
@@ -1550,7 +1550,7 @@ function Start-PlayFlow {
         $wuMaster = Join-Path $Ws 'Program\restore\system\scripts\wiiu-launch.vbs'
         if (-not (Test-Path -LiteralPath $wuVbs) -and (Test-Path -LiteralPath $wuMaster)) {
             Copy-Item -LiteralPath $wuMaster -Destination $wuVbs -Force
-            Log 'wiiu chooser: launcher put back from update-restore'
+            Log 'wiiu chooser: launcher put back from Program\restore'
         }
         $wuOn = $true
         $featIni = Join-Path $Ws 'Settings\features.ini'
@@ -1577,7 +1577,7 @@ function Start-PlayFlow {
         $glMaster = Join-Path $Ws 'Program\restore\system\scripts\game-launch.vbs'
         if (-not (Test-Path -LiteralPath $glVbs) -and (Test-Path -LiteralPath $glMaster)) {
             Copy-Item -LiteralPath $glMaster -Destination $glVbs -Force
-            Log 'how to play: launcher put back from update-restore'
+            Log 'how to play: launcher put back from Program\restore'
         }
         $glOn = $true
         $featIni = Join-Path $Ws 'Settings\features.ini'
@@ -6022,7 +6022,7 @@ function Render-PlaySummary($s) {
 
 
 # The Help tab. Every word comes from scripts\HelpText.ps1, which is also
-# what Maintenance Steps\Show Help.bat prints, so the tab and the button can
+# what Buttons\Show Help.bat prints, so the tab and the button can
 # never disagree. If that file is missing the tab says where to read instead
 # of being blank.
 # The "set this computer up" button, and anything else the Help tab can DO
@@ -9685,7 +9685,7 @@ function Render-Profiles {
 #      Use this one   run the drive as this profile on whatever computer it
 #                     is plugged into. Written to machine\pinned.txt
 #      Rename         the 'name =' line and the file, together
-#      Delete         moved into _SAFE TO DELETE, never deleted
+#      Delete         moved into Cache\Trash, never deleted
 #      New            an empty profile tied to no computer at all
 #
 #  THE ICONS. Each profile wears a little pixel controller. Nobody chooses
@@ -9817,7 +9817,7 @@ function Render-ProfileList($panel) {
 #
 #  Both buttons open windows that live in scripts\SteamUI.ps1, so the wizard
 #  holds no Steam logic of its own and both are still reachable from
-#  Maintenance Steps\Connect Steam.bat if this window ever breaks.
+#  Buttons\Connect Steam.bat if this window ever breaks.
 # ---------------------------------------------------------------------------
 function Add-SteamSection($panel) {
     if (-not $script:steamOk) { return }
@@ -10141,7 +10141,7 @@ function Select-ProfileIconButton([string]$Icon) {
 }
 
 
-# NOTHING ON THIS DRIVE IS DELETED. The file is moved into _SAFE TO DELETE
+# NOTHING ON THIS DRIVE IS DELETED. The file is moved into Cache\Trash
 # with the date on it, which is the same rule the shortcuts, the protected
 # files and the old .bat files all follow.
 function Invoke-ProfileDelete([string]$File) {
@@ -10163,7 +10163,7 @@ function Invoke-ProfileDelete([string]$File) {
         if (-not (Test-Path -LiteralPath $bin)) { New-Item -ItemType Directory -Path $bin -Force | Out-Null }
         $dest = Join-Path $bin ("{0}_{1}.ini" -f $name, (Get-Date -Format 'yyyy-MM-dd_HHmmss'))
         Move-Item -LiteralPath $File -Destination $dest -Force
-        Log "machine tab: moved profile '$name' into _SAFE TO DELETE"
+        Log "machine tab: moved profile '$name' into Cache\Trash"
         if ((Get-PinnedProfile -Root $Root) -ieq $name) { [void](Set-PinnedProfile -Root $Root -Name '') }
     }
     catch {
@@ -10361,7 +10361,7 @@ function Invoke-ProfileApply {
 #  The Features tab  (Phase 6)
 # ---------------------------------------------------------------------------
 #  A window over _Wizard\Settings\features.ini, nothing more. Every switch it
-#  shows can be set by editing that file by hand, and Maintenance Steps\Show
+#  shows can be set by editing that file by hand, and Buttons\Show
 #  My Features.bat lists the same thing without a window, because the window
 #  is a convenience layer and never a dependency.
 #
@@ -11092,7 +11092,7 @@ function Build-AdvancedEditor {
     #  This one cannot be a tier, a pin or a per-game setting, because the
     #  settings are not RetroBat's at all: they live inside Cemu's own
     #  settings.xml under the game's graphic packs. So it stays a button,
-    #  running the same script as Maintenance Steps\Apply Cemu Graphic Packs.bat.
+    #  running the same script as Buttons\Apply Cemu Graphic Packs.bat.
     #
     #  It sat on the front of this tab until 2026-09-18. It is one game on one
     #  emulator, so it belongs in here with the other one-game things.
@@ -11794,13 +11794,13 @@ function Set-ProfileOverrides {
 # ===========================================================================
 #  THE SAVES TAB   (Phase 5, added 2026-08-29)
 # ===========================================================================
-#  A window over what SaveBackups\ already does, and nothing more. Every rule
+#  A window over what Backups\Saves\ already does, and nothing more. Every rule
 #  about what counts as a game lives in scripts\SaveIndex.ps1, which is shared
-#  with SaveBackups\Browse My Saves.bat, so the button and the window can
+#  with Buttons\Browse My Saves.bat, so the button and the window can
 #  never disagree with each other.
 #
 #  WHY IT DOES NOT WALK THE VERSIONS FOLDER
-#    SaveBackups\Versions\ holds thousands of entries, most of them Wii and
+#    Backups\Saves\Versions\ holds thousands of entries, most of them Wii and
 #    3DS internal memory. Listing it takes tens of seconds on a USB drive,
 #    which is exactly why the old Restore A Save button feels slow. This tab
 #    reads index.json instead, which is one file, and only opens a game's own
@@ -12118,7 +12118,7 @@ function Render-SaveDetail {
     foreach ($pt in $points) {
         $shown++
         if ($shown -gt 40) {
-            [void]$p.Children.Add((New-Text ('... and {0} older ones. Use SaveBackups\Browse My Saves.bat to see them all.' -f ($points.Count - 40)) $ColDim 12))
+            [void]$p.Children.Add((New-Text ('... and {0} older ones. Use Buttons\Browse My Saves.bat to see them all.' -f ($points.Count - 40)) $ColDim 12))
             break
         }
         $row = New-Object System.Windows.Controls.StackPanel
@@ -12334,7 +12334,7 @@ function Invoke-SavestateJumpInCancel {
 }
 
 # How much the backups keep (2026-10-11, Steven: friends with smaller drives).
-# Writes SaveBackups\storage.ini through SaveStates.ps1. Default: everything.
+# Writes Backups\Saves\storage.ini through SaveStates.ps1. Default: everything.
 function Invoke-SaveStorage {
     if (-not $script:saveStatesOk) { return }
     $cur = Get-SsStorage $Root

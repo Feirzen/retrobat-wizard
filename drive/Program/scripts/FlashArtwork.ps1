@@ -3,7 +3,7 @@
 
     FUNCTIONS ONLY. Dot-source it (after SteamEngine.ps1 and
     SteamArtwork.ps1, whose helpers it borrows). Used by
-    Maintenance Steps\Get Flash Artwork.bat through Show-FlashArtwork.ps1.
+    Buttons\Get Flash Artwork.bat through Show-FlashArtwork.ps1.
 
     WHY (Steven, 2026-10-11). RetroBat's scraper knows almost no Flash games,
     so the Flash shelf showed ckau-book's blank cartridge for every game, and

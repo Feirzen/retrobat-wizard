@@ -4,7 +4,7 @@
     Fetches proper artwork and trailers for every Steam game on the shelf, from
     Steam itself, and writes them into the game list so RetroBat shows them.
 
-    Run it from:  Maintenance Steps\Get Steam Artwork.bat
+    Run it from:  Buttons\Get Steam Artwork.bat
 
     WHY NOT JUST SCRAPE. RetroBat scrapes from ScreenScraper, a retro games
     database, which knows Wind Waker inside out and has never heard of a party

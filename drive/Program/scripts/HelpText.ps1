@@ -8,7 +8,7 @@
     that does the same job without the window, because the window is a
     convenience layer and must never be the only way to see something.
     Help is no different: the wizard's Help tab and
-    Maintenance Steps\Show Help.bat both read THIS file, so the two can
+    Buttons\Show Help.bat both read THIS file, so the two can
     never drift apart and there is one place to edit the wording.
 
     KEEP IT SHORT. The wording rule on this drive is that new on-screen

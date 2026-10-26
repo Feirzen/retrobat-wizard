@@ -522,7 +522,7 @@ function Render-SuStepArtwork {
         [void]$script:suBody.Children.Add($t)
     }
     [void](Add-SuLine 'Fetch them from Steam now? It needs the internet and takes about ten seconds a game. They are kept on the drive afterwards, so this only ever happens once per game - even if the drive comes back to this computer months from now.' $script:SuText 14 $false '0,12,0,0')
-    [void](Add-SuLine 'Skipping is fine too: Get Steam Artwork in Maintenance Steps does the same job later.' $script:SuDim 13)
+    [void](Add-SuLine 'Skipping is fine too: Get Steam Artwork in Buttons does the same job later.' $script:SuDim 13)
 
     $script:suMainBtn.Content = 'Fetch now'
     $script:suSecondBtn.Content = 'Skip'

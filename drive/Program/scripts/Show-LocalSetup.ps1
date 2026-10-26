@@ -20,7 +20,7 @@
     Everything it writes is on the COMPUTER, never on the drive, and it is
     all undoable from the Remove option below.
 
-    Run it from:  Maintenance Steps\Set Up This Computer.bat
+    Run it from:  Buttons\Set Up This Computer.bat
 #>
 
 [CmdletBinding()]

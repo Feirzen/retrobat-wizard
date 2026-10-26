@@ -42,7 +42,7 @@
 
     Nothing is changed, moved or deleted. It only looks.
 
-    Run it from:  Maintenance Steps\Check Wii U Games.bat
+    Run it from:  Buttons\Check Wii U Games.bat
 #>
 
 [CmdletBinding()]

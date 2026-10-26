@@ -4,7 +4,7 @@
     WORKS OUT WHAT A SAVE'S GAME CODE ACTUALLY IS, and finds its artwork.
 
     Functions only, no side effects when dot-sourced. Used by the wizard's
-    Saves tab and by SaveBackups\Browse My Saves.bat, both through
+    Saves tab and by Buttons\Browse My Saves.bat, both through
     SaveIndex.ps1.
 
     THE PROBLEM
@@ -28,7 +28,7 @@
       and the same picture the game menu shows.
 
     WHAT IT WRITES
-      SaveBackups\game-names-found.txt, a plain text cache, one line per code:
+      Backups\Saves\game-names-found.txt, a plain text cache, one line per code:
 
           GKYE | Kirby Air Ride | roms\gamecube\images\kirby-air-ride.png
 

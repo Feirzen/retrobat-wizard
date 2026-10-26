@@ -1,7 +1,7 @@
 <#
     Tidy-Drive.ps1 - the one-time clean-up of old backups and leftovers
     (Steven, 2026-10-13: "strip down all the extra stuff so the plumbing is
-    solid and clear"). Run from Maintenance Steps\Tidy The Drive.bat.
+    solid and clear"). Run from Buttons\Tidy The Drive.bat.
 
     WHAT IT DELETES - only things nothing on the drive uses any more:
       * _Wizard\Cache\Trash   (the scripts make it again when

@@ -26,7 +26,7 @@
     Safe to run as many times as you like. Changes nothing that is already
     correct. Backs up any file before touching it.
 
-    Run it from:  Maintenance Steps\Fix Drive Letters.bat
+    Run it from:  Buttons\Fix Drive Letters.bat
 #>
 
 [CmdletBinding()]

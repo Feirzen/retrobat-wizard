@@ -11,7 +11,7 @@
         -Relaunch       open the wizard again afterwards
         -Console        plain text in a console instead of a window, with a
                         yes/no question before anything changes. Used by the
-                        two buttons in Maintenance Steps.
+                        two buttons in Buttons.
         -Title <text>   the window's heading (the Admin page's Stable / Dev
                         switch says "Switching to Dev")
         -RevertChannel <stable|dev>
@@ -20,8 +20,8 @@
 
     Started by:
         the wizard's "Update now" bar and Help tab buttons (window mode)
-        Maintenance Steps\Check For Updates.bat   (-Mode Update -Console)
-        Maintenance Steps\Go Back One Update.bat  (-Mode GoBack -Console)
+        Buttons\Check For Updates.bat   (-Mode Update -Console)
+        Buttons\Go Back One Update.bat  (-Mode GoBack -Console)
 
     ASCII ONLY, Windows PowerShell 5.1. $PSScriptRoot is resolved in the
     body, never in param(): it is empty there under -File.

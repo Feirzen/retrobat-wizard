@@ -6,7 +6,7 @@
     same two functions directly, so if the wizard ever breaks, both windows are
     still reachable from a .bat.
 
-    Run it from:  Maintenance Steps\Connect Steam.bat
+    Run it from:  Buttons\Connect Steam.bat
 
     WHAT IT CHANGES. Connect writes a [steam] section into THIS computer's
     machine profile, and adds this drive to Steam's list of game folders on

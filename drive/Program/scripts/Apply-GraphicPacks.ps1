@@ -2,7 +2,7 @@
     Apply-GraphicPacks.ps1 - per-game Cemu settings, for the handful of Wii U
     games that need them.
 
-    Run it from:  Maintenance Steps\Apply Cemu Graphic Packs.bat
+    Run it from:  Buttons\Apply Cemu Graphic Packs.bat
 
     WHY THIS EXISTS. RetroBat's tier system sets Wii U options for the whole
     console. It has no way to say "everything is fine except Breath of the

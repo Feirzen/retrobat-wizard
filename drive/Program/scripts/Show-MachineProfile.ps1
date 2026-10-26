@@ -6,7 +6,7 @@
     without changing a single file. Safe to run any time, even with RetroBat
     open.
 
-    Run it from:  Maintenance Steps\Show My Machine.bat
+    Run it from:  Buttons\Show My Machine.bat
 #>
 
 [CmdletBinding()]
@@ -72,5 +72,5 @@ foreach ($key in $mp.Settings.Keys) {
 }
 
 Write-Host ""
-Write-Host "  Nothing was changed. To apply: Maintenance Steps\Apply My Settings.bat" -ForegroundColor DarkGray
+Write-Host "  Nothing was changed. To apply: Buttons\Apply My Settings.bat" -ForegroundColor DarkGray
 Write-Host ""

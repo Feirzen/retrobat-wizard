@@ -8,7 +8,7 @@
     It is the console front end for SteamEngine.ps1, so if the wizard's window
     ever breaks, everything underneath can still be checked from here.
 
-    Run it from:  Maintenance Steps\Show My Steam Games.bat
+    Run it from:  Buttons\Show My Steam Games.bat
 #>
 
 [CmdletBinding()]

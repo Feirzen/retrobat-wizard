@@ -1,6 +1,6 @@
 <#
     Report-Bug.ps1 - the console way to report a bug, for
-    Maintenance Steps\Report A Bug.bat. The wizard's Help tab does the same
+    Buttons\Report A Bug.bat. The wizard's Help tab does the same
     thing in a window. The engine is scripts\BugReport.ps1.
 
     Asks what happened, shows exactly what will be sent, asks once more, then

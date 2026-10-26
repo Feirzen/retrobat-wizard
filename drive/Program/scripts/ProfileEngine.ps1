@@ -535,7 +535,7 @@ function Get-PinnedProfile {
 }
 
 # Write the pin, or clear it with an empty name. Returns $true if it worked.
-# Clearing MOVES the file into _SAFE TO DELETE rather than deleting it,
+# Clearing MOVES the file into Cache\Trash rather than deleting it,
 # because nothing on this drive is ever deleted.
 function Set-PinnedProfile {
     param([string]$Root, [string]$Name = '')

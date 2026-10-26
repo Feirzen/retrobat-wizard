@@ -25,8 +25,8 @@
 
     It does not re-implement the other scripts' logic - it reads the records
     they already keep:
-        SaveBackups\hook.log + backup.log        (the save backup)
-        update-restore\                          (the protected file masters)
+        Backups\Saves\hook.log + backup.log        (the save backup)
+        Program\restore\                          (the protected file masters)
         machine\last-applied.json + active.txt  (what Apply last wrote)
         tools\video-loudness-checked.txt         (the volume checked-list)
 
@@ -35,7 +35,7 @@
       - no $PSScriptRoot inside a param() block
       - written for Windows PowerShell 5.1
 
-    Run it from:  Maintenance Steps\Check Drive Health.bat
+    Run it from:  Buttons\Check Drive Health.bat
 #>
 
 [CmdletBinding()]
@@ -221,12 +221,12 @@ try {
             if ($lastFired -ge 0 -and $lastFinish -lt $lastFired) {
                 $checks['savebackups'] = New-Check 'bad' 'The last game-end backup started but never finished.' @(
                     'EmulationStation ran the hook, but the backup script did not report back.',
-                    'Run SaveBackups\Backup Saves Now.bat by hand and read the error it shows.',
+                    'Run Buttons\Backup Saves Now.bat by hand and read the error it shows.',
                     "hook log: _Wizard\Backups\Saves\hook.log")
             }
             elseif ($null -ne $lastCode -and $lastCode -ne 0) {
                 $checks['savebackups'] = New-Check 'bad' "The last backup ended with an error (exit code $lastCode)." @(
-                    'Run SaveBackups\Backup Saves Now.bat by hand and read the error it shows.')
+                    'Run Buttons\Backup Saves Now.bat by hand and read the error it shows.')
             }
             elseif ($failedCount -gt 0) {
                 $checks['savebackups'] = New-Check 'warn' "The last backup could not copy $failedCount file(s)." @(
@@ -247,13 +247,13 @@ catch { $checks['savebackups'] = New-Check 'unknown' "Could not check: $($_.Exce
 # ===========================================================================
 #  2. PROTECTED FILES
 # ===========================================================================
-#  Every file in update-restore\ must exist in RetroBat's own folders with
+#  Every file in Program\restore\ must exist in RetroBat's own folders with
 #  identical content. Same comparison Restore-ProtectedFiles.ps1 makes, done
 #  read-only.
 try {
     $masterDir = Join-Path $Ws 'Program\restore'
     if (-not (Test-Path $masterDir)) {
-        $checks['protectedfiles'] = New-Check 'unknown' 'No update-restore folder found.'
+        $checks['protectedfiles'] = New-Check 'unknown' 'No Program\restore folder found.'
     }
     else {
         $masters = @(Get-ChildItem -LiteralPath $masterDir -File -Recurse -ErrorAction SilentlyContinue)
@@ -317,7 +317,7 @@ try {
             $detail = @()
             foreach ($x in $missing) { $detail += "MISSING  $x" }
             foreach ($x in $differs) { $detail += "CHANGED  $x" }
-            $detail += 'Fix: run Maintenance Steps\Restore Protected Files.bat (RetroBat closed).'
+            $detail += 'Fix: run Buttons\Restore Protected Files.bat (RetroBat closed).'
             $detail += 'If YOU changed one on purpose, run Update Master Copies.bat instead.'
             $checks['protectedfiles'] = New-Check 'bad' "$($missing.Count) missing, $($differs.Count) changed of $($masters.Count) protected files." $detail
         }
@@ -342,7 +342,7 @@ try {
     }
     elseif (-not (Test-Path $snapPath)) {
         $checks['settings'] = New-Check 'warn' 'Apply My Settings has not been run since the health check was added.' @(
-            'Run Maintenance Steps\Apply My Settings.bat once (RetroBat closed) and',
+            'Run Buttons\Apply My Settings.bat once (RetroBat closed) and',
             'this light will know what to compare against.')
     }
     else {
@@ -447,7 +447,7 @@ try {
         else {
             $detail = @($drift | Select-Object -First 12)
             if ($drift.Count -gt 12) { $detail += "...and $($drift.Count - 12) more" }
-            $detail += 'Fix: run Maintenance Steps\Apply My Settings.bat (RetroBat closed).'
+            $detail += 'Fix: run Buttons\Apply My Settings.bat (RetroBat closed).'
             $detail += 'If you changed one of these in the RetroBat menu ON PURPOSE, tell Claude'
             $detail += 'or pin it on the Machine tab so it stops counting as drift.'
             $checks['settings'] = New-Check 'bad' "$($drift.Count) setting(s) no longer match what was applied." $detail
@@ -540,11 +540,11 @@ try {
         }
     }
     if ($hits -gt 0) {
-        $detail += 'Fix: run Maintenance Steps\Fix Drive Letters.bat (RetroBat closed).'
+        $detail += 'Fix: run Buttons\Fix Drive Letters.bat (RetroBat closed).'
     }
 
     if ($bad) {
-        $detail += 'Fix: run Maintenance Steps\Fix Drive Letters.bat (RetroBat closed).'
+        $detail += 'Fix: run Buttons\Fix Drive Letters.bat (RetroBat closed).'
         $checks['driveletters'] = New-Check 'bad' 'The Wii launch command needs repairing.' $detail
     }
     elseif ($hits -gt 0) {
@@ -656,7 +656,7 @@ try {
         else {
             $detail = @($unlevelled | Select-Object -First 10)
             if ($unlevelled.Count -gt 10) { $detail += "...and $($unlevelled.Count - 10) more" }
-            $detail += 'Fix: run Maintenance Steps\Fix Video Volume.bat (RetroBat closed).'
+            $detail += 'Fix: run Buttons\Fix Video Volume.bat (RetroBat closed).'
             $checks['videovolume'] = New-Check 'warn' "$unlevelledCount video(s) not levelled yet." $detail
         }
     }

@@ -8,7 +8,7 @@
     layer and must never be the only way to see something, so every tab has a
     button that does the same job from a console. This is that button.
 
-    Run it from:  Maintenance Steps\Show My Features.bat
+    Run it from:  Buttons\Show My Features.bat
 #>
 
 [CmdletBinding()]

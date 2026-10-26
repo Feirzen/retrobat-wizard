@@ -26,7 +26,7 @@
 
     Safe to re-run. Files already converted are skipped.
 
-    Run it from:  Maintenance Steps\Unpack New 3DS Roms.bat
+    Run it from:  Buttons\Unpack New 3DS Roms.bat
       - after dropping a new .7z into roms\3ds
       - or any time; if there is nothing new it does nothing.
 #>

@@ -2,7 +2,7 @@
     Rename-WizardButton.ps1 - make the button at the drive root match the name
     in Settings\wizard.ini.
 
-    Run it from:  Maintenance Steps\Rename The Wizard Button.bat
+    Run it from:  Buttons\Rename The Wizard Button.bat
 
     WHY IT EXISTS. The drive's name lives in ONE place, the "name =" line in
     Settings\wizard.ini. Everything follows it by itself: the window title, the
@@ -152,7 +152,7 @@ $done = 0; $already = 0; $problems = 0
 
 foreach ($place in @(
         @{ Label = 'at the drive root';   Folder = $RetroBatRoot },
-        @{ Label = 'in update-restore\'; Folder = $MasterDir }
+        @{ Label = 'in Program\restore\'; Folder = $MasterDir }
     )) {
 
     $found = Find-WizardBat $place.Folder
@@ -197,11 +197,11 @@ foreach ($place in @(
     $r = Move-ToBin $found
     if ($r -ne 'moved') {
         Say ("             the new one is there, but the old one {0}" -f $r) 'Yellow'
-        Say  "             both exist now. Drag the old one into _SAFE TO DELETE" 'DarkGray'
+        Say  "             both exist now. Drag the old one into Cache\Trash" 'DarkGray'
         $problems++
         continue
     }
-    Say  "             old one moved into _SAFE TO DELETE, not deleted" 'DarkGray'
+    Say  "             old one moved into Cache\Trash, not deleted" 'DarkGray'
     $done++
 }
 
@@ -224,7 +224,7 @@ else {
 # They used to wait for the SETUP button, which nobody presses twice, so a
 # rename left "Old Name.lnk" sitting there. Now this button does them too.
 # Update-RootShortcuts writes the icon under the new name and retires the old
-# one into _SAFE TO DELETE, the same way this .bat was. Safe when nothing
+# one into Cache\Trash, the same way this .bat was. Safe when nothing
 # changed: identical icons are left alone.
 if (-not $WhatIf) {
     $lib = Join-Path $PSScriptRoot 'Shortcuts.ps1'

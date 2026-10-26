@@ -1,6 +1,6 @@
 <#
     Show-FlashArtwork.ps1 - the console front end for
-    Maintenance Steps\Get Flash Artwork.bat. See FlashArtwork.ps1.
+    Buttons\Get Flash Artwork.bat. See FlashArtwork.ps1.
     -Force fetches every picture again and replaces names and descriptions
     typed in by hand. ASCII ONLY, Windows PowerShell 5.1.
 #>

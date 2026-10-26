@@ -10,7 +10,7 @@
     token and the same way of talking to GitHub). Used by:
         wizard\SetupWizard.ps1          the Help tab button, and the offer
                                         after the wizard itself crashes
-        scripts\Report-Bug.ps1          Maintenance Steps\Report A Bug.bat
+        scripts\Report-Bug.ps1          Buttons\Report A Bug.bat
 
     WHAT A REPORT HOLDS
     -------------------

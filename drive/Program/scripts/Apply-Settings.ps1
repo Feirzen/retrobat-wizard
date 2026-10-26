@@ -30,7 +30,7 @@
     will overwrite your changes when it exits. The script checks and refuses
     to run if it sees RetroBat open.
 
-    Run it from:  Maintenance Steps\Apply My Settings.bat
+    Run it from:  Buttons\Apply My Settings.bat
 #>
 
 [CmdletBinding()]

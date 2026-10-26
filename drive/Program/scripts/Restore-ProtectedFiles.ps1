@@ -86,7 +86,7 @@ $StockDir   = Join-Path $Root '_Wizard\Program\restore-off'
 #  Most protected files are simply "ours" and are always put back. A few are
 #  a FEATURE, and features.ini can turn a feature off. When one is off:
 #
-#    - if update-restore-off\<same path> holds RetroBat's own version of the
+#    - if Program\restore-off\<same path> holds RetroBat's own version of the
 #      file, that is put back instead. That is a real undo: the menus really
 #      do go back to saying START NEW GAME
 #    - if there is no stock copy to put back, the live file is left exactly
@@ -260,7 +260,7 @@ foreach ($m in $masters) {
         else {
             Say ("  left     $rel") 'Yellow'
             Say ("           '{0}' is off, but there is no stock copy in" -f $offKey) 'DarkGray'
-            Say  "           update-restore-off\ to put back - not guessing" 'DarkGray'
+            Say  "           Program\restore-off\ to put back - not guessing" 'DarkGray'
             $same++
             continue
         }

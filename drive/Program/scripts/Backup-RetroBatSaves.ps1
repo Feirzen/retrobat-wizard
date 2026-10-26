@@ -35,10 +35,10 @@
       next run rather than being trusted.
 
     LAYOUT
-      SaveBackups\Versions\<mirrored folders>\<save name>\
+      Backups\Saves\Versions\<mirrored folders>\<save name>\
           2026-08-20_161930_a3f9c1d2__Kirby Air Ride (USA).gci
 
-    Run it with SaveBackups\Backup Saves Now.bat. It also runs automatically and
+    Run it with Buttons\Backup Saves Now.bat. It also runs automatically and
     invisibly after every game via the game-end hook.
 #>
 
@@ -189,7 +189,7 @@ if (Test-Path -LiteralPath $saveIndexLib) {
     try { . $saveIndexLib; $extraRoots = @($script:SaveExtraRoots) } catch { $extraRoots = @() }
 }
 
-# How much to keep (SaveBackups\storage.ini, set from the Saves tab, 2026-10-11).
+# How much to keep (Backups\Saves\storage.ini, set from the Saves tab, 2026-10-11).
 # "versions = N" keeps the newest N of each save, whatever their age. Missing
 # or 0: the defaults above (200, and nothing younger than a year is trimmed).
 $keepAnyAge = $false

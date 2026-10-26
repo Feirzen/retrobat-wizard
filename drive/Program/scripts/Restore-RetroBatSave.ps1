@@ -2,7 +2,7 @@
     Restore-RetroBatSave.ps1   (v7)
     -------------------------------------------------------------------------
     Browse and restore save-file versions.
-    Use the SaveBackups\Restore A Save.bat button rather than calling this directly.
+    Use the Buttons\Restore A Save.bat button rather than calling this directly.
 
     v7 CHANGES
       * Results are now GROUPED BY SAVE FILE instead of sorted by date. All of

@@ -9,8 +9,8 @@
                                          when an update is ready
         scripts\Updater.ps1              installs or goes back, in its own
                                          process, after the wizard has closed
-        Maintenance Steps\Check For Updates.bat     the same, without the
-        Maintenance Steps\Go Back One Update.bat    window
+        Buttons\Check For Updates.bat     the same, without the
+        Buttons\Go Back One Update.bat    window
 
     HOW IT WORKS
     ------------
@@ -66,7 +66,7 @@
     touched: saves, roms, machines, the profile, the personal pack, logs.
 
     NOTHING IS EVER DELETED. Replaced files go into update\previous\, and the
-    previous\ from the update before that moves into _SAFE TO DELETE.
+    previous\ from the update before that moves into Cache\Trash.
 
     NO DRIVE LETTERS. Every path is built from the $Ws it is handed.
 
@@ -533,7 +533,7 @@ function Exit-UpdLock([string]$Ws) {
     } catch { }
 }
 
-# Moves a file or folder into _SAFE TO DELETE\<bucket>\<rel>, adding a number
+# Moves a file or folder into Cache\Trash\<bucket>\<rel>, adding a number
 # if the name is already taken there. The drive's one way of getting rid of
 # anything.
 function Move-UpdToSafe([string]$Ws, [string]$Full, [string]$Bucket, [string]$Rel) {
@@ -804,7 +804,7 @@ function Invoke-UpdateInstall {
     $updSay = { param([string]$m) if ($null -ne $Progress) { try { & $Progress $m } catch { } } }
 
     try {
-        # --- the previous\ from last time goes to SAFE TO DELETE -------------
+        # --- the previous\ from last time goes to Cache\Trash -------------
         if (Test-Path -LiteralPath $prevDir) {
             [void](Move-UpdToSafe $Ws $prevDir 'updates' ("previous-from-" + $stamp))
         }
@@ -821,7 +821,7 @@ function Invoke-UpdateInstall {
 
         # --- one-time renames, before any file lands -------------------------
         $migLib = Join-UpdPath $Ws 'Program\scripts\Migrations.ps1'
-        $newMig = Join-UpdPath $filesDir 'scripts/Migrations.ps1'
+        $newMig = Join-UpdPath $filesDir 'Program/scripts/Migrations.ps1'
         if (Test-Path -LiteralPath $newMig) { $migLib = $newMig }
         if (Test-Path -LiteralPath $migLib) {
             & $updSay 'Tidying up old names'
@@ -914,8 +914,8 @@ function Invoke-UpdateInstall {
     if (-not $NoPostSteps) {
         $lines = @()
         if (Test-Path -LiteralPath $journal) { $lines = @([System.IO.File]::ReadAllLines($journal)) }
-        $touchedRestore = @($lines | Where-Object { $_ -match "`tupdate-restore(-off)?/" }).Count -gt 0
-        $touchedTiers   = @($lines | Where-Object { $_ -match "`tmachine/(tiers|rules)/" }).Count -gt 0
+        $touchedRestore = @($lines | Where-Object { $_ -match "`tProgram/restore(-off)?/" }).Count -gt 0
+        $touchedTiers   = @($lines | Where-Object { $_ -match "`tProgram/machine/(tiers|rules)/" }).Count -gt 0
         if ($touchedRestore) { & $updSay 'Putting protected files in place'; Invoke-UpdPostStep $Ws 'Restore-ProtectedFiles.ps1' }
         if ($touchedTiers)   { & $updSay 'Re-applying settings';             Invoke-UpdPostStep $Ws 'Apply-Settings.ps1' }
     }
@@ -962,7 +962,7 @@ function Undo-UpdJournal([string]$Ws, [string]$Bucket) {
     $migOk = $false
     if (Test-Path -LiteralPath $migJour) {
         foreach ($cand in @((Join-UpdPath $Ws 'Program\scripts\Migrations.ps1'),
-                            (Join-UpdPath (Join-UpdPath $prevDir 'files') 'scripts/Migrations.ps1'))) {
+                            (Join-UpdPath (Join-UpdPath $prevDir 'files') 'Program/scripts/Migrations.ps1'))) {
             if (Test-Path -LiteralPath $cand) { . $cand; $migOk = $true; break }
         }
         if (-not $migOk) { Write-UpdLog $Ws 'undo: Migrations.ps1 not found, renames were left as they are' }
@@ -1015,7 +1015,7 @@ function Undo-UpdJournal([string]$Ws, [string]$Bucket) {
     if (Test-Path -LiteralPath $prevInst) { Copy-UpdFile $prevInst $instIni }
     elseif (Test-Path -LiteralPath $instIni) { [void](Move-UpdToSafe $Ws $instIni 'updates' ("$Bucket-$stamp/installed.ini")) }
 
-    # previous\ has been used up. Into SAFE TO DELETE with it.
+    # previous\ has been used up. Into Cache\Trash with it.
     if (Test-Path -LiteralPath $prevDir) { [void](Move-UpdToSafe $Ws $prevDir 'updates' ("previous-used-" + $stamp)) }
     return $count
 }

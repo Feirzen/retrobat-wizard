@@ -136,7 +136,7 @@ function Get-FeatureCatalogue {
 
     $c['savebackup'] = @{
         title   = 'Automatic save backup'
-        desc    = 'Copies changed game saves into SaveBackups after every game.'
+        desc    = 'Copies changed game saves into Backups\Saves after every game.'
         off     = 'Off stops backing up. What is already kept stays.'
         scripts = @()
         reverts = $false
@@ -183,9 +183,9 @@ function Get-FeatureCatalogue {
 # ===========================================================================
 #  WHICH PROTECTED FILES BELONG TO A SWITCH
 # ===========================================================================
-#  Most files in update-restore\ are simply ours and are always put back. A
+#  Most files in Program\restore\ are simply ours and are always put back. A
 #  few ARE a feature, and switching that feature off has to put RetroBat's
-#  own version back instead, from update-restore-off\.
+#  own version back instead, from Program\restore-off\.
 #
 #  This map used to be written out twice, once in Restore-ProtectedFiles.ps1
 #  and again in Check-DriveHealth.ps1, with a comment in each asking whoever
@@ -193,11 +193,11 @@ function Get-FeatureCatalogue {
 #  that goes wrong, so it lives here now, beside the catalogue it belongs to.
 #
 #  Paths are relative to the RetroBat root, exactly as they sit inside
-#  update-restore\, and are compared lower-cased.
+#  Program\restore\, and are compared lower-cased.
 #
 #  A feature with no entry here simply has no protected file, which is true
 #  of six of the nine. Adding one is a line here and a copy into both
-#  update-restore\ and update-restore-off\ - no script needs editing.
+#  Program\restore\ and Program\restore-off\ - no script needs editing.
 # ---------------------------------------------------------------------------
 function Get-FeatureFileMap {
     $m = [ordered]@{}

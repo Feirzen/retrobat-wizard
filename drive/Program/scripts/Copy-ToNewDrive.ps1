@@ -24,7 +24,7 @@
       - written for Windows PowerShell 5.1, pure ASCII
       - refuses to run while RetroBat or an emulator is open
 
-    Run it from:  Maintenance Steps\Copy This Drive To A New Drive.bat
+    Run it from:  Buttons\Copy This Drive To A New Drive.bat
 #>
 
 $ErrorActionPreference = 'Stop'

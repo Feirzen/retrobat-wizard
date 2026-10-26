@@ -5,7 +5,7 @@
     the wizard's Help tab calls the same function directly, so if the wizard
     ever breaks this window is still reachable from a .bat.
 
-    Run it from:  Maintenance Steps\Add A Game Shortcut.bat
+    Run it from:  Buttons\Add A Game Shortcut.bat
 
     WHAT IT CHANGES. Nothing on the drive. Everything it writes goes on the
     COMPUTER: a .lnk on the desktop or in the Start Menu, and a .ico in the

@@ -183,7 +183,7 @@ function Get-SavestateSources([string]$Root) {
 }
 
 # ---------------------------------------------------------------------------
-#  The "jump in" hold list: SaveBackups\jump-in.txt
+#  The "jump in" hold list: Backups\Saves\jump-in.txt
 # ---------------------------------------------------------------------------
 #  One line per thing being held for the next game, tab separated:
 #    file <TAB> <placed, relative to RetroBat> <TAB> <the archived original, full path>
@@ -355,7 +355,7 @@ function Invoke-SavestateSweep([string]$Root, [switch]$MidGame) {
 #  RetroArch's per-core state folders go, to keep the launch menu plain.
 #  The sweep does that job for every console now (Steven checked NES and
 #  SNES, which never had one), so any empty file named libretro.<core> in a
-#  console's saves folder is moved to _SAFE TO DELETE\retroarch-placeholders.
+#  console's saves folder is moved to Cache\Trash\retroarch-placeholders.
 #  Nothing is deleted. Returns how many moved.
 function Invoke-SsRetirePlaceholders([string]$Root) {
     $n = 0
@@ -533,7 +533,7 @@ function Clear-SavestateJumpIn([string]$Root) {
 }
 
 # ---------------------------------------------------------------------------
-#  Storage limits (SaveBackups\storage.ini, set from the Saves tab)
+#  Storage limits (Backups\Saves\storage.ini, set from the Saves tab)
 # ---------------------------------------------------------------------------
 #  versions = N   keep the newest N backed-up versions of each save file
 #                 (Backup-RetroBatSaves.ps1 reads it). 0 or missing: its own

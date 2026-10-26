@@ -17,7 +17,7 @@
       be put back from one moment in time in one go.
 
     WHY IT READS index.json AND NOT THE FOLDERS
-      Walking SaveBackups\Versions\ takes tens of seconds on a USB drive - the
+      Walking Backups\Saves\Versions\ takes tens of seconds on a USB drive - the
       wii and 3ds folders alone hold thousands of entries. index.json already
       lists every tracked file and where its newest version went, in one read.
       A game's full history is then read from that game's own history folders,
