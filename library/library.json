@@ -2273,6 +2273,19 @@
       ]
     },
     {
+      "id": "the-lion-king",
+      "title": "The Lion King",
+      "system": "snes",
+      "players": "1",
+      "description": "Young Simba just can't wait to be king. His father is the current King of the Savannah and the young prince is able to frolic the lands at will; jumping on and around other subjects of this animal kingdom. When Simba's father, King Mufasa, is killed and his evil brother Scar...",
+      "added": "2026-10-26",
+      "art": "library/art/the-lion-king.png",
+      "video": "library/video/the-lion-king.mp4",
+      "files": [
+        { "name": "Lion King, The (USA).sfc", "url": "private:the-lion-king__Lion.King.The.USA.sfc", "size": 3145728, "sha256": "457abe634e0a8be03e29513a3dca8f3e9d0ddc6bf97d8931f2316094260f3712" }
+      ]
+    },
+    {
       "id": "animal-crossing-city-folk",
       "title": "Animal Crossing : City Folk",
       "system": "wii",
