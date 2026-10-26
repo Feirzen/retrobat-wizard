@@ -4347,8 +4347,9 @@
       "system": "xbox",
       "players": "1",
       "description": "Ninja Gaiden Black puts you in the shoes of Ryu Hayabusa, a ninja by trade. After Lord Doku puts his clan to the sword, our hero sets out to exact his revenge, using his sacred sword and spectacular acrobatics. Pure action takes precedence over the infiltration traditionally...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/ninja-gaiden-black.jpg",
+      "video": "library/video/ninja-gaiden-black.mp4",
       "files": [
       ],
       "parts": { "name": "Ninja Gaiden Black (USA) (En,Ja).xiso.iso", "size": 6337134592, "sha256": "dc965ec508fef878545cc47623b3beda8c31c9f87617378b320fa2d9b96e05c6", "pieces": [
