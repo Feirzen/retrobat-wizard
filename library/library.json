@@ -4414,8 +4414,9 @@
       "system": "xbox",
       "players": "1",
       "description": "Star Wars: Knights of the Old Republic II: The Sith Lords on Xbox is a role-playing game set 3,000 years before the events of the film saga. You play the role of a survivor of the Jedi order, saved by his exile. Can you regain your lost status and save the galaxy from a terrible...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/star-wars-knights-of-the-old-republic-ii.jpg",
+      "video": "library/video/star-wars-knights-of-the-old-republic-ii.mp4",
       "files": [
       ],
       "parts": { "name": "Star Wars - Knights of the Old Republic II - The Sith Lords (USA).xiso.iso", "size": 4112318464, "sha256": "02335a0001fca6021af26d3a202d8efc3299c349663137ffe7fa025f29a70cb6", "pieces": [
