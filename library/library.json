@@ -1634,6 +1634,20 @@
       ]
     },
     {
+      "id": "snowboard-kids",
+      "title": "Snowboard Kids",
+      "system": "n64",
+      "players": "1-4",
+      "description": "A racing game where you control one of five cutesy snowboarders competing against each other. Being a snowboarding game, each track is a downhill slalom with a ski lift at the bottom which takes you back to the start for however many laps a track has. The tracks are varied, the...",
+      "added": "2026-10-26",
+      "art": "library/art/snowboard-kids.png",
+      "video": "library/video/snowboard-kids.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Snowboard Kids (USA)", "name": "snowboard-kids.zip", "size": 8390414, "sha256": "220e4819e7adc44c499f869e1526239325ede3904253b26ca8d3aa544832760e", "url": "private:snowboard-kids__snowboard-kids.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
