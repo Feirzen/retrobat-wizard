@@ -1466,6 +1466,20 @@
       ]
     },
     {
+      "id": "harvest-moon-64",
+      "title": "Harvest Moon 64",
+      "system": "n64",
+      "players": "1",
+      "description": "In Harvest Moon 64, your objective is to restore a run-down farm that you've inherited from your grandfather, who has died recently. In the village many people help you out on your long journey. During this time you can attend festivals, race in horse races, farm, tend to your...",
+      "added": "2026-10-26",
+      "art": "library/art/harvest-moon-64.png",
+      "video": "library/video/harvest-moon-64.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Harvest Moon 64 (USA)", "name": "harvest-moon-64.zip", "size": 16780305, "sha256": "413a78889359c38af2ef87ecd3f093d7dd9482a2a2cea7fd83cfc3cde085d3c9", "url": "private:harvest-moon-64__harvest-moon-64.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "harvest-moon-64-usa",
       "title": "Harvest Moon 64 (USA)",
       "system": "n64",
