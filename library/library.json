@@ -2253,6 +2253,19 @@
       ]
     },
     {
+      "id": "secret-of-mana",
+      "title": "Secret of Mana",
+      "system": "snes",
+      "players": "1-3",
+      "description": "In Secret of Mana, a young boy unknowingly unleashes ancient evil by pulling a legendary sword from its resting place and is cast out of his village. His only hope lies in reforging the Mana Sword and restoring balance by protecting the Mana seeds in eight sacred palaces. With...",
+      "added": "2026-10-26",
+      "art": "library/art/secret-of-mana.png",
+      "video": "library/video/secret-of-mana.mp4",
+      "files": [
+        { "name": "Secret of Mana (USA).sfc", "url": "private:secret-of-mana__Secret.of.Mana.USA.sfc", "size": 2097152, "sha256": "4c15013131351e694e05f22e38bb1b3e4031dedac77ec75abecebe8520d82d5f" }
+      ]
+    },
+    {
       "id": "street-fighter-ii-turbo",
       "title": "Street Fighter II Turbo",
       "system": "snes",
