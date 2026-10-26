@@ -239,19 +239,16 @@
       ]
     },
     {
-      "id": "pok-mon-omega-ruby",
-      "title": "Pokmon Omega Ruby",
+      "id": "pokemon-rumble-blast",
+      "title": "Pokemon Rumble Blast",
       "system": "3ds",
       "players": "1",
-      "description": "Immerse yourself in the incredible adventure of Pokmon Omega Ruby for Nintendo 3DS and 2DS! A fresh take on the world first discovered in 2003 in Pokmon Ruby for Game Boy Advance. With enhanced graphics and new content, this is the perfect setting to prove you're the best...",
+      "description": "Pokemon Rumble Blast, the first Pokemon game created exclusively for the Nintendo 3DS system, is an action-packed Pokemon adventure in 3D! Battle against waves of opponents, connect and play with friends, and collect more than 600 different Toy Pokemon! As you advance through...",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-omega-ruby.png",
+      "art": "library/art/pokemon-rumble-blast.png",
       "files": [
-      ],
-      "parts": { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "d76faafacd746fdcc5ec04a60b8b82ceb9678c3ad937b374234a506c50c417e4", "pieces": [
-        { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "f3986e685cc0ed7fd337fff17dd7d68a0fbc87bbe50434cd5e02c0d43ac09e8a" },
-        { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
-      ] }
+        { "name": "Pokemon Rumble Blast (USA) (Rev 1).cci", "url": "private:pokemon-rumble-blast__Pokemon.Rumble.Blast.USA.Rev.1.cci", "size": 536870912, "sha256": "1203ca26d946e97496962c0596959f0a15f79910fd9fcd42d301850e06842f03" }
+      ]
     },
     {
       "id": "pok-mon-alpha-sapphire",
@@ -282,6 +279,21 @@
         { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e67d1c52e0c9ef08349bd27f820fe97e20ece552864d393dd36768a47f5f56c8" },
         { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "cb35d11c43799da3952f9bebea120c3d778ba71a8b4fe8ebc126595c2c18633f" },
         { "name": "Pokemon Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-moon__Pokemon.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
+      "id": "pok-mon-omega-ruby",
+      "title": "Pokmon Omega Ruby",
+      "system": "3ds",
+      "players": "1",
+      "description": "Immerse yourself in the incredible adventure of Pokmon Omega Ruby for Nintendo 3DS and 2DS! A fresh take on the world first discovered in 2003 in Pokmon Ruby for Game Boy Advance. With enhanced graphics and new content, this is the perfect setting to prove you're the best...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-omega-ruby.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "d76faafacd746fdcc5ec04a60b8b82ceb9678c3ad937b374234a506c50c417e4", "pieces": [
+        { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "f3986e685cc0ed7fd337fff17dd7d68a0fbc87bbe50434cd5e02c0d43ac09e8a" },
+        { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
     },
     {
