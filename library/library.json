@@ -4476,8 +4476,9 @@
       "system": "xbox",
       "players": "1-16",
       "description": "As terrorist attacks against the United States and Venezuela escalate, you are in charge of leading the last line of defense: Rainbow. In Rainbow Six 3, you will lead this top-secret task force dedicated to combating terrorism in all its forms. Your team consists of the best...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/tom-clancy-s-rainbow-six-3.jpg",
+      "video": "library/video/tom-clancy-s-rainbow-six-3.mp4",
       "files": [
       ],
       "parts": { "name": "Tom Clancy's Rainbow Six 3 (USA, Europe) (En,Fr,De,Es,It).xiso.iso", "size": 2649948160, "sha256": "c54ff2446aeaae27de0cb46f6153b4094e6ea7f229569449b8414de16be9a43c", "pieces": [
