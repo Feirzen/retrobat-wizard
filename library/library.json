@@ -88,6 +88,21 @@
       ] }
     },
     {
+      "id": "kid-icarus-uprising",
+      "title": "Kid Icarus : Uprising",
+      "system": "3ds",
+      "players": "1",
+      "description": "One of the most beloved franchises in Nintendos long history makes its glorious return in spectacular 3D! Pit of Kid Icarus fame is back in a new game designed specifically for the Nintendo 3DS system, by Masahiro Sakurai, creator of the Kirby and Super Smash Bros. franchises,...",
+      "added": "2026-10-26",
+      "art": "library/art/kid-icarus-uprising.png",
+      "files": [
+      ],
+      "parts": { "name": "Kid Icarus - Uprising (USA) (En,Fr,Es) (Rev 1).cci", "size": 2147483648, "sha256": "cfb4fdb15375449249d991b2e57611e449b0a7e37c55499349665b0577c4e07a", "pieces": [
+        { "name": "Kid Icarus - Uprising (USA) (En,Fr,Es) (Rev 1).cci.part01", "url": "private:kid-icarus-uprising__Kid.Icarus.-.Uprising.USA.En.Fr.Es.Rev.1.cci.part01", "size": 1992294400, "sha256": "fd1303a83e65592573081ad4e1d44733df2093d364a888ae83dec5c9f8928869" },
+        { "name": "Kid Icarus - Uprising (USA) (En,Fr,Es) (Rev 1).cci.part02", "url": "private:kid-icarus-uprising__Kid.Icarus.-.Uprising.USA.En.Fr.Es.Rev.1.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
