@@ -2240,6 +2240,19 @@
       ]
     },
     {
+      "id": "nba-jam-tournament-edition",
+      "title": "NBA Jam Tournament Edition",
+      "system": "snes",
+      "players": "1-4",
+      "description": "\"NBA Jam: Tournament Edition\" is a fast-paced two-on-two arcade basketball game featuring players from all NBA teams. There are hardly any rules, no fouls, and spectacular dunks. Players are rated across eight categories, including steals, blocks, and three-pointers. Up to four...",
+      "added": "2026-10-26",
+      "art": "library/art/nba-jam-tournament-edition.png",
+      "video": "library/video/nba-jam-tournament-edition.mp4",
+      "files": [
+        { "name": "NBA Jam - Tournament Edition (USA).sfc", "url": "private:nba-jam-tournament-edition__NBA.Jam.-.Tournament.Edition.USA.sfc", "size": 3145728, "sha256": "b257cffb3484e6be051a56268cb99ee888bd6d3e9c0e8d6d0779ff66c411f6ba" }
+      ]
+    },
+    {
       "id": "street-fighter-ii-turbo",
       "title": "Street Fighter II Turbo",
       "system": "snes",
