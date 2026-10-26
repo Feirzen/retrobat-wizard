@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "excitebike",
+      "title": "Excitebike",
+      "system": "nes",
+      "players": "1",
+      "description": "Race by yourself against the clock or compete with other motocross riders on 5 tracks full of long straights, large jumps and obstacles to win the Excitebike championship. Create your own tracks by placing jumps and obstacles of all different sizes and shapes on the track and...",
+      "added": "2026-10-26",
+      "art": "library/art/excitebike.png",
+      "video": "library/video/excitebike.mp4",
+      "files": [
+        { "name": "Excitebike (Japan, USA) (En).nes", "url": "private:excitebike__Excitebike.Japan.USA.En.nes", "size": 24592, "sha256": "4eac85fdf79ffb931103d910d6f9ae3b0db0affd1df833d5e2511055a5698489" }
+      ]
+    },
+    {
       "id": "galaga-demons-of-death",
       "title": "Galaga : Demons of Death",
       "system": "nes",
