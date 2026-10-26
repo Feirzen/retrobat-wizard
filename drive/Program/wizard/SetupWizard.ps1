@@ -7037,7 +7037,8 @@ $script:socialFetched = $null
 $script:socialNote   = ''
 $script:socialSearch = ''
 $script:AvatarIcons  = @('nes', 'snes', 'n64', 'gamecube', 'wiiremote', 'gamepad', 'switch', 'gameboy', 'gba', 'ds',
-                         'xbox', 'xboxone', 'xboxseries', 'playstation', 'ps4', 'ps5', 'pad', 'mouse')
+                         'xbox', 'xboxone', 'xboxseries', 'playstation', 'ps4', 'ps5', 'pad', 'mouse',
+                         'gbc', '3ds', 'arcade', 'dreamcast', 'dreamcastpad', 'genesis', 'genesispad')
 $ColOnline = '#FF2FA84F'; $ColAway = '#FFE5B83B'; $ColBusy = '#FFE0524D'; $ColPlaying = '#FF6C8CFF'
 
 function Get-SocialDotColour([string]$Kind) {
@@ -7900,7 +7901,8 @@ function Get-MyGameStats {
 # One list for every place that shows a console's picture (2026-10-17: the
 # Wii Remote and GamePad split in two, and Xbox and PlayStation added).
 $script:ConsolePics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'gamecube'; wii = 'wiiremote'; wiiu = 'gamepad'; switch = 'switch'
-                         gb = 'gameboy'; gbc = 'gameboy'; gba = 'gba'; nds = 'ds'; '3ds' = 'ds'
+                         gb = 'gameboy'; gbc = 'gbc'; gba = 'gba'; nds = 'ds'; '3ds' = '3ds'
+                         dreamcast = 'dreamcast'; megadrive = 'genesis'; genesis = 'genesis'; fbneo = 'arcade'; mame = 'arcade'; arcade = 'arcade'
                          xbox = 'xbox'; xbox360 = 'xboxone'; psx = 'playstation'; ps2 = 'playstation'; ps3 = 'playstation' }
 function Get-ConsolePicPath([string]$System) {
     $n = $(if ($script:ConsolePics.ContainsKey($System)) { $script:ConsolePics[$System] } else { 'pc' })
