@@ -2154,8 +2154,9 @@
       "system": "snes",
       "players": "1-2",
       "description": "Ages ago, evil beings created powerful creatures called Espers, and unleashed them against each other. The resulting battles left their world a smoldering rubble. Legend has it, the Espers destroyed themselves and most of humanity. Magic disappeared forever. Centuries have...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/final-fantasy-iii.png",
+      "video": "library/video/final-fantasy-iii.mp4",
       "files": [
         { "name": "Final Fantasy III (USA) (Rev 1).sfc", "url": "private:final-fantasy-iii__Final.Fantasy.III.USA.Rev.1.sfc", "size": 3145728, "sha256": "10eccc5d2fab81346dd759f6be478dcb682eef981e8d3d662da176e1f9a996bc" }
       ]
