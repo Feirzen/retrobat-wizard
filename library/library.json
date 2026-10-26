@@ -27,6 +27,21 @@
       ]
     },
     {
+      "id": "detective-pikachu",
+      "title": "Detective Pikachu",
+      "system": "3ds",
+      "players": "1",
+      "description": "Follow the story of Tim Goodman, an 18-year-old university student with a strong sense of justice, and form an unlikely partnership with a peculiar talking Pikachu! Gather evidence, interview witnesses, and piece together a variety of clues to unravel the many mysteries...",
+      "added": "2026-10-26",
+      "art": "library/art/detective-pikachu.png",
+      "files": [
+      ],
+      "parts": { "name": "Detective Pikachu (USA) (En,Ja,Fr,De,Es,It,Zh).cci", "size": 2147483648, "sha256": "90ebf2baf66d1536a9d50893cf3a01bb07857643db147e1cb0bdd1227c2cc35f", "pieces": [
+        { "name": "Detective Pikachu (USA) (En,Ja,Fr,De,Es,It,Zh).cci.part01", "url": "private:detective-pikachu__Detective.Pikachu.USA.En.Ja.Fr.De.Es.It.Zh.cci.part01", "size": 1992294400, "sha256": "533be8495a32f4ecce61373815e3f1f937080a17c6c7fc978f9eb02d2088f22c" },
+        { "name": "Detective Pikachu (USA) (En,Ja,Fr,De,Es,It,Zh).cci.part02", "url": "private:detective-pikachu__Detective.Pikachu.USA.En.Ja.Fr.De.Es.It.Zh.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
