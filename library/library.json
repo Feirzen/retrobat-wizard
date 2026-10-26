@@ -4198,8 +4198,9 @@
       "system": "xbox",
       "players": "1-4",
       "description": "Dead or Alive Ultimate combines the original Dead or Alive with a redesigned Dead or Alive 2 and takes the series online for the first time. Both games can be played on Xbox Live, which enables you to test your fighting skills against gamers from around the world. The new Dead...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/dead-or-alive-ultimate.png",
+      "video": "library/video/dead-or-alive-ultimate.mp4",
       "files": [
       ],
       "parts": { "name": "Dead or Alive 1 Ultimate (USA, Asia) (En,Ja).xiso.iso", "size": 4387635200, "sha256": "475711717a2d67e7c258250b318b0ab92b472fc513b44d187db16ac2d1839bac", "pieces": [
