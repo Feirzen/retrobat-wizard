@@ -1601,6 +1601,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "ready-2-rumble-boxing-usa",
+      "title": "Ready 2 Rumble Boxing (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/ready-2-rumble-boxing-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Ready 2 Rumble Boxing (USA)", "name": "ready-2-rumble-boxing-usa.zip", "size": 33560099, "sha256": "d7fab8afa1723eaf30631762a7b13f2988d5149a8f201424d13ee746f21fbfb9", "url": "private:ready-2-rumble-boxing-usa__ready-2-rumble-boxing-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "rugrats-scavenger-hunt",
       "title": "Rugrats : Scavenger Hunt",
       "system": "n64",
