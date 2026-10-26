@@ -2793,6 +2793,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "twisted-metal-2",
+      "title": "Twisted Metal 2",
+      "system": "psx",
+      "players": "1-2",
+      "description": "Twisted Metal features destructive car combat, playable either as a complete tournament or a single match The action takes place in 8 different locations around the world, on differing surfaces, many featuring destructible buildings and landmarks. Combat takes place between a...",
+      "added": "2026-10-26",
+      "art": "library/art/twisted-metal-2.png",
+      "video": "library/video/twisted-metal-2.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Twisted Metal 2 (USA)", "name": "twisted-metal-2.zip", "size": 733946384, "sha256": "eea3fc1513812150a83605b9f2a49489156bb422513ef927962bf392ad4263d4", "url": "private:twisted-metal-2__twisted-metal-2.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
