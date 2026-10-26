@@ -2,7 +2,7 @@
 
 Newest first. Written for players: what you will notice.
 
-## 3.1.0 (2026-10-17) - the polish round
+## 3.1.0 (2026-10-25) - the polish round
 
 **Setting up**
 - The installer finds RetroBat by itself, names each step as it goes, and closes when it is done.

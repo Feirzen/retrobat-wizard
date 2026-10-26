@@ -4277,6 +4277,7 @@ function Initialize-NewLook {
 }
 
 function Show-MainWindow($status, [string]$startTab = 'play') {
+    $script:closeNow = $false; $script:afterWork = ''   # a fresh window asks before closing again
 
     if ($null -eq $status) { $status = Invoke-Health }
 
@@ -5349,7 +5350,8 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
             $list = Format-RunningWork $work
             $unsafe = @($work | Where-Object { -not $_.Safe })
             if ($unsafe.Count -gt 0) {
-                $pick = Show-Choice $WizardName ("Still working on:`n`n{0}`n`nClosing now could leave it half done." -f $list) @('Close when it is done', 'Keep the wizard open')
+                $pick = Show-Choice $WizardName ("Still working on:`n`n{0}`n`nClosing now could leave it half done." -f $list) @('Close when it is done', 'Keep the wizard open', 'Close anyway')
+                if ($pick -eq 'Close anyway') { Log ("closed while still working on: {0}" -f (($work | ForEach-Object { $_.Label }) -join ', ')); return }
                 $e2.Cancel = $true
                 if ($pick -eq 'Close when it is done') { Set-AfterWork 'close' }
             }
@@ -8196,7 +8198,7 @@ function Invoke-SocialLogin([string]$Id) {
 function Sync-SocialPersonSaves([string]$Id) {
     if (-not $script:socialOk -or $Id -eq '') { return }
     try {
-        $r = Invoke-EngineWork 'putting your saves in place' @('SocialEngine.ps1') 'Update-SocialPlayLedger $args[0] $args[1] $args[2] -Switch | Out-Null; Get-Content -LiteralPath (Join-SocialPath $args[1] ''profile\saves-of\owner.txt'') -ErrorAction SilentlyContinue' @($Root, $Ws, $Id)
+        $r = Invoke-EngineWork 'getting your favourites ready' @('SocialEngine.ps1') 'Update-SocialPlayLedger $args[0] $args[1] $args[2] -Switch | Out-Null; Get-Content -LiteralPath (Join-SocialPath $args[1] ''profile\saves-of\owner.txt'') -ErrorAction SilentlyContinue' @($Root, $Ws, $Id)
         Log ("profile: saves and favourites now belong to {0}" -f [string]$r)
         $script:myGameStats = $null
         try { Initialize-Saves; Render-SaveConsoleList; Render-SaveGames } catch { }
@@ -10522,6 +10524,7 @@ function Show-KeyLayoutFor([string]$Leaf) {
         $g = [pscustomobject]@{ Label = $Leaf; Leaf = $Leaf; Ini = $ini; Name = [System.IO.Path]::GetFileNameWithoutExtension($Leaf) }
     }
     Log ("keys: editor opened for {0} from the how-to-play screen" -f $Leaf)
+    Close-Splash
     Show-KeyLayoutEditor $g
 }
 

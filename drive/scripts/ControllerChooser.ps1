@@ -418,7 +418,9 @@ try {
     # new layout on screen (2026-10-25).
     function Edit-Keys {
         try {
-            $timer.Stop(); $form.Hide()
+            # Not Hide(): hiding a ShowDialog window ends it, and the game would
+            # start under the editor. See-through and not on top instead.
+            $timer.Stop(); $form.TopMost = $false; $form.Opacity = 0
             $wiz = Join-Path $Root '_ClaudeWorkspace\wizard\SetupWizard.ps1'
             $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
             $p = Start-Process -FilePath $ps -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-WindowStyle', 'Hidden', '-File', ('"' + $wiz + '"'), '-EditKeys', ('"' + $script:kLeaf + '"')) -WindowStyle Hidden -PassThru
@@ -426,7 +428,7 @@ try {
             Set-KeyLines
             Log ("{0}: layout edited from the how-to-play screen" -f $key)
         } catch { Log ('edit keys: ' + $_.Exception.Message) }
-        finally { $script:prev = -1; $form.Show(); $form.Activate(); $form.Invalidate(); $timer.Start() }
+        finally { $script:prev = -1; $form.Opacity = 1; $form.TopMost = $true; $form.Activate(); $form.Invalidate(); $timer.Start() }
     }
     function Finish([int]$code) {
         $script:result = $code

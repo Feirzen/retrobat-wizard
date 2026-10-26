@@ -103,8 +103,10 @@ $script:FfHidRx  = New-Object System.Text.RegularExpressions.Regex('[ \t]*<hidde
 function Sync-FamilyFilter([string]$Root, [string]$Ws) {
     $res = @{ Hidden = 0; Shown = 0; Message = '' }
     $on = Test-FfOn $Ws
-    $list = Get-FfList $Ws
     $recF = Join-FfPath $Ws 'family-hidden.txt'
+    # Off, with nothing it hid before: nothing to do, no game list is opened.
+    if (-not $on -and -not (Test-Path -LiteralPath $recF)) { $res.Message = 'off'; return $res }
+    $list = Get-FfList $Ws
     $rec = @{}
     if (Test-Path -LiteralPath $recF) { foreach ($l in [System.IO.File]::ReadAllLines($recF)) { if ($l -ne '' -and -not $l.StartsWith(';')) { $rec[$l] = $true } } }
     $newRec = @{}
