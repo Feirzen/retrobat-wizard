@@ -127,6 +127,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-a-link-between-world",
+      "title": "The Legend of Zelda : A Link Between Worlds",
+      "system": "3ds",
+      "players": "1",
+      "description": "Two worlds collide in an all-new adventure set in the world of Super NES classic The Legend of Zelda: A Link to the Past. In this newly spun tale, Link transforms into a living painting to cross into a dark, parallel dimension mirroring Hyrule. Conquer the puzzles, traps, and...",
+      "added": "2026-10-26",
+      "art": "library/art/the-legend-of-zelda-a-link-between-world.png",
+      "files": [
+        { "name": "Legend of Zelda, The - A Link Between Worlds (USA) (En,Fr,Es).cci", "url": "private:the-legend-of-zelda-a-link-between-world__Legend.of.Zelda.The.-.A.Link.Between.Worlds.USA.En.Fr.Es.cci", "size": 1073741824, "sha256": "ff1538f16f5599ee2e6772219e52bbbf3b2a5287305e3a6bdad4fa995663765e" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
