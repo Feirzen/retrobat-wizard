@@ -2370,6 +2370,19 @@
       ]
     },
     {
+      "id": "super-punch-out",
+      "title": "Super Punch-Out!!",
+      "system": "snes",
+      "players": "1",
+      "description": "Your dreams are finally going to come true! All the years of training...all for that day where you'd finally step into the ring, amidst the roar of the excited crowd, to square off against the best of the best...you tighten your fist and hear your gloves tighten with them...you...",
+      "added": "2026-10-26",
+      "art": "library/art/super-punch-out.png",
+      "video": "library/video/super-punch-out.mp4",
+      "files": [
+        { "name": "Super Punch-Out!! (USA).sfc", "url": "private:super-punch-out__Super.Punch-Out.USA.sfc", "size": 2097152, "sha256": "a3d803b8c6b0b6ac55085671040b840f993543915c7f802e14fb651beabe9b63" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
