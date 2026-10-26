@@ -1653,6 +1653,19 @@
       ]
     },
     {
+      "id": "star-wars-episode-i-racer-usa",
+      "title": "Star Wars Episode I - Racer (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/star-wars-episode-i-racer-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Star Wars Episode I - Racer (USA)", "name": "star-wars-episode-i-racer-usa.zip", "size": 33560117, "sha256": "ffcc29e38a078090dae1593df02a5b0f4877989902bf5dd71de3825e3be05155", "url": "private:star-wars-episode-i-racer-usa__star-wars-episode-i-racer-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "super-mario-64",
       "title": "Super Mario 64",
       "system": "n64",
