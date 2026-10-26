@@ -4365,8 +4365,9 @@
       "system": "xbox",
       "players": "1",
       "description": "The fourth installment of the Panzer Dragoon series has you playing Orta, a young girl who has been imprisoned by the Empire. Under a wave of attack, the prison camp is broken through by a mysterious dragon, and Orta takes it upon herself to ride the dragon, and destroy the...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/panzer-dragoon-orta.png",
+      "video": "library/video/panzer-dragoon-orta.mp4",
       "files": [
       ],
       "parts": { "name": "Panzer Dragoon Orta (USA).xiso.iso", "size": 3098279936, "sha256": "7f45a0cdbde152f6cce216ace26bb2322443b0592898fa8bf4d58d34ab2941a4", "pieces": [
