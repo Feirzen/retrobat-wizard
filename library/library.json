@@ -1256,8 +1256,9 @@
       "system": "n64",
       "players": "1-2",
       "description": "Goemon and his friends return in this side-scrolling sequel to Mystical Ninja Starring Goemon. Bismaru, who looks like Goemon's friend Ebisumaru dressed up as a nun, has swiped a freshly-invented Ghost Returning Machine! With it, he's using planning nothing less than world...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/goemon-s-great-adventure.png",
+      "video": "library/video/goemon-s-great-adventure.mp4",
       "files": [
         { "name": "Goemon's Great Adventure (USA).zip", "url": "private:goemon-s-great-adventure__Goemon.s.Great.Adventure.USA.zip", "size": 14634530, "sha256": "384826fcd621796480bf3a345338e121a7383b2f85053590fb2405c9668aa75e" }
       ]
