@@ -1116,18 +1116,6 @@
       ]
     },
     {
-      "id": "mario-tennis",
-      "title": "Mario Tennis",
-      "system": "gbc",
-      "players": "1-2",
-      "description": "Mario Tennis for the Game Boy Color is a much different experience than its N64 effort. In addition to the core gameplay found in the N64 version, the GBC version features an RPG-style world that allows you to work your way up through the ranks at the Royal Tennis Academy. The...",
-      "added": "2026-10-12",
-      "art": "library/art/mario-tennis.png",
-      "files": [
-        { "name": "Mario Tennis (USA).zip", "url": "private:mario-tennis__Mario.Tennis.USA.zip", "size": 764126, "sha256": "3c628dfb8804939d0e95b3467e2f0431de1be499d9ed60d51a4fa43ee4dadf4c" }
-      ]
-    },
-    {
       "id": "pok-mon-silver-version",
       "title": "Pokmon : Silver Version",
       "system": "gbc",
@@ -1623,6 +1611,20 @@
       "files": [
       ],
       "bundle": { "folder": "Mario Party 3 (USA)", "name": "mario-party-3-usa.zip", "size": 33560075, "sha256": "bcb6f2c03647e95f152420eedfad777fcc81bf1335742830329458543e58aee7", "url": "private:mario-party-3-usa__mario-party-3-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
+      "id": "mario-tennis",
+      "title": "Mario Tennis",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Choose your favourite Nintendo character and take to the world of tennis. Game types include ring shot (where you must shoot the ball through golden hoops that are suspended above the play area, gaining bonus points as you play), bomb tennis (simply put Tennis with Bombs) and...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-tennis.png",
+      "video": "library/video/mario-tennis.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Tennis (USA)", "name": "mario-tennis.zip", "size": 16780296, "sha256": "ee1f6e9345277774c43a730721119b3aca9070ba19da545be06d335e4e077c3a", "url": "private:mario-tennis__mario-tennis.zip" },
       "min": "3.2.0"
     },
     {
