@@ -1477,8 +1477,9 @@
       "system": "n64",
       "players": "1",
       "description": "Reclaim the Super Happy Tree to restore happiness! Baby Bowser has taken the Super Happy Tree and put a spell on Yoshi Island. It's up to a few remaining Yoshis to restore everything to its rightful place as they run, ground-pound, flutter-jump, throw eggs, and traverse a...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/yoshi-s-story.png",
+      "video": "library/video/yoshi-s-story.mp4",
       "files": [
         { "name": "Yoshi's Story (USA) (En,Ja).zip", "url": "private:yoshi-s-story__Yoshi.s.Story.USA.En.Ja.zip", "size": 9339645, "sha256": "460c029922e658378a6e5ed759f0015bda5ce818dfa34c5bf62062e66e78a70d" }
       ]
