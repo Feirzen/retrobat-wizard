@@ -2569,6 +2569,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "gran-turismo",
+      "title": "Gran Turismo",
+      "system": "psx",
+      "players": "1-2",
+      "description": "Gran Turismo puts you behind the wheel in realistic races against AI opponents, collecting cars, credits, and trophies. Arcade Mode offers free access to cars and tracks, while Simulation Mode challenges you to earn licenses, win races, and wisely invest in cars and upgrades....",
+      "added": "2026-10-26",
+      "art": "library/art/gran-turismo.png",
+      "video": "library/video/gran-turismo.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Gran Turismo (USA) (Rev 1)", "name": "gran-turismo.zip", "size": 693774560, "sha256": "db999d2a3a3c49da87cef301a847e29462914851678ee77b2299903719d3afec", "url": "private:gran-turismo__gran-turismo.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
