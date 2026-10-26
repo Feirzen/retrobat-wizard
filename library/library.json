@@ -4460,8 +4460,9 @@
       "system": "xbox",
       "players": "1-2",
       "description": "ToeJam & Earl III: Mission to Earth on Xbox is a game mixing adventure and platforming, in which you play as two wacky aliens who love to waddle and dance hip-hop. This third opus sends the two aliens to Earth to preach the good word and convert its inhabitants to the benefits...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/toejam-earl-iii-mission-to-earth.jpg",
+      "video": "library/video/toejam-earl-iii-mission-to-earth.mp4",
       "files": [
       ],
       "parts": { "name": "ToeJam & Earl III - Mission to Earth (USA).xiso.iso", "size": 2669150208, "sha256": "f8e2c5266db5a5aafb81100fbceb1fab17ce0ecb5ebf9e2c160789ebf64bf670", "pieces": [
