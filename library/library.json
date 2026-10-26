@@ -278,18 +278,18 @@
       ] }
     },
     {
-      "id": "pok-mon-x",
-      "title": "Pokmon X",
+      "id": "pok-mon-y",
+      "title": "Pokmon Y",
       "system": "3ds",
       "players": "1",
-      "description": "An all-new 3D Pokemon adventure packed with never-before-seen Pokemon will launch worldwide in October 2013. Pokemon X and Pokemon Y will present a new generation of Pokemon, and introduce players to an exciting new adventure in a breathtaking 3D world.",
+      "description": "As with previous installments, the games follow the journey of a young Pokmon trainer as they train and battle Pokmon while thwarting schemes of the criminal organization Team Flare. X and Y introduced 72 new Pokmon species, and added new features including the new...",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-x.png",
+      "art": "library/art/pok-mon-y.png",
       "files": [
       ],
-      "parts": { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci", "size": 2147483648, "sha256": "4c153a06a684ef0cfa52d57fb270bc64c8779ea1a686e8a4c1360f6491976837", "pieces": [
-        { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part01", "url": "private:pok-mon-x__Pokemon.X.USA.En.Ja.Fr.De.Es.It.Ko.cci.part01", "size": 1992294400, "sha256": "a5273014159d1364739ab19352ec80dfce99039805e54e2b4f76ad79b6c010ad" },
-        { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part02", "url": "private:pok-mon-x__Pokemon.X.USA.En.Ja.Fr.De.Es.It.Ko.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      "parts": { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci", "size": 2147483648, "sha256": "e181ab63223a5222e7c4dc1ac7428e17e8a96327f4895f9eb6808ba04698ecac", "pieces": [
+        { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part01", "url": "private:pok-mon-y__Pokemon.Y.USA.En.Ja.Fr.De.Es.It.Ko.cci.part01", "size": 1992294400, "sha256": "811e32d5e28df40c4e65e08c8302b23580372f34c1ecf76d39037d9197dab44a" },
+        { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part02", "url": "private:pok-mon-y__Pokemon.Y.USA.En.Ja.Fr.De.Es.It.Ko.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
     },
     {
@@ -384,6 +384,21 @@
         { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-ultra-sun__Pokemon.Ultra.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "077857d1c7164d5f254a59616cf7081fa22cd9b61720b57284ca6d03b06fe1e3" },
         { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-ultra-sun__Pokemon.Ultra.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "2870c68e0b1860d45b27d67d80bd046244e683f365c765d955feb943ccb26a57" },
         { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-ultra-sun__Pokemon.Ultra.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
+      "id": "pok-mon-x",
+      "title": "Pokmon X",
+      "system": "3ds",
+      "players": "1",
+      "description": "An all-new 3D Pokemon adventure packed with never-before-seen Pokemon will launch worldwide in October 2013. Pokemon X and Pokemon Y will present a new generation of Pokemon, and introduce players to an exciting new adventure in a breathtaking 3D world.",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-x.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci", "size": 2147483648, "sha256": "4c153a06a684ef0cfa52d57fb270bc64c8779ea1a686e8a4c1360f6491976837", "pieces": [
+        { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part01", "url": "private:pok-mon-x__Pokemon.X.USA.En.Ja.Fr.De.Es.It.Ko.cci.part01", "size": 1992294400, "sha256": "a5273014159d1364739ab19352ec80dfce99039805e54e2b4f76ad79b6c010ad" },
+        { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part02", "url": "private:pok-mon-x__Pokemon.X.USA.En.Ja.Fr.De.Es.It.Ko.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
     },
     {
