@@ -1849,6 +1849,19 @@
       ]
     },
     {
+      "id": "punch-out",
+      "title": "Punch-Out!!",
+      "system": "nes",
+      "players": "1",
+      "description": "\"Punch-Out!! featuring Mr. Dream\" is the reedition of the previous version \"Mike Tyson's Punch-Out!!\". Contrary to popular belief, Tyson was not removed because of his rape conviction (which did not occur until a year after the changeover), but because his contract expired....",
+      "added": "2026-10-26",
+      "art": "library/art/punch-out.png",
+      "video": "library/video/punch-out.mp4",
+      "files": [
+        { "name": "Punch-Out!! (USA).nes", "url": "private:punch-out__Punch-Out.USA.nes", "size": 262160, "sha256": "2f06867500d5bc105cfa30f041fcb6bf5934d6b464779fbc4b041203af72b052" }
+      ]
+    },
+    {
       "id": "river-city-ransom",
       "title": "River City Ransom",
       "system": "nes",
