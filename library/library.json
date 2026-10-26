@@ -187,6 +187,18 @@
       ]
     },
     {
+      "id": "mario-kart-7",
+      "title": "Mario Kart 7",
+      "system": "3ds",
+      "players": "1",
+      "description": "The newest installment of the fan-favorite Mario Kart franchise brings Mushroom Kingdom racing fun into glorious 3D. For the first time, drivers explore new competitive kart possibilities, such as soaring through the skies or plunging to the depths of the sea. New courses,...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-kart-7.png",
+      "files": [
+        { "name": "Mario Kart 7 (USA) (En,Fr,Es) (Rev 1).cci", "url": "private:mario-kart-7__Mario.Kart.7.USA.En.Fr.Es.Rev.1.cci", "size": 1073741824, "sha256": "6b378a54eb154c174d91c38a0337c931410bc1eee7ce5e857ee1ac6b68cbc65c" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
