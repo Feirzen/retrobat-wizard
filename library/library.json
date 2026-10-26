@@ -1825,6 +1825,19 @@
       ]
     },
     {
+      "id": "mega-man-2",
+      "title": "Mega Man 2",
+      "system": "nes",
+      "players": "1",
+      "description": "After defeating Dr. Light's six robots that were reprogrammed by the villainous Dr. Wily in Mega Man, it seemed like the world was safe. But it was not to be. Dr. Wily has escaped from prison and is madder than ever, this time creating eight new Robot Masters of his own to take...",
+      "added": "2026-10-26",
+      "art": "library/art/mega-man-2.png",
+      "video": "library/video/mega-man-2.mp4",
+      "files": [
+        { "name": "Mega Man 2 (USA).nes", "url": "private:mega-man-2__Mega.Man.2.USA.nes", "size": 262160, "sha256": "9f5fa21062933e89c4f923d7755b6df185b054e84d9b5a6ef54216ac4dd67070" }
+      ]
+    },
+    {
       "id": "mega-man-3",
       "title": "Mega Man 3",
       "system": "nes",
