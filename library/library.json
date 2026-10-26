@@ -4314,8 +4314,9 @@
       "system": "xbox",
       "players": "1-4",
       "description": "A follow up to the Dreamcast title Jet Grind Radio. The setting is Tokyo in the year 2024. Freedom is a valuable commodity and freedom of expression even more so. Gangs of misbehaving teens strap on rocket-powered roller blades and skate, grind, and mark their territory with...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/jsrf-jet-set-radio-future.png",
+      "video": "library/video/jsrf-jet-set-radio-future.mp4",
       "files": [
       ],
       "parts": { "name": "JSRF - Jet Set Radio Future (USA).xiso.iso", "size": 2502426624, "sha256": "1b45f3a36de92fbb3fa92a3778dfe08503105a3c59570cc7367a4f28c5951278", "pieces": [
