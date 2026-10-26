@@ -2709,6 +2709,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "spyro-2-ripto-s-rage",
+      "title": "Spyro 2 : Ripto's Rage!",
+      "system": "psx",
+      "players": "1",
+      "description": "Ripto's Rage is the second game in the Spyro the Dragon series, which started with Spyro the Dragon in 1998. The protagonist of the series, Spyro, is placed in the land of Avalar, rather than the Dragon Worlds, where the previous installment was set. A dinosaur-riding sorcerer,...",
+      "added": "2026-10-26",
+      "art": "library/art/spyro-2-ripto-s-rage.png",
+      "video": "library/video/spyro-2-ripto-s-rage.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Spyro 2 - Ripto's Rage! (USA)", "name": "spyro-2-ripto-s-rage.zip", "size": 565458099, "sha256": "d9251d9c4e342aeec58277828d75c74ce892303f1f14603534088f81d6d0e72e", "url": "private:spyro-2-ripto-s-rage__spyro-2-ripto-s-rage.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
