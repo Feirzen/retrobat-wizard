@@ -2639,6 +2639,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "mega-man-legends",
+      "title": "Mega Man Legends",
+      "system": "psx",
+      "players": "1",
+      "description": "THE BLUE BOMBER BLASTS INTO A WHOLE NEW DIMENSION Mega Man blasts his way into the third dimension in an amazing new adventure. Mega Man Legends combines the best of classic Mega Man action with enormous bosses, a riveting storyline, and all the depth of the hottest RPG. Explore...",
+      "added": "2026-10-26",
+      "art": "library/art/mega-man-legends.png",
+      "video": "library/video/mega-man-legends.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Mega Man Legends (USA)", "name": "mega-man-legends.zip", "size": 524682570, "sha256": "e0543518d0691c3731fe56cd18f445f97d30bb6cd7a63fff7d926707cb2a22e7", "url": "private:mega-man-legends__mega-man-legends.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
