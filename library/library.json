@@ -278,21 +278,6 @@
       ] }
     },
     {
-      "id": "pok-mon-y",
-      "title": "Pokmon Y",
-      "system": "3ds",
-      "players": "1",
-      "description": "As with previous installments, the games follow the journey of a young Pokmon trainer as they train and battle Pokmon while thwarting schemes of the criminal organization Team Flare. X and Y introduced 72 new Pokmon species, and added new features including the new...",
-      "added": "2026-10-26",
-      "art": "library/art/pok-mon-y.png",
-      "files": [
-      ],
-      "parts": { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci", "size": 2147483648, "sha256": "e181ab63223a5222e7c4dc1ac7428e17e8a96327f4895f9eb6808ba04698ecac", "pieces": [
-        { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part01", "url": "private:pok-mon-y__Pokemon.Y.USA.En.Ja.Fr.De.Es.It.Ko.cci.part01", "size": 1992294400, "sha256": "811e32d5e28df40c4e65e08c8302b23580372f34c1ecf76d39037d9197dab44a" },
-        { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part02", "url": "private:pok-mon-y__Pokemon.Y.USA.En.Ja.Fr.De.Es.It.Ko.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
-      ] }
-    },
-    {
       "id": "pok-mon-alpha-sapphire",
       "title": "Pokmon Alpha Sapphire",
       "system": "3ds",
@@ -399,6 +384,36 @@
       "parts": { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci", "size": 2147483648, "sha256": "4c153a06a684ef0cfa52d57fb270bc64c8779ea1a686e8a4c1360f6491976837", "pieces": [
         { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part01", "url": "private:pok-mon-x__Pokemon.X.USA.En.Ja.Fr.De.Es.It.Ko.cci.part01", "size": 1992294400, "sha256": "a5273014159d1364739ab19352ec80dfce99039805e54e2b4f76ad79b6c010ad" },
         { "name": "Pokemon X (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part02", "url": "private:pok-mon-x__Pokemon.X.USA.En.Ja.Fr.De.Es.It.Ko.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
+      "id": "pok-mon-y",
+      "title": "Pokmon Y",
+      "system": "3ds",
+      "players": "1",
+      "description": "As with previous installments, the games follow the journey of a young Pokmon trainer as they train and battle Pokmon while thwarting schemes of the criminal organization Team Flare. X and Y introduced 72 new Pokmon species, and added new features including the new...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-y.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci", "size": 2147483648, "sha256": "e181ab63223a5222e7c4dc1ac7428e17e8a96327f4895f9eb6808ba04698ecac", "pieces": [
+        { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part01", "url": "private:pok-mon-y__Pokemon.Y.USA.En.Ja.Fr.De.Es.It.Ko.cci.part01", "size": 1992294400, "sha256": "811e32d5e28df40c4e65e08c8302b23580372f34c1ecf76d39037d9197dab44a" },
+        { "name": "Pokemon Y (USA) (En,Ja,Fr,De,Es,It,Ko).cci.part02", "url": "private:pok-mon-y__Pokemon.Y.USA.En.Ja.Fr.De.Es.It.Ko.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
+      "id": "poochy-yoshi-s-woolly-world",
+      "title": "Poochy & Yoshi's Woolly World",
+      "system": "3ds",
+      "players": "1",
+      "description": "Discover a handicraft world bursting at the seams with creativity, as you guide Yarn Yoshi or Yarn Poochy through clever side-scrolling stages. Unravel secrets, toss yarn to weave platforms, and power up with woolly transformations. All stages from the Wii U version are joined...",
+      "added": "2026-10-26",
+      "art": "library/art/poochy-yoshi-s-woolly-world.png",
+      "files": [
+      ],
+      "parts": { "name": "Poochy & Yoshi's Woolly World (USA) (En,Fr,Es) (Rev 1).cci", "size": 2147483648, "sha256": "cf48bb02f9e8dbe419a7f88486ef91c7c0553af1ec0d0342be9ff7a2fe144634", "pieces": [
+        { "name": "Poochy & Yoshi's Woolly World (USA) (En,Fr,Es) (Rev 1).cci.part01", "url": "private:poochy-yoshi-s-woolly-world__Poochy.Yoshi.s.Woolly.World.USA.En.Fr.Es.Rev.1.cci.part01", "size": 1992294400, "sha256": "24514f7bf3f90d9dfd230aeb475cb92f60f74aa3c5d9bcfd8f82c675cb368770" },
+        { "name": "Poochy & Yoshi's Woolly World (USA) (En,Fr,Es) (Rev 1).cci.part02", "url": "private:poochy-yoshi-s-woolly-world__Poochy.Yoshi.s.Woolly.World.USA.En.Fr.Es.Rev.1.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
     },
     {
