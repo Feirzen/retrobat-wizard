@@ -1740,6 +1740,20 @@
       ]
     },
     {
+      "id": "wwf-no-mercy",
+      "title": "WWF No Mercy",
+      "system": "n64",
+      "players": "1-4",
+      "description": "The last wrestling title made by the team of THQ and AKI allows players to compete for 7 different WWF Titles with each belt getting its own unique story. Stories can be replayed, allowing players to defend their title in a storyline. Upon successful completion of a story mode,...",
+      "added": "2026-10-26",
+      "art": "library/art/wwf-no-mercy.png",
+      "video": "library/video/wwf-no-mercy.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "WWF No Mercy (USA) (Rev 1)", "name": "wwf-no-mercy.zip", "size": 33560096, "sha256": "8ebdd1fec89cd431f64d8f3008b29b79c433d9b783fa4d95a53e715596a9b629", "url": "private:wwf-no-mercy__wwf-no-mercy.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "yoshi-s-story",
       "title": "Yoshi's Story",
       "system": "n64",
