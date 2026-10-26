@@ -278,19 +278,19 @@
       ] }
     },
     {
-      "id": "pok-mon-ultra-moon",
-      "title": "Pokmon Ultra Moon",
+      "id": "pok-mon-ultra-sun",
+      "title": "Pokmon Ultra Sun",
       "system": "3ds",
       "players": "1",
       "description": "Take on the role of a Pokmon Trainer and unravel the mystery of the Legendary Pokmon Necrozma's new forms: Dusk Mane Necrozma in the Pokmon Ultra Sun game and Dawn Wings Necrozma in the Pokmon Ultra Moon game. You can encounter and battle 400+ Pokmon, including new forms....",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-ultra-moon.png",
+      "art": "library/art/pok-mon-ultra-sun.png",
       "files": [
       ],
-      "parts": { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "e08a903921bb87bdfb6e46c2a9c5e41a685e91cc371d38ffcbdcc4884bc84054", "pieces": [
-        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e70db13af2006e88a9fb32d793b5595483fcdba0c9e6cd3af241cfc1725fd4a1" },
-        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "2c8d5508103d20c5ee5a82182f1b083a44b6d3730a2f416b040830d278388ee8" },
-        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      "parts": { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "3bb3b4eb0d17f18875d8b847c871dc97a172beeda03ce99e59e62a78ed5c1a53", "pieces": [
+        { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-ultra-sun__Pokemon.Ultra.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "077857d1c7164d5f254a59616cf7081fa22cd9b61720b57284ca6d03b06fe1e3" },
+        { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-ultra-sun__Pokemon.Ultra.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "2870c68e0b1860d45b27d67d80bd046244e683f365c765d955feb943ccb26a57" },
+        { "name": "Pokemon Ultra Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-ultra-sun__Pokemon.Ultra.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
       ] }
     },
     {
@@ -353,6 +353,22 @@
         { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "fe647abbd060abf551b6121ca081e4fc43fec9276779fc3c6ebae86824265226" },
         { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "f43e2a7cd89083af609dfe85e50f6c3689e51d2bdca295c723d2fcedc802a827" },
         { "name": "Pokemon Sun (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-sun__Pokemon.Sun.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
+      "id": "pok-mon-ultra-moon",
+      "title": "Pokmon Ultra Moon",
+      "system": "3ds",
+      "players": "1",
+      "description": "Take on the role of a Pokmon Trainer and unravel the mystery of the Legendary Pokmon Necrozma's new forms: Dusk Mane Necrozma in the Pokmon Ultra Sun game and Dawn Wings Necrozma in the Pokmon Ultra Moon game. You can encounter and battle 400+ Pokmon, including new forms....",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-ultra-moon.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "e08a903921bb87bdfb6e46c2a9c5e41a685e91cc371d38ffcbdcc4884bc84054", "pieces": [
+        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e70db13af2006e88a9fb32d793b5595483fcdba0c9e6cd3af241cfc1725fd4a1" },
+        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "2c8d5508103d20c5ee5a82182f1b083a44b6d3730a2f416b040830d278388ee8" },
+        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
       ] }
     },
     {
