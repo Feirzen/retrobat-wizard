@@ -2527,6 +2527,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "final-fantasy-ix",
+      "title": "Final Fantasy IX",
+      "system": "psx",
+      "players": "1",
+      "description": "Corruption -- the root of all evil. Alexandria's Queen Brahne was once presented as a noble and caring ruler, who would throw lavish festivals to show appreciation for her supporters. Recently, she became involved in secretive deals with mysterious people. Matters took a turn...",
+      "added": "2026-10-26",
+      "art": "library/art/final-fantasy-ix.png",
+      "video": "library/video/final-fantasy-ix.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Final Fantasy IX (USA, Canada) (Disc 1) (Rev 1)", "name": "final-fantasy-ix.zip", "size": 740828901, "sha256": "4045da8e2099a734f34169f9346e7d4aafca5478b63b6ac07dfe789d7655cb0c", "url": "private:final-fantasy-ix__final-fantasy-ix.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
