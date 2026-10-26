@@ -163,6 +163,18 @@
       ]
     },
     {
+      "id": "mario-luigi-superstar-saga-bowser-s-mini",
+      "title": "Mario & Luigi : Superstar Saga + Bowser's Minions",
+      "system": "3ds",
+      "players": "1",
+      "description": "The game that launched the Mario & Luigi series returns looking better than ever before. In this renewed classic, Mario and Luigi journey to the Beanbean Kingdom with Bowser to restore Princess Peach's voice. Control Mario and Luigi simultaneously, making use of their unique...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-luigi-superstar-saga-bowser-s-mini.png",
+      "files": [
+        { "name": "Mario & Luigi - Superstar Saga + Bowser's Minions (USA) (En,Fr,Es).cci", "url": "private:mario-luigi-superstar-saga-bowser-s-mini__Mario.Luigi.-.Superstar.Saga.Bowser.s.Minions.USA.En.Fr.Es.cci", "size": 1073741824, "sha256": "f5e38db735d8d03e413c2f9260334e404230edd071390cc334d0f0c33131c8cf" }
+      ]
+    },
+    {
       "id": "mario-luigi-bowser-s-inside-story-bowser",
       "title": "Mario & Luigi: Bowser's Inside Story + Bowser Jr.'s Journey",
       "system": "3ds",
