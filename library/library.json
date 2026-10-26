@@ -2305,6 +2305,19 @@
       ]
     },
     {
+      "id": "super-mario-kart",
+      "title": "Super Mario Kart",
+      "system": "snes",
+      "players": "1-2",
+      "description": "A collection of Super Mario characters, including Mario, Luigi, Yoshi, Peach, Bowser and Donkey Kong Jr., are out to win the Super Mario Kart championship. Using Mode 7 scaling, the first true kart game on the SNES has you collecting coins to boost your speed while using shells...",
+      "added": "2026-10-26",
+      "art": "library/art/super-mario-kart.png",
+      "video": "library/video/super-mario-kart.mp4",
+      "files": [
+        { "name": "Super Mario Kart (USA).sfc", "url": "private:super-mario-kart__Super.Mario.Kart.USA.sfc", "size": 524288, "sha256": "2ada8919688087be60a6a48cace8f877add60c45d2e5d09e2442faa55be62a49" }
+      ]
+    },
+    {
       "id": "super-mario-world",
       "title": "Super Mario World",
       "system": "snes",
