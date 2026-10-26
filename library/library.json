@@ -1506,6 +1506,20 @@
       ]
     },
     {
+      "id": "mario-golf",
+      "title": "Mario Golf",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Forget buying expensive golf gear--Mario brings the game to you. Mario Golf features four complete 18-hole courses, 11 golfers, and precise play control. Create your own golfer and build up his or her experience and skill levels by competing in various tournaments and...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-golf.png",
+      "video": "library/video/mario-golf.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Golf (USA)", "name": "mario-golf.zip", "size": 33560066, "sha256": "4b21e973cbb5dd895593b092c6855ed348a90d747b9fd369b421b01de3d9324b", "url": "private:mario-golf__mario-golf.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mario-golf-usa",
       "title": "Mario Golf (USA)",
       "system": "n64",
