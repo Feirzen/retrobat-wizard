@@ -528,6 +528,18 @@
       ]
     },
     {
+      "id": "yoshi-s-new-island",
+      "title": "Yoshi's New Island",
+      "system": "3ds",
+      "players": "1",
+      "description": "Yoshi and Baby Mario are back in Yoshi's New Island, the third installment in the beloved franchise. The series' fun game-play mechanics such as Yoshi's Flutter Jump, Ground Pound and Egg Throw return, but now Yoshi knows a ton of new tricks too. Yoshi gets to bash and thrash...",
+      "added": "2026-10-26",
+      "art": "library/art/yoshi-s-new-island.png",
+      "files": [
+        { "name": "Yoshi's New Island (USA) (En,Fr,Es).cci", "url": "private:yoshi-s-new-island__Yoshi.s.New.Island.USA.En.Fr.Es.cci", "size": 536870912, "sha256": "b78fa6da0dc0ae7e3ac59dea8a9f3a0578ebae4ccc0f93019ef6dfda495cde59" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
