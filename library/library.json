@@ -1368,6 +1368,19 @@
       ]
     },
     {
+      "id": "harvest-moon-64-usa",
+      "title": "Harvest Moon 64 (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/harvest-moon-64-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Harvest Moon 64 (USA)", "name": "harvest-moon-64-usa.zip", "size": 16780305, "sha256": "fecc9ce29684471488364acb34e46e160de2024d77e5672abfb44053711228e0", "url": "private:harvest-moon-64-usa__harvest-moon-64-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "kirby-64-the-crystal-shards",
       "title": "Kirby 64 : The Crystal Shards",
       "system": "n64",
