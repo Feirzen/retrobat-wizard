@@ -1536,6 +1536,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "pokemon-puzzle-league-usa",
+      "title": "Pokemon Puzzle League (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/pokemon-puzzle-league-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Pokemon Puzzle League (USA)", "name": "pokemon-puzzle-league-usa.zip", "size": 33560099, "sha256": "ba32f615fbaf0cd86b1cdf3cd56c54a4dbcddbdb654c83a7db4e78e64afc5228", "url": "private:pokemon-puzzle-league-usa__pokemon-puzzle-league-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "pok-mon-snap",
       "title": "Pokmon Snap",
       "system": "n64",
