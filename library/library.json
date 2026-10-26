@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "bomberman-ii",
+      "title": "Bomberman II",
+      "system": "nes",
+      "players": "1-3",
+      "description": "Our hero Bomberman Shiro was walking down the street one day when he witnessed a robbery. It was Bomberman Kuro who was the robber. But Kuro knocked Shiro to the ground, and then left the money so that he would be framed. Now Shiro has been taken to jail and must fight his way...",
+      "added": "2026-10-26",
+      "art": "library/art/bomberman-ii.png",
+      "video": "library/video/bomberman-ii.mp4",
+      "files": [
+        { "name": "Bomberman II (USA).nes", "url": "private:bomberman-ii__Bomberman.II.USA.nes", "size": 131088, "sha256": "637e4ca30e929858c34b20b8538d081b6261feede8273d2d7df3790983f93a7d" }
+      ]
+    },
+    {
       "id": "bubble-bobble",
       "title": "Bubble Bobble",
       "system": "nes",
