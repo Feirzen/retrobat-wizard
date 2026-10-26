@@ -2201,6 +2201,19 @@
       ]
     },
     {
+      "id": "mega-man-x2",
+      "title": "Mega Man X2",
+      "system": "snes",
+      "players": "1",
+      "description": "Sigma, the leader of the Maverick army, was destroyed when he underestimated his opponent: a lone warrior, awakened into a time he never knew...X. 6 months had passed, and X rose to the rank of leader of the Maverick Hunters. His first task was to eliminate the last of the...",
+      "added": "2026-10-26",
+      "art": "library/art/mega-man-x2.png",
+      "video": "library/video/mega-man-x2.mp4",
+      "files": [
+        { "name": "Mega Man X2 (USA).sfc", "url": "private:mega-man-x2__Mega.Man.X2.USA.sfc", "size": 1572864, "sha256": "f3246755f608a1e1dc9c848b61da3b824c7853b29b3be40df6fc7f2793a887ed" }
+      ]
+    },
+    {
       "id": "mega-man-x3",
       "title": "Mega Man X3",
       "system": "snes",
