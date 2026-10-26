@@ -1731,6 +1731,19 @@
       ]
     },
     {
+      "id": "wwf-no-mercy-usa-rev-1",
+      "title": "WWF No Mercy (USA) (Rev 1)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/wwf-no-mercy-usa-rev-1.png",
+      "files": [
+      ],
+      "bundle": { "folder": "WWF No Mercy (USA) (Rev 1)", "name": "wwf-no-mercy-usa-rev-1.zip", "size": 33560096, "sha256": "7748d1c995bbad11aa6b9f967c638be357e9558c6181411c1f39631fc3cbd00c", "url": "private:wwf-no-mercy-usa-rev-1__wwf-no-mercy-usa-rev-1.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "yoshi-s-story",
       "title": "Yoshi's Story",
       "system": "n64",
