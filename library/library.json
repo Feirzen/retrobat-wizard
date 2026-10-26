@@ -1394,6 +1394,18 @@
       ]
     },
     {
+      "id": "mario-golf-usa",
+      "title": "Mario Golf (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Golf (USA)", "name": "mario-golf-usa.zip", "size": 33560066, "sha256": "abbd176347986ad7f7bd5ae04f4992941336cd14b4abed426e6b01202dcb28a0", "url": "private:mario-golf-usa__mario-golf-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mario-kart-64",
       "title": "Mario Kart 64",
       "system": "n64",
