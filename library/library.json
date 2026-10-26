@@ -568,6 +568,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "jet-set-radio",
+      "title": "Jet Set Radio",
+      "system": "dreamcast",
+      "players": "1",
+      "description": "The government is trying to curb the activities of young people in Tokyo-To ... Equipped with super fast rollerblades, it is not easy to get your hands on them! The music of Professor K, DJ of the pirate radio station Jet Set Radio, brings these young people together and...",
+      "added": "2026-10-26",
+      "art": "library/art/jet-set-radio.jpg",
+      "video": "library/video/jet-set-radio.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Jet Set Radio (Europe) (En,Fr,De,Es)", "name": "jet-set-radio.zip", "size": 1216370643, "sha256": "2c31b3fcc82b244eaccee550870f09b83f3451439a5e4a6db0bebd64a5bd5585", "url": "private:jet-set-radio__jet-set-radio.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
