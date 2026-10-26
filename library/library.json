@@ -2443,6 +2443,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "crash-bandicoot-warped",
+      "title": "Crash Bandicoot : Warped",
+      "system": "psx",
+      "players": "1",
+      "description": "After defeating Dr. Neo Cortex, Crash and his sister, Coco, take a well-deserved vacation. However, their friend, Aku Aku, has a bad feeling, and as usual, he is right. Aku's evil twin, Uka Uka, was the person behind all of Dr. Cortex's schemes. Now Uka and Cortex have hatched a...",
+      "added": "2026-10-26",
+      "art": "library/art/crash-bandicoot-warped.png",
+      "video": "library/video/crash-bandicoot-warped.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Crash Bandicoot - Warped (USA)", "name": "crash-bandicoot-warped.zip", "size": 285174534, "sha256": "9fcb94864c0e10922194194678c9f1b1da11fd289edc6bd5c6cceee4533ed1e9", "url": "private:crash-bandicoot-warped__crash-bandicoot-warped.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
