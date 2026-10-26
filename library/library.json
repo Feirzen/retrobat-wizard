@@ -1217,8 +1217,9 @@
       "system": "n64",
       "players": "1",
       "description": "Banjo-Kazooie's fairy tale back story is reminiscent of Snow White's. A gnarled, ugly witch named Gruntilda asks her magical cauldron who is the fairest of them all. Of course, the pot's answer doesn't please the hag-- he singles out Banjo's sister, Tooty. When Tooty turns up...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/banjo-kazooie.png",
+      "video": "library/video/banjo-kazooie.mp4",
       "files": [
         { "name": "Banjo-Kazooie (USA) (Rev 1).zip", "url": "private:banjo-kazooie__Banjo-Kazooie.USA.Rev.1.zip", "size": 16322179, "sha256": "d68245096b84890629040761ac03e16563831f66210faff72e7e1acbab8ecce0" }
       ]
