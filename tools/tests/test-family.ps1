@@ -57,6 +57,10 @@ $t = [System.IO.File]::ReadAllText($gl)
 Check 'off: cod shown' ($t -notmatch '(?s)Black Ops II</name>\s*<hidden>' -and $r.Shown -eq 1)
 Check 'off: yoshi (hidden by hand) left hidden' ($t -match "(?s)Woolly World</name>\s*<hidden>true</hidden>")
 Check 'off: record gone' (-not (Test-Path "$Ws/Settings/family-hidden.txt"))
+$names = @(Get-FfDriveGameNames $Root)
+Check 'search: names from the game lists, decoded' (@($names.Name) -contains "Yoshi's Woolly World" -and @($names.Name) -contains 'Call of Duty: Black Ops II')
+Check 'search: console kept with each name' (@($names | Where-Object { $_.Name -eq 'Mario Kart 8' })[0].Console -eq 'wiiu')
+Check 'search: no roms folder, empty list' (@(Get-FfDriveGameNames (Join-Path $Base 'nowhere')).Count -eq 0)
 Remove-Item $Base -Recurse -Force
 Write-Host ("family filter tests: {0} passed, {1} failed" -f $pass, $fail)
 if ($fail -gt 0) { exit 1 }

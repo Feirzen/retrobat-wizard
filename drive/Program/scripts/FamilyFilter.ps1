@@ -184,6 +184,28 @@ function Set-FfShowHiddenOff([string]$Root) {
     return $true
 }
 
+# Every game name RetroBat shows on this setup (each console's gamelist.xml),
+# for the family list's search box (3.2, Steven's flag: "search the games
+# instead of typing the name"). Returns @(@{ Name; Console }) sorted by name.
+function Get-FfDriveGameNames([string]$Root) {
+    $out = @{}
+    $roms = Join-FfPath $Root 'roms'
+    if (-not (Test-Path -LiteralPath $roms)) { return @() }
+    $rx = New-Object System.Text.RegularExpressions.Regex('<game\b[^>]*>.*?<name>(.*?)</name>', 'Singleline')
+    foreach ($d in @(Get-ChildItem -LiteralPath $roms -Directory -ErrorAction SilentlyContinue)) {
+        $gl = Join-Path $d.FullName 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        try { $t = [System.IO.File]::ReadAllText($gl) } catch { continue }
+        foreach ($m in $rx.Matches($t)) {
+            $n = [System.Net.WebUtility]::HtmlDecode($m.Groups[1].Value).Trim()
+            if ($n -eq '') { continue }
+            $k = $n.ToLower() + '|' + $d.Name.ToLower()
+            if (-not $out.ContainsKey($k)) { $out[$k] = [pscustomobject]@{ Name = $n; Console = $d.Name } }
+        }
+    }
+    return @($out.Values | Sort-Object Name, Console)
+}
+
 # Adds a name to this setup's own list (family-hide.txt). $Allow: let it
 # through instead.
 function Add-FfName([string]$Ws, [string]$Name, [bool]$Allow = $false) {

@@ -1950,7 +1950,7 @@ function Start-SetupFlow {
     #  rather than what might.
     $work = New-Object System.Collections.ArrayList
     [void]$work.Add(@('script', 'Restore-ProtectedFiles.ps1', 'putting protected files back'))
-    [void]$work.Add(@('script', 'Fix-Portability.ps1',        'fixing drive letters'))
+    [void]$work.Add(@('script', 'Fix-Portability.ps1',        'pointing settings at this setup'))
     [void]$work.Add(@('script', 'Apply-Settings.ps1',         'applying your settings'))
     [void]$work.Add(@('script', 'Restore-CkauBookTheme.ps1',  'restoring theme collections'))
     [void]$work.Add(@('script', 'Decompress-3DS.ps1',         'checking for new 3DS games'))
@@ -1961,7 +1961,7 @@ function Start-SetupFlow {
     if ($doPlaces)          { [void]$work.Add(@('places', '', "putting this computer's buttons in place")) }
     if ($padChoice -ne '')  { [void]$work.Add(@('pad', $padChoice, 'setting up the controller shortcut')) }
     if ($script:shortcutsOk) {
-        [void]$work.Add(@('roots',  '', 'rebuilding the icons at the top of the drive'))
+        [void]$work.Add(@('roots',  '', 'rebuilding the buttons in the RetroBat folder'))
     }
     [void]$work.Add(@('health', '', 'checking everything over'))
 
@@ -5997,7 +5997,7 @@ function Render-PlaySummary($s) {
     $row = New-Object System.Windows.Controls.StackPanel
     $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Center'
     $gem = New-StatusLight $state '0,3,12,0'
-    $lab = New-Text 'Drive health' $ColText 14 $true
+    $lab = New-Text 'Health' $ColText 14 $true
     [void]$row.Children.Add($gem)
     [void]$row.Children.Add($lab)
     $t = New-Text $line $ColDim 14
@@ -6049,7 +6049,7 @@ function Add-HelpActions {
         $b.Add_Click({ Invoke-LocalSetup })
         [void]$row.Children.Add($b)
 
-        $t = New-Text 'Puts Play, this wizard and a Controllers button on this computer, with icons that stay put when the drive is unplugged.' $ColDim 13
+        $t = New-Text 'Puts Play, this wizard and a Controllers button on this computer, with icons copied onto the computer (so on a carry-about drive they stay put when it is unplugged).' $ColDim 13
         $t.Margin = '12,7,0,0'; $t.MaxWidth = 470; $t.TextWrapping = 'Wrap'
         [void]$row.Children.Add($t)
 
@@ -6131,7 +6131,7 @@ function Add-RenameAction {
     $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
 
     $b = New-Object System.Windows.Controls.Button
-    $b.Content = 'Rename the button at the top of the drive'
+    $b.Content = 'Rename the button in the RetroBat folder'
     $b.Padding = '10,3'; $b.FontSize = 13; $b.VerticalAlignment = 'Top'   # Top: the row would otherwise stretch it to the height of the text beside it
     $b.Add_Click({
         if (Test-RetroBatRunning) {
@@ -6140,7 +6140,7 @@ function Add-RenameAction {
         }
         $code = Invoke-Step 'Rename-WizardButton.ps1' 'renaming the wizard button'
         if ($code -eq 0) {
-            [void](Show-Choice $WizardName ("Done.`n`nThe button at the top of the drive now matches the name in _Wizard\Settings\wizard.ini. The old one was moved into _Wizard\Cache\Trash - nothing was deleted.") @('OK'))
+            [void](Show-Choice $WizardName ("Done.`n`nThe button in the RetroBat folder now matches the name in _Wizard\Settings\wizard.ini. The old one was moved into _Wizard\Cache\Trash - nothing was deleted.") @('OK'))
         }
         else {
             [void](Show-Choice $WizardName ("That did not finish, and nothing was left half-done.`n`nThe details are in wizard.log.") @('OK'))
@@ -6168,10 +6168,10 @@ function Invoke-LocalSetup {
     $already = ($current.Count -gt 0)
 
     if ($already) {
-        $msg = "Where should this computer's buttons be?`n`nSaving also points them at wherever the drive is plugged in right now, which is what fixes them after the drive changes letter."
+        $msg = "Where should this computer's buttons be?`n`nSaving also points them at wherever this setup is right now, which is what fixes them after a carry-about drive changes letter."
     }
     else {
-        $msg = "Add Play, this wizard and a Controllers button to this computer?`n`nThe icons are copied onto the computer so they stay put when the drive is unplugged. Nothing at all is written to the drive."
+        $msg = "Add Play, this wizard and a Controllers button to this computer?`n`nThe icons are copied onto the computer, so on a carry-about drive they stay put when it is unplugged."
     }
 
     $ans = Show-PlaceToggles $WizardName $msg $current
@@ -9405,6 +9405,146 @@ function Render-Help {
 }
 
 
+# MISSING GAMES (3.2, Steven's flag): games on this setup that RetroBat is
+# not showing, each with the reason and a fix where one is safe. Looked for
+# only when asked (it walks every console folder). scripts\MissingGames.ps1.
+function Add-MissingGamesCard {
+    if (-not (Test-Path -LiteralPath (Join-Path $ScriptsDir 'MissingGames.ps1'))) { return }
+    $card = New-Object System.Windows.Controls.Border
+    $card.Background = (New-Brush $ColPanel); $card.CornerRadius = '6'; $card.Padding = '14,10'; $card.Margin = '0,0,0,10'
+    $inner = New-Object System.Windows.Controls.StackPanel
+    [void]$inner.Children.Add((New-Text 'Missing games' $ColText 14 $true))
+    $t = New-Text 'A game that is on this setup but not in RetroBat: in the wrong console folder, a file type that console does not read, or hidden. This looks through every console folder and says why, with a fix where one is safe.' $ColDim 13
+    $t.Margin = '0,3,0,0'; $t.TextWrapping = 'Wrap'
+    [void]$inner.Children.Add($t)
+    $b = New-Object System.Windows.Controls.Button
+    $b.Content = 'Look for missing games'; $b.Padding = '12,5'; $b.FontSize = 13; $b.Margin = '0,8,0,2'; $b.HorizontalAlignment = 'Left'
+    $b.Add_Click({ Invoke-MissingGames })
+    [void]$inner.Children.Add($b)
+    $card.Child = $inner
+    [void]$script:healthPanel.Children.Add($card)
+}
+
+function Invoke-MissingGames {
+    $r = Invoke-EngineWork 'looking for missing games' @('GameLibrary.ps1', 'MissingGames.ps1') 'Find-MissingGames $args[0] $args[1]' @($Root, $Ws)
+    if ($null -eq $r) { [void](Show-Choice $WizardName 'That did not finish. Details are in wizard.log.' @('OK')); return }
+    Log ("missing games: {0}" -f $r.Message)
+    if (@($r.Items).Count -eq 0) { [void](Show-Choice $WizardName ([string]$r.Message) @('OK')); return }
+    Show-MissingGames $r
+}
+
+function Show-MissingGames($Found) {
+    Close-Splash
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 760; $w.Height = 600
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+    $hd = New-Text ([string]$Found.Message + ' Fixes move a file into the right console folder or show a hidden game again; nothing is ever deleted or replaced. Close RetroBat before fixing.') $ColText 14
+    $hd.Margin = '0,0,0,10'; $hd.TextWrapping = 'Wrap'
+    [System.Windows.Controls.DockPanel]::SetDock($hd, 'Top'); [void]$dp.Children.Add($hd)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($row, 'Bottom')
+    $script:mgWin = $w; $script:mgRows = @()
+    $fixable = @($Found.Items | Where-Object { [string]$_.Fix -ne '' })
+    if ($fixable.Count -gt 1) {
+        $fa = New-Object System.Windows.Controls.Button; $fa.Content = ('Fix all {0}' -f $fixable.Count); $fa.Padding = '16,7'; $fa.FontSize = 14; $fa.Margin = '0,0,8,0'
+        $fa.Add_Click({
+            if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it completely first: it rewrites its game lists when it exits.' @('OK')); return }
+            foreach ($rw in @($script:mgRows)) { if ($rw.Button.IsEnabled) { Invoke-MissingFix $rw } }
+        })
+        [void]$row.Children.Add($fa)
+    }
+    $cl = New-Object System.Windows.Controls.Button; $cl.Content = 'Close'; $cl.Padding = '16,7'; $cl.FontSize = 14
+    $cl.Add_Click({ $script:mgWin.Close() })
+    [void]$row.Children.Add($cl)
+    [void]$dp.Children.Add($row)
+    $list = New-Object System.Windows.Controls.StackPanel
+    foreach ($it in @($Found.Items)) {
+        $bd = New-Object System.Windows.Controls.Border; $bd.Background = (New-Brush $ColPanel); $bd.CornerRadius = '6'; $bd.Padding = '12,8'; $bd.Margin = '0,0,0,6'
+        $rp = New-Object System.Windows.Controls.DockPanel
+        $info = New-Object System.Windows.Controls.StackPanel
+        [void]$info.Children.Add((New-Text ('roms\' + [string]$it.Show) $ColText 13 $true))
+        $why = New-Text ([string]$it.Reason) $ColDim 12; $why.TextWrapping = 'Wrap'
+        [void]$info.Children.Add($why)
+        $fb = $null
+        if ([string]$it.Fix -ne '') {
+            $fb = New-Object System.Windows.Controls.Button; $fb.Padding = '10,3'; $fb.FontSize = 12; $fb.VerticalAlignment = 'Center'; $fb.Margin = '10,0,0,0'
+            $fb.Content = $(if ($it.Fix -eq 'move') { 'Move to ' + [string]$it.To } else { 'Show it again' })
+            [System.Windows.Controls.DockPanel]::SetDock($fb, 'Right'); [void]$rp.Children.Add($fb)
+        }
+        [void]$rp.Children.Add($info)
+        $bd.Child = $rp
+        [void]$list.Children.Add($bd)
+        if ($null -ne $fb) {
+            $rw = [pscustomobject]@{ Item = $it; Button = $fb; Why = $why }
+            $fb.Tag = $rw
+            $fb.Add_Click({ param($s2, $e2) Invoke-MissingFix $s2.Tag })
+            $script:mgRows += $rw
+        }
+    }
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'; $sv.Content = $list
+    [void]$dp.Children.Add($sv)
+    $w.Content = $dp
+    [void]$w.ShowDialog()
+}
+
+function Invoke-MissingFix($Row) {
+    if (Test-RetroBatRunning) { [void](Show-Choice $WizardName 'RetroBat is open. Close it completely first: it rewrites its game lists when it exits.' @('OK')); return }
+    if (-not (Get-Command Repair-MissingGame -ErrorAction SilentlyContinue)) { . (Join-Path $ScriptsDir 'GameLibrary.ps1'); . (Join-Path $ScriptsDir 'MissingGames.ps1') }
+    $r = Repair-MissingGame $Row.Item
+    Log ("missing games: fix {0} '{1}' - {2}" -f $Row.Item.Fix, $Row.Item.Show, $r.Message)
+    $Row.Why.Text = [string]$r.Message
+    $Row.Why.Foreground = (New-Brush $(if ($r.Ok) { $ColOnline } else { $ColAway }))
+    if ($r.Ok) { $Row.Button.IsEnabled = $false }
+}
+
+# Breath of the Wild's own lines in Settings\game-settings.ini (3.2): Vulkan
+# (video_renderer 1) and Cemu's async shaders (async_texture 1), under each
+# BotW file found in roms\wiiu. Only adds what is missing, never inside the
+# block PLAY writes. Returns how many lines were added.
+function Set-BotwGameSettings {
+    $added = 0
+    try {
+        $wiiu = Join-Path (Join-Path $Root 'roms') 'wiiu'
+        $gsPath = Join-Path (Join-Path $Ws 'Settings') 'game-settings.ini'
+        if (-not (Test-Path -LiteralPath $wiiu) -or -not (Test-Path -LiteralPath $gsPath)) { return 0 }
+        $names = @()
+        foreach ($f in @(Get-ChildItem -LiteralPath $wiiu -File -ErrorAction SilentlyContinue)) {
+            if ($f.Name -match 'Breath of the Wild' -and $f.Extension -match '^\.(wux|wud|wua|iso|rpx)$') { $names += $f.Name }
+        }
+        foreach ($d in @(Get-ChildItem -LiteralPath $wiiu -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'Breath of the Wild' })) {
+            foreach ($r in @(Get-ChildItem -LiteralPath $d.FullName -Recurse -File -Filter '*.rpx' -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+                $names += ($r.FullName.Substring($wiiu.TrimEnd('\', '/').Length + 1) -replace '\\', '/')
+            }
+        }
+        if ($names.Count -eq 0) { return 0 }
+        $t = [System.IO.File]::ReadAllText($gsPath)
+        $nl = $(if ($t.Contains("`r`n")) { "`r`n" } else { "`n" })
+        $new = @()
+        foreach ($n in $names) {
+            foreach ($kv in @(@('video_renderer', '1'), @('async_texture', '1'))) {
+                $k = ('wiiu[{0}].{1}' -f $n, $kv[0])
+                if ($t -notmatch ('(?m)^\s*' + [regex]::Escape($k) + '\s*=')) { $new += ($k + ' = ' + $kv[1]) }
+            }
+        }
+        if ($new.Count -eq 0) { return 0 }
+        $add = '; Breath of the Wild: Vulkan and async shaders (the Set up Breath of the Wild button)' + $nl + (($new | ForEach-Object { $_ + $nl }) -join '')
+        $at = $t.IndexOf('; === BEGIN: written by PLAY')
+        if ($at -ge 0) { $t = $t.Substring(0, $at) + $add + $t.Substring($at) }
+        elseif ($t -match '(?m)^\[game-settings\]') { $t = $t.TrimEnd() + $nl + $add }
+        else { $t = $t.TrimEnd() + $nl + $nl + '[game-settings]' + $nl + $add }
+        $arch = Join-Path (Join-Path $Ws 'Backups') 'Archive'
+        if (-not (Test-Path -LiteralPath $arch)) { [void](New-Item -ItemType Directory -Path $arch -Force) }
+        Copy-Item -LiteralPath $gsPath -Destination (Join-Path $arch ('game-settings_botw_{0}.ini' -f (Get-Date -Format 'yyyy-MM-dd_HHmmss'))) -Force
+        [System.IO.File]::WriteAllText($gsPath, $t)
+        $added = $new.Count
+        Log ("botw: {0} line(s) added to game-settings.ini: {1}" -f $added, ($new -join ' | '))
+    }
+    catch { Log ("botw: game settings not written - {0}" -f $_.Exception.Message) }
+    return $added
+}
+
 function Render-Status {
     $s = $script:uiStatus
     $script:lightsPanel.Children.Clear()
@@ -9457,6 +9597,7 @@ function Render-Status {
         $card.Child = $inner
         [void]$script:healthPanel.Children.Add($card)
     }
+    Add-MissingGamesCard
     $foot = "$($s.machine)"
     if ($s.profile) { $foot += "  |  $($s.profile)" }
     if ($s.tier)    { $foot += "  |  $(([string]$s.tier).ToUpper()) tier" }
@@ -10622,14 +10763,71 @@ function Update-KeyLayoutList {
 
 # -EditKeys: just the editor for one game, then the wizard closes.
 function Invoke-FamilyAdd([bool]$Allow) {
-    $q = $(if ($Allow) { 'The name of the game to let through (it shows even with family-friendly on):' } else { 'The name of the game to hide (as it shows in RetroBat, or its file name). End it with * to hide a whole series:' })
-    $n = ([string](Show-TextInput $WizardName $q '')).Trim()
+    $q = $(if ($Allow) { 'Search for the game to let through (it shows even with family-friendly on). Pick it from the list, or type any name and add it anyway:' } else { 'Search for the game to hide. Pick it from the list, or type any name and add it anyway (a game not on this setup yet counts too). End it with * to hide a whole series:' })
+    $n = ([string](Show-FamilyPick $q $Allow)).Trim()
     if ($n -eq '') { return }
     try {
         Add-FfName $Ws $n $Allow
         Log ("family filter: {0} '{1}'" -f $(if ($Allow) { 'let through' } else { 'hide' }), $n)
         [void](Show-Choice $WizardName ("Added. {0}" -f $(if (Test-FamilyOn) { 'RetroBat follows it from the next PLAY.' } else { 'It counts once family-friendly is switched on (Features page).' })) @('OK'))
     } catch { [void](Show-Choice $WizardName ('That could not be saved: ' + $_.Exception.Message) @('OK')) }
+}
+
+# The family list's search box (3.2): type, the games on this setup that
+# match show underneath, click one to use its exact name, or add what was
+# typed anyway. Returns the name, or '' for Cancel.
+function Show-FamilyPick([string]$Message, [bool]$Allow) {
+    Close-Splash
+    $script:fpAll = @()
+    try { $script:fpAll = @(Get-FfDriveGameNames $Root) } catch { Log ('family search: ' + $_.Exception.Message) }
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = $WizardName; $w.Width = 520; $w.Height = 520
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg); $w.Topmost = $true
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '20'
+    $msg = New-Text $Message $ColText 14; $msg.Margin = '0,0,0,10'
+    [System.Windows.Controls.DockPanel]::SetDock($msg, 'Top'); [void]$dp.Children.Add($msg)
+    $script:fpBox = New-Object System.Windows.Controls.TextBox; $script:fpBox.FontSize = 15; $script:fpBox.Padding = '6,4'
+    [System.Windows.Controls.DockPanel]::SetDock($script:fpBox, 'Top'); [void]$dp.Children.Add($script:fpBox)
+    $row = New-Object System.Windows.Controls.StackPanel; $row.Orientation = 'Horizontal'; $row.HorizontalAlignment = 'Right'; $row.Margin = '0,12,0,0'
+    [System.Windows.Controls.DockPanel]::SetDock($row, 'Bottom')
+    $script:fpResult = ''; $script:fpWin = $w
+    $cn = New-Object System.Windows.Controls.Button; $cn.Content = 'Cancel'; $cn.Padding = '16,7'; $cn.FontSize = 14
+    $cn.Add_Click({ $script:fpWin.Close() })
+    $script:fpGo = New-Object System.Windows.Controls.Button; $script:fpGo.Content = $(if ($Allow) { 'Let it through' } else { 'Hide it' }); $script:fpGo.Padding = '16,7'; $script:fpGo.FontSize = 14; $script:fpGo.Margin = '8,0,0,0'
+    $script:fpGo.IsEnabled = $false
+    $script:fpGo.Add_Click({ $script:fpResult = [string]$script:fpBox.Text; $script:fpWin.Close() })
+    [void]$row.Children.Add($cn); [void]$row.Children.Add($script:fpGo)
+    [void]$dp.Children.Add($row)
+    $script:fpHint = New-Text '' $ColDim 12; $script:fpHint.Margin = '0,8,0,4'
+    [System.Windows.Controls.DockPanel]::SetDock($script:fpHint, 'Top'); [void]$dp.Children.Add($script:fpHint)
+    $script:fpList = New-Object System.Windows.Controls.ListBox; $script:fpList.FontSize = 14
+    $script:fpList.Background = (New-Brush $ColPanel); $script:fpList.Foreground = (New-Brush $ColText); $script:fpList.BorderThickness = '0'
+    $script:fpList.Add_SelectionChanged({ $it = $script:fpList.SelectedItem; if ($null -ne $it) { $script:fpBox.Text = [string]$it.Tag; $script:fpBox.CaretIndex = $script:fpBox.Text.Length } })
+    $script:fpList.Add_MouseDoubleClick({ if ($null -ne $script:fpList.SelectedItem) { $script:fpResult = [string]$script:fpBox.Text; $script:fpWin.Close() } })
+    [void]$dp.Children.Add($script:fpList)
+    $script:fpBox.Add_TextChanged({
+        $t = ([string]$script:fpBox.Text).Trim()
+        $script:fpGo.IsEnabled = ($t -ne '')
+        $sel = $script:fpList.SelectedItem
+        if ($null -ne $sel -and [string]$sel.Tag -eq $t) { return }   # just picked from the list
+        $script:fpList.Items.Clear()
+        if ($t.Length -lt 2) { $script:fpHint.Text = $(if ($script:fpAll.Count -gt 0) { ('Type at least 2 letters to search {0} games.' -f $script:fpAll.Count) } else { 'No game lists found on this setup: type the name.' }); return }
+        $q = $t.TrimEnd('*').ToLower()
+        $hits = @($script:fpAll | Where-Object { $_.Name.ToLower().Contains($q) } | Select-Object -First 60)
+        foreach ($h in $hits) {
+            $li = New-Object System.Windows.Controls.ListBoxItem
+            $li.Content = ('{0}   ({1})' -f $h.Name, $h.Console); $li.Tag = $h.Name; $li.Padding = '6,3'
+            [void]$script:fpList.Items.Add($li)
+        }
+        $script:fpHint.Text = $(if ($hits.Count -eq 0) { 'No game on this setup matches. You can still add the name as typed.' } elseif ($hits.Count -ge 60) { 'Showing the first 60. Type more to narrow it down.' } else { 'Click one to use its exact name, or add what you typed.' })
+    })
+    $script:fpBox.Text = ''
+    $script:fpHint.Text = $(if ($script:fpAll.Count -gt 0) { ('Type at least 2 letters to search {0} games.' -f $script:fpAll.Count) } else { 'No game lists found on this setup: type the name.' })
+    $w.Content = $dp
+    $w.Add_ContentRendered({ $script:fpBox.Focus() })
+    [void]$w.ShowDialog()
+    return $script:fpResult
 }
 
 function Open-FamilyList {
@@ -11181,7 +11379,7 @@ function Build-AdvancedEditor {
         $bh = New-Text 'Breath of the Wild, on a slower computer' $ColText 15 $true
         $bh.Margin = '0,0,0,4'
         [void]$panel.Children.Add($bh)
-        [void]$panel.Children.Add((New-Text 'Switches on the graphic packs that are already in this setup for it: 720p, lighter shadows, and the two Nvidia smoke and cloud fixes. It only ever adds packs, it backs up Cemu''s settings first, and it is safe to press twice. Close RetroBat first.' $ColDim 13))
+        [void]$panel.Children.Add((New-Text 'Switches on the graphic packs that are already in this setup for it (720p, lighter shadows, and the two Nvidia smoke and cloud fixes), and sets the game itself to Vulkan with background shader building, the two settings that help it most. It only ever adds packs, it backs up Cemu''s settings first, and it is safe to press twice. Close RetroBat first.' $ColDim 13))
         $bwhy = New-Text 'This is NOT the same thing as "One game at a time" further down, and it cannot be folded into it. Everything down there is a RetroBat setting. These are Cemu''s own graphic packs, which RetroBat has no setting for at all - including the resolution, which is the one that actually matters on a Wii U game. So this button has to stay.' $ColDim 12
         $bwhy.Margin = '0,6,0,0'; $bwhy.TextWrapping = 'Wrap'; $bwhy.MaxWidth = 560
         [void]$panel.Children.Add($bwhy)
@@ -11195,8 +11393,12 @@ function Build-AdvancedEditor {
                 return
             }
             $code = Invoke-Step 'Apply-GraphicPacks.ps1' 'Cemu graphic packs' @{ Quiet = $true }
+            # (3.2) Vulkan and async shaders for the game itself, whatever
+            # the console is set to (Steven's flag), then applied.
+            $bw = Set-BotwGameSettings
+            if ($bw -gt 0) { [void](Invoke-Step 'Apply-Settings.ps1' 'applying the Breath of the Wild settings') }
             if ($code -eq 0) {
-                [void](Show-Choice $WizardName ("Done.`n`nIf the game still struggles, drop this computer to LOW at the top of this tab. Exactly what changed is in wizard.log, and Cemu's old settings file is in _Wizard\Backups\Archive.") @('OK'))
+                [void](Show-Choice $WizardName ("Done: graphic packs, plus Vulkan and background shader building for the game.`n`nIf the game still struggles, drop this computer to LOW at the top of this tab. Exactly what changed is in wizard.log, and Cemu's old settings file is in _Wizard\Backups\Archive.") @('OK'))
             }
             else {
                 [void](Show-Choice $WizardName ("That did not finish, and nothing was left half-done.`n`nThe usual reason is that Cemu or RetroBat is still open. The details are in wizard.log.") @('OK'))
