@@ -1866,8 +1866,9 @@
       "system": "nes",
       "players": "1-2",
       "description": "Bowser is back, and along with the Bowser kids, he's out to spoil Mario's day once again. This time, along with nabbing the Princess, the Bowser crew have also taken the magic wands from the Kings of each land and turned them into creatures. It's up to Mario and Luigi to get...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/super-mario-bros-3.png",
+      "video": "library/video/super-mario-bros-3.mp4",
       "files": [
         { "name": "Super Mario Bros. 3 (USA) (Rev 1).nes", "url": "private:super-mario-bros-3__Super.Mario.Bros.3.USA.Rev.1.nes", "size": 393232, "sha256": "1ddc4b429490e298c05fa70389034107c0cb50f671c7c1baaa3f228224afc2e9" }
       ]
