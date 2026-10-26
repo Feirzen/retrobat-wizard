@@ -211,6 +211,22 @@
       ]
     },
     {
+      "id": "monster-hunter-4-ultimate",
+      "title": "Monster Hunter 4 Ultimate",
+      "system": "3ds",
+      "players": "1",
+      "description": "Monster Hunter 4 Ultimate (called Monster Hunter 4G in Japan) is the newest installment in the popular Monster Hunter series, which has sold more than 28 million units worldwide to date. In Monster Hunter 4 Ultimate, players will take on the role of a hunter that joins up with a...",
+      "added": "2026-10-26",
+      "art": "library/art/monster-hunter-4-ultimate.png",
+      "files": [
+      ],
+      "parts": { "name": "Monster Hunter 4 Ultimate (USA).cci", "size": 4294967296, "sha256": "e046b44b1be3042d28df4547f436bf62d7362f8f7d452ec2581574babb893a6d", "pieces": [
+        { "name": "Monster Hunter 4 Ultimate (USA).cci.part01", "url": "private:monster-hunter-4-ultimate__Monster.Hunter.4.Ultimate.USA.cci.part01", "size": 1992294400, "sha256": "c1aa7bd5f1267c71124b8db1706d4709b6187ef023921e6bc294caa4cbd82fcf" },
+        { "name": "Monster Hunter 4 Ultimate (USA).cci.part02", "url": "private:monster-hunter-4-ultimate__Monster.Hunter.4.Ultimate.USA.cci.part02", "size": 1992294400, "sha256": "8cf7e04aafb2fa5f5a48a342ffed6bfb0f3972e9066e95856ed2f0e5d2ddf1d7" },
+        { "name": "Monster Hunter 4 Ultimate (USA).cci.part03", "url": "private:monster-hunter-4-ultimate__Monster.Hunter.4.Ultimate.USA.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
