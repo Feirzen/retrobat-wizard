@@ -2625,6 +2625,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "medal-of-honor",
+      "title": "Medal of Honor",
+      "system": "psx",
+      "players": "1-2",
+      "description": "FIGHT WWII FOR THE FIRST TIME Tomorrow is D-Day. Tonight you land behind enemy lines. The tide of the war is in your hands. Your are an elite Special Forces agent sent to execute covert operations, search and rescue missions, and commando raids. Fight to win the Medal of Honor...",
+      "added": "2026-10-26",
+      "art": "library/art/medal-of-honor.png",
+      "video": "library/video/medal-of-honor.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Medal of Honor (USA)", "name": "medal-of-honor.zip", "size": 742724768, "sha256": "35630a6d4313b687b9b58d50151a0fe97b5c4be8a173d0024fac0e0ac16dd7e8", "url": "private:medal-of-honor__medal-of-honor.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
