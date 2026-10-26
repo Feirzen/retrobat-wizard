@@ -4296,8 +4296,9 @@
       "system": "xbox",
       "players": "1-10",
       "description": "Set in an ancient world inspired by mythical China, Jade Empire lets you train under your master's watchful eye as you learn powerful martial arts and mystical powers. When danger threatens, you'll travel across the world, from the harsh mountains of the Land of Howling Spirits...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/jade-empire.png",
+      "video": "library/video/jade-empire.mp4",
       "files": [
       ],
       "parts": { "name": "Jade Empire (USA, Europe) (En,Es,It).xiso.iso", "size": 6587744256, "sha256": "51fc7edda275713172c1c998a664be9ecc9a2df2212e284363d5e705f31ae0eb", "pieces": [
