@@ -1842,8 +1842,9 @@
       "system": "nes",
       "players": "1",
       "description": "It's you against the evil Mother Brain in the thrilling battle of Metroid! You're inside the fortress planet Zebes. The planet of endless secret passageways where the Metroid are multiplying. Left alone the Metroid are harmless. But in the wrong hands they could destroy the...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/metroid.png",
+      "video": "library/video/metroid.mp4",
       "files": [
         { "name": "Metroid (USA).nes", "url": "private:metroid__Metroid.USA.nes", "size": 131088, "sha256": "88ad02b0b53012712f3c773a62073847551cec191aeda5d3ec19b22b594640eb" }
       ]
