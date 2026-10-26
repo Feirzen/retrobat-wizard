@@ -1825,6 +1825,19 @@
       ]
     },
     {
+      "id": "mega-man-3",
+      "title": "Mega Man 3",
+      "system": "nes",
+      "players": "1",
+      "description": "It's the robot revolt, and no one is safe! Mega Man is even less safe than anyone else. This time, our super-powered cybernetic friend is up against a horde of metal crazies who are sick and tired of obeying! Mega Man 3 is a traditional action-platformer: you jump from brick to...",
+      "added": "2026-10-26",
+      "art": "library/art/mega-man-3.png",
+      "video": "library/video/mega-man-3.mp4",
+      "files": [
+        { "name": "Mega Man 3 (USA).nes", "url": "private:mega-man-3__Mega.Man.3.USA.nes", "size": 393232, "sha256": "d50c957bd76c6af2c2684983e3f8d1a3904c38811cd8424a7dd1480f1d21caaa" }
+      ]
+    },
+    {
       "id": "mega-man-5",
       "title": "Mega Man 5",
       "system": "nes",
