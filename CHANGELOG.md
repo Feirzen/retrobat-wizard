@@ -2,6 +2,28 @@
 
 Newest first. Written for players: what you will notice.
 
+## 3.2.0 (2026-10-31) - the tidy house
+
+**The wizard's folder**
+- The wizard's folder is now RetroBat\_Wizard, sorted into eight rooms: Program, Settings, People, Backups, Buttons, Apps, Owner and Cache. START HERE.txt explains each one.
+- The move happens by itself the first time the wizard opens after the update. Every button, desktop icon and shortcut is pointed at the new place, and nothing is deleted.
+
+**Setting up**
+- The installer is a single file that runs straight from the zip, and finishes a setup that was cut off part way.
+- A new setup starts with the shared ScreenScraper login already filled in (admins: press Share the scraper login once on the Admin page).
+- Breath of the Wild gets Vulkan and background shader building on new setups; the Set up Breath of the Wild button adds them on older ones.
+- Setup and help no longer assume RetroBat is on an external drive.
+
+**Online library**
+- Add as many games as you like: they wait in a line and two download at a time. Move one up or take it out of the line.
+- Games made of several files (.cue with .bin tracks, .gdi, .m3u multi-disc) and whole-folder games (PS3, Wii U) can be shared now. They need wizard 3.2 to download.
+- Admins: add more games to the upload queue while it is already going, and A folder game publishes a game that is a folder.
+
+**Other**
+- Health page: Look for missing games finds games RetroBat is not showing (wrong console folder, a file type that console does not read, hidden) and fixes them where it is safe.
+- Family-friendly lists: search the games on this setup instead of typing the name.
+- The theme picker is back in the website's settings.
+
 ## 3.1.0 (2026-10-25) - the polish round
 
 **Setting up**

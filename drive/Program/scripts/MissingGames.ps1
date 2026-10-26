@@ -32,7 +32,7 @@ $script:MgSkipDirs = @('images', 'videos', 'manuals', 'media', 'downloaded_image
 # discs). RetroBat folds them into the game, so they are never "missing".
 function Get-MgReferenced([string]$Folder) {
     $ref = @{}
-    foreach ($f in @(Get-ChildItem -LiteralPath $Folder -Recurse -File -Include '*.cue', '*.gdi', '*.m3u', '*.ccd', '*.mds' -ErrorAction SilentlyContinue)) {
+    foreach ($f in @(Get-ChildItem -LiteralPath $Folder -Recurse -File -ErrorAction SilentlyContinue | Where-Object { @('.cue', '.gdi', '.m3u', '.ccd', '.mds') -contains $_.Extension.ToLower() })) {
         try {
             $gs = Get-LibGameSet $f.FullName $Folder
             foreach ($x in @($gs.Files | Select-Object -Skip 1)) { $ref[([string]$x.Path).ToLower()] = $true }
