@@ -3,6 +3,18 @@
   "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
   "games": [
     {
+      "id": "animal-crossing-new-leaf",
+      "title": "Animal Crossing : New Leaf",
+      "system": "3ds",
+      "players": "1",
+      "description": "Continuing the much-loved freeform gameplay from previous Animal Crossing titles, Animal Crossing: New Leaf is a game without any restrictions. There are no goals, no story, not even an ending  instead, you can enjoy life in your new town in any way you choose. And since time...",
+      "added": "2026-10-26",
+      "art": "library/art/animal-crossing-new-leaf.png",
+      "files": [
+        { "name": "Animal Crossing - New Leaf (USA) (En,Fr,Es).cci", "url": "private:animal-crossing-new-leaf__Animal.Crossing.-.New.Leaf.USA.En.Fr.Es.cci", "size": 1073741824, "sha256": "aa70fa9d2435735191c3ddcff6b2a94561494955ec7a1eb1e41e04f902ee8e30" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
