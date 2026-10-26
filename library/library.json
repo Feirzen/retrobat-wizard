@@ -1308,8 +1308,9 @@
       "system": "n64",
       "players": "1",
       "description": "Mystical Ninja Starring Goemon is an action-based RPG similar in style to The Legend of Zelda: The Ocarina of Time. It is also the first localized Goemon game since The Legend of the Mystical Ninja for the SNES. Players control Goemon and his friends as they make their way...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/mystical-ninja-starring-goemon.png",
+      "video": "library/video/mystical-ninja-starring-goemon.mp4",
       "files": [
         { "name": "Mystical Ninja Starring Goemon (USA).zip", "url": "private:mystical-ninja-starring-goemon__Mystical.Ninja.Starring.Goemon.USA.zip", "size": 13151166, "sha256": "ad2960ec51b66d0cfdfa6a48931d4e73a1370714effa9ec412602c8024002119" }
       ]
