@@ -183,6 +183,15 @@ body.in #site { display: block; }
   .mage { zoom: .5; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+  .steps .sub { margin: 8px 0 6px; padding-left: 20px; list-style: disc; }
+  ol.steps ul.sub li { margin: 5px 0; padding-left: 0; counter-increment: none; }
+  ol.steps ul.sub li::before { content: none; }
+  .vid { display: inline-flex; align-items: center; vertical-align: middle; margin-left: 8px; padding: 2px 4px; border-radius: 6px; color: var(--accent, #e5b83b); cursor: pointer; transition: transform .2s ease, background .2s ease; }
+  .vid:hover, .vid:focus { transform: scale(1.12); background: color-mix(in srgb, var(--accent) 18%, transparent); outline: none; }
+  .tl, .row .txt span.tl { display: flex !important; align-items: center; gap: 2px; color: inherit; font-size: inherit; overflow: visible; }
+  .row .txt span.vid { display: inline-flex !important; width: auto !important; white-space: nowrap; overflow: visible; padding: 1px 3px; margin-top: 0; font-size: inherit; }
+  .mnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+  video.pv { width: 100%; max-height: 70vh; border-radius: 10px; background: #000; display: block; }
 </style>
 </head>
 <body>
@@ -227,28 +236,47 @@ body.in #site { display: block; }
   </section>
 
   <section class="panel" id="p-start">
-    <div class="eyebrow">Five steps</div>
+    <div class="eyebrow">Five steps, about 20 minutes</div>
     <h1>Get started</h1>
     <div class="card">
       <ol class="steps">
-        <li><b>Download RetroBat (free).</b> Straight from RetroBat's own GitHub, about 1.9 GB:
-          <br><a class="btn" style="margin-top:10px" href="https://github.com/RetroBat-Official/retrobat/releases/download/8.2.1/RetroBat-v8.2.1-stable-win64-setup.exe">Download RetroBat 8.2.1</a>
-          <br><span class="note">This is the full, standalone RetroBat for Windows: everything lives in one folder and runs from anywhere. If you have an external hard drive, this is a great use for it, because your games and saves go wherever the drive goes.</span></li>
-        <li><b>Install it and open it once.</b> Run the file you downloaded.
-          <br><span class="note"><b>Windows protected your PC?</b> Windows shows this blue box for programs it has not seen much of. Click <b>More info</b>, then <b>Run anyway</b>.</span>
-          <br><span class="note"><b>Where it goes:</b> the folder it suggests (<code>C:\RetroBat</code>) is fine. To keep everything on an <b>external drive</b> instead, change the folder to one on that drive, like <code>D:\RetroBat</code>. Either way: no spaces, not in Program Files.</span>
-          <br><span class="note"><b>The list of extra parts</b> (if it shows one): tick <b>Visual C++</b> and <b>DirectX 9</b>, RetroBat needs both. Leave <b>Dokan</b> and <b>WinFsp</b> unticked: they only open games packed as <code>.squashfs</code> files, which this setup does not use. No list at all? Then they are already on the computer.</span>
-          <br>Then open RetroBat, let it finish starting up, set up your controller if it asks, and close it.</li>
-        <li><b>Download the wizard installer.</b> A small zip with one file in it.
-          <br><a class="btn" style="margin-top:10px" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the installer</a></li>
-        <li><b>Open the zip and double-click <code>INSTALL THE WIZARD.bat</code>.</b> No unzipping needed. If Windows asks, click <b>Run</b> (or <b>More info</b>, then <b>Run anyway</b>). It finds RetroBat by itself, or asks you to pick its folder, then shows three bars, each with how long is left:
-          <br>1. the wizard (about 17 MB, usually under a minute),
-          <br>2. putting it in place (a few seconds),
-          <br>3. the ckau-book look (about 1.7 GB, it keeps going in the background).
-          <br>The wizard's setup opens as soon as bar 2 is full, so you can carry on while the look finishes: pick Quick setup if you are not sure, and every question has a Back button. Leave the installer window open until bar 3 is done; it closes by itself. The next time you press Play, RetroBat switches to the new look.</li>
-        <li><b>Add games.</b> Open the wizard's <b>Games</b> tab: add games you own from your computer, or grab free ones from the library.</li>
+        <li><b>Get RetroBat.</b> It is free, and it is what plays the games.
+          <ul class="sub">
+            <li>Click this button. The download is about 2 GB, so it takes a few minutes.
+              <br><a class="btn" style="margin-top:8px" href="https://github.com/RetroBat-Official/retrobat/releases/download/8.2.1/RetroBat-v8.2.1-stable-win64-setup.exe">Download RetroBat</a></li>
+          </ul>
+          <span class="note">Already have RetroBat on this computer? Skip to step 3.</span></li>
+        <li><b>Install RetroBat.</b>
+          <ul class="sub">
+            <li>Open the file you just downloaded. It is in your <b>Downloads</b> folder.</li>
+            <li>A blue box that says <b>Windows protected your PC</b>? Click <b>More info</b>, then <b>Run anyway</b>.</li>
+            <li>When it asks where to install, leave it as it is (<code>C:\RetroBat</code>) and click Next.</li>
+            <li>If it shows a list of extras, tick <b>Visual C++</b> and <b>DirectX 9</b>, then carry on.</li>
+            <li>When it finishes, open RetroBat once. Wait for its menu to show up, then close it.</li>
+          </ul>
+          <span class="note">Want it on an external drive so it travels with you? Pick a folder on that drive instead, like <code>D:\RetroBat</code>.</span></li>
+        <li><b>Get the wizard.</b>
+          <ul class="sub">
+            <li>Click this button. It downloads a small zip file.
+              <br><a class="btn" style="margin-top:8px" id="dlBtn" href="installer/RetroBat-Wizard-Installer.zip">Download the wizard</a></li>
+          </ul></li>
+        <li><b>Install the wizard.</b>
+          <ul class="sub">
+            <li>Open your <b>Downloads</b> folder and double-click the zip file you just got.</li>
+            <li>Inside is one file, <b>INSTALL THE WIZARD</b>. Double-click it.</li>
+            <li>If Windows asks, click <b>Run</b> (or <b>More info</b>, then <b>Run anyway</b>).</li>
+            <li>A window with three bars opens. It finds RetroBat by itself. If it ever asks, point it to the RetroBat folder.</li>
+            <li>The wizard opens and asks a few questions. Pick <b>Quick setup</b>.</li>
+            <li>Leave the bars window open. It closes by itself when the last bar is done (that one is the new look, about 2 GB).</li>
+          </ul>
+          <span class="note">Know what you want? <b>Advanced setup</b> lets you choose things like how hard the computer is pushed, where the buttons go, and controllers.</span></li>
+        <li><b>Play.</b>
+          <ul class="sub">
+            <li>Press <b>PLAY</b> in the wizard, or the Play icon it put on your desktop.</li>
+            <li>To add games, open the wizard's <b>Games</b> page: add games you own, or pick free ones from the library.</li>
+          </ul></li>
       </ol>
-      <p class="note">You never need a GitHub account. Something went wrong? Run the installer again: it carries on where it stopped. It keeps notes in <code>RetroBat\_ClaudeWorkspace\update\install.log</code>.</p>
+      <p class="note">Something went wrong? Run the installer again: it carries on where it stopped. Its notes are in <code>RetroBat\_Wizard\Cache\logs\install.log</code>.</p>
     </div>
   </section>
 
@@ -306,8 +334,9 @@ const W = "site/consoles/";
 const CONSOLES = [
   ["nes", "NES", "nes"], ["snes", "SNES", "snes"], ["n64", "Nintendo 64", "n64"],
   ["gamecube", "GameCube", "gamecube"], ["wii", "Wii", "wiiremote"], ["wiiu", "Wii U", "gamepad"],
-  ["switch", "Switch", "switch"], ["gb", "Game Boy", "gameboy"], ["gbc", "Game Boy Color", "gameboy"],
-  ["gba", "Game Boy Advance", "gba"], ["nds", "Nintendo DS", "ds"], ["3ds", "3DS", "ds"],
+  ["switch", "Switch", "switch"], ["gb", "Game Boy", "gameboy"], ["gbc", "Game Boy Color", "gbc"],
+  ["gba", "Game Boy Advance", "gba"], ["nds", "Nintendo DS", "ds"], ["3ds", "3DS", "3ds"],
+  ["megadrive", "Genesis", "genesis"], ["dreamcast", "Dreamcast", "dreamcast"], ["fbneo", "Arcade", "arcade"],
   ["xbox", "Xbox", "xbox"], ["xbox360", "Xbox 360", "xboxone"],
   ["psx", "PlayStation", "playstation"], ["ps2", "PlayStation 2", "playstation"], ["ps3", "PlayStation 3", "playstation"],
   ["flash", "Flash", "pc"], ["scummvm", "ScummVM", "pc"], ["windows", "PC", "pc"]
@@ -323,14 +352,19 @@ function card(g) {
   // wizard's Games tab, never from here.
   // A folder game or a game of several files (3.2) needs wizard 3.2 or newer.
   const priv = !!g.parts || !!g.bundle || files.some(f => String(f.url || "").startsWith("private:"));
-  const get = priv ? `<span class="note">Get it in the wizard: Games tab${g.min ? " (wizard " + esc(g.min) + " or newer)" : ""}</span>`
+  // (3.2, Steven) no "get it in the wizard" line under each game
+  const get = priv ? ""
     : files.map(f => `<a class="btn ghost" href="${esc(f.url)}">Download${files.length > 1 ? " " + esc(f.name) : ""}</a>`).join(" ");
   // Box art comes from the uploader (library/art/<id>.png). No art: the console icon.
   const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
     : `<img class="fallback" src="${pic(g.system)}" alt="">`;
-  return `<div class="game"><div class="art">${art}</div><div class="body"><b>${esc(g.title)}</b>
+  return `<div class="game"><div class="art">${art}</div><div class="body"><span class="tl"><b>${esc(g.title)}</b>${vidBtn(g)}</span>
     <div class="meta">${g.players ? esc(g.players) + " players &middot; " : ""}${mb} MB</div>
-    ${g.description ? `<p>${esc(g.description)}</p>` : ""}<div class="get">${get}</div></div></div>`;
+    ${g.description ? `<p>${esc(g.description)}</p>` : ""}${get ? `<div class="get">${get}</div>` : ""}</div></div>`;
+}
+// (3.2) a small film icon beside the title when the game has a video preview
+function vidBtn(g) {
+  return g.video ? `<span class="vid" role="button" tabindex="0" title="Watch the video" data-video="${esc(g.video)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="5" width="14" height="14" rx="2" fill="currentColor"/><path d="M17 10l5-3v10l-5-3z" fill="currentColor"/></svg></span>` : "";
 }
 // One short row per game for the Compact view: small art, the name, one line.
 function row(g, i) {
@@ -341,7 +375,7 @@ function row(g, i) {
   const art = g.art ? `<img src="${esc(g.art)}" alt="" loading="lazy" onerror="this.className='fallback';this.src='${pic(g.system)}'">`
     : `<img class="fallback" src="${pic(g.system)}" alt="">`;
   const line = (g.players ? esc(g.players) + " players &middot; " : "") + mb + " MB" + (g.description ? " &middot; " + esc(g.description) : "");
-  return `<button class="row" data-i="${i}"><span class="thumb">${art}</span><span class="txt"><b>${esc(g.title)}</b><span>${line}</span></span><span class="open">&#9654;</span></button>`;
+  return `<button class="row" data-i="${i}"><span class="thumb">${art}</span><span class="txt"><span class="tl"><b>${esc(g.title)}</b>${vidBtn(g)}</span><span>${line}</span></span><span class="open">&#9654;</span></button>`;
 }
 let LIB = [], VIEW = store("rbw-libview") === "big" ? "big" : "compact";
 const openSys = new Set();   // consoles start folded; this remembers which are open
@@ -397,13 +431,45 @@ document.querySelectorAll("#viewSeg button").forEach(b => b.addEventListener("cl
 }));
 // the little window with the full card
 const modal = document.getElementById("gameModal");
+// (3.2, Steven) arrows to step through the rest of that console's games
+let NAV = [], NAVI = -1;
 function openGame(g) {
   if (!g) return;
-  document.getElementById("modalBody").innerHTML = card(g);
+  NAV = LIB.filter(x => x.system === g.system).sort((a, b) => String(a.title).localeCompare(String(b.title)));
+  NAVI = NAV.indexOf(g);
+  drawGame();
   modal.classList.add("on"); modal.setAttribute("aria-hidden", "false");
   document.getElementById("modalX").focus();
 }
-function closeGame() { modal.classList.remove("on"); modal.setAttribute("aria-hidden", "true"); }
+function drawGame() {
+  const g = NAV[NAVI]; if (!g) return;
+  const many = NAV.length > 1;
+  document.getElementById("modalBody").innerHTML = card(g) +
+    (many ? `<div class="mnav"><button class="btn ghost" id="mPrev" aria-label="Previous game">&#9664;</button><span class="note">${NAVI + 1} of ${NAV.length}</span><button class="btn ghost" id="mNext" aria-label="Next game">&#9654;</button></div>` : "");
+  if (many) {
+    document.getElementById("mPrev").onclick = () => stepGame(-1);
+    document.getElementById("mNext").onclick = () => stepGame(1);
+  }
+}
+function stepGame(d) { if (NAV.length < 2) return; NAVI = (NAVI + d + NAV.length) % NAV.length; drawGame(); }
+function openVideo(src) {
+  NAV = []; NAVI = -1;
+  document.getElementById("modalBody").innerHTML = `<video class="pv" src="${esc(src)}" controls autoplay playsinline></video>`;
+  modal.classList.add("on"); modal.setAttribute("aria-hidden", "false");
+}
+document.addEventListener("click", e => {
+  const v = e.target.closest && e.target.closest(".vid");
+  if (!v) return;
+  e.preventDefault(); e.stopPropagation();
+  openVideo(v.dataset.video);
+}, true);
+document.addEventListener("keydown", e => {
+  if (!modal.classList.contains("on")) return;
+  if (e.key === "ArrowLeft") stepGame(-1);
+  if (e.key === "ArrowRight") stepGame(1);
+  if (e.key === "Enter" && e.target.classList && e.target.classList.contains("vid")) openVideo(e.target.dataset.video);
+});
+function closeGame() { modal.classList.remove("on"); modal.setAttribute("aria-hidden", "true"); const v = document.querySelector("#modalBody video"); if (v) v.pause(); document.getElementById("modalBody").innerHTML = ""; }
 document.getElementById("modalX").addEventListener("click", closeGame);
 modal.addEventListener("click", e => { if (e.target === modal) closeGame(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeGame(); });
