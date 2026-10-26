@@ -2091,8 +2091,9 @@
       "system": "snes",
       "players": "1-2",
       "description": "Help Donkey Kong and Diddy Kong get back those stolen bananas!After a dark and stormy night, Donkey Kong finds all of his bananas stolen by K. Rool and his reptilian crew of Kremlings! Armed with chest-pounding muscle, mighty barrel rolls, and awesome vine-swinging skills,...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/donkey-kong-country.png",
+      "video": "library/video/donkey-kong-country.mp4",
       "files": [
         { "name": "Donkey Kong Country (USA) (Rev 2).sfc", "url": "private:donkey-kong-country__Donkey.Kong.Country.USA.Rev.2.sfc", "size": 4194304, "sha256": "628147468c3539283197f58f03b94df49758a332831857481ea9cc31645f0527" }
       ]
