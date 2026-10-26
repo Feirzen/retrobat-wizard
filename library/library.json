@@ -1549,16 +1549,16 @@
       "min": "3.2.0"
     },
     {
-      "id": "pok-mon-stadium",
-      "title": "Pokmon Stadium",
+      "id": "pok-mon-stadium-2",
+      "title": "Pokmon Stadium 2",
       "system": "n64",
       "players": "1-4",
-      "description": "At long last, all of your favorite Pokmon are ready to go head-to-head on the N64! Whether you're battle a friend, a Gym Leader or a tournament contestant, you're about to witness some of the most spectacular battle scenes in Pokmon history! Select a team from a huge stable...",
+      "description": "Hundreds of Pokmon in Three-mendous 3-D! What's sweeter than victory in a Pokmon battle! Victory in a 3-D arena on the N64?! Set your strategy and stand back while your Pokmon battle it out. You can even set the Pokmon you've trained--fully rendered in 3-D and ready for...",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-stadium.png",
-      "video": "library/video/pok-mon-stadium.mp4",
+      "art": "library/art/pok-mon-stadium-2.png",
+      "video": "library/video/pok-mon-stadium-2.mp4",
       "files": [
-        { "name": "Pokemon Stadium (USA) (Rev 2).zip", "url": "private:pok-mon-stadium__Pokemon.Stadium.USA.Rev.2.zip", "size": 27214319, "sha256": "a41319485c5cfe132c3b36dd819038b2af1701a547d8cc8194f13f27454ceac7" }
+        { "name": "Pokemon Stadium 2 (USA).zip", "url": "private:pok-mon-stadium-2__Pokemon.Stadium.2.USA.zip", "size": 48045275, "sha256": "f525de47574eedc4f644be1c376ff29379c8a83c3b68ba85ac1297aabe005d2e" }
       ]
     },
     {
@@ -1575,16 +1575,16 @@
       ]
     },
     {
-      "id": "pok-mon-stadium-2",
-      "title": "Pokmon Stadium 2",
+      "id": "pok-mon-stadium",
+      "title": "Pokmon Stadium",
       "system": "n64",
       "players": "1-4",
-      "description": "Hundreds of Pokmon in Three-mendous 3-D! What's sweeter than victory in a Pokmon battle! Victory in a 3-D arena on the N64?! Set your strategy and stand back while your Pokmon battle it out. You can even set the Pokmon you've trained--fully rendered in 3-D and ready for...",
+      "description": "At long last, all of your favorite Pokmon are ready to go head-to-head on the N64! Whether you're battle a friend, a Gym Leader or a tournament contestant, you're about to witness some of the most spectacular battle scenes in Pokmon history! Select a team from a huge stable...",
       "added": "2026-10-26",
-      "art": "library/art/pok-mon-stadium-2.png",
-      "video": "library/video/pok-mon-stadium-2.mp4",
+      "art": "library/art/pok-mon-stadium.png",
+      "video": "library/video/pok-mon-stadium.mp4",
       "files": [
-        { "name": "Pokemon Stadium 2 (USA).zip", "url": "private:pok-mon-stadium-2__Pokemon.Stadium.2.USA.zip", "size": 48045275, "sha256": "f525de47574eedc4f644be1c376ff29379c8a83c3b68ba85ac1297aabe005d2e" }
+        { "name": "Pokemon Stadium (USA) (Rev 2).zip", "url": "private:pok-mon-stadium__Pokemon.Stadium.USA.Rev.2.zip", "size": 27214319, "sha256": "a41319485c5cfe132c3b36dd819038b2af1701a547d8cc8194f13f27454ceac7" }
       ]
     },
     {
