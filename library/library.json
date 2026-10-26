@@ -2193,8 +2193,9 @@
       "system": "snes",
       "players": "1",
       "description": "Mega Man X is a robot designed by Dr. Light to choose his own path in life. Years after he is created, Dr. Cain finds X and mimics his design to create a race of such robots called reploids. When the sigma virus infects these reploids, causing them to commit acts of evil, it is...",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/mega-man-x.png",
+      "video": "library/video/mega-man-x.mp4",
       "files": [
         { "name": "Mega Man X (USA) (Rev 1).sfc", "url": "private:mega-man-x__Mega.Man.X.USA.Rev.1.sfc", "size": 1572864, "sha256": "b8f70a6e7fb93819f79693578887e2c11e196bdf1ac6ddc7cb924b1ad0be2d32" }
       ]
