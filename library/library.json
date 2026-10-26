@@ -2383,6 +2383,19 @@
       ]
     },
     {
+      "id": "teenage-mutant-ninja-turtles-iv-turtles",
+      "title": "Teenage Mutant Ninja Turtles IV : Turtles in Time",
+      "system": "snes",
+      "players": "1-2",
+      "description": "Doesn't this Shredder dude ever take a break? Now he's gone and kidnapped Channel 6's own reporter babe April O' Neill again, and just as the Ninja Turtles were about to kick his butt, he tore open some kinda time portal thingy and flung them back into the past! Now Leonardo,...",
+      "added": "2026-10-26",
+      "art": "library/art/teenage-mutant-ninja-turtles-iv-turtles.png",
+      "video": "library/video/teenage-mutant-ninja-turtles-iv-turtles.mp4",
+      "files": [
+        { "name": "Teenage Mutant Ninja Turtles IV - Turtles in Time (USA).sfc", "url": "private:teenage-mutant-ninja-turtles-iv-turtles__Teenage.Mutant.Ninja.Turtles.IV.-.Turtles.in.Time.USA.sfc", "size": 1048576, "sha256": "5b82cdd6f2da56f43680d6a5021faebe2e06036d30602c1a7917aa414cf8b5f4" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-a-link-to-the-past",
       "title": "The Legend of Zelda : A Link to the Past",
       "system": "snes",
