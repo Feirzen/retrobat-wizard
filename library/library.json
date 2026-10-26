@@ -2583,6 +2583,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "gran-turismo-2-simulation-mode",
+      "title": "Gran Turismo 2 (Simulation Mode)",
+      "system": "psx",
+      "players": "1-2",
+      "description": "Gran Turismo 2 is fundamentally based on the racing game genre. The player must maneuver an automobile to compete against artificially intelligent drivers on various race tracks. The game uses two different modes: arcade and simulation. In the arcade mode, the player can freely...",
+      "added": "2026-10-26",
+      "art": "library/art/gran-turismo-2-simulation-mode.png",
+      "video": "library/video/gran-turismo-2-simulation-mode.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Gran Turismo 2 (USA) (Simulation Mode) (Rev 2)", "name": "gran-turismo-2-simulation-mode.zip", "size": 691956284, "sha256": "ac59976d813a33a004308458f67efff458f88301b89eb011e3ceeab216e592cb", "url": "private:gran-turismo-2-simulation-mode__gran-turismo-2-simulation-mode.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
