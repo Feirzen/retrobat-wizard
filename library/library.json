@@ -1445,6 +1445,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "mario-party-3-usa",
+      "title": "Mario Party 3 (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/mario-party-3-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Party 3 (USA)", "name": "mario-party-3-usa.zip", "size": 33560075, "sha256": "bcb6f2c03647e95f152420eedfad777fcc81bf1335742830329458543e58aee7", "url": "private:mario-party-3-usa__mario-party-3-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mystical-ninja-starring-goemon",
       "title": "Mystical Ninja Starring Goemon",
       "system": "n64",
