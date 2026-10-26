@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "bubble-bobble",
+      "title": "Bubble Bobble",
+      "system": "nes",
+      "players": "1-2",
+      "description": "Bubble Bobble tells the story of Bub and Bob, two humans who wander into a mysterious monster cave and are magically transformed into dragons. To return to their human form, they must reach the end of the cave. The game is a platform adventure where each level takes place on a...",
+      "added": "2026-10-26",
+      "art": "library/art/bubble-bobble.png",
+      "video": "library/video/bubble-bobble.mp4",
+      "files": [
+        { "name": "Bubble Bobble (USA).nes", "url": "private:bubble-bobble__Bubble.Bobble.USA.nes", "size": 163856, "sha256": "e34901acf6917495890ef79ddb33e4641ea309a803d777a27a198e8802c9b4a0" }
+      ]
+    },
+    {
       "id": "castlevania",
       "title": "Castlevania",
       "system": "nes",
