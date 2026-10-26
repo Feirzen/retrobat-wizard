@@ -151,6 +151,18 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-ocarina-of-time-3d",
+      "title": "The Legend of Zelda : Ocarina of Time 3D",
+      "system": "3ds",
+      "players": "1",
+      "description": "The Legend of Zelda: Ocarina of Time 3D brings a completely re-mastered version of an epic entry in the beloved The Legend of Zelda game series to Nintendos newest hand-held system, Nintendo 3DS. The game couples phenomenally enhanced graphics with stunning, glasses-free 3D...",
+      "added": "2026-10-26",
+      "art": "library/art/the-legend-of-zelda-ocarina-of-time-3d.png",
+      "files": [
+        { "name": "Legend of Zelda, The - Ocarina of Time 3D (USA) (En,Fr,Es) (Rev 1).cci", "url": "private:the-legend-of-zelda-ocarina-of-time-3d__Legend.of.Zelda.The.-.Ocarina.of.Time.3D.USA.En.Fr.Es.Rev.1.cci", "size": 536870912, "sha256": "a12d30e6c2c2e81618ac595ead12d02abe59b0725e1ef788cf74cf02091554cb" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
