@@ -51,7 +51,7 @@ function Read-FrdList([string]$Ws) {
     foreach ($l in [System.IO.File]::ReadAllLines($f)) {
         $t = $l.Trim()
         if ($t -eq '' -or $t.StartsWith(';') -or $t.StartsWith('#')) { continue }
-        if ($t -match '^(bool|int|string)\s+(\S+)\s*=\s*(.*)$') {
+        if ($t -match '^(bool|int|string|ini)\s+(\S+)\s*=\s*(.*)$') {
             $out += @{ Kind = $Matches[1]; Name = $Matches[2]; Value = $Matches[3].Trim() }
         }
     }
@@ -82,6 +82,33 @@ function Set-FrdNode($Xml, $Config, [string]$Kind, [string]$Name, [string]$Value
     return $true
 }
 
+# One Key=Value in one [Section] of RetroBat's own retrobat.ini. $Name is
+# 'Section.Key'. Only changes that one line. Returns $true when it changed.
+function Set-FrdRetroBatIni([string]$Root, [string]$Name, [string]$Value) {
+    $p = [System.IO.Path]::Combine($Root, 'retrobat.ini')
+    if (-not (Test-Path -LiteralPath $p)) { return $false }
+    $dot = $Name.IndexOf('.')
+    if ($dot -lt 1) { return $false }
+    $sec = $Name.Substring(0, $dot); $key = $Name.Substring($dot + 1)
+    $lines = [System.Collections.ArrayList]@([System.IO.File]::ReadAllLines($p))
+    $in = $false; $at = -1; $secEnd = -1
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        $t = ([string]$lines[$i]).Trim()
+        if ($t -match '^\[(.+)\]$') { if ($in) { $secEnd = $i; break }; $in = ($Matches[1] -ieq $sec); continue }
+        if ($in -and $t -match ('^' + [regex]::Escape($key) + '\s*=\s*(.*)$')) {
+            if ($Matches[1].Trim() -eq $Value) { return $false }
+            $lines[$i] = $key + '=' + $Value; $at = $i; break
+        }
+    }
+    if ($at -lt 0) {
+        if (-not $in -and $secEnd -lt 0) { return $false }     # no such section: leave the file alone
+        if ($secEnd -lt 0) { $secEnd = $lines.Count }
+        $lines.Insert($secEnd, ($key + '=' + $Value))
+    }
+    [System.IO.File]::WriteAllLines($p, [string[]]$lines.ToArray())
+    return $true
+}
+
 # Writes the list (and the scraper login, if there is one and none is set).
 # Returns @{ Ok; Changed; Message }.
 function Set-FirstRunDefaults([string]$Root, [string]$Ws) {
@@ -97,7 +124,11 @@ function Set-FirstRunDefaults([string]$Root, [string]$Ws) {
         $c = $x.SelectSingleNode('/config')
         if ($null -eq $c) { return @{ Ok = $false; Changed = 0; Message = 'es_settings.cfg could not be read.' } }
         $n = 0
-        foreach ($e in (Read-FrdList $Ws)) { if (Set-FrdNode $x $c $e.Kind $e.Name $e.Value) { $n++ } }
+        $all = @(Read-FrdList $Ws)
+        foreach ($e in @($all | Where-Object { $_.Kind -ne 'ini' })) { if (Set-FrdNode $x $c $e.Kind $e.Name $e.Value) { $n++ } }
+        # 'ini Section.Key = value' lines go to retrobat.ini (2026-10-25: the
+        # language switch lives there).
+        foreach ($e in @($all | Where-Object { $_.Kind -eq 'ini' })) { try { if (Set-FrdRetroBatIni $Root $e.Name $e.Value) { $n++ } } catch { } }
         $sc = Read-FrdScraper $Ws
         $have = $c.SelectSingleNode("string[@name='ScreenScraperUser']")
         $haveUser = ($null -ne $have -and [string]$have.GetAttribute('value') -ne '')

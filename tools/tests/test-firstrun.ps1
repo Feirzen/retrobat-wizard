@@ -13,6 +13,9 @@ Copy-Item (Join-Path (Split-Path $Scripts -Parent) 'defaults/retrobat-defaults.i
 $es = Join-Path $R 'emulationstation/.emulationstation/es_settings.cfg'
 function Get-Val([string]$k, [string]$name) { [xml]$x = [System.IO.File]::ReadAllText($es); $n = $x.SelectSingleNode("/config/$k[@name='$name']"); if ($null -eq $n) { return $null }; return $n.GetAttribute('value') }
 
+# RetroBat's own ini, as a fresh RetroBat has it
+[System.IO.File]::WriteAllLines((Join-Path $R 'retrobat.ini'), [string[]]@('[RetroBat]', 'LanguageDetection=1', 'Autostart=0', '[SplashScreen]', 'EnableIntro=1'))
+
 # 1. no es_settings.cfg yet: it is started
 $res1 = Set-FirstRunDefaults $R $Ws
 Check 'made a settings file' (Test-Path $es)
@@ -23,6 +26,13 @@ Check 'all games grid' ((Get-Val 'string' 'all.defaultView') -eq 'grid')
 Check '2 players grid+details' ((Get-Val 'string' '2players.defaultView') -eq 'Grid + Details')
 Check 'ampersand kept' ((Get-Val 'string' 'ScreenSaverGameInfo') -eq 'start & end')
 Check 'no scraper login without the file' ($null -eq (Get-Val 'string' 'ScreenScraperUser'))
+Check 'language English (UK/EU)' ((Get-Val 'string' 'Language') -eq 'en_GB')
+Check 'Wii U uses a Pro Controller' ((Get-Val 'string' 'wiiu.cemu_controllerp0') -eq 'procontroller')
+Check 'no graphics-quality settings copied' ($null -eq (Get-Val 'string' 'wii.internal_resolution'))
+Check 'no login or nickname copied' ($null -eq (Get-Val 'string' 'global.netplay.nickname') -and $null -eq (Get-Val 'string' 'ScreenScraperPass'))
+$ri = [System.IO.File]::ReadAllText((Join-Path $R 'retrobat.ini'))
+Check 'retrobat.ini: language detection off' ($ri -match '(?m)^LanguageDetection=0\r?$')
+Check 'retrobat.ini: the rest untouched' ($ri -match '(?m)^Autostart=0' -and $ri -match '(?m)^\[SplashScreen\]' -and $ri -match '(?m)^EnableIntro=1')
 
 # 2. second run changes nothing
 $r2 = Set-FirstRunDefaults $R $Ws

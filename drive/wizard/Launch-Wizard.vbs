@@ -57,8 +57,19 @@ ps = shell.ExpandEnvironmentStrings("%SystemRoot%") & _
 ' script that builds a path there dies before it can log anything. That bug
 ' cost this drive a week of silent backups. This is the exact invocation the
 ' .bat files have always used and that is known to work.
+' A START THAT FAILS SAYS SO (2026-10-25). With no window, a wizard that
+' died on the way in looked exactly like a button that does nothing (Steven,
+' at a friend's house). Now anything that stops it before it is running
+' shows a small box with the reason, and the reason goes in wizard.log.
+Dim logPath, catchPart
+logPath = fso.BuildPath(wizardDir, "wizard.log")
+catchPart = " } catch { $m = $_.Exception.Message; " & _
+    "try { Add-Content -LiteralPath '" & logPath & "' -Value ((Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + '  START FAILED: ' + $m) } catch { }; " & _
+    "Add-Type -AssemblyName System.Windows.Forms; " & _
+    "[void][System.Windows.Forms.MessageBox]::Show('The wizard could not start.' + [char]10 + [char]10 + $m + [char]10 + [char]10 + 'This is also written in _ClaudeWorkspace\wizard\wizard.log.', 'RetroBat Wizard') }"
+
 cmd = q & ps & q & " -NoProfile -ExecutionPolicy Bypass -Command " & _
-      q & "& '" & script & "'" & mode & q
+      q & "try { & '" & script & "'" & mode & catchPart & q
 
 ' 0 = no window ever created. False = do not wait, so this script exits at
 ' once and the wizard is not a child of anything the user can close.
