@@ -1458,6 +1458,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "mario-tennis-usa",
+      "title": "Mario Tennis (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/mario-tennis-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Tennis (USA)", "name": "mario-tennis-usa.zip", "size": 16780296, "sha256": "8f96eede1f748966fced665bfe5c5b42208ad17cbd3e916791d1b8909a7e5b86", "url": "private:mario-tennis-usa__mario-tennis-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mystical-ninja-starring-goemon",
       "title": "Mystical Ninja Starring Goemon",
       "system": "n64",
