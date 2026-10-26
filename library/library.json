@@ -1412,8 +1412,9 @@
       "system": "n64",
       "players": "1",
       "description": "Mario is super in a whole new way! Combining the finest 3-D graphics ever developed for a video game and an explosive sound track, Super Mario 64 becomes a new standard for video games. It's packed with bruising battles, daunting obstacle courses and underwater adventures....",
-      "added": "2026-10-12",
+      "added": "2026-10-26",
       "art": "library/art/super-mario-64.png",
+      "video": "library/video/super-mario-64.mp4",
       "files": [
         { "name": "Super Mario 64.zip", "url": "private:super-mario-64__Super.Mario.64.zip", "size": 6099886, "sha256": "8c99636d47b98789bc3cf82a69ec40a8bd45eb5004e45a86ab950e703ec3d73e" }
       ]
