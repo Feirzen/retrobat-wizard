@@ -1800,6 +1800,19 @@
       ]
     },
     {
+      "id": "battletoads",
+      "title": "Battletoads",
+      "system": "nes",
+      "players": "1-2",
+      "description": "The Dark Queen has attacked and kidnapped (toadnapped?) your best buddy.. To make matters worse, she nabbed the best looking girl around! So, what will you do? Cry? Whimper? Hide? Call the Starcops? NO! Cause you're a Battletoad! Battletoads don't cry, hide or call for help! And...",
+      "added": "2026-10-26",
+      "art": "library/art/battletoads.png",
+      "video": "library/video/battletoads.mp4",
+      "files": [
+        { "name": "Battletoads (USA).nes", "url": "private:battletoads__Battletoads.USA.nes", "size": 262160, "sha256": "2cc2a9afae9b9e875f0fd2f36affb615d81ce4301dbf530336fc23add999e63d" }
+      ]
+    },
+    {
       "id": "galaga-demons-of-death",
       "title": "Galaga : Demons of Death",
       "system": "nes",
