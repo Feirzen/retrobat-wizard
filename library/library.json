@@ -4279,8 +4279,9 @@
       "system": "xbox",
       "players": "1-4",
       "description": "Humanity is the midst of a long war against an alien alliance called the Covenant who have been wiping out colony after colony. You hero is Master Chief, who is given no name beyond his rank in the game itself. He is stationed on the Pillar of Autumn, a ship which, per protocol...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/halo-combat-evolved.png",
+      "video": "library/video/halo-combat-evolved.mp4",
       "files": [
       ],
       "parts": { "name": "Halo - Combat Evolved (USA) (Rev 2).xiso.iso", "size": 3625713664, "sha256": "43ec0813edadd592b7b489a930f108d289db9313ac337611110ffca8be0a7258", "pieces": [
