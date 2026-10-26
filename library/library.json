@@ -2956,6 +2956,19 @@
       ] }
     },
     {
+      "id": "the-legend-of-zelda-the-wind-waker-hd",
+      "title": "The Legend of Zelda - The Wind Waker HD",
+      "system": "wiiu",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/the-legend-of-zelda-the-wind-waker-hd.jpg",
+      "files": [
+      ],
+      "bundle": { "folder": "The Legend of Zelda - The Wind Waker HD", "name": "the-legend-of-zelda-the-wind-waker-hd.zip", "size": 1797833987, "sha256": "fbf099bab8bae0f723c34f6f912d5947ae49ce21d950a76edb8f7673a92be004", "url": "private:the-legend-of-zelda-the-wind-waker-hd__the-legend-of-zelda-the-wind-waker-hd.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-zelda-breath-of-the-wild",
       "title": "The Legend of Zelda: Breath of the Wild",
       "system": "wiiu",
