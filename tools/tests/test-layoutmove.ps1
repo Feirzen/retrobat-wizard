@@ -92,6 +92,7 @@ $old = [ordered]@{
     'update\previous\info.ini' = 'from = 3.1.0'
     'update-restore\PLAY.bat' = 'old master'
     'update-restore-off\x.po' = 'po'
+    'update-restore\Steven the Setup Wizard.bat' = ("REM look in _ClaudeWorkspace\features.ini.`r`n" + '"%~dp0_ClaudeWorkspace\wizard\Launch-Wizard.vbs"')
     'Maintenance Steps\Show Help.bat' = 'OLD help (modified)'
     'Maintenance Steps\Show My Profile.bat' = 'ancient'
     '_SAFE TO DELETE\old.lnk' = 'lnk'
@@ -228,6 +229,8 @@ Assert ((T (J $R 'emulationstation\.emulationstation\scripts\start\zz-social.bat
 Assert ((T (J $R 'system\scripts\wiiu-launch.vbs')) -match [regex]::Escape('"_Wizard\Cache\logs\controller-chooser.log"')) 'Wii U launcher log path'
 Assert ((T (J $R 'roms\windows\New Club Penguin.bat')) -match [regex]::Escape('_Wizard\Program\scripts\Launch-Browser.vbs')) 'browser game launcher path'
 Assert ((T (J $R 'PLAY.bat')).EndsWith("`r`n")) 'Windows line ends kept'
+$mw = T (J $R '_Wizard\Program\restore\Steven the Setup Wizard.bat')
+Assert ($mw -match [regex]::Escape('"%~dp0_Wizard\Program\wizard\Launch-Wizard.vbs"') -and $mw -match [regex]::Escape('_Wizard\Settings\features.ini.')) ('a personal master copy is pointed at _Wizard too, full stop kept: ' + $mw)
 Assert ((T (J $R 'roms\snes\Zelda.sfc')) -eq 'a game, never touched') 'games untouched'
 Assert (@(Get-ChildItem -LiteralPath (J $N 'Backups\Archive') -Directory | Where-Object Name -like 'layout-move_*').Count -eq 1) 'outside files backed up'
 

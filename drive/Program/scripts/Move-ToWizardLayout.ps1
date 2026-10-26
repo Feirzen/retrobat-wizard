@@ -199,7 +199,7 @@ function Convert-LegacyText([string]$Text) {
         [void]$cuts.Add($body.Length)
         for ($i = $body.Length - 1; $i -gt 0; $i--) { if (' \/'.Contains($body.Substring($i, 1))) { [void]$cuts.Add($i) } }
         foreach ($c in $cuts) {
-            $piece = $body.Substring(0, $c).TrimEnd(' ')
+            $piece = $body.Substring(0, $c).TrimEnd(' ', '.')   # a sentence's full stop is not part of the name
             if ($piece -eq '') { continue }
             $tail = $body.Substring($piece.Length)
             $p2 = $piece -replace '/', '\'
@@ -229,6 +229,9 @@ function Get-OutsideFiles {
     & $add (Join-WizPath $Root 'emulationstation\.emulationstation\scripts') $code $true
     & $add (Join-WizPath $Root 'emulationstation\.emulationstation') @('es_systems*.cfg') $false
     & $add (Join-WizPath $Root 'system\scripts') $code $false
+    # the master copies of those files (a drive's own RetroBat Wizard.bat
+    # master came over from 3.1 still pointing at _ClaudeWorkspace, 2026-10-26)
+    foreach ($m in @('Program\restore', 'Program\restore-off')) { & $add (Join-WizPath (Join-WizPath $Root $script:WizFolderName) $m) @('*.bat', '*.cmd', '*.vbs', '*.ps1', '*.xml') $true }
     $roms = Join-WizPath $Root 'roms'
     if (Test-Path -LiteralPath $roms) {
         foreach ($d in @(Get-ChildItem -LiteralPath $roms -Directory -Force -ErrorAction SilentlyContinue)) { & $add $d.FullName $code $false }

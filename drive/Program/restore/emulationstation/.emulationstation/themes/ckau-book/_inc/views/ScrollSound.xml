@@ -6,7 +6,7 @@
      sound. The theme's own version plays a different sound per console.
      To use another sound, change wiiu.wav below (three places) to any file
      in _inc\sound\, then run Update Master Copies.bat. Switched on and off
-     by 'scrollsound' in _Wizard\features.ini. -->
+     by 'scrollsound' in _Wizard\Settings\features.ini. -->
 	<view name="system, menu, basic, detailed, grid, gamecarousel">
 		<textlist name="gamelist">
 			<scrollSound>${themePath}/_inc/sound/wiiu.wav</scrollSound>
