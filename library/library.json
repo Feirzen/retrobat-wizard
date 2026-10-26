@@ -4398,8 +4398,9 @@
       "system": "xbox",
       "players": "1",
       "description": "Long before the Galactic Civil War, an epic drama begins. Engage in this saga set in the Golden Age of the Republic--over 4,000 years before the first Star Wars film, when both Jedi and Sith number in the thousands. With the Galaxy reeling from a recent conflict with the Dark...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/star-wars-knights-of-the-old-republic.jpg",
+      "video": "library/video/star-wars-knights-of-the-old-republic.mp4",
       "files": [
       ],
       "parts": { "name": "Star Wars - Knights of the Old Republic (USA) (Rev 1).xiso.iso", "size": 3939303424, "sha256": "c90852607ab0c798aec9a362c0be4ef65daac9bd050ca27965200610466fd150", "pieces": [
