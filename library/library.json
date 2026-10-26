@@ -610,6 +610,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "shenmue",
+      "title": "Shenmue",
+      "system": "dreamcast",
+      "players": "1",
+      "description": "Witness to the murder of his father by the mysterious Lan Di, the young Ryo Hazuki swears to find him to avenge his father. This is the starting point of this extraordinary adventure that is Shenmue on Dreamcast, a game at the crossroads of a multitude of genres that includes...",
+      "added": "2026-10-26",
+      "art": "library/art/shenmue.png",
+      "video": "library/video/shenmue.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Shenmue (USA) (Disc 1)", "name": "shenmue.zip", "size": 1188735780, "sha256": "936ba015b5f59f59e991798f9287fceb6cd1e277bef24a292a6aed589cabd8b7", "url": "private:shenmue__shenmue.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
