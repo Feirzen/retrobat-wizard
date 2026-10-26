@@ -2653,6 +2653,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "metal-gear-solid",
+      "title": "Metal Gear Solid",
+      "system": "psx",
+      "players": "1",
+      "description": "Renegade special forces unit FOXHOUND has taken over Shadow Moses Island in Alaska's Fox Archipelago - publicly a nuclear weapons disposal facility but in truth a top secret weapons development site and home to Metal Gear REX. With the help of the genetically engineered Next...",
+      "added": "2026-10-26",
+      "art": "library/art/metal-gear-solid.png",
+      "video": "library/video/metal-gear-solid.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Metal Gear Solid (USA) (Disc 1) (Rev 1)", "name": "metal-gear-solid.zip", "size": 705722253, "sha256": "6627ab331b78493cf2497e757a2241baae40e54f70c30e44d19b0fbad42141a7", "url": "private:metal-gear-solid__metal-gear-solid.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "the-legend-of-dragoon",
       "title": "The Legend of Dragoon",
       "system": "psx",
