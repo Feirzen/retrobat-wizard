@@ -2555,6 +2555,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "final-fantasy-vii",
+      "title": "Final Fantasy VII",
+      "system": "psx",
+      "players": "1",
+      "description": "Set in a dystopian world, Final Fantasy VII's story centers on mercenary Cloud Strife who joins with several others to stop the megacorporation Shinra, which is draining the life of the planet to use as an energy source. As the story progresses, the situation escalates and Cloud...",
+      "added": "2026-10-26",
+      "art": "library/art/final-fantasy-vii.png",
+      "video": "library/video/final-fantasy-vii.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Final Fantasy VII (USA) (Disc 1)", "name": "final-fantasy-vii.zip", "size": 747549515, "sha256": "0c273f04bfe5074f8136a052d4fab2de6439fcf10d5cb89e6887c714db2564b9", "url": "private:final-fantasy-vii__final-fantasy-vii.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
