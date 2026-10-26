@@ -227,6 +227,21 @@
       ] }
     },
     {
+      "id": "pok-mon-alpha-sapphire",
+      "title": "Pokmon Alpha Sapphire",
+      "system": "3ds",
+      "players": "1",
+      "description": "Prepare for an epic adventure exploring a world filled with Pokmon in Pokmon Alpha Sapphire for the Nintendo 3DS family of systems. Your adventure takes place in Hoenn, a region that consists of a main island that stretches widely from east to west, along with countless small...",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-alpha-sapphire.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "f349613532dbcc124b11373fc03ed7dbf2addb3c4ac7b15c8674a7628ebafab4", "pieces": [
+        { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "d946af351c4d8e2a3c61d0068d62efae8e80730b654deac433ece99d0078c65e" },
+        { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
