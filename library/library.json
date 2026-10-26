@@ -2513,6 +2513,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "digimon-world",
+      "title": "Digimon World",
+      "system": "psx",
+      "players": "1-2",
+      "description": "It is your goal to roam the dangerous countryside with your trained Digimon battling other lost Digimon. A victorious battle permits them to return home to the abandoned File Island. The main one-player mode on Digimon World is where the mysterious story unfolds as you raise...",
+      "added": "2026-10-26",
+      "art": "library/art/digimon-world.png",
+      "video": "library/video/digimon-world.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Digimon World (USA)", "name": "digimon-world.zip", "size": 381830557, "sha256": "083ea678d4842bb9cc5fa7697fd9cd1e7404632e66199188e55cf77ba2c88537", "url": "private:digimon-world__digimon-world.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
