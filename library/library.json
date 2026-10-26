@@ -1432,6 +1432,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "mario-party-2-usa",
+      "title": "Mario Party 2 (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/mario-party-2-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Party 2 (USA)", "name": "mario-party-2-usa.zip", "size": 33560075, "sha256": "648e9b747e319c1f0f7a4a0631ea10f3d74f4bf0b529c5020170e344eb8766f5", "url": "private:mario-party-2-usa__mario-party-2-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mystical-ninja-starring-goemon",
       "title": "Mystical Ninja Starring Goemon",
       "system": "n64",
