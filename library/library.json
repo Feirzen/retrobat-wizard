@@ -1627,6 +1627,19 @@
       ]
     },
     {
+      "id": "snowboard-kids-usa",
+      "title": "Snowboard Kids (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/snowboard-kids-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Snowboard Kids (USA)", "name": "snowboard-kids-usa.zip", "size": 8390414, "sha256": "6f4c616d648b1abde5edef7e9d044232bfd7c2c3a67d3690225e4099192ed3de", "url": "private:snowboard-kids-usa__snowboard-kids-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "star-fox-64",
       "title": "Star Fox 64",
       "system": "n64",
