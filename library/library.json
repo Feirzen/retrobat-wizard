@@ -4247,8 +4247,9 @@
       "system": "xbox",
       "players": "1",
       "description": "Grabbed by the Ghoulies follows a young man named Cooper Chance who sets out to rescue his girlfriend, Amber, from Ghoulhaven Hall. This mansion is full of supernatural creatures, and Cooper will receive help along the way from the many hired hands that work there.",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/grabbed-by-the-ghoulies.png",
+      "video": "library/video/grabbed-by-the-ghoulies.mp4",
       "files": [
       ],
       "parts": { "name": "Grabbed by the Ghoulies (USA) (En,Fr,De,Es,It).xiso.iso", "size": 2709585920, "sha256": "35515e57026b2ccbd219e8ed22d6eb67adb3448d75c813a0399b48526c283fa0", "pieces": [
