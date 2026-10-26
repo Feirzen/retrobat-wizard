@@ -1319,6 +1319,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "conker-s-bad-fur-day",
+      "title": "Conker's Bad Fur Day",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Conker the Squirrel has had a really bad day. Too much partying, too much booze - and the result is predictable: a terrible hangover. What is less predictable, however, is the fact that Conker has no idea where he is. All he wants is to go home to his girlfriend Berri, but it...",
+      "added": "2026-10-26",
+      "art": "library/art/conker-s-bad-fur-day.png",
+      "video": "library/video/conker-s-bad-fur-day.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Conker's Bad Fur Day (USA)", "name": "conker-s-bad-fur-day.zip", "size": 67119648, "sha256": "42f2f7345455135aae622c86e56d9a49ca48d1d31add49477c7d5d4e7756c1ff", "url": "private:conker-s-bad-fur-day__conker-s-bad-fur-day.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "conker-s-bad-fur-day-usa",
       "title": "Conker's Bad Fur Day (USA)",
       "system": "n64",
