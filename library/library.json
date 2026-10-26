@@ -4231,8 +4231,9 @@
       "system": "xbox",
       "players": "1-4",
       "description": "Fuzion Frenzy is a launch title for the Microsoft Xbox. At its core, Fuzion Frenzy is a four-player party game featuring 45 different mini-games (not including the titular Fuzion Frenzy). A demo of the game was included with some other launch titles in the US, including Halo,...",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/fuzion-frenzy.png",
+      "video": "library/video/fuzion-frenzy.mp4",
       "files": [
       ],
       "parts": { "name": "Fuzion Frenzy (USA).xiso.iso", "size": 2084569088, "sha256": "8662b9ccdf2507e6d1edd3fa8ec3003cc7b8f016e0f55518aa700200db104618", "pieces": [
