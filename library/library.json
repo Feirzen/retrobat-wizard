@@ -278,6 +278,22 @@
       ] }
     },
     {
+      "id": "pok-mon-ultra-moon",
+      "title": "Pokmon Ultra Moon",
+      "system": "3ds",
+      "players": "1",
+      "description": "Take on the role of a Pokmon Trainer and unravel the mystery of the Legendary Pokmon Necrozma's new forms: Dusk Mane Necrozma in the Pokmon Ultra Sun game and Dawn Wings Necrozma in the Pokmon Ultra Moon game. You can encounter and battle 400+ Pokmon, including new forms....",
+      "added": "2026-10-26",
+      "art": "library/art/pok-mon-ultra-moon.png",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci", "size": 4294967296, "sha256": "e08a903921bb87bdfb6e46c2a9c5e41a685e91cc371d38ffcbdcc4884bc84054", "pieces": [
+        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part01", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part01", "size": 1992294400, "sha256": "e70db13af2006e88a9fb32d793b5595483fcdba0c9e6cd3af241cfc1725fd4a1" },
+        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part02", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part02", "size": 1992294400, "sha256": "2c8d5508103d20c5ee5a82182f1b083a44b6d3730a2f416b040830d278388ee8" },
+        { "name": "Pokemon Ultra Moon (USA) (En,Ja,Fr,De,Es,It,Zh,Ko).cci.part03", "url": "private:pok-mon-ultra-moon__Pokemon.Ultra.Moon.USA.En.Ja.Fr.De.Es.It.Zh.Ko.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
       "id": "pok-mon-alpha-sapphire",
       "title": "Pokmon Alpha Sapphire",
       "system": "3ds",
