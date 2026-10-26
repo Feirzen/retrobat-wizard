@@ -1813,6 +1813,19 @@
       ]
     },
     {
+      "id": "castlevania",
+      "title": "Castlevania",
+      "system": "nes",
+      "players": "1",
+      "description": "Enter at your own risk! If you think it's scary on the outside, wait till you see the basement. You're in for the longest night of your life. Ghosts, goblins, demons, wolves, bats  creatures lurking around every corner. As you descend deeper and deeper, they get thicker and...",
+      "added": "2026-10-26",
+      "art": "library/art/castlevania.png",
+      "video": "library/video/castlevania.mp4",
+      "files": [
+        { "name": "Castlevania (USA) (Rev 1).nes", "url": "private:castlevania__Castlevania.USA.Rev.1.nes", "size": 131088, "sha256": "5e859d77bc0e3a9f30a7c14d2637b9c2aae6ce19f6520a7c9b252a86974f7800" }
+      ]
+    },
+    {
       "id": "contra",
       "title": "Contra",
       "system": "nes",
