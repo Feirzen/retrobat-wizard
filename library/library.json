@@ -2611,6 +2611,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "hot-shots-golf-2",
+      "title": "Hot Shots Golf 2",
+      "system": "psx",
+      "players": "1-4",
+      "description": "Everybody's Golf 2 (GOLF2 Minna no Golf 2?) (Hot Shots Golf 2 in North America) is the second game in the Everybody's Golf series and the second game released for PlayStation. It was released on 29 July 1999 in Japan, 29 February 2000 in North America and 2000 in Europe.",
+      "added": "2026-10-26",
+      "art": "library/art/hot-shots-golf-2.png",
+      "video": "library/video/hot-shots-golf-2.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Hot Shots Golf 2 (USA)", "name": "hot-shots-golf-2.zip", "size": 288862995, "sha256": "49232c32753f52775db3dff47891c4912741eeb40a52639dd72e6a9bad0907cd", "url": "private:hot-shots-golf-2__hot-shots-golf-2.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
