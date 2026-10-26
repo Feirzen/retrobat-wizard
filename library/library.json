@@ -1654,6 +1654,20 @@
       ]
     },
     {
+      "id": "nfl-blitz-2000",
+      "title": "NFL Blitz 2000",
+      "system": "n64",
+      "players": "1-4",
+      "description": "New edition of Midway's \"NFL Jam\" action/sports game where the emphasis is on bone-crushing action rather than sport simulation. Additions this year come in the form of a season mode, a simpler passing system based on preset buttons (gone is the \"aiming\" mechanism) as well as a...",
+      "added": "2026-10-26",
+      "art": "library/art/nfl-blitz-2000.png",
+      "video": "library/video/nfl-blitz-2000.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "NFL Blitz 2000 (USA) (Rev 1)", "name": "nfl-blitz-2000.zip", "size": 16780326, "sha256": "7d8d0f1035cfca2076314537ad687976d4ce1c9603123a73e7d9d4760888f31a", "url": "private:nfl-blitz-2000__nfl-blitz-2000.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "nfl-blitz-2000-usa-rev-1",
       "title": "NFL Blitz 2000 (USA) (Rev 1)",
       "system": "n64",
