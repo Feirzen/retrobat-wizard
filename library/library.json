@@ -251,6 +251,18 @@
       ]
     },
     {
+      "id": "pokemon-rumble-world",
+      "title": "Pokemon Rumble World",
+      "system": "3ds",
+      "players": "1",
+      "description": "Control cute Toy Pokemon and have exhilarating battles in Pokemon Rumble World! This downloadable game for systems in the Nintendo 3DS family is packed with Pokemon that you can battle and befriend. You can collect 719 species of Pokemon: all the ones that have appeared in the...",
+      "added": "2026-10-26",
+      "art": "library/art/pokemon-rumble-world.jpg",
+      "files": [
+        { "name": "Pokemon Rumble World (USA).cci", "url": "private:pokemon-rumble-world__Pokemon.Rumble.World.USA.cci", "size": 536870912, "sha256": "eb0d85b288b647bf696de76effed6db614ea6ee71016bfb52543dcfa2b308daa" }
+      ]
+    },
+    {
       "id": "pok-mon-alpha-sapphire",
       "title": "Pokmon Alpha Sapphire",
       "system": "3ds",
