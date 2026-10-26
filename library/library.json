@@ -15,6 +15,18 @@
       ]
     },
     {
+      "id": "captain-toad-treasure-tracker",
+      "title": "Captain Toad: Treasure Tracker",
+      "system": "3ds",
+      "players": "1",
+      "description": "The sometimes cowardly, sometimes courageous Captain Toad embarks on his first solo adventure for 3DS! This puzzle-platformer game sees the diminutive hero from SUPER MARIO 3D WORLD adventure through a wide range of levels.Use the Wii U GamePad to look around each self-contained...",
+      "added": "2026-10-26",
+      "art": "library/art/captain-toad-treasure-tracker.png",
+      "files": [
+        { "name": "Captain Toad - Treasure Tracker (USA) (En,Fr,Es).cci", "url": "private:captain-toad-treasure-tracker__Captain.Toad.-.Treasure.Tracker.USA.En.Fr.Es.cci", "size": 536870912, "sha256": "cbf62d25fee6d03040c7e6ce86c2a3d971805b39ec46744d9dcc0fe058ffc69b" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
