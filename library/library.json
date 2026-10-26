@@ -4169,8 +4169,9 @@
       "system": "xbox",
       "players": "1",
       "description": "Based on the animated television program of the same name, Avatar: The Last Airbender follows the adventures of a group of kids living in an Asian-inspired fantasy world where the nations have been divided up according to the four classical elements: Air, Water, Earth, and Fire....",
-      "added": "2026-10-25",
+      "added": "2026-10-26",
       "art": "library/art/avatar-the-last-airbender.png",
+      "video": "library/video/avatar-the-last-airbender.mp4",
       "files": [
         { "name": "Nickelodeon Avatar - The Last Airbender (USA).xiso.iso", "url": "private:avatar-the-last-airbender__Nickelodeon.Avatar.-.The.Last.Airbender.USA.xiso.iso", "size": 1235419136, "sha256": "4f1ee4d1c6f60af41b51590749cec339bce6fb9654e33de0e71c69619ae3ff91" }
       ]
