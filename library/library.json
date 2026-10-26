@@ -1264,6 +1264,19 @@
       ]
     },
     {
+      "id": "bomberman-64-usa",
+      "title": "Bomberman 64 (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/bomberman-64-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Bomberman 64 (USA)", "name": "bomberman-64-usa.zip", "size": 8390408, "sha256": "9128557a1f2163d77f8331ae35aa39c45dc4f22d48f933db1c4a5fb9515f13c8", "url": "private:bomberman-64-usa__bomberman-64-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-64",
       "title": "Donkey Kong 64",
       "system": "n64",
