@@ -2485,6 +2485,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "crash-bash",
+      "title": "Crash Bash",
+      "system": "psx",
+      "players": "1-4",
+      "description": "Crash and his friends are back in a knockdown, drag-out arena rumble. Get ready to ride, race, jump, throw, and battle it out to the finish in frantic, head-to-head battles, and heart-pumping chases. Choose your favorite character, including Crash, Coco, Dr. Neo Cortex, and new...",
+      "added": "2026-10-26",
+      "art": "library/art/crash-bash.png",
+      "video": "library/video/crash-bash.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Crash Bash (USA)", "name": "crash-bash.zip", "size": 178247989, "sha256": "e9c5b1776273d4a04e92779bfef249afed9ac5927bdfb0760ebaa6fe2771a7a8", "url": "private:crash-bash__crash-bash.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
