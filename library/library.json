@@ -1572,6 +1572,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "mario-party-2",
+      "title": "Mario Party 2",
+      "system": "n64",
+      "players": "1-4",
+      "description": "Mario and a range of well known Nintendo characters, including Yoshi, Bowser, Luigi, and Wario return for some more party action. The second edition includes 5 new boards, each with a specific theme, such as Space Land, Western Land, Horror Land, and Mystery Land. Each board...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-party-2.png",
+      "video": "library/video/mario-party-2.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Mario Party 2 (USA)", "name": "mario-party-2.zip", "size": 33560075, "sha256": "09bf63a316c7beb791d933c3725ac11af4e8dae4c12a4315db76ee3f91a62e86", "url": "private:mario-party-2__mario-party-2.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "mario-party-2-usa",
       "title": "Mario Party 2 (USA)",
       "system": "n64",
