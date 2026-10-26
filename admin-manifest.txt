@@ -1,4 +1,4 @@
 # retrobat-wizard ADMIN TOOLS. Built by publish.py from ship-list.txt.
-version	3.1.0
-code	26cec9ea34cb876f1500f103bdffa03ee6cbdbc5c6b9ce959fe65b2644d304b6	42412	scripts/AdminEngine.ps1
-code	4004217eced55eb7e72659f12861a5c0e150a32cbabb027a3907e77b7fa2d4ed	39578	scripts/AdminUI.ps1
+version	3.2.0
+code	3e99731222b0e08f2408aad9c369d9837fb0658c766056ce34e3c69f9cd00467	55321	Program/scripts/AdminEngine.ps1
+code	c66c05b76f1258b9693920427028c7ad30aa8a356ad9ebccbc588570e50162ed	52162	Program/scripts/AdminUI.ps1
