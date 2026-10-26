@@ -1607,6 +1607,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "ready-2-rumble-boxing",
+      "title": "Ready 2 Rumble Boxing",
+      "system": "n64",
+      "players": "1-2",
+      "description": "Ready 2 Rumble is a cartoon style boxing beat 'em up with plenty of strange looking characters to choose from and beat the hell out of. You can train your character up to the best of his/her ability and then fight the best in the world for the championship belt.",
+      "added": "2026-10-26",
+      "art": "library/art/ready-2-rumble-boxing.png",
+      "video": "library/video/ready-2-rumble-boxing.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Ready 2 Rumble Boxing (USA)", "name": "ready-2-rumble-boxing.zip", "size": 33560099, "sha256": "51e9f27f92ad1cdb6607537196f93806491e75aea75eaadbf12cdf83ab70f38f", "url": "private:ready-2-rumble-boxing__ready-2-rumble-boxing.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "rugrats-scavenger-hunt",
       "title": "Rugrats : Scavenger Hunt",
       "system": "n64",
