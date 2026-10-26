@@ -453,6 +453,21 @@
       ]
     },
     {
+      "id": "super-smash-bros-for-nintendo-3ds",
+      "title": "Super Smash Bros. for Nintendo 3DS",
+      "system": "3ds",
+      "players": "1",
+      "description": "The basics of Super Smash Bros. are simple. Use your chosen character's unique attacks and special moves to damage your opponent, then hit 'em with a smash attack to send them flying off the stage! The higher your opponent's damage  represented as a percentage  the farther...",
+      "added": "2026-10-26",
+      "art": "library/art/super-smash-bros-for-nintendo-3ds.png",
+      "files": [
+      ],
+      "parts": { "name": "Super Smash Bros. for Nintendo 3DS (USA) (En,Fr,Es) (Rev 7).cci", "size": 2147483648, "sha256": "c57c957a0f17fbbe84f5678d84698fcac87ed4a57689e775b9796e8946a9da50", "pieces": [
+        { "name": "Super Smash Bros. for Nintendo 3DS (USA) (En,Fr,Es) (Rev 7).cci.part01", "url": "private:super-smash-bros-for-nintendo-3ds__Super.Smash.Bros.for.Nintendo.3DS.USA.En.Fr.Es.Rev.7.cci.part01", "size": 1992294400, "sha256": "f9a33156be94261a8d28f90ee875d5bd74eb395a50cafe245c4cceea5028afd6" },
+        { "name": "Super Smash Bros. for Nintendo 3DS (USA) (En,Fr,Es) (Rev 7).cci.part02", "url": "private:super-smash-bros-for-nintendo-3ds__Super.Smash.Bros.for.Nintendo.3DS.USA.En.Fr.Es.Rev.7.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-a-link-between-world",
       "title": "The Legend of Zelda : A Link Between Worlds",
       "system": "3ds",
