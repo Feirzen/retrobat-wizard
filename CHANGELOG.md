@@ -10,7 +10,7 @@ Newest first. Written for players: what you will notice.
 
 **Setting up**
 - The installer is a single file that runs straight from the zip, and finishes a setup that was cut off part way.
-- A new setup starts with the shared ScreenScraper login already filled in (admins: press Share the scraper login once on the Admin page).
+- A new setup starts with the shared ScreenScraper login already filled in (admins: press Share my ScreenScraper login once on the Admin page).
 - Breath of the Wild gets Vulkan and background shader building on new setups; the Set up Breath of the Wild button adds them on older ones.
 - Setup and help no longer assume RetroBat is on an external drive.
 
