@@ -1238,6 +1238,19 @@
       ]
     },
     {
+      "id": "banjo-tooie-usa",
+      "title": "Banjo-Tooie (USA)",
+      "system": "n64",
+      "players": "",
+      "description": "",
+      "added": "2026-10-26",
+      "art": "library/art/banjo-tooie-usa.png",
+      "files": [
+      ],
+      "bundle": { "folder": "Banjo-Tooie (USA)", "name": "banjo-tooie-usa.zip", "size": 33560069, "sha256": "f85e3fc7c6dc1c729f682f28048dc355560a4dcabf362eb2d2529a60bf53498b", "url": "private:banjo-tooie-usa__banjo-tooie-usa.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "beetle-adventure-racing",
       "title": "Beetle Adventure Racing!",
       "system": "n64",
