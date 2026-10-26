@@ -596,6 +596,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "power-stone-2",
+      "title": "Power Stone 2",
+      "system": "dreamcast",
+      "players": "1-4",
+      "description": "The world's most revolutionary fighting game does it again! Power Stone 2 takes go-anywhere, grab-anything combat, and introduces awesome new innovations to the hit arcade fighting series. Now, up to four players wage insane battles in fully interactive, multi-level stages....",
+      "added": "2026-10-26",
+      "art": "library/art/power-stone-2.png",
+      "video": "library/video/power-stone-2.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Power Stone 2 (USA)", "name": "power-stone-2.zip", "size": 1189882896, "sha256": "960e81bd811adfbb5bf3a102dcad53fa07914d082c619ca3044ea41f34846482", "url": "private:power-stone-2__power-stone-2.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
