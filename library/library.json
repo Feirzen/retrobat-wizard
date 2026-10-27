@@ -1428,6 +1428,19 @@
       ]
     },
     {
+      "id": "vectorman",
+      "title": "Vectorman",
+      "system": "megadrive",
+      "players": "1",
+      "description": "In 2049, the human population of Earth embarks on a migratory voyage to try to colonize other planets. They leave mechanical \"orbots\" to clean up the mess they made on Earth through littering and pollution. Raster, a high-level orbot who watches Earth through a planetwide...",
+      "added": "2026-10-26",
+      "art": "library/art/vectorman.png",
+      "video": "library/video/vectorman.mp4",
+      "files": [
+        { "name": "Vectorman (USA, Europe).zip", "url": "private:vectorman__Vectorman.USA.Europe.zip", "size": 1006210, "sha256": "571bb840fdc2ba68d021dd5a4df57fd6e463bfb8992e5f1b408bc566a4b866a4" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
