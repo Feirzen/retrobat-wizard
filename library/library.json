@@ -1402,6 +1402,19 @@
       ]
     },
     {
+      "id": "streets-of-rage-2",
+      "title": "Streets of Rage 2",
+      "system": "megadrive",
+      "players": "1-2",
+      "description": "After defeating Syndicate leader Mr. X, Axel Stone, Blaze Fielding, and Adam Hunter restored peace to the city before each pursuing their own path. One year after their reunion, Adam's brother Sammy returns from school to find the apartment in disarray and Adam missing. After...",
+      "added": "2026-10-26",
+      "art": "library/art/streets-of-rage-2.png",
+      "video": "library/video/streets-of-rage-2.mp4",
+      "files": [
+        { "name": "Streets of Rage 2 (USA).zip", "url": "private:streets-of-rage-2__Streets.of.Rage.2.USA.zip", "size": 986418, "sha256": "3f7d5d0a31a437b5ab91eed09eca3c048698a13b3ee872c2fb5586e9beba1ff0" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
