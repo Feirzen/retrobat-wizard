@@ -1324,6 +1324,19 @@
       ]
     },
     {
+      "id": "ecco-the-dolphin",
+      "title": "Ecco the Dolphin",
+      "system": "megadrive",
+      "players": "1",
+      "description": "Travel through time along with Ecco the dolphin, in the only game that could call itself a \"dolphin simulator\". Indeed, you can do pretty much everything a typical dolphin does, including eating fish, surfacing in order to breathe, using your biological sonar and of course,...",
+      "added": "2026-10-26",
+      "art": "library/art/ecco-the-dolphin.png",
+      "video": "library/video/ecco-the-dolphin.mp4",
+      "files": [
+        { "name": "Ecco the Dolphin (USA, Europe, Korea) (En).zip", "url": "private:ecco-the-dolphin__Ecco.the.Dolphin.USA.Europe.Korea.En.zip", "size": 494993, "sha256": "4d387c1d4d06e4d131220d22aef3467c35abec55ad5c35a59703dcc47b64514a" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
