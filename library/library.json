@@ -742,6 +742,19 @@
       ]
     },
     {
+      "id": "knights-of-the-round",
+      "title": "Knights of the Round",
+      "system": "fbneo",
+      "players": "1-3",
+      "description": "Knights of the Round is an arcade game released by Capcom in 1991. A side-scrolling beat 'em up based loosely on the legend of King Arthur and the Knights of the Round Table, the game features an role-playing video game-like level advancement system, with fighters getting new...",
+      "added": "2026-10-26",
+      "art": "library/art/knights-of-the-round.png",
+      "video": "library/video/knights-of-the-round.mp4",
+      "files": [
+        { "name": "knights.zip", "url": "private:knights-of-the-round__knights.zip", "size": 2355202, "sha256": "41e54d65889d9bdf0181b10c73582ba2ca97cf502d5ddb32688f3b39bf0baa13" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
