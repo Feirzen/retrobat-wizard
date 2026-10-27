@@ -1389,6 +1389,19 @@
       ]
     },
     {
+      "id": "shining-force",
+      "title": "Shining Force",
+      "system": "megadrive",
+      "players": "1",
+      "description": "In a world near our own, Dark Dragon's forces of darkness nearly conquered Rune but were defeated by legendary warriors of light, banishing him to another dimension. He vowed to return in 1,000 years to break the barrier and claim the world again. A millennium of peace followed,...",
+      "added": "2026-10-26",
+      "art": "library/art/shining-force.png",
+      "video": "library/video/shining-force.mp4",
+      "files": [
+        { "name": "Shining Force (USA).zip", "url": "private:shining-force__Shining.Force.USA.zip", "size": 1160427, "sha256": "7585b014ad31bef2e88d1d0b2e24a0f90ef555da1ed28162780e5b92c067b36a" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
