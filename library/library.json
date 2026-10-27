@@ -624,6 +624,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "space-channel-5",
+      "title": "Space Channel 5",
+      "system": "dreamcast",
+      "players": "1",
+      "description": "Hey there, Space Cats! Some pesky little aliens called Morolians are trying to take over Earth, and they're forcing the population to dance endlessly! Space Channel 5, the planet's news channel, has sent the grooviest reporter they have, Ulala, out to cover the latest...",
+      "added": "2026-10-26",
+      "art": "library/art/space-channel-5.png",
+      "video": "library/video/space-channel-5.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Space Channel 5 (USA)", "name": "space-channel-5.zip", "size": 1188953738, "sha256": "d0bc813a18c3754b06830bb7931304b2563a323e131426c16b5b3c636dea1ae5", "url": "private:space-channel-5__space-channel-5.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
