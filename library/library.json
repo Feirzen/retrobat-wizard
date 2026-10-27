@@ -1311,6 +1311,19 @@
       ]
     },
     {
+      "id": "bonanza-bros",
+      "title": "Bonanza Bros.",
+      "system": "megadrive",
+      "players": "1-2",
+      "description": "Mobo and Robo Bonona are watching TV when a mysterious stranger appears on screen, challenging them to retrieve items from various buildings within 3 minutes. While the duo accepts, each location is guarded by security personnel who will raise the alarm if they are spotted....",
+      "added": "2026-10-26",
+      "art": "library/art/bonanza-bros.png",
+      "video": "library/video/bonanza-bros.mp4",
+      "files": [
+        { "name": "Bonanza Bros. (USA, Europe, Korea) (En) (Rev B).zip", "url": "private:bonanza-bros__Bonanza.Bros.USA.Europe.Korea.En.Rev.B.zip", "size": 194622, "sha256": "96b542e166d3b68bb509dd4fe5fdca3aa55eba987fc71391738b75807089207d" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
