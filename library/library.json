@@ -781,6 +781,19 @@
       ]
     },
     {
+      "id": "ms-pac-man",
+      "title": "Ms. Pac-Man",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "In this, the first proper sequel to Namco's legendary pill eating maze game, players must once again run around a number of mazes, eating all of the pills that are scattered throughout. The ever-present ghosts (Blinky, Pinky, Inky and Sue) return to hamper the player's progress....",
+      "added": "2026-10-26",
+      "art": "library/art/ms-pac-man.png",
+      "video": "library/video/ms-pac-man.mp4",
+      "files": [
+        { "name": "mspacman.zip", "url": "private:ms-pac-man__mspacman.zip", "size": 21791, "sha256": "8374fafe9f0053a2e0f6de0b3b62088a0a48cb2115219b9507ddd63145acc131" }
+      ]
+    },
+    {
       "id": "the-king-of-dragons",
       "title": "The King of Dragons",
       "system": "fbneo",
