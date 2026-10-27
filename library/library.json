@@ -755,6 +755,19 @@
       ]
     },
     {
+      "id": "the-king-of-dragons",
+      "title": "The King of Dragons",
+      "system": "fbneo",
+      "players": "1-3",
+      "description": "The King of Dragons is a 1991 side-scrolling hack and slash video game by Capcom that allows players to choose from five characters (Elf, Wizard, Fighter, Cleric, and Dwarf) in order to travel through the kingdom of Malus and defeat the monsters that have taken over, as well as...",
+      "added": "2026-10-26",
+      "art": "library/art/the-king-of-dragons.png",
+      "video": "library/video/the-king-of-dragons.mp4",
+      "files": [
+        { "name": "kod.zip", "url": "private:the-king-of-dragons__kod.zip", "size": 2361501, "sha256": "2dfc59da0a8c6a63d2b57e812fa4db862bc85811a5779c9ed1c6a31466f1f9e2" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
