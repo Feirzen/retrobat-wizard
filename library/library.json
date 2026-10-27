@@ -846,6 +846,19 @@
       ]
     },
     {
+      "id": "the-simpsons",
+      "title": "The Simpsons",
+      "system": "fbneo",
+      "players": "1-4",
+      "description": "A jewel heist gone wrong sees Mr Burns's sidekick, Smithers, kidnapping Maggie and making his escape. Between one and four players take on the role of either Homer, Marge, Lisa, or Bart in this colorful, horizontally-scrolling beat-em-up from Konami. Each Simpsons character...",
+      "added": "2026-10-26",
+      "art": "library/art/the-simpsons.png",
+      "video": "library/video/the-simpsons.mp4",
+      "files": [
+        { "name": "simpsons2p.zip", "url": "private:the-simpsons__simpsons2p.zip", "size": 2486568, "sha256": "afb5751ad53d44450a727b8aab81fae8f8f24f007dc07bd5c31f2d5b2c881f60" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
