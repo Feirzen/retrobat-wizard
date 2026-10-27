@@ -768,6 +768,19 @@
       ]
     },
     {
+      "id": "metal-slug-3",
+      "title": "Metal Slug 3",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "In the third installment of the Metal Slug series, General Morden is back and he plans to establish a new world order. You guide one of the heroes: Marco, Tarma, Eri or Fio as they blast their way through sidescrolling levels with a unique theme, filled with countless enemies...",
+      "added": "2026-10-26",
+      "art": "library/art/metal-slug-3.png",
+      "video": "library/video/metal-slug-3.mp4",
+      "files": [
+        { "name": "mslug3.zip", "url": "private:metal-slug-3__mslug3.zip", "size": 80456826, "sha256": "47e1d4c73c8073bd68e1624e657900772ed4f644eecf2aba2c19ba82b4222f10" }
+      ]
+    },
+    {
       "id": "the-king-of-dragons",
       "title": "The King of Dragons",
       "system": "fbneo",
