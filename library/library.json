@@ -651,6 +651,19 @@
       ]
     },
     {
+      "id": "dig-dug",
+      "title": "Dig Dug",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "Dig Dug is single screen action game in which the player must dig horizontal and vertical tunnels to reach and eliminate the underground-dwelling monsters living there. This is achieved by either inflating them with an air pump until they explode, or by dropping rocks onto them.",
+      "added": "2026-10-26",
+      "art": "library/art/dig-dug.png",
+      "video": "library/video/dig-dug.mp4",
+      "files": [
+        { "name": "digdug.zip", "url": "private:dig-dug__digdug.zip", "size": 28481, "sha256": "c9a12fa0a8b19b33a3c826ef368f2a9f808fa6fea2cfda7880025ffb242b6dbc" }
+      ]
+    },
+    {
       "id": "dungeons-dragons-shadow-over-mystara",
       "title": "Dungeons & Dragons: Shadow over Mystara",
       "system": "fbneo",
