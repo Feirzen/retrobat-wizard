@@ -1376,6 +1376,19 @@
       ]
     },
     {
+      "id": "phantasy-star-iv",
+      "title": "Phantasy Star IV",
+      "system": "megadrive",
+      "players": "1",
+      "description": "The Algo star system faces renewed turmoil a millennium after Palma's explosion devastated its 3 worlds and unleashed Darkness. While life on the desert planet Motavia slowly recovers under the Hunter's Guild, a long-dormant evil is awakening. Young hunter Chaz is drawn into a...",
+      "added": "2026-10-26",
+      "art": "library/art/phantasy-star-iv.png",
+      "video": "library/video/phantasy-star-iv.mp4",
+      "files": [
+        { "name": "Phantasy Star IV (USA).zip", "url": "private:phantasy-star-iv__Phantasy.Star.IV.USA.zip", "size": 2355820, "sha256": "f19ed612e097b8efe7fde3ec4f52833cb9e3f81afe6fde0427dbed9e75cba13a" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
