@@ -638,6 +638,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "cadillacs-and-dinosaurs",
+      "title": "Cadillacs and Dinosaurs",
+      "system": "fbneo",
+      "players": "1-3",
+      "description": "The plot is based on the comic Cadillacs and Dinosaurs and takes place in the \"City In The Sea\" and its neighboring nearby jungle. The story starts 500 years from the 20th century, when an ensemble gang called the Black Marketeers begin hunting the dinosaurs to serve their...",
+      "added": "2026-10-26",
+      "art": "library/art/cadillacs-and-dinosaurs.png",
+      "video": "library/video/cadillacs-and-dinosaurs.mp4",
+      "files": [
+        { "name": "dino.zip", "url": "private:cadillacs-and-dinosaurs__dino.zip", "size": 4116096, "sha256": "f281737ccb848bdc942ef094f6a5a96aabe4659ba901759dbc1ac6ecebc17a39" }
+      ]
+    },
+    {
       "id": "captain-commando",
       "title": "Captain Commando",
       "system": "fbneo",
