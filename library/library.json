@@ -885,6 +885,19 @@
       ]
     },
     {
+      "id": "willow",
+      "title": "Willow",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "Willow is a sideways scrolling platform shoot-em-up game loosely based upon the movie of the same name. Players take on the role of one of two characters: Willow Ufgood or Madmartigan. The hero's mission is to rescue the baby Elora Danan from the evil Queen Bavmorda and bring...",
+      "added": "2026-10-26",
+      "art": "library/art/willow.png",
+      "video": "library/video/willow.mp4",
+      "files": [
+        { "name": "willow.zip", "url": "private:willow__willow.zip", "size": 1773778, "sha256": "a8b22e77185479179f6dfbb89289f3cc1490a603af3099ea0741d0bcf7b5dbb4" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
