@@ -1415,6 +1415,19 @@
       ]
     },
     {
+      "id": "toejam-earl",
+      "title": "ToeJam & Earl",
+      "system": "megadrive",
+      "players": "1-2",
+      "description": "Hip aliens Toejam and Earl crash their spaceship into Earth after Earl fails to navigate around an asteroid while cruising the galaxy. Toejam and Earl must travel from level to level on Earth and collect the 10 scattered pieces of the ship. But the various Earthlings, such as...",
+      "added": "2026-10-26",
+      "art": "library/art/toejam-earl.png",
+      "video": "library/video/toejam-earl.mp4",
+      "files": [
+        { "name": "ToeJam & Earl (USA, Europe, Korea) (En).zip", "url": "private:toejam-earl__ToeJam.Earl.USA.Europe.Korea.En.zip", "size": 594232, "sha256": "83b13c2cb44ffc5f7539f61ebdd8d31d3118e07a9bccf7f2d47d54bf51e63b96" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
