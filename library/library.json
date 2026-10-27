@@ -638,6 +638,19 @@
       "min": "3.2.0"
     },
     {
+      "id": "captain-commando",
+      "title": "Captain Commando",
+      "system": "fbneo",
+      "players": "1-4",
+      "description": "Captain Commando is set in a crime-ridden future in the year 2026, where a superhero named Captain Commando, assisted by his three faithful Commando Companions rise up to protect the Earth and all the Galaxy from a gang of super-powered criminals.",
+      "added": "2026-10-26",
+      "art": "library/art/captain-commando.png",
+      "video": "library/video/captain-commando.mp4",
+      "files": [
+        { "name": "captcomm.zip", "url": "private:captain-commando__captcomm.zip", "size": 2542116, "sha256": "7a9cd980e562b6ca13863f4e59a4fea8af254ec0a6e65c3b06d8d4b95720eeab" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
