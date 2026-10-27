@@ -1350,6 +1350,19 @@
       ]
     },
     {
+      "id": "gunstar-heroes",
+      "title": "Gunstar Heroes",
+      "system": "megadrive",
+      "players": "1-2",
+      "description": "Chaos has broken out on the planet Gunstar-9!! The mad Colonel Red has discovered four crystals that imprison a deadly being known as GoldenSilver, and plans on unleashing it onto the population of the planet! He must be stopped! Enter...the Gunstar Heroes, Red and Blue! Unleash...",
+      "added": "2026-10-26",
+      "art": "library/art/gunstar-heroes.png",
+      "video": "library/video/gunstar-heroes.mp4",
+      "files": [
+        { "name": "Gunstar Heroes (USA).zip", "url": "private:gunstar-heroes__Gunstar.Heroes.USA.zip", "size": 647393, "sha256": "23617f6634ac1ea2d1f86010d6f23854de0b02c05df2c24f66145d73f4b71244" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
