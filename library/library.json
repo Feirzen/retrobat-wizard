@@ -1337,6 +1337,19 @@
       ]
     },
     {
+      "id": "golden-axe",
+      "title": "Golden Axe",
+      "system": "megadrive",
+      "players": "1-2",
+      "description": "In the past, a terrible war raged between the Gods, the creators of the world, and the Titans. The Titans were defeated thanks to a super-powerful weapon forged by the Gods, called the Golden Axe. Thanks to this weapon, the Titans were banished, and the Gods bequeathed the Earth...",
+      "added": "2026-10-26",
+      "art": "library/art/golden-axe.png",
+      "video": "library/video/golden-axe.mp4",
+      "files": [
+        { "name": "Golden Axe (World) (Rev A).zip", "url": "private:golden-axe__Golden.Axe.World.Rev.A.zip", "size": 335704, "sha256": "b4e8985515a975c6993d72738939dee6fd5518980f0c3737175e90db3b104a2b" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
