@@ -1363,6 +1363,19 @@
       ]
     },
     {
+      "id": "micro-machines-2-turbo-tournament",
+      "title": "Micro Machines 2 : Turbo Tournament",
+      "system": "megadrive",
+      "players": "1-8",
+      "description": "The second game of the Micro Machines series. Like in its predecessor, you behind the steering wheel of an extremely small car. You race around on interesting places, like a table, a treehouse and many more. The control of the cars is sometimes quite difficult, especially if you...",
+      "added": "2026-10-26",
+      "art": "library/art/micro-machines-2-turbo-tournament.png",
+      "video": "library/video/micro-machines-2-turbo-tournament.mp4",
+      "files": [
+        { "name": "Micro Machines 2 - Turbo Tournament (Europe).zip", "url": "private:micro-machines-2-turbo-tournament__Micro.Machines.2.-.Turbo.Tournament.Europe.zip", "size": 859856, "sha256": "a317f013c615f1992b6c65ec4276f1dfd12be10d38be8e51de25f558c0df01a0" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
