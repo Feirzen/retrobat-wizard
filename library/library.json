@@ -651,6 +651,19 @@
       ]
     },
     {
+      "id": "dungeons-dragons-shadow-over-mystara",
+      "title": "Dungeons & Dragons: Shadow over Mystara",
+      "system": "fbneo",
+      "players": "1-4",
+      "description": "Dungeons & Dragons: Shadow over Mystara is an arcade game developed and published by Capcom in 1996 as a sequel to Dungeons & Dragons: Tower of Doom. It was also released on the Sega Saturn, packaged with Tower of Doom, under the title Dungeons & Dragons Collection. The game is...",
+      "added": "2026-10-26",
+      "art": "library/art/dungeons-dragons-shadow-over-mystara.png",
+      "video": "library/video/dungeons-dragons-shadow-over-mystara.mp4",
+      "files": [
+        { "name": "ddsom.zip", "url": "private:dungeons-dragons-shadow-over-mystara__ddsom.zip", "size": 16975285, "sha256": "3a6ee47309fa049ea2f99bee7b90c223043acd081ea296e215a42b800882b385" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
