@@ -768,6 +768,19 @@
       ]
     },
     {
+      "id": "marvel-vs-capcom-clash-of-super-heroes",
+      "title": "Marvel vs. Capcom : Clash of Super Heroes",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "Marvel vs. Capcom: Clash of Super Heroes is the fifth Marvel Comics-licensed fighting game by Capcom and the third game in the Marvel vs. Capcom series. In contrast to X-Men vs. Street Fighter and Marvel Super Heroes vs. Street Fighter, the game features characters from numerous...",
+      "added": "2026-10-26",
+      "art": "library/art/marvel-vs-capcom-clash-of-super-heroes.png",
+      "video": "library/video/marvel-vs-capcom-clash-of-super-heroes.mp4",
+      "files": [
+        { "name": "mvsc.zip", "url": "private:marvel-vs-capcom-clash-of-super-heroes__mvsc.zip", "size": 22699761, "sha256": "6f63627cc37c554f74e8bf07b21730fa7f85511c7d5d07449850be98dde91da8" }
+      ]
+    },
+    {
       "id": "metal-slug-3",
       "title": "Metal Slug 3",
       "system": "fbneo",
