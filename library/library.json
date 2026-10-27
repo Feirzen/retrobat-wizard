@@ -729,6 +729,19 @@
       ]
     },
     {
+      "id": "gauntlet",
+      "title": "Gauntlet",
+      "system": "fbneo",
+      "players": "1-4",
+      "description": "Gauntlet is a maze-based shoot-em-up for up to four players. Heavily influenced by classic fantasy conventions, players take on the role of either Thor the Warrior, Thyra the Valkyrie, Merlin the Wizard, or Questor the Elf and must play cooperatively as they explore and fight...",
+      "added": "2026-10-26",
+      "art": "library/art/gauntlet.png",
+      "video": "library/video/gauntlet.mp4",
+      "files": [
+        { "name": "gauntlet2p.zip", "url": "private:gauntlet__gauntlet2p.zip", "size": 257112, "sha256": "77d8852fcba9d00d9c202cab5a6596df81d3e905a3de2b4c89a8ef59c77fb498" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
