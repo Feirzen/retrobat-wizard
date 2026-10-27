@@ -820,6 +820,19 @@
       ]
     },
     {
+      "id": "the-punisher",
+      "title": "The Punisher",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "A Capcom arcade beat-em-up game similar to games like Double Dragon featuring the Marvel character The Punisher. Nick Fury is also a playable character in this game.",
+      "added": "2026-10-26",
+      "art": "library/art/the-punisher.png",
+      "video": "library/video/the-punisher.mp4",
+      "files": [
+        { "name": "punisher.zip", "url": "private:the-punisher__punisher.zip", "size": 4042628, "sha256": "d959b9e3b1dced95f5ef55f01189e6da0c9006d02ceb4d564df85aa5f35e440d" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
