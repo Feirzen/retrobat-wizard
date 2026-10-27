@@ -716,6 +716,19 @@
       ]
     },
     {
+      "id": "frogger",
+      "title": "Frogger",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "Frogger is a one or two-player game in which players must overcome a number of hazards to safely guide the green amphibian from the bottom of the screen to one of five home bases situated at the top of the screen. A round is completed once five frogs have been guided safely...",
+      "added": "2026-10-26",
+      "art": "library/art/frogger.png",
+      "video": "library/video/frogger.mp4",
+      "files": [
+        { "name": "frogger.zip", "url": "private:frogger__frogger.zip", "size": 16011, "sha256": "b975a63ea4c3fd87781d3233660928e3b822334ad415ac495599cf85230ad01f" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
