@@ -833,6 +833,19 @@
       ]
     },
     {
+      "id": "teenage-mutant-ninja-turtles-turtles-in",
+      "title": "Teenage Mutant Ninja Turtles: Turtles in Time",
+      "system": "fbneo",
+      "players": "1-4",
+      "description": "The sequel to 1989's hugely successful original, 'Turtles in Time' once more sees the four heroes taking on Shredder and his army. Gameplay remains similar to the original game, but the experience is enhanced further with the obligatory improved graphics and sound effects....",
+      "added": "2026-10-26",
+      "art": "library/art/teenage-mutant-ninja-turtles-turtles-in.png",
+      "video": "library/video/teenage-mutant-ninja-turtles-turtles-in.mp4",
+      "files": [
+        { "name": "tmnt22pu.zip", "url": "private:teenage-mutant-ninja-turtles-turtles-in__tmnt22pu.zip", "size": 3309829, "sha256": "5caec2dba20fd69dafc9fc10819e4a5372748598c1f690ad76fd17d21c37e50a" }
+      ]
+    },
+    {
       "id": "the-king-of-dragons",
       "title": "The King of Dragons",
       "system": "fbneo",
