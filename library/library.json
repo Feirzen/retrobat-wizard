@@ -820,6 +820,19 @@
       ]
     },
     {
+      "id": "sunset-riders",
+      "title": "Sunset Riders",
+      "system": "fbneo",
+      "players": "1-4",
+      "description": "Sunset Riders is a horizontally-scrolling platform shoot-em-up for up to four players set in America's Wild West. Four sharpshooter bounty hunters (Steve, Billy, Bob and Cormano) set out to claim the bounties for killing the most wanted outlaws in the West, before a final...",
+      "added": "2026-10-26",
+      "art": "library/art/sunset-riders.png",
+      "video": "library/video/sunset-riders.mp4",
+      "files": [
+        { "name": "ssridersubc.zip", "url": "private:sunset-riders__ssridersubc.zip", "size": 2274428, "sha256": "0518811b838ca5707771b05b0f65b0ae2db98064ef58cd15d9d51852ded3b9e1" }
+      ]
+    },
+    {
       "id": "the-king-of-dragons",
       "title": "The King of Dragons",
       "system": "fbneo",
