@@ -1298,6 +1298,19 @@
       ]
     },
     {
+      "id": "aladdin",
+      "title": "Aladdin",
+      "system": "megadrive",
+      "players": "1",
+      "description": "The game from Virgin based on the 1992 animated Disney film is a side-scrolling platformer. The player controls Aladdin, who must make his way through several levels based on locations from the movie: from the streets and rooftops of Agrabah, the Cave of Wonders and the Sultan's...",
+      "added": "2026-10-26",
+      "art": "library/art/aladdin.png",
+      "video": "library/video/aladdin.mp4",
+      "files": [
+        { "name": "Aladdin (USA).zip", "url": "private:aladdin__Aladdin.USA.zip", "size": 1129565, "sha256": "3d3fff9a5030366d317abdd2441cfcf9172746826fa7199662ed59d850cf2716" }
+      ]
+    },
+    {
       "id": "1080-teneighty-snowboarding",
       "title": "1080 TenEighty Snowboarding",
       "system": "n64",
