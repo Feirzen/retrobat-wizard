@@ -898,6 +898,19 @@
       ]
     },
     {
+      "id": "x-men",
+      "title": "X-Men",
+      "system": "fbneo",
+      "players": "1-6",
+      "description": "X-Men is a side-scrolling beat-em-up for up to four players. The X-Men's mission is to find and rescue Professor X, who has been captured by evil mutants and is now being held prisoner by Magneto. Each X-Man character has an 'Attack', 'Jump' and 'Mutant Power' button. The mutant...",
+      "added": "2026-10-26",
+      "art": "library/art/x-men.png",
+      "video": "library/video/x-men.mp4",
+      "files": [
+        { "name": "xmen2pa.zip", "url": "private:x-men__xmen2pa.zip", "size": 4251710, "sha256": "53f7938f360f45c82e166c534ab3be472788a138cbffdbdde951b48005db7a5d" }
+      ]
+    },
+    {
       "id": "alien-hominid",
       "title": "Alien Hominid",
       "system": "gamecube",
