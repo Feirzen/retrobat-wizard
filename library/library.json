@@ -755,6 +755,19 @@
       ]
     },
     {
+      "id": "mario-bros",
+      "title": "Mario Bros.",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "Mario Bros. is a superb, single-screen platform game in which the legendary \"Mario Bros.\", Mario and Luigi, must try to rid each level of a number of pests that have infested the waterworks: Shellcreepers (turtles), Sidesteppers (crabs that need to be hit twice) and Fighterflies...",
+      "added": "2026-10-26",
+      "art": "library/art/mario-bros.png",
+      "video": "library/video/mario-bros.mp4",
+      "files": [
+        { "name": "mario.zip", "url": "private:mario-bros__mario.zip", "size": 36588, "sha256": "40596c5c9968999bdbaee3201e33aeaa68dd2c9f6d0a9e504c068cdbd5e338df" }
+      ]
+    },
+    {
       "id": "the-king-of-dragons",
       "title": "The King of Dragons",
       "system": "fbneo",
