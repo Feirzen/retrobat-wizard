@@ -677,6 +677,19 @@
       ]
     },
     {
+      "id": "donkey-kong",
+      "title": "Donkey Kong",
+      "system": "fbneo",
+      "players": "1-2",
+      "description": "Donkey Kong is a platform-action game that has Mario scale four different industrial-themed levels (construction zone, cement factory, an elevator-themed level, and removing rivets from girders) in an attempt to save the damsel in distress, Pauline, from the big ape before the...",
+      "added": "2026-10-26",
+      "art": "library/art/donkey-kong.png",
+      "video": "library/video/donkey-kong.mp4",
+      "files": [
+        { "name": "dkong.zip", "url": "private:donkey-kong__dkong.zip", "size": 22302, "sha256": "bcfdad4052be66b40923afb97ff996c7cc0157358fcebe3374c93d270b22c8d5" }
+      ]
+    },
+    {
       "id": "dungeons-dragons-shadow-over-mystara",
       "title": "Dungeons & Dragons: Shadow over Mystara",
       "system": "fbneo",
