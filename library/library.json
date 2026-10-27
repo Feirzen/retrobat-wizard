@@ -807,6 +807,19 @@
       ]
     },
     {
+      "id": "rampage",
+      "title": "Rampage",
+      "system": "fbneo",
+      "players": "1-3",
+      "description": "George, Lizzy and Ralph were just ordinary Americans, until an experiment went wrong, turning them into a Gorilla, Lizard and Werewolf respectively. Following this, the three of them plan to go round destroying buildings, and up to 3 human players can join in. Smashing at the...",
+      "added": "2026-10-26",
+      "art": "library/art/rampage.png",
+      "video": "library/video/rampage.mp4",
+      "files": [
+        { "name": "rampage.zip", "url": "private:rampage__rampage.zip", "size": 257472, "sha256": "786d5cb5c1fe9dce41f10f3eaf90f242a8153c2f1b88f2700204adcebb99ae81" }
+      ]
+    },
+    {
       "id": "the-king-of-dragons",
       "title": "The King of Dragons",
       "system": "fbneo",
