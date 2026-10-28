@@ -1046,8 +1046,9 @@
       "system": "gamecube",
       "players": "1-4",
       "description": "Prepare for fast and furious racing action as Kirby hits Warpstar speed. Use simple controls to race and battle your friends in one of three hectic game modes. In Air Ride mode, you'll race to the finish line against your friends or computer-controlled competition. Top Ride mode...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/kirby-air-ride.png",
+      "video": "library/video/kirby-air-ride.mp4",
       "files": [
         { "name": "Kirby Air Ride (USA).rvz", "url": "private:kirby-air-ride__Kirby.Air.Ride.USA.rvz", "size": 691605072, "sha256": "e42facaf2a3ecd2d9c7572a201ef19898dec1dbe96d7330bbb8610a7f0a23ab9" }
       ]
