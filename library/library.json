@@ -989,6 +989,19 @@
       ]
     },
     {
+      "id": "def-jam-fight-for-ny",
+      "title": "Def Jam : Fight for NY",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "The ultimate hip-hop fueled fighting game, Def Jam Fight For NY challenges players to step into the shoes of a ruthless street fighter battling for control of New York's hip-hop underground. The game features an all-new fighting engine including weapons, interactive...",
+      "added": "2026-10-28",
+      "art": "library/art/def-jam-fight-for-ny.png",
+      "video": "library/video/def-jam-fight-for-ny.mp4",
+      "files": [
+        { "name": "Def Jam - Fight for NY (USA).ciso", "url": "private:def-jam-fight-for-ny__Def.Jam.-.Fight.for.NY.USA.ciso", "size": 1310753344, "sha256": "09803954a8934b33de8ce5a6368a31f704c24dfbac61e2710107907ee8c6cd51" }
+      ]
+    },
+    {
       "id": "fire-emblem-path-of-radiance",
       "title": "Fire Emblem : Path of Radiance",
       "system": "gamecube",
