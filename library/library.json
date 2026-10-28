@@ -1028,6 +1028,19 @@
       ]
     },
     {
+      "id": "harry-potter-and-the-chamber-of-secrets",
+      "title": "Harry Potter and the Chamber of Secrets",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Be Harry Potter in a new adventure with more magic, friends, and danger. In his sophomore year at Hogwarts School of Witchcraft and Wizardry, Harry stumbles upon a dark chapter in the school's past. In an effort to confront the powers at the heart of the Chamber of Secrets,...",
+      "added": "2026-10-28",
+      "art": "library/art/harry-potter-and-the-chamber-of-secrets.png",
+      "video": "library/video/harry-potter-and-the-chamber-of-secrets.mp4",
+      "files": [
+        { "name": "Harry Potter and the Chamber of Secrets (USA).ciso", "url": "private:harry-potter-and-the-chamber-of-secrets__Harry.Potter.and.the.Chamber.of.Secrets.USA.ciso", "size": 1348502080, "sha256": "e7b6c9c36787683306d9d4a39de9c6613330b8f6dc9dfe7084b9df9fdf6fcc11" }
+      ]
+    },
+    {
       "id": "kirby-air-ride",
       "title": "Kirby Air Ride",
       "system": "gamecube",
