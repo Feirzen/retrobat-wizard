@@ -976,6 +976,19 @@
       ]
     },
     {
+      "id": "custom-robo",
+      "title": "Custom Robo",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "This is the fourth installment in the Custom Robo series, but the first one to be released outside of Japan. On an unknown planet in the future, custom robos are used for criminal purposes. Those who can manipulate the robots through brain waves are called \"Commanders\". When you...",
+      "added": "2026-10-28",
+      "art": "library/art/custom-robo.png",
+      "video": "library/video/custom-robo.mp4",
+      "files": [
+        { "name": "Custom Robo (USA).ciso", "url": "private:custom-robo__Custom.Robo.USA.ciso", "size": 989889088, "sha256": "7901ae1bf176e011503f9a7c9ef1deacfbb9f504f435d3efc6d8b66ce7f06dcc" }
+      ]
+    },
+    {
       "id": "fire-emblem-path-of-radiance",
       "title": "Fire Emblem : Path of Radiance",
       "system": "gamecube",
