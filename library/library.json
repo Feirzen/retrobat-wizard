@@ -950,6 +950,19 @@
       ]
     },
     {
+      "id": "crash-nitro-kart",
+      "title": "Crash Nitro Kart",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Crash Bandicoot returns to the karting scene with a host of other characters from the adventure series, and this time they have both Neo Cortex and Emperor Velo to worry about. Velo has taken the crew to a remote planet, forced to race for their lives against Neo Cortex and his...",
+      "added": "2026-10-28",
+      "art": "library/art/crash-nitro-kart.png",
+      "video": "library/video/crash-nitro-kart.mp4",
+      "files": [
+        { "name": "Crash Nitro Kart (USA).ciso", "url": "private:crash-nitro-kart__Crash.Nitro.Kart.USA.ciso", "size": 1442873920, "sha256": "09b014af6514bb552967213099c871794468a8e125041249e9b7a29260e30b80" }
+      ]
+    },
+    {
       "id": "fire-emblem-path-of-radiance",
       "title": "Fire Emblem : Path of Radiance",
       "system": "gamecube",
