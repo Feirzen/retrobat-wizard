@@ -1055,6 +1055,19 @@
       ]
     },
     {
+      "id": "madden-nfl-2005",
+      "title": "Madden NFL 2005",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Madden NFL 2005 introduces the Hit Stick, a new feature that lets players turn a game around with a crucial tackle. Along with all-new defensive preplay controls and defensive artificial intelligence enhancements, the defense now has a diverse arsenal of weapons available. Also,...",
+      "added": "2026-10-28",
+      "art": "library/art/madden-nfl-2005.png",
+      "video": "library/video/madden-nfl-2005.mp4",
+      "files": [
+        { "name": "Madden NFL 2005 (USA).ciso", "url": "private:madden-nfl-2005__Madden.NFL.2005.USA.ciso", "size": 1314947648, "sha256": "067594207b6d9c448c8416570ee34a8beb986a0241375e60df9253f59283f9e8" }
+      ]
+    },
+    {
       "id": "mario-kart-double-dash",
       "title": "Mario Kart : Double Dash!!",
       "system": "gamecube",
