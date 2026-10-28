@@ -1094,6 +1094,19 @@
       ]
     },
     {
+      "id": "mario-party-4",
+      "title": "Mario Party 4",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Toad, Koopa, and other party-planning pranksters have hidden birthday presents for their closest friends inside the Party Cube. To win the presents, Mario, Yoshi, Peach, and other Mushroom Kingdom favorites will have to plunge into a circus of minigame trickery. As always, keep...",
+      "added": "2026-10-28",
+      "art": "library/art/mario-party-4.png",
+      "video": "library/video/mario-party-4.mp4",
+      "files": [
+        { "name": "Mario Party 4 (USA) (Rev 1).ciso", "url": "private:mario-party-4__Mario.Party.4.USA.Rev.1.ciso", "size": 599818816, "sha256": "543b93edb8fc1facd2559011bf1fba9f090ecb5fc7193769a1b241b31c178fa9" }
+      ]
+    },
+    {
       "id": "mario-party-6",
       "title": "Mario Party 6",
       "system": "gamecube",
