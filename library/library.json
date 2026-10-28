@@ -937,6 +937,19 @@
       ]
     },
     {
+      "id": "baldur-s-gate-dark-alliance",
+      "title": "Baldur's Gate : Dark Alliance",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Baldur's Gate: Dark Alliance features a distinctive blend of action and adventure set in the most popular Dungeons & Dragons campaign setting: The Forgotten Realms franchise owned by Wizards of the Coast Inc. Played from a third person perspective, Baldur's Gate: Dark Alliance...",
+      "added": "2026-10-28",
+      "art": "library/art/baldur-s-gate-dark-alliance.png",
+      "video": "library/video/baldur-s-gate-dark-alliance.mp4",
+      "files": [
+        { "name": "Baldur's Gate - Dark Alliance (USA).ciso", "url": "private:baldur-s-gate-dark-alliance__Baldur.s.Gate.-.Dark.Alliance.USA.ciso", "size": 1358987840, "sha256": "f8810eedcea71b3d86c709cca35ae14f88b0efe4fa9988525928d245ad28223b" }
+      ]
+    },
+    {
       "id": "fire-emblem-path-of-radiance",
       "title": "Fire Emblem : Path of Radiance",
       "system": "gamecube",
