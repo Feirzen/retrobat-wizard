@@ -929,8 +929,9 @@
       "system": "gamecube",
       "players": "1",
       "description": "Occasionally strange but completely addictive, Nintendo's Animal Crossing for the GameCube is not so much a game as a simulation of life on a small town. Players begin the game by setting out to live life on their own in a colorful town, where they are greeted by a seemingly...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/animal-crossing.png",
+      "video": "library/video/animal-crossing.mp4",
       "files": [
         { "name": "Animal Crossing (USA, Canada).ciso", "url": "private:animal-crossing__Animal.Crossing.USA.Canada.ciso", "size": 31490624, "sha256": "f6e0e4d5662f1241add7ae1d7a6ddb95476f923cecd50f08c8eada5270427ccc" }
       ]
