@@ -1015,6 +1015,19 @@
       ]
     },
     {
+      "id": "f-zero-gx",
+      "title": "F-Zero GX",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "The classic Nintendo franchise that has inspired countless futuristic racing games returns with F-Zero GX on the Nintendo GameCube. Long-time rival Sega collaborated with Nintendo to redefine the futuristic racing genre with intense competition, blazing speeds, and brilliant...",
+      "added": "2026-10-28",
+      "art": "library/art/f-zero-gx.png",
+      "video": "library/video/f-zero-gx.mp4",
+      "files": [
+        { "name": "F-Zero GX (USA).ciso", "url": "private:f-zero-gx__F-Zero.GX.USA.ciso", "size": 1438679616, "sha256": "3d45ca0cdd5ed408c4dd417bc0a1691ef48b7d59fab123963bd9e934be6ee91e" }
+      ]
+    },
+    {
       "id": "kirby-air-ride",
       "title": "Kirby Air Ride",
       "system": "gamecube",
