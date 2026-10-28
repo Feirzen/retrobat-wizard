@@ -1067,8 +1067,9 @@
       "system": "gamecube",
       "players": "1-2",
       "description": "From the 2006 DreamWorks Animation film Over The Hedge comes this new action/adventure from Activision. Gamers assume the role of characters including RJ the raccoon, Verne the turtle, Hammy the squirrel and Stella the skunk, and explore a suburban neighborhood filled with traps...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/over-the-hedge.png",
+      "video": "library/video/over-the-hedge.mp4",
       "files": [
         { "name": "DreamWorks Over the Hedge (USA).ciso", "url": "private:over-the-hedge__DreamWorks.Over.the.Hedge.USA.ciso", "size": 1262518848, "sha256": "162af01b9839db4787a706cf5f94a4407e4fc9d3fb91e7c3177a3799aa01d14a" }
       ]
