@@ -127,18 +127,6 @@
       ]
     },
     {
-      "id": "luigi-s-mansion",
-      "title": "Luigi's Mansion",
-      "system": "3ds",
-      "players": "1",
-      "description": "Luigi's Mansion pits you as Luigi, Mario's forgotten brother. Luigi, while checking his mail, found out he won a mansion in a contest. What's weird, is he never entered any contest to begin with. Being the curious person he is, he calls up his brother, Mario, and asks to meet...",
-      "added": "2026-10-26",
-      "art": "library/art/luigi-s-mansion.png",
-      "files": [
-        { "name": "Luigi's Mansion (USA).cci", "url": "private:luigi-s-mansion__Luigi.s.Mansion.USA.cci", "size": 536870912, "sha256": "5ef6a586614dd0aaa95540b2e929f4ba0c796452cd2c64b570d6d7fdcd987407" }
-      ]
-    },
-    {
       "id": "luigi-s-mansion-dark-moon",
       "title": "Luigi's Mansion : Dark Moon",
       "system": "3ds",
@@ -1051,6 +1039,19 @@
       "video": "library/video/kirby-air-ride.mp4",
       "files": [
         { "name": "Kirby Air Ride (USA).rvz", "url": "private:kirby-air-ride__Kirby.Air.Ride.USA.rvz", "size": 691605072, "sha256": "e42facaf2a3ecd2d9c7572a201ef19898dec1dbe96d7330bbb8610a7f0a23ab9" }
+      ]
+    },
+    {
+      "id": "luigi-s-mansion",
+      "title": "Luigi's Mansion",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Luigi steps out from the shadow of his brother Mario and into the gloomy shadows of a very haunted house in this, his first-ever starring role. Armed with a flashlight and a customized vacuum cleaner, Luigi must rid the mansion of Boos and ghouls -- and find his missing brother...",
+      "added": "2026-10-28",
+      "art": "library/art/luigi-s-mansion.png",
+      "video": "library/video/luigi-s-mansion.mp4",
+      "files": [
+        { "name": "Luigi's Mansion (USA, Canada).ciso", "url": "private:luigi-s-mansion__Luigi.s.Mansion.USA.Canada.ciso", "size": 199262784, "sha256": "a868fd4bcf4d304aae74fb32ddb067e605d64db35e035c248a630d05a7d8ac4f" }
       ]
     },
     {
