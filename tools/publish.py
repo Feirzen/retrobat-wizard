@@ -1,10 +1,20 @@
 #!/usr/bin/env python3
-"""Builds the public repo tree from a copy of _ClaudeWorkspace and its ship-list.txt.
+"""Builds the public repo tree from a copy of _Wizard (3.2+; _ClaudeWorkspace before) and its ship-list.txt.
 
 usage:
   publish.py build  <ws_dir> <repo_dir> <version>      drive/..., manifest.txt, .gitattributes
   publish.py latest <repo_dir> <version> <commit> <notes>   latest.ini, pointing at <commit>
   publish.py dev    <repo_dir> <version> <commit> <notes>   latest-dev.ini, the same for the dev channel
+  publish.py package <repo_dir>                        package/wizard-package.zip from drive/
+
+THE PACKAGE (2026-10-25). The installer downloads package/wizard-package.zip
+(at the published commit) in ONE go instead of fetching ~260 files one by
+one, then the update engine checks every file against manifest.txt and
+fetches only what the package lacks or has older. So the package does not
+have to be exactly current: `build` prints how far it has drifted, and it is
+only worth rebuilding (`package`) when that is more than a few MB, because
+every rebuild adds its full size to the repo's history. Admin-only files are
+left out of it.
 
 The dev channel (2026-10-12): drives set to Dev on the Admin tab read
 latest-dev.ini instead. Build the dev version on a dev branch (say 2.4-dev),
@@ -34,6 +44,58 @@ if sys.argv[1] in ('latest', 'dev'):
     print(name, '->', version, commit)
     sys.exit(0)
 
+def drive_files(repo):
+    drive = os.path.join(repo, 'drive')
+    admin = set()
+    am = os.path.join(repo, 'admin-manifest.txt')
+    if os.path.exists(am):
+        for line in open(am, encoding='latin-1'):
+            parts = line.rstrip('\n').split('\t')
+            if len(parts) == 4:
+                admin.add(parts[3])
+    out = []
+    for d, _, fs in os.walk(drive):
+        for f in fs:
+            rel = os.path.relpath(os.path.join(d, f), drive).replace(os.sep, '/')
+            if rel not in admin:
+                out.append(rel)
+    return drive, sorted(out, key=str.lower)
+
+
+def package_drift(repo):
+    import zipfile
+    pk = os.path.join(repo, 'package', 'wizard-package.zip')
+    drive, files = drive_files(repo)
+    if not os.path.exists(pk):
+        return None
+    z = zipfile.ZipFile(pk)
+    have = {i.filename: i for i in z.infolist()}
+    n = 0; size = 0
+    for rel in files:
+        data = open(os.path.join(drive, rel), 'rb').read()
+        i = have.get(rel)
+        if i is None or i.file_size != len(data) or z.read(rel) != data:
+            n += 1; size += len(data)
+    return n, size
+
+
+if sys.argv[1] == 'package':
+    import zipfile
+    repo = sys.argv[2]
+    drive, files = drive_files(repo)
+    os.makedirs(os.path.join(repo, 'package'), exist_ok=True)
+    pk = os.path.join(repo, 'package', 'wizard-package.zip')
+    tmp = pk + '.tmp'
+    with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        for rel in files:
+            info = zipfile.ZipInfo(rel, date_time=(2020, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            z.writestr(info, open(os.path.join(drive, rel), 'rb').read(), compresslevel=9)
+    os.replace(tmp, pk)
+    print('package: %d files, %.1f MB' % (len(files), os.path.getsize(pk) / 1048576))
+    sys.exit(0)
+
 assert sys.argv[1] == 'build'
 ws, repo, version = sys.argv[2], sys.argv[3], sys.argv[4]
 
@@ -52,7 +114,10 @@ def pat_to_re(p):
 
 
 rules = []
-for raw in open(os.path.join(ws, 'ship-list.txt'), encoding='latin-1'):
+shiplist = os.path.join(ws, 'Program', 'ship-list.txt')       # 3.2 rooms
+if not os.path.exists(shiplist):
+    shiplist = os.path.join(ws, 'ship-list.txt')              # before 3.2
+for raw in open(shiplist, encoding='latin-1'):
     line = raw.strip()
     if not line or line.startswith(';') or line.startswith('#'):
         continue
@@ -73,7 +138,7 @@ for rel in sorted(all_files):
     if any(k == 'skip' and pat_to_re(p).match(rel) for k, p, _ in rules):
         continue
     for kind, p, src in rules:
-        if kind in ('code', 'seed') and src is None and pat_to_re(p).match(rel):
+        if kind in ('code', 'seed', 'admin') and src is None and pat_to_re(p).match(rel):
             entries[rel] = (kind, os.path.join(ws, rel))
             break
 for kind, p, src in rules:
@@ -105,6 +170,12 @@ if os.path.isdir(drive):
     shutil.rmtree(drive)
 lines = ['# retrobat-wizard manifest. Built by publish.py from ship-list.txt.',
          'version\t' + version]
+# The admin tools: same format, kind 'code', in a list of their own that
+# only an admin's setup reads (Install-UpdAdminPack). manifest.txt never
+# names them, so older drives, which refuse any kind but code and seed,
+# read it as always.
+admin_lines = ['# retrobat-wizard ADMIN TOOLS. Built by publish.py from ship-list.txt.',
+               'version\t' + version]
 total = 0
 for rel in sorted(entries, key=str.lower):
     kind, src = entries[rel]
@@ -113,15 +184,28 @@ for rel in sorted(entries, key=str.lower):
     shutil.copyfile(src, dst)
     data = open(dst, 'rb').read()
     total += len(data)
-    lines.append('%s\t%s\t%d\t%s' % (kind, hashlib.sha256(data).hexdigest(), len(data), rel))
+    line = '%s\t%s\t%d\t%s' % ('code' if kind == 'admin' else kind, hashlib.sha256(data).hexdigest(), len(data), rel)
+    (admin_lines if kind == 'admin' else lines).append(line)
 
 # version.txt in the repo must say the version being published
 vt = open(os.path.join(drive, 'version.txt')).read().strip()
 assert vt == version, 'version.txt says %s, publishing %s' % (vt, version)
 
 open(os.path.join(repo, 'manifest.txt'), 'w', newline='\n').write('\n'.join(lines) + '\n')
+am = os.path.join(repo, 'admin-manifest.txt')
+if len(admin_lines) > 2:
+    open(am, 'w', newline='\n').write('\n'.join(admin_lines) + '\n')
+elif os.path.exists(am):
+    os.remove(am)
 open(os.path.join(repo, '.gitattributes'), 'w', newline='\n').write(
     '# Byte-for-byte: the drive checks every file against its SHA-256.\n* -text\n')
 print('%d files, %.1f MB, version %s' % (len(entries), total / 1048576, version))
-print('code: %d  seed: %d' % (sum(1 for e in entries.values() if e[0] == 'code'),
-                              sum(1 for e in entries.values() if e[0] == 'seed')))
+print('code: %d  seed: %d  admin: %d' % (sum(1 for e in entries.values() if e[0] == 'code'),
+                                         sum(1 for e in entries.values() if e[0] == 'seed'),
+                                         sum(1 for e in entries.values() if e[0] == 'admin')))
+d = package_drift(repo)
+if d is None:
+    print('package: none yet. Run: publish.py package %s' % repo)
+else:
+    print('package: %d file(s), %.1f MB newer than package/wizard-package.zip%s' % (
+        d[0], d[1] / 1048576, '  -> worth rebuilding (publish.py package)' if d[1] > 3 * 1048576 else ''))

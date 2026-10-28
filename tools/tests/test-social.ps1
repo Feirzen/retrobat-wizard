@@ -1,4 +1,4 @@
-param([string]$Scripts = '/home/claude/work/new/_ClaudeWorkspace/scripts')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'))
 $ErrorActionPreference = 'Stop'
 $script:pass = 0; $script:fail = 0
 function Assert($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" -ForegroundColor Red } }
@@ -45,7 +45,7 @@ $script:SocialApiOverride = {
 }
 
 $base = Join-Path ([IO.Path]::GetTempPath()) ('soc-' + [guid]::NewGuid().ToString('N'))
-function NewWs([string]$n) { $w = Join-Path $base "$n/_ClaudeWorkspace"; New-Item -ItemType Directory -Force $w | Out-Null; return $w }
+function NewWs([string]$n) { $w = Join-Path $base "$n/_Wizard"; New-Item -ItemType Directory -Force $w | Out-Null; return $w }
 $wsA = NewWs 'a'; $wsB = NewWs 'b'; $wsC = NewWs 'c'
 $off = [pscustomobject]@{ State = 'on'; InGame = $false; Game = ''; Console = ''; Since = '' }
 
@@ -59,11 +59,11 @@ Assert ((Test-SocialUsername ('n' * 21)) -ne '') 'too long'
 Assert ((New-SocialId) -match '^[a-z0-9]{10}$') 'id shape'
 Assert ((New-SocialId) -ne (New-SocialId)) 'ids differ'
 $tok = 'github_pat_ABCdef123_xyz'
-New-Item -ItemType Directory -Force (Join-Path $wsA 'social') | Out-Null
-[IO.File]::WriteAllText((Join-Path $wsA 'social/social-token.txt'), (ConvertTo-SocialScrambled $tok))
+New-Item -ItemType Directory -Force (Join-Path $wsA 'People/social') | Out-Null
+[IO.File]::WriteAllText((Join-Path $wsA 'People/social/social-token.txt'), (ConvertTo-SocialScrambled $tok))
 Assert ((Get-SocialToken $wsA) -eq $tok) 'scrambled token round-trips'
 Assert ((ConvertTo-SocialScrambled $tok) -notmatch 'github_pat_') 'scrambled hides the prefix'
-[IO.File]::WriteAllText((Join-Path $wsA 'social/social-token.txt'), "  $tok `r`n")
+[IO.File]::WriteAllText((Join-Path $wsA 'People/social/social-token.txt'), "  $tok `r`n")
 Assert ((Get-SocialToken $wsA) -eq $tok) 'plain token read'
 Assert ((Get-SocialToken $wsB) -eq '') 'no token file -> empty'
 Assert ((Get-SocialRepo $wsA) -eq 'Feirzen/retrobat-wizard-social') 'default repo'
@@ -88,7 +88,7 @@ $r = Publish-SocialRecord $wsB (Read-SocialProfile $wsB) $off '2.2.0'
 Assert $r.Ok 'B publishes'
 $all = Get-SocialPlayers $wsA
 Assert ($all.Ok -and @($all.Players).Count -eq 2) "two players read in one call (got $(@($all.Players).Count))"
-Assert (Test-Path (Join-Path $wsA 'social/cache/players.json')) 'cache written'
+Assert (Test-Path (Join-Path $wsA 'Cache/social/players.json')) 'cache written'
 Assert (@(Get-SocialCachedPlayers $wsA).Count -eq 2) 'cache reads back'
 Assert (Test-SocialNameTaken $all.Players 'ruby' $A.Id) 'name taken is case-insensitive'
 Assert (-not (Test-SocialNameTaken $all.Players 'naverog' $A.Id)) 'own name not taken'
@@ -258,6 +258,19 @@ Assert (@($jo.games).Count -eq 1 -and @($jo.games[0].files).Count -eq 1 -and $jo
 Assert ($j -match '"files": \[') 'files written as a list'
 Assert ((ConvertTo-AdminLibraryJson 'n' @() | ConvertFrom-Json).games.Count -eq 0) 'empty library'
 Assert ((Get-AdminLibId 'Star Fox: The Sequel!!') -eq 'star-fox-the-sequel') 'library id'
+
+# password resets (2026-10-25)
+$xd = [pscustomobject]@{ data = [pscustomobject]@{ repository = [pscustomobject]@{
+    names = [pscustomobject]@{ entries = @(
+        [pscustomobject]@{ name = 'abcdefghij-pw.txt'; object = [pscustomobject]@{ text = 'reset:2026-10-25T12:00:00Z'; byteSize = 26 } },
+        [pscustomobject]@{ name = 'abcdefghij.txt'; object = [pscustomobject]@{ text = 'approved:Newname'; byteSize = 16 } }) }
+    admins = [pscustomobject]@{ text = "abcdefghij`n" } } } }
+$xx = ConvertFrom-SocialExtras $xd
+Assert ($xx.Resets['abcdefghij'] -eq '2026-10-25T12:00:00Z') 'reset read'
+Assert ($xx.Names['abcdefghij'].Name -eq 'Newname') 'name answer still read beside a reset'
+Assert (Test-SocialPwReset ([pscustomobject]@{ Id = 'abcdefghij'; PwSet = '2026-10-01T00:00:00Z' }) $xx.Resets) 'reset newer than password: let in'
+Assert (-not (Test-SocialPwReset ([pscustomobject]@{ Id = 'abcdefghij'; PwSet = '2026-10-26T00:00:00Z' }) $xx.Resets)) 'new password set after reset: reset over'
+Assert (-not (Test-SocialPwReset ([pscustomobject]@{ Id = 'zzzzzzzzzz'; PwSet = '' }) $xx.Resets)) 'nobody else'
 
 Remove-Item -Recurse -Force $base
 Write-Host ("social tests: {0} passed, {1} failed" -f $script:pass, $script:fail)

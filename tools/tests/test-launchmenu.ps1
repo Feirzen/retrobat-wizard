@@ -1,13 +1,13 @@
 # The "Launch game?" screen (LaunchMenu.ps1, 2026-10-12) against copies of
 # the drive's real es_savestates.cfg and es_systems.cfg.
-param([string]$Scripts = '/mnt/user-data/outputs/r2/scripts', [string]$Real = '/mnt/user-data/uploads/RetroBat/emulationstation/.emulationstation')
+param([string]$Scripts = (Join-Path $PSScriptRoot '../../drive/Program/scripts'), [string]$Real = '/mnt/user-data/uploads/RetroBat/emulationstation/.emulationstation')
 $ErrorActionPreference = 'Stop'
 $script:pass = 0; $script:fail = 0
 function A($c, [string]$n) { if ($c) { $script:pass++ } else { $script:fail++; Write-Host "FAIL: $n" -ForegroundColor Red } }
 . (Join-Path $Scripts 'LaunchMenu.ps1')
 $TR = Join-Path ([IO.Path]::GetTempPath()) ('lm' + [guid]::NewGuid().ToString('N').Substring(0, 6))
 $es = Join-Path $TR 'emulationstation/.emulationstation'
-New-Item -ItemType Directory -Force $es, (Join-Path $TR '_ClaudeWorkspace/archive') | Out-Null
+New-Item -ItemType Directory -Force $es, (Join-Path $TR '_Wizard/Backups/Archive') | Out-Null
 Copy-Item (Join-Path $Real 'es_savestates.cfg'), (Join-Path $Real 'es_systems.cfg') $es
 $before = [IO.File]::ReadAllText((Join-Path $es 'es_savestates.cfg'))
 function Names { [xml]$x = [IO.File]::ReadAllText((Join-Path $es 'es_savestates.cfg')); return @($x.savestates.emulator | ForEach-Object { $_.name }) }
@@ -22,7 +22,7 @@ A ($n -contains 'ruffle' -and $n -contains 'xemu' -and $n -contains 'cxbx' -and 
 $lib = @($x.savestates.emulator | Where-Object name -eq 'libretro')[0]
 A ($lib.directory -eq '{{system}}/libretro.{{core}}') 'RetroArch entry untouched'
 A ((@($x.savestates.emulator | Where-Object name -eq 'xemu')[0]).directory -eq '{{system}}/xemu') 'our entry points at an empty folder'
-A (@(Get-ChildItem (Join-Path $TR '_ClaudeWorkspace/archive') -Directory).Count -eq 1) 'backup made'
+A (@(Get-ChildItem (Join-Path $TR '_Wizard/Backups/Archive') -Directory).Count -eq 1) 'backup made'
 $r2 = Update-LaunchMenu -Root $TR -On $true
 A ($r2.Ok -and @($r2.Added).Count -eq 0 -and $r2.Backup -eq '') 'second run writes nothing'
 $r3 = Update-LaunchMenu -Root $TR -On $false

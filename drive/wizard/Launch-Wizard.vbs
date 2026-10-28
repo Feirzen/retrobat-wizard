@@ -1,65 +1,62 @@
 ' ---------------------------------------------------------------------------
-'  Launch-Wizard.vbs - starts the Setup Wizard with NO console window at all.
+'  THE BRIDGE (wizard 3.2, 2026-10-26).
 '
-'  WHY THIS FILE EXISTS. Launching PowerShell from a .bat leaves a black
-'  console window on screen for as long as the wizard is open, and closing
-'  that window kills the wizard with it. "-WindowStyle Hidden" does not stop
-'  it: the console is created before PowerShell is running to hide anything.
-'  WScript.Shell's Run takes a window style of its own, and 0 means the
-'  window is never created. That is the whole trick.
+'  On a drive updated from 3.1, this file sits at the OLD launcher's place,
+'  RetroBat\_ClaudeWorkspace\wizard\Launch-Wizard.vbs, because every button
+'  that drive already has (PLAY, the wizard button, desktop and Start menu
+'  icons, the controller shortcut, the updater's "reopen") points here.
 '
-'  The two icons at the top of the drive point straight at this file, so
-'  clicking one shows nothing whatsoever until the wizard or RetroBat opens.
-'  The two .bat files call it too; those still flash their own console for a
-'  moment, because every .bat does.
+'  The first time any of them is used it:
+'    1. copies Move-ToWizardLayout.ps1 and Paths.ps1 to this computer's TEMP
+'       folder and runs them from there (so nothing inside the folder being
+'       renamed is in use), which renames _ClaudeWorkspace to _Wizard, sorts
+'       everything into its room and points every button at the new place;
+'    2. then starts the real launcher, _Wizard\Program\wizard\Launch-Wizard.vbs,
+'       with the same argument (-Play, -Setup, -Pad ...).
+'  After that this file is in _Wizard\Cache\Trash and nothing points at it.
 '
-'  NO DRIVE LETTER. This file lives in <RetroBat>\_ClaudeWorkspace\wizard\
-'  and works out where it is from its own location, the same way
-'  system\scripts\wii-nand-launch.vbs does.
-'
-'  ONE ARGUMENT, OPTIONAL: -Play runs the quiet check-then-launch flow,
-'  -Setup runs the once-per-new-computer flow and lands on the Play tab,
-'  -Pad opens the full window full screen for a controller.
-'  With no argument the full window opens.
-'
-'  PowerShell is called by its FULL path on purpose. A bare "powershell.exe"
-'  fails completely silently when the parent did not hand down a normal PATH,
-'  which is the trap that hid a broken save backup here for five days.
+'  Its source is _Wizard\Program\scripts\Bridge-Launch.vbs; the publishing
+'  step ships it at the old place (see ship-list.txt).
 ' ---------------------------------------------------------------------------
-
 Option Explicit
-
-Dim fso, shell, q, wizardDir, script, ps, mode, cmd
+Dim fso, shell, q, here, wsDir, root, newVbs, oldMove, oldPaths, tmpDir, ps, cmd, rc, i, args
 
 Set fso   = CreateObject("Scripting.FileSystemObject")
 Set shell = CreateObject("WScript.Shell")
+q = Chr(34)
 
-q         = Chr(34)
-wizardDir = fso.GetParentFolderName(WScript.ScriptFullName)
-script    = fso.BuildPath(wizardDir, "SetupWizard.ps1")
+here  = fso.GetParentFolderName(WScript.ScriptFullName)   ' ...\_ClaudeWorkspace\wizard
+wsDir = fso.GetParentFolderName(here)                       ' ...\_ClaudeWorkspace
+root  = fso.GetParentFolderName(wsDir)                      ' RetroBat
+newVbs = fso.BuildPath(root, "_Wizard\Program\wizard\Launch-Wizard.vbs")
 
-mode = ""
-If WScript.Arguments.Count > 0 Then
-    If LCase(WScript.Arguments(0)) = "-play"  Then mode = " -Play"
-    If LCase(WScript.Arguments(0)) = "-setup" Then mode = " -Setup"
-    ' -pad: sent by PadWatch.ps1 when SELECT + START is pressed on a controller.
-    ' The wizard opens full screen, ready for the controller. (2026-09-23)
-    If LCase(WScript.Arguments(0)) = "-pad"   Then mode = " -Pad"
-    ' -netplay: sent by the friends helper's Join button. (2026-10-12)
-    If LCase(WScript.Arguments(0)) = "-netplay" Then mode = " -Tab netplay"
+args = ""
+For i = 0 To WScript.Arguments.Count - 1
+    args = args & " " & q & WScript.Arguments(i) & q
+Next
+
+If fso.FolderExists(fso.BuildPath(root, "_ClaudeWorkspace")) Then
+    oldMove  = fso.BuildPath(wsDir, "Program\scripts\Move-ToWizardLayout.ps1")
+    oldPaths = fso.BuildPath(wsDir, "Program\scripts\Paths.ps1")
+    If fso.FileExists(oldMove) And fso.FileExists(oldPaths) Then
+        tmpDir = fso.BuildPath(shell.ExpandEnvironmentStrings("%TEMP%"), "RetroBatWizardMove")
+        If Not fso.FolderExists(tmpDir) Then fso.CreateFolder tmpDir
+        fso.CopyFile oldMove, fso.BuildPath(tmpDir, "Move-ToWizardLayout.ps1"), True
+        fso.CopyFile oldPaths, fso.BuildPath(tmpDir, "Paths.ps1"), True
+        shell.CurrentDirectory = tmpDir
+        ps = shell.ExpandEnvironmentStrings("%SystemRoot%") & "\System32\WindowsPowerShell\v1.0\powershell.exe"
+        cmd = q & ps & q & " -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File " & _
+              q & fso.BuildPath(tmpDir, "Move-ToWizardLayout.ps1") & q & " -Root " & q & root & q
+        ' 0 = no console window; True = wait until the move is done
+        rc = shell.Run(cmd, 0, True)
+    End If
 End If
 
-ps = shell.ExpandEnvironmentStrings("%SystemRoot%") & _
-     "\System32\WindowsPowerShell\v1.0\powershell.exe"
-
-' -Command "& 'script' -Play" and not -File, deliberately. Under -File,
-' $PSScriptRoot is empty while PowerShell works out parameter defaults, and a
-' script that builds a path there dies before it can log anything. That bug
-' cost this drive a week of silent backups. This is the exact invocation the
-' .bat files have always used and that is known to work.
-cmd = q & ps & q & " -NoProfile -ExecutionPolicy Bypass -Command " & _
-      q & "& '" & script & "'" & mode & q
-
-' 0 = no window ever created. False = do not wait, so this script exits at
-' once and the wizard is not a child of anything the user can close.
-shell.Run cmd, 0, False
+If fso.FileExists(newVbs) Then
+    shell.Run q & shell.ExpandEnvironmentStrings("%SystemRoot%") & "\System32\wscript.exe" & q & " //nologo " & q & newVbs & q & args, 0, False
+Else
+    MsgBox "The wizard could not finish moving to its new folder (_Wizard)." & vbCrLf & vbCrLf & _
+           "Nothing was lost. Close RetroBat and every wizard window, then try again." & vbCrLf & _
+           "If it keeps happening, restart the computer first." & vbCrLf & vbCrLf & _
+           "Details: RetroBat\_ClaudeWorkspace\move.log", vbExclamation, "RetroBat Wizard"
+End If
