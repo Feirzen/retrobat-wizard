@@ -963,6 +963,19 @@
       ]
     },
     {
+      "id": "crazy-taxi",
+      "title": "Crazy Taxi",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Crazy Taxi is an arcade-like racer where the player takes the role of a taxi driver who weaves his way through crowded streets, across sidewalks and even under water, in a wild and frantic race to deliver passengers on time. The courses are largely set inside cities crowded with...",
+      "added": "2026-10-28",
+      "art": "library/art/crazy-taxi.png",
+      "video": "library/video/crazy-taxi.mp4",
+      "files": [
+        { "name": "Crazy Taxi (USA).ciso", "url": "private:crazy-taxi__Crazy.Taxi.USA.ciso", "size": 140542528, "sha256": "67fe85505f78dda896bf3b391c5e86c52267e8d228dd9abf3fd254b3c8ba1717" }
+      ]
+    },
+    {
       "id": "fire-emblem-path-of-radiance",
       "title": "Fire Emblem : Path of Radiance",
       "system": "gamecube",
