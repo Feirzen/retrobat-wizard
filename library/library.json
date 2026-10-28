@@ -1086,8 +1086,9 @@
       "system": "gamecube",
       "players": "1-4",
       "description": "The Mushroom Kingdom just got a whole lot more hectic as Mario and friends double up for furious kart racing. This time around, each kart holds two racers that can switch places at any time, so choose from a huge cast of favorites and pair them up any way you see fit. The...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/mario-kart-double-dash.png",
+      "video": "library/video/mario-kart-double-dash.mp4",
       "files": [
         { "name": "Mario Kart - Double Dash!! (USA).ciso", "url": "private:mario-kart-double-dash__Mario.Kart.-.Double.Dash.USA.ciso", "size": 494961216, "sha256": "dbfb3726eddeea07d4b4713e31cb1ebf70111766886b90b2debac5da8922cb04" }
       ]
