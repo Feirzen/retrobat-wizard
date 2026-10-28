@@ -1068,6 +1068,19 @@
       ]
     },
     {
+      "id": "mario-golf-toadstool-tour",
+      "title": "Mario Golf : Toadstool Tour",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Mario Golf: Toadstool Tour updates the Mario Golf series with more swing control, new courses, and fun side games. Carefully select your club, choose the optimal contact point and trajectory, compensate for wind and green speeds, and then swing away. You'll also have to...",
+      "added": "2026-10-28",
+      "art": "library/art/mario-golf-toadstool-tour.png",
+      "video": "library/video/mario-golf-toadstool-tour.mp4",
+      "files": [
+        { "name": "Mario Golf - Toadstool Tour (USA).ciso", "url": "private:mario-golf-toadstool-tour__Mario.Golf.-.Toadstool.Tour.USA.ciso", "size": 1193312832, "sha256": "378fdba175b4c2a21ba8b9393fc5c55bc1a03f8ca1eecfd7b7b4583a54579cb7" }
+      ]
+    },
+    {
       "id": "mario-kart-double-dash",
       "title": "Mario Kart : Double Dash!!",
       "system": "gamecube",
