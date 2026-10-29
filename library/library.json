@@ -1679,6 +1679,19 @@
       ]
     },
     {
+      "id": "warioware-inc-mega-party-game",
+      "title": "WarioWare, Inc. : Mega Party Game$!",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Wario is back in the video game biz, and this time the tightfisted microgame master is servin' up some insane party games on Nintendo GameCube. The 200+ hysterical microgames from Wario Ware, Inc.: Mega Microgame$ are making a triumphant return on the big screen, supported by...",
+      "added": "2026-10-28",
+      "art": "library/art/warioware-inc-mega-party-game.png",
+      "video": "library/video/warioware-inc-mega-party-game.mp4",
+      "files": [
+        { "name": "WarioWare, Inc. - Mega Party Game$! (USA).ciso", "url": "private:warioware-inc-mega-party-game__WarioWare.Inc.-.Mega.Party.Game.USA.ciso", "size": 889225792, "sha256": "b8c33924afed0fec165afc3fe0d6e8dddfcdef53842fcae180560b3b904b4a81" }
+      ]
+    },
+    {
       "id": "jungle-strike",
       "title": "Jungle Strike",
       "system": "gb",
