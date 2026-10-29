@@ -5997,23 +5997,6 @@
       "min": "3.2.0"
     },
     {
-      "id": "viva-pi-ata",
-      "title": "Viva Piata",
-      "system": "xbox360",
-      "players": "1",
-      "description": "Viva Piata on Xbox 360 is a management game in which the player must take care of a garden. Ploughing, sowing, watering... Here are some of the activities that await you to beautify your plot. All of this with the aim of attracting Piatas, animal cuddly toys of various...",
-      "added": "2026-10-16",
-      "art": "library/art/viva-pi-ata.jpg",
-      "files": [
-      ],
-      "parts": { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso", "size": 7834892288, "sha256": "ed732daec607cb4e2b5be4d58f89b51f3e9408cf258ebdb94d8554568eef752b", "pieces": [
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part01", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part01", "size": 1992294400, "sha256": "ba2cf2a4dddd325b2a331c879b50d53bcd01fcc92b084736305c7da837b98af9" },
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part02", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part02", "size": 1992294400, "sha256": "4cf8295c4febb69a29d93d3673eb839d85f1218046a11ec9839869d5663ecb63" },
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part03", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part03", "size": 1992294400, "sha256": "c76f8f876c5c135438836e8ee7657774b4c11dcb802c06df5c6743b780caab03" },
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part04", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part04", "size": 1858009088, "sha256": "96b8a497c8b017ccb2106ffdf0aee7fe086ee7b1045489d95e6b53d6437ad0fc" }
-      ] }
-    },
-    {
       "id": "viva-pi-ata-party-animals",
       "title": "Viva Piata : Party Animals",
       "system": "xbox360",
@@ -6029,6 +6012,24 @@
         { "name": "Viva Pinata - Party Animals (USA) (Rev 1).iso.part02", "url": "private:viva-pi-ata-party-animals__Viva.Pinata.-.Party.Animals.USA.Rev.1.iso.part02", "size": 1992294400, "sha256": "69ed39700840759537b389458a0719f0c544d46aa50c714851a74ce1b3c4d4fc" },
         { "name": "Viva Pinata - Party Animals (USA) (Rev 1).iso.part03", "url": "private:viva-pi-ata-party-animals__Viva.Pinata.-.Party.Animals.USA.Rev.1.iso.part03", "size": 1992294400, "sha256": "163af4e668a88f742f122ae4bad09b7e5aaf2d5f90a9b48f523f93687c974822" },
         { "name": "Viva Pinata - Party Animals (USA) (Rev 1).iso.part04", "url": "private:viva-pi-ata-party-animals__Viva.Pinata.-.Party.Animals.USA.Rev.1.iso.part04", "size": 1858609152, "sha256": "5cca3829654a16bd605b011b0a551f71b8aa98ad1ff581058af4a5619a8e5db3" }
+      ] }
+    },
+    {
+      "id": "viva-pi-ata",
+      "title": "Viva Piata",
+      "system": "xbox360",
+      "players": "1",
+      "description": "Viva Piata on Xbox 360 is a management game in which the player must take care of a garden. Ploughing, sowing, watering... Here are some of the activities that await you to beautify your plot. All of this with the aim of attracting Piatas, animal cuddly toys of various...",
+      "added": "2026-10-29",
+      "art": "library/art/viva-pi-ata.jpg",
+      "video": "library/video/viva-pi-ata.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso", "size": 7834892288, "sha256": "ed732daec607cb4e2b5be4d58f89b51f3e9408cf258ebdb94d8554568eef752b", "pieces": [
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part01", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part01", "size": 1992294400, "sha256": "ba2cf2a4dddd325b2a331c879b50d53bcd01fcc92b084736305c7da837b98af9" },
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part02", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part02", "size": 1992294400, "sha256": "4cf8295c4febb69a29d93d3673eb839d85f1218046a11ec9839869d5663ecb63" },
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part03", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part03", "size": 1992294400, "sha256": "c76f8f876c5c135438836e8ee7657774b4c11dcb802c06df5c6743b780caab03" },
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part04", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part04", "size": 1858009088, "sha256": "96b8a497c8b017ccb2106ffdf0aee7fe086ee7b1045489d95e6b53d6437ad0fc" }
       ] }
     }
   ]
