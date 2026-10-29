@@ -5844,6 +5844,24 @@
       ] }
     },
     {
+      "id": "red-dead-redemption",
+      "title": "Red Dead Redemption",
+      "system": "xbox360",
+      "players": "1",
+      "description": "In 1911, the United States of America was rocked by the emergence of new technologies. Their emergence has angered many gangs, who reject civilisation and fight to maintain the Wild West. John Marston is a former outlaw looking for a quiet new life in North America, where he has...",
+      "added": "2026-10-29",
+      "art": "library/art/red-dead-redemption.jpg",
+      "video": "library/video/red-dead-redemption.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Red Dead Redemption (World) (En,Fr,De,Es,It).iso", "size": 7838695424, "sha256": "67652fa867c1cef5fb92cc8c5ee70d374adb0019455e91cc90835cc30bcdcd01", "pieces": [
+        { "name": "Red Dead Redemption (World) (En,Fr,De,Es,It).iso.part01", "url": "private:red-dead-redemption__Red.Dead.Redemption.World.En.Fr.De.Es.It.iso.part01", "size": 1992294400, "sha256": "f7c00248b9aa5ba91308bdb9172990b51edbbe75de0b52e724aa82ed9e68c731" },
+        { "name": "Red Dead Redemption (World) (En,Fr,De,Es,It).iso.part02", "url": "private:red-dead-redemption__Red.Dead.Redemption.World.En.Fr.De.Es.It.iso.part02", "size": 1992294400, "sha256": "af9fe85fc7335ca5f5e9c80776ebdb7d2d665cedb12e3ff4a999c3c741e71f28" },
+        { "name": "Red Dead Redemption (World) (En,Fr,De,Es,It).iso.part03", "url": "private:red-dead-redemption__Red.Dead.Redemption.World.En.Fr.De.Es.It.iso.part03", "size": 1992294400, "sha256": "a522d57b80b2c2fb9ef0e1e059f1aeb2c13c04ca506e497ffffee066b4fadec7" },
+        { "name": "Red Dead Redemption (World) (En,Fr,De,Es,It).iso.part04", "url": "private:red-dead-redemption__Red.Dead.Redemption.World.En.Fr.De.Es.It.iso.part04", "size": 1861812224, "sha256": "c4dd9c8e2ec82e0015945caeee2fb9d8c6ec55aaa8713dcc052ab3b1535f7ddb" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
