@@ -1451,6 +1451,19 @@
       ]
     },
     {
+      "id": "the-simpsons-hit-run",
+      "title": "The Simpsons : Hit & Run",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Explore Springfield as your favorite Simpsons characters as you unravel the plot that threatens the town's very existence. Play as Homer, Bart, Marge, Lisa, and Apu in over 56 driving and on-foot missions in seven challenging levels. Drive in 40 of Springfield's finest vehicles...",
+      "added": "2026-10-28",
+      "art": "library/art/the-simpsons-hit-run.png",
+      "video": "library/video/the-simpsons-hit-run.mp4",
+      "files": [
+        { "name": "Simpsons, The - Hit & Run (USA).ciso", "url": "private:the-simpsons-hit-run__Simpsons.The.-.Hit.Run.USA.ciso", "size": 912294464, "sha256": "558f963b4177c4126ba68c2f92aacf83d59a14276c47eb5411f6e753be9e965f" }
+      ]
+    },
+    {
       "id": "the-spongebob-squarepants-movie",
       "title": "The SpongeBob SquarePants Movie",
       "system": "gamecube",
