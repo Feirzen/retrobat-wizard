@@ -1250,6 +1250,19 @@
       ]
     },
     {
+      "id": "pikmin",
+      "title": "Pikmin",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Pikmin may be small and plantlike, but they can be a space traveler's best friend. Stranded on an unknown planet, Captain Olimar must enlist the help of these native Pikmin to rebuild his spaceship before the life-support system runs out. In the meantime, you'll have to fend off...",
+      "added": "2026-10-28",
+      "art": "library/art/pikmin.png",
+      "video": "library/video/pikmin.mp4",
+      "files": [
+        { "name": "Pikmin (USA) (Rev 1).ciso", "url": "private:pikmin__Pikmin.USA.Rev.1.ciso", "size": 669024832, "sha256": "b1bae19336951143cb74777d141df3bc76de9d85104a99bcd45bcb21aa5ac2c3" }
+      ]
+    },
+    {
       "id": "pok-mon-xd-gale-of-darkness",
       "title": "Pokmon XD : Gale of Darkness",
       "system": "gamecube",
