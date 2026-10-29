@@ -5790,6 +5790,24 @@
       ] }
     },
     {
+      "id": "halo-wars",
+      "title": "Halo Wars",
+      "system": "xbox360",
+      "players": "2-6",
+      "description": "Halo Wars is a strategy game based on the legendary Halo universe. Join the Spirit of Fire crew in their battle against the Covenant alien coalition and prepare to command entire armies of Spartans, warthogs and more. Halo Wars will allow you to easily lead powerful armies in...",
+      "added": "2026-10-29",
+      "art": "library/art/halo-wars.png",
+      "video": "library/video/halo-wars.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Halo Wars (USA).iso", "size": 7835492352, "sha256": "87c7dd30f74f2e3b1166bea8fc579b05aafdcf0427e6f3a5877a8f12b6154514", "pieces": [
+        { "name": "Halo Wars (USA).iso.part01", "url": "private:halo-wars__Halo.Wars.USA.iso.part01", "size": 1992294400, "sha256": "f28736f410ad71d53bcb5b89480847e9446d86bc2296bf20681730e06229f6b6" },
+        { "name": "Halo Wars (USA).iso.part02", "url": "private:halo-wars__Halo.Wars.USA.iso.part02", "size": 1992294400, "sha256": "16986d91cde04c960eb0d9a441e06a43e3506ac89c8c6d297c6b4c3c92989417" },
+        { "name": "Halo Wars (USA).iso.part03", "url": "private:halo-wars__Halo.Wars.USA.iso.part03", "size": 1992294400, "sha256": "ee89ce03c3a754723b8ae3ea768d671db927ee6df3cb275cc5bdbb42ce4dd57a" },
+        { "name": "Halo Wars (USA).iso.part04", "url": "private:halo-wars__Halo.Wars.USA.iso.part04", "size": 1858609152, "sha256": "59b5509631afc1979ca7d997bb8afdcc4d0f065f70cd082e57e254d733a808b3" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
