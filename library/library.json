@@ -1523,6 +1523,19 @@
       ]
     },
     {
+      "id": "surf-s-up",
+      "title": "Surf's Up",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Surf's Up is a surfing game set at the annual \"Reggie Belafonte Big Z Memorial Surf Off.\" Players choose from one of 10 characters from the film \"Surf's Up\" to play as, including Cody, the young challenger from Shiverpool; Tank, the merciless champion; or Big Z, the surfing...",
+      "added": "2026-10-28",
+      "art": "library/art/surf-s-up.png",
+      "video": "library/video/surf-s-up.mp4",
+      "files": [
+        { "name": "Surf's Up (USA) (En,Fr,Es).ciso", "url": "private:surf-s-up__Surf.s.Up.USA.En.Fr.Es.ciso", "size": 1432388160, "sha256": "e492facd8ec92cd9019d36a355f466436a0cb0827c145589edcc516819f1bb43" }
+      ]
+    },
+    {
       "id": "tak-and-the-power-of-juju",
       "title": "Tak and the Power of JuJu",
       "system": "gamecube",
