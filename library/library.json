@@ -5702,6 +5702,21 @@
       ] }
     },
     {
+      "id": "castle-crashers",
+      "title": "Castle Crashers",
+      "system": "xbox360",
+      "players": "2-4",
+      "description": "Castle Crashers is a beat'em all game for four players in multiplayer on Xbox 360. An arena mode allows human opponents to fight each other. Each character can unlock over 40 different weapons, adopt animal companions, go treasure hunting and spend their gold in a multitude of...",
+      "added": "2026-10-29",
+      "art": "library/art/castle-crashers.jpg",
+      "video": "library/video/castle-crashers.mp4",
+      "files": [
+        { "name": "Castle Crashers (World) (XBLA).m3u", "url": "private:castle-crashers__Castle.Crashers.World.XBLA.m3u", "size": 92, "sha256": "1c866fc222348f459216c53eeb6f0a151ce51add41da6e6365dfa85e33d7de47" },
+        { "name": "Castle Crashers (World) (XBLA)/584108B7/000D0000/F9432A7FE407A3C196C95D0FFD4A540937FD4EEC58", "url": "private:castle-crashers__Castle.Crashers.World.XBLA.584108B7.000D0000.F9432A7FE407A3C196C95D0FFD4A540937FD4EEC58", "size": 146616320, "sha256": "ed7b65a8de5a70fabd311df4e542cf21adad9a75ac568b5f0a8c404c31d41e74" }
+      ],
+      "min": "3.2.0"
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
