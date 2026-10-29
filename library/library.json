@@ -5685,6 +5685,23 @@
       ] }
     },
     {
+      "id": "call-of-duty-world-at-war",
+      "title": "Call of Duty: World at War",
+      "system": "xbox360",
+      "players": "18",
+      "description": "Call of Duty: World at War is a 2008 first-person shooter video game developed by Treyarch and published by Activision for Microsoft Windows, PlayStation 3, Playstation 2, Wii, and Xbox 360. It is generally considered to be the fifth mainstream game of the Call of Duty series...",
+      "added": "2026-10-29",
+      "art": "library/art/call-of-duty-world-at-war.jpg",
+      "files": [
+      ],
+      "parts": { "name": "Call of Duty - World at War (USA, Europe).iso", "size": 7835492352, "sha256": "6064e91ab3acd7b7795d97df60b04e2cad1e0dbfaaa1653b1799cf6c195a8f3e", "pieces": [
+        { "name": "Call of Duty - World at War (USA, Europe).iso.part01", "url": "private:call-of-duty-world-at-war__Call.of.Duty.-.World.at.War.USA.Europe.iso.part01", "size": 1992294400, "sha256": "adef03a5043d23af9054ae13261d21129d2d6f2beddf588675a76bd92d2ed62d" },
+        { "name": "Call of Duty - World at War (USA, Europe).iso.part02", "url": "private:call-of-duty-world-at-war__Call.of.Duty.-.World.at.War.USA.Europe.iso.part02", "size": 1992294400, "sha256": "fca525fca4903a801a61752e9855bc255f6dc56eb2672125cd2806b3d477e75c" },
+        { "name": "Call of Duty - World at War (USA, Europe).iso.part03", "url": "private:call-of-duty-world-at-war__Call.of.Duty.-.World.at.War.USA.Europe.iso.part03", "size": 1992294400, "sha256": "0fd4ae452a68c4aa537a252b88d85cbe80c4e68b473d7cedf0b8ea428b2b114a" },
+        { "name": "Call of Duty - World at War (USA, Europe).iso.part04", "url": "private:call-of-duty-world-at-war__Call.of.Duty.-.World.at.War.USA.Europe.iso.part04", "size": 1858609152, "sha256": "8eb95a2eb2449b170e9530a75926e2e084bca8bdea55c9e2df0b94a1fbf49e12" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
