@@ -1471,6 +1471,19 @@
       ]
     },
     {
+      "id": "super-mario-strikers",
+      "title": "Super Mario Strikers",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Nintendo's foray into sports titles continues with Super Mario Strikers, a soccer game that's unlike anything ever to hit the pitch. Whether players are freezing their opponents with an ice-cold shell, unleashing a spiny shell on their hapless opponents or making entire teams...",
+      "added": "2026-10-28",
+      "art": "library/art/super-mario-strikers.png",
+      "video": "library/video/super-mario-strikers.mp4",
+      "files": [
+        { "name": "Super Mario Strikers (USA).ciso", "url": "private:super-mario-strikers__Super.Mario.Strikers.USA.ciso", "size": 652247616, "sha256": "bb80f951bac87c13204e8b1af001eb1965d0dec5c6228529b996efb27884f6b8" }
+      ]
+    },
+    {
       "id": "super-mario-sunshine",
       "title": "Super Mario Sunshine",
       "system": "gamecube",
