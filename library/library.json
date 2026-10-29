@@ -5648,6 +5648,25 @@
       ] }
     },
     {
+      "id": "borderlands-2",
+      "title": "Borderlands 2",
+      "system": "xbox360",
+      "players": "1-4",
+      "description": "Borderlands 2 begins with the player fighting to the death to win a priceless cache of loot in a gladiatorial tournament run by Handsome Jack for his personal amusement. The player succeeds and gains notoriety, but Handsome Jack sees this as a threat to his popularity with the...",
+      "added": "2026-10-29",
+      "art": "library/art/borderlands-2.png",
+      "video": "library/video/borderlands-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Borderlands 2 (World) (En,Ja,Fr,De,Es,It).iso", "size": 8738846720, "sha256": "9267043404baebb3284ab2963eb4f3f62653707373758e677388f487f1c19f1e", "pieces": [
+        { "name": "Borderlands 2 (World) (En,Ja,Fr,De,Es,It).iso.part01", "url": "private:borderlands-2__Borderlands.2.World.En.Ja.Fr.De.Es.It.iso.part01", "size": 1992294400, "sha256": "84cac16a5a4f6031ea31f563499a06e8aa78736f87557f92b395f51b62b44a37" },
+        { "name": "Borderlands 2 (World) (En,Ja,Fr,De,Es,It).iso.part02", "url": "private:borderlands-2__Borderlands.2.World.En.Ja.Fr.De.Es.It.iso.part02", "size": 1992294400, "sha256": "752ff059364b9edc474b0d71a7a98fe963becf15e9797038a74bf2f205f4e878" },
+        { "name": "Borderlands 2 (World) (En,Ja,Fr,De,Es,It).iso.part03", "url": "private:borderlands-2__Borderlands.2.World.En.Ja.Fr.De.Es.It.iso.part03", "size": 1992294400, "sha256": "3238d7fd0e6c424db3716edd0776bac96537673655a473b6b126f21fa57ad0c8" },
+        { "name": "Borderlands 2 (World) (En,Ja,Fr,De,Es,It).iso.part04", "url": "private:borderlands-2__Borderlands.2.World.En.Ja.Fr.De.Es.It.iso.part04", "size": 1992294400, "sha256": "93bcb6c62157618dcbde6586ff8ee26938ce8bc1041a159f78b4195cf67987e8" },
+        { "name": "Borderlands 2 (World) (En,Ja,Fr,De,Es,It).iso.part05", "url": "private:borderlands-2__Borderlands.2.World.En.Ja.Fr.De.Es.It.iso.part05", "size": 769669120, "sha256": "20fc834b20fb926c73e1d802d3b7228004c0d4a91a2c8321b33949d412309ecb" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
