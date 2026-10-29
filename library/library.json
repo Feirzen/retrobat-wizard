@@ -6033,6 +6033,18 @@
       "min": "3.2.0"
     },
     {
+      "id": "uno-world-xbla",
+      "title": "UNO (World) (XBLA)",
+      "system": "xbox360",
+      "players": "",
+      "description": "",
+      "added": "2026-10-29",
+      "files": [
+      ],
+      "bundle": { "folder": "UNO (World) (XBLA)", "name": "uno-world-xbla.zip", "size": 25514001, "sha256": "56cf6cddffc21edf5f2e3a7faad81dc7b278dbfbeae839e69677dfda3b969420", "url": "private:uno-world-xbla__uno-world-xbla.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
