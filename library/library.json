@@ -1146,6 +1146,19 @@
       ]
     },
     {
+      "id": "mario-power-tennis",
+      "title": "Mario Power Tennis",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "The Mushroom Kingdom has hosted tennis tournaments before, but never one as explosive as this one. The wild multiplayer action of the smash Nintendo 64 hit, Mario Tennis, returns with even more powerful shots and new, character-specific power-ups guaranteed to make for the...",
+      "added": "2026-10-28",
+      "art": "library/art/mario-power-tennis.jpg",
+      "video": "library/video/mario-power-tennis.mp4",
+      "files": [
+        { "name": "Mario Power Tennis (USA) (Rev 1).ciso", "url": "private:mario-power-tennis__Mario.Power.Tennis.USA.Rev.1.ciso", "size": 635470400, "sha256": "2e37c30e7b8cd75cb0b9619e15c26ddc6a58fe9c0bbc4aadad46c25f5e3f3882" }
+      ]
+    },
+    {
       "id": "metroid-prime-2-echoes",
       "title": "Metroid Prime 2 : Echoes",
       "system": "gamecube",
