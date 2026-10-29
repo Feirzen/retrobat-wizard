@@ -5997,6 +5997,24 @@
       "min": "3.2.0"
     },
     {
+      "id": "viva-pi-ata",
+      "title": "Viva Piata",
+      "system": "xbox360",
+      "players": "1",
+      "description": "Viva Piata on Xbox 360 is a management game in which the player must take care of a garden. Ploughing, sowing, watering... Here are some of the activities that await you to beautify your plot. All of this with the aim of attracting Piatas, animal cuddly toys of various...",
+      "added": "2026-10-29",
+      "art": "library/art/viva-pi-ata.jpg",
+      "video": "library/video/viva-pi-ata.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso", "size": 7834892288, "sha256": "ed732daec607cb4e2b5be4d58f89b51f3e9408cf258ebdb94d8554568eef752b", "pieces": [
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part01", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part01", "size": 1992294400, "sha256": "ba2cf2a4dddd325b2a331c879b50d53bcd01fcc92b084736305c7da837b98af9" },
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part02", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part02", "size": 1992294400, "sha256": "4cf8295c4febb69a29d93d3673eb839d85f1218046a11ec9839869d5663ecb63" },
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part03", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part03", "size": 1992294400, "sha256": "c76f8f876c5c135438836e8ee7657774b4c11dcb802c06df5c6743b780caab03" },
+        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part04", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part04", "size": 1858009088, "sha256": "96b8a497c8b017ccb2106ffdf0aee7fe086ee7b1045489d95e6b53d6437ad0fc" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata-party-animals",
       "title": "Viva Piata : Party Animals",
       "system": "xbox360",
@@ -6015,21 +6033,20 @@
       ] }
     },
     {
-      "id": "viva-pi-ata",
-      "title": "Viva Piata",
+      "id": "worms-collection",
+      "title": "Worms Collection",
       "system": "xbox360",
-      "players": "1",
-      "description": "Viva Piata on Xbox 360 is a management game in which the player must take care of a garden. Ploughing, sowing, watering... Here are some of the activities that await you to beautify your plot. All of this with the aim of attracting Piatas, animal cuddly toys of various...",
+      "players": "4",
+      "description": "Worms Collection is a collection of three video games in the Worms series developed by Team17. It contained Worms (2007), Worms 2: Armageddon and Worms Ultimate Mayhem. It also contained six bonus DLCs. The collection was released on 31 August 2012 for the PlayStation 3 and Xbox...",
       "added": "2026-10-29",
-      "art": "library/art/viva-pi-ata.jpg",
-      "video": "library/video/viva-pi-ata.mp4",
+      "art": "library/art/worms-collection.jpg",
       "files": [
       ],
-      "parts": { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso", "size": 7834892288, "sha256": "ed732daec607cb4e2b5be4d58f89b51f3e9408cf258ebdb94d8554568eef752b", "pieces": [
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part01", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part01", "size": 1992294400, "sha256": "ba2cf2a4dddd325b2a331c879b50d53bcd01fcc92b084736305c7da837b98af9" },
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part02", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part02", "size": 1992294400, "sha256": "4cf8295c4febb69a29d93d3673eb839d85f1218046a11ec9839869d5663ecb63" },
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part03", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part03", "size": 1992294400, "sha256": "c76f8f876c5c135438836e8ee7657774b4c11dcb802c06df5c6743b780caab03" },
-        { "name": "Viva Pinata (USA, Europe) (En,Ja,Fr,De,Es,It,Nl,Pt,Sv,No,Zh,Ko,Pl,Cs,Hu,Sk).iso.part04", "url": "private:viva-pi-ata__Viva.Pinata.USA.Europe.En.Ja.Fr.De.Es.It.Nl.Pt.Sv.No.Zh.Ko.Pl.Cs.Hu.Sk.iso.part04", "size": 1858009088, "sha256": "96b8a497c8b017ccb2106ffdf0aee7fe086ee7b1045489d95e6b53d6437ad0fc" }
+      "parts": { "name": "Worms Collection (USA).iso", "size": 7838695424, "sha256": "908d5afe484422e38d25f8eaa00d986ea9842e6fb8a6e6b4123d3a7d910c73c1", "pieces": [
+        { "name": "Worms Collection (USA).iso.part01", "url": "private:worms-collection__Worms.Collection.USA.iso.part01", "size": 1992294400, "sha256": "8aee31c73ec60c2c51b4f8fef2a0b1edc0ad9763846362caf021f29716d41ff3" },
+        { "name": "Worms Collection (USA).iso.part02", "url": "private:worms-collection__Worms.Collection.USA.iso.part02", "size": 1992294400, "sha256": "7e0f3587166943f42a9d69f9f5d33c869794196040730d4db4f0b272662770d2" },
+        { "name": "Worms Collection (USA).iso.part03", "url": "private:worms-collection__Worms.Collection.USA.iso.part03", "size": 1992294400, "sha256": "014f6520d69396477c6f19030ae2076c2c464d4a72864c8569fcbc933cdb64b1" },
+        { "name": "Worms Collection (USA).iso.part04", "url": "private:worms-collection__Worms.Collection.USA.iso.part04", "size": 1861812224, "sha256": "e34856a2712c558c7689fe188e22f4a13dd2042a9a8693399103cfee464ab029" }
       ] }
     }
   ]
