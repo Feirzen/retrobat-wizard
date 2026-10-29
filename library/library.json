@@ -1419,6 +1419,19 @@
       ]
     },
     {
+      "id": "ssx-3",
+      "title": "SSX 3",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Drop in and conquer the massive, living mountain rife with ego-crushing challenges and gravity-bending thrills. SSX 3 returns with more slopes and all-new hazards to overcome including lightning storms, vertical drops, serpentine slopestyle courses and avalanches. Customize your...",
+      "added": "2026-10-28",
+      "art": "library/art/ssx-3.png",
+      "video": "library/video/ssx-3.mp4",
+      "files": [
+        { "name": "SSX 3 (USA).ciso", "url": "private:ssx-3__SSX.3.USA.ciso", "size": 1247838784, "sha256": "0e710e7ed459a97fe136c9f2f696f536150c5adf7c0ce5c3d3d76d5ce4b3617f" }
+      ]
+    },
+    {
       "id": "star-fox-assault",
       "title": "Star Fox : Assault",
       "system": "gamecube",
