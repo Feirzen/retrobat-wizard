@@ -1458,6 +1458,19 @@
       ]
     },
     {
+      "id": "star-fox-adventures",
+      "title": "Star Fox Adventures",
+      "system": "gamecube",
+      "players": "1",
+      "description": "A new kind of adventure awaits the Star Fox Team ! As he approaches Dinosaur Planet, in the edges of Lylat Solar System, Fox McCloud is assigned an unusual mission : save Dinosaur Planet, ruled by General Scales and his SharpClaws army, who unleashed chaos and teared the whole...",
+      "added": "2026-10-28",
+      "art": "library/art/star-fox-adventures.jpg",
+      "video": "library/video/star-fox-adventures.mp4",
+      "files": [
+        { "name": "Star Fox Adventures (USA) (Rev 1).ciso", "url": "private:star-fox-adventures__Star.Fox.Adventures.USA.Rev.1.ciso", "size": 820019776, "sha256": "71fe25f59239bbc11d6a3060925455667a4bafe48e6d90b0170a06609410a54b" }
+      ]
+    },
+    {
       "id": "super-mario-sunshine",
       "title": "Super Mario Sunshine",
       "system": "gamecube",
