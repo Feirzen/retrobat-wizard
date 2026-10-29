@@ -5930,6 +5930,24 @@
       ] }
     },
     {
+      "id": "supreme-commander",
+      "title": "Supreme Commander",
+      "system": "xbox360",
+      "players": "",
+      "description": "Supreme Commander (abbreviated SupCom) is a real-time strategy computer game designed by Chris Taylor and developed by his company, Gas Powered Games. The game is considered to be a spiritual successor to Taylor's 1997 game Total Annihilation,[1] alongside the Spring remake....",
+      "added": "2026-10-29",
+      "art": "library/art/supreme-commander.jpg",
+      "video": "library/video/supreme-commander.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Supreme Commander (USA).iso", "size": 7835492352, "sha256": "c66bdf7cd94f5809be250406634acc314f64c7ec1280985b84dd0aa00eebb1ea", "pieces": [
+        { "name": "Supreme Commander (USA).iso.part01", "url": "private:supreme-commander__Supreme.Commander.USA.iso.part01", "size": 1992294400, "sha256": "e4742ab62fcda5a219d932f2167e31853d156de8529897ee506503f432e54c7b" },
+        { "name": "Supreme Commander (USA).iso.part02", "url": "private:supreme-commander__Supreme.Commander.USA.iso.part02", "size": 1992294400, "sha256": "2a9a8c308b7002027080125ef09c168b8b316b973755a86378cc8965b2b045e8" },
+        { "name": "Supreme Commander (USA).iso.part03", "url": "private:supreme-commander__Supreme.Commander.USA.iso.part03", "size": 1992294400, "sha256": "458f310894ad16fdda7e90424c227bb5b462ebc8f04ce1784228733213bdc102" },
+        { "name": "Supreme Commander (USA).iso.part04", "url": "private:supreme-commander__Supreme.Commander.USA.iso.part04", "size": 1858609152, "sha256": "590aee9afad3895f54d329881cb65ea4512190aad22a9ec06d6390860f1cc214" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
