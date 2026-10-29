@@ -1159,6 +1159,19 @@
       ]
     },
     {
+      "id": "mario-superstar-baseball",
+      "title": "Mario Superstar Baseball",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Continuing the tradition started by such games as Mario Power Tennis and Mario Golf: Toadstool Tour, Mario Baseball lets you play in arcade-style baseball. You can clear all the trials in Challenge mode, or sit down for a game in the Toy Field. With multiplayer options for up to...",
+      "added": "2026-10-28",
+      "art": "library/art/mario-superstar-baseball.png",
+      "video": "library/video/mario-superstar-baseball.mp4",
+      "files": [
+        { "name": "Mario Superstar Baseball (USA).ciso", "url": "private:mario-superstar-baseball__Mario.Superstar.Baseball.USA.ciso", "size": 635470400, "sha256": "1bb675ea4c9100cb88f07d9c3a04af6c53602a70952c7df3ada2e42debc9e766" }
+      ]
+    },
+    {
       "id": "metroid-prime-2-echoes",
       "title": "Metroid Prime 2 : Echoes",
       "system": "gamecube",
