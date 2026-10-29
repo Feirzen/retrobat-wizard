@@ -5948,6 +5948,24 @@
       ] }
     },
     {
+      "id": "supreme-commander-2",
+      "title": "Supreme Commander 2",
+      "system": "xbox360",
+      "players": "",
+      "description": "Boasting intense battles on a massive scale, players will wage war, creating enormous customizable armies and experimental war machines that can change the balance of power at any given moment. Assume the role of one of the three enigmatic commanders, each representing a unique...",
+      "added": "2026-10-29",
+      "art": "library/art/supreme-commander-2.jpg",
+      "video": "library/video/supreme-commander-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Supreme Commander 2 (USA, Europe) (En,Fr,De,Es,It).iso", "size": 7838695424, "sha256": "a67832dbbfe568cfd2eed3c2205dab2475f48d8460f1efad7a4f0160e2cafbc3", "pieces": [
+        { "name": "Supreme Commander 2 (USA, Europe) (En,Fr,De,Es,It).iso.part01", "url": "private:supreme-commander-2__Supreme.Commander.2.USA.Europe.En.Fr.De.Es.It.iso.part01", "size": 1992294400, "sha256": "487790c5d821678a69cdd33e0d72c5eeef7edbcb69edf7a74bf7f74064dcdf5a" },
+        { "name": "Supreme Commander 2 (USA, Europe) (En,Fr,De,Es,It).iso.part02", "url": "private:supreme-commander-2__Supreme.Commander.2.USA.Europe.En.Fr.De.Es.It.iso.part02", "size": 1992294400, "sha256": "7ddb91078690a6af76a0b82facf0152ac47be8be7832819679bd56dd3399707c" },
+        { "name": "Supreme Commander 2 (USA, Europe) (En,Fr,De,Es,It).iso.part03", "url": "private:supreme-commander-2__Supreme.Commander.2.USA.Europe.En.Fr.De.Es.It.iso.part03", "size": 1992294400, "sha256": "ea3ae103dc7abc77e6529b8c1a28bef423230b3be19a703729ed2082cdca06f9" },
+        { "name": "Supreme Commander 2 (USA, Europe) (En,Fr,De,Es,It).iso.part04", "url": "private:supreme-commander-2__Supreme.Commander.2.USA.Europe.En.Fr.De.Es.It.iso.part04", "size": 1861812224, "sha256": "6cd6563817117a3be75badab4ce2bff271c984688981a3df52d3fdb9cc2bec25" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
