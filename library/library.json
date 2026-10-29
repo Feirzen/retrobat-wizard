@@ -1263,6 +1263,19 @@
       ]
     },
     {
+      "id": "pok-mon-colosseum",
+      "title": "Pokmon Colosseum",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Pokmon fans can now battle their favorite Pokmon on the grand stage. Starring a brand new leading character, Pokmon, Colosseum offers a story mode that pits you against tough trainers who routinely catch damaged Pokmon. In Battle mode, you can use the Game Boy Advance cable...",
+      "added": "2026-10-28",
+      "art": "library/art/pok-mon-colosseum.png",
+      "video": "library/video/pok-mon-colosseum.mp4",
+      "files": [
+        { "name": "Pokemon Colosseum (USA).ciso", "url": "private:pok-mon-colosseum__Pokemon.Colosseum.USA.ciso", "size": 664830528, "sha256": "39864d2e53505b1ead42d5fe8d6e875d5335af1a423290ce4c3730794a1f706c" }
+      ]
+    },
+    {
       "id": "pok-mon-xd-gale-of-darkness",
       "title": "Pokmon XD : Gale of Darkness",
       "system": "gamecube",
