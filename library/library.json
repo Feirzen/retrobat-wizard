@@ -1432,6 +1432,19 @@
       ]
     },
     {
+      "id": "ssx-tricky",
+      "title": "SSX Tricky",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "SSX Tricky launches you into a world of monster air, intense tracks, and death-defying tricks. Six all-new competitors plus six riders from the original SSX make up the circuit. Compete in the World Circuit, go head-to-head in the Showoff versions of nine courses on the World...",
+      "added": "2026-10-28",
+      "art": "library/art/ssx-tricky.png",
+      "video": "library/video/ssx-tricky.mp4",
+      "files": [
+        { "name": "SSX Tricky (USA).ciso", "url": "private:ssx-tricky__SSX.Tricky.USA.ciso", "size": 1080066624, "sha256": "f9d832ae673867b78ec41f78db5c52ba56345dd06624d887a60790114a15fcb5" }
+      ]
+    },
+    {
       "id": "star-fox-assault",
       "title": "Star Fox : Assault",
       "system": "gamecube",
