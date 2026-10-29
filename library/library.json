@@ -1627,6 +1627,19 @@
       ]
     },
     {
+      "id": "timesplitters-2",
+      "title": "TimeSplitters 2",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "TimeSplitters 2 returns, surpassing its predecessor with a larger-than-life experience. This sequel expands on every front, offering faster-paced action, richer storytelling, and diverse graphical styles across nine thrilling time-traveling adventures. From the lawless Wild West...",
+      "added": "2026-10-28",
+      "art": "library/art/timesplitters-2.png",
+      "video": "library/video/timesplitters-2.mp4",
+      "files": [
+        { "name": "TimeSplitters 2 (USA).ciso", "url": "private:timesplitters-2__TimeSplitters.2.USA.ciso", "size": 1432388160, "sha256": "cb2154cc9d91c5941b4e1997b894fd2930ea92ef6fd8ec8c598ed4642a413a0b" }
+      ]
+    },
+    {
       "id": "tony-hawk-s-pro-skater-3",
       "title": "Tony Hawk's Pro Skater 3",
       "system": "gamecube",
