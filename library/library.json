@@ -1666,6 +1666,19 @@
       ]
     },
     {
+      "id": "viewtiful-joe",
+      "title": "Viewtiful Joe",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Joe is your normal everyday guy, watching movies and hanging out with his girlfriend, Silvia. But when Silvia is sucked into a movie reel by an evil force, Joe's life is turned upside down. It's up to you to take everyman Joe and turn him into a superhero to end all superhero's...",
+      "added": "2026-10-28",
+      "art": "library/art/viewtiful-joe.png",
+      "video": "library/video/viewtiful-joe.mp4",
+      "files": [
+        { "name": "Viewtiful Joe (USA).ciso", "url": "private:viewtiful-joe__Viewtiful.Joe.USA.ciso", "size": 1327530560, "sha256": "cb328dd8f62fb3e7e7ef4ef2763636121f5bc24371db798d6b217c83543f7edc" }
+      ]
+    },
+    {
       "id": "jungle-strike",
       "title": "Jungle Strike",
       "system": "gb",
