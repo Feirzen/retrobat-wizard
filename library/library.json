@@ -1263,6 +1263,19 @@
       ]
     },
     {
+      "id": "pok-mon-colosseum",
+      "title": "Pokmon Colosseum",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Pokmon fans can now battle their favorite Pokmon on the grand stage. Starring a brand new leading character, Pokmon, Colosseum offers a story mode that pits you against tough trainers who routinely catch damaged Pokmon. In Battle mode, you can use the Game Boy Advance cable...",
+      "added": "2026-10-28",
+      "art": "library/art/pok-mon-colosseum.png",
+      "video": "library/video/pok-mon-colosseum.mp4",
+      "files": [
+        { "name": "Pokemon Colosseum (USA).ciso", "url": "private:pok-mon-colosseum__Pokemon.Colosseum.USA.ciso", "size": 664830528, "sha256": "39864d2e53505b1ead42d5fe8d6e875d5335af1a423290ce4c3730794a1f706c" }
+      ]
+    },
+    {
       "id": "pok-mon-xd-gale-of-darkness",
       "title": "Pokmon XD : Gale of Darkness",
       "system": "gamecube",
@@ -1276,16 +1289,16 @@
       ]
     },
     {
-      "id": "pok-mon-colosseum",
-      "title": "Pokmon Colosseum",
+      "id": "resident-evil-2",
+      "title": "Resident Evil 2",
       "system": "gamecube",
-      "players": "1-4",
-      "description": "Pokmon fans can now battle their favorite Pokmon on the grand stage. Starring a brand new leading character, Pokmon, Colosseum offers a story mode that pits you against tough trainers who routinely catch damaged Pokmon. In Battle mode, you can use the Game Boy Advance cable...",
+      "players": "1",
+      "description": "In Resident Evil 2, the classic action, tense exploration, and puzzle solving gameplay that defined the Resident Evil series returns. Players join rookie police officer Leon Kennedy and college student Claire Redfield, who are thrust together by a disastrous outbreak in Raccoon...",
       "added": "2026-10-28",
-      "art": "library/art/pok-mon-colosseum.png",
-      "video": "library/video/pok-mon-colosseum.mp4",
+      "art": "library/art/resident-evil-2.png",
+      "video": "library/video/resident-evil-2.mp4",
       "files": [
-        { "name": "Pokemon Colosseum (USA).ciso", "url": "private:pok-mon-colosseum__Pokemon.Colosseum.USA.ciso", "size": 664830528, "sha256": "39864d2e53505b1ead42d5fe8d6e875d5335af1a423290ce4c3730794a1f706c" }
+        { "name": "Resident Evil 2 (USA).ciso", "url": "private:resident-evil-2__Resident.Evil.2.USA.ciso", "size": 1258324544, "sha256": "bfcfed856677d44e1edef120d73e3ba75984e78edf3484618c846e73b446ddda" }
       ]
     },
     {
