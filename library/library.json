@@ -5729,6 +5729,18 @@
       "min": "3.2.0"
     },
     {
+      "id": "castle-crashers-world-xbla",
+      "title": "Castle Crashers (World) (XBLA)",
+      "system": "xbox360",
+      "players": "",
+      "description": "",
+      "added": "2026-10-29",
+      "files": [
+      ],
+      "bundle": { "folder": "Castle Crashers (World) (XBLA)", "name": "castle-crashers-world-xbla.zip", "size": 146638918, "sha256": "97e204ec760c2dd580daf1a2511a8d17c63c79388c801a5025c1f702b3ec86ce", "url": "private:castle-crashers-world-xbla__castle-crashers-world-xbla.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "fable-ii",
       "title": "Fable II",
       "system": "xbox360",
