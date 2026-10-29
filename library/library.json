@@ -1328,6 +1328,19 @@
       ]
     },
     {
+      "id": "skies-of-arcadia-legends",
+      "title": "Skies of Arcadia Legends",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Grasp the wheel of your air-ship and prepare to embark on a legendary adventure. You are Vyse, a young member of the Blue Rogue pirates. Together with your childhood friend Aika and Fina, a mysterious girl, you are locked in an epic struggle with a powerful enemy nation for the...",
+      "added": "2026-10-28",
+      "art": "library/art/skies-of-arcadia-legends.png",
+      "video": "library/video/skies-of-arcadia-legends.mp4",
+      "files": [
+        { "name": "Skies of Arcadia - Legends (USA).ciso", "url": "private:skies-of-arcadia-legends__Skies.of.Arcadia.-.Legends.USA.ciso", "size": 1430291008, "sha256": "5d9da20e23eb596de482adc650fdb9295cab57e5de7f9c1726a90a94f3965713" }
+      ]
+    },
+    {
       "id": "sonic-adventure-2-battle",
       "title": "Sonic Adventure 2 Battle",
       "system": "gamecube",
