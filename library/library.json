@@ -5596,6 +5596,25 @@
       ] }
     },
     {
+      "id": "bioshock-infinite",
+      "title": "Bioshock Infinite",
+      "system": "xbox360",
+      "players": "1",
+      "description": "BioShock Infinite is a first-person shooter like you?ve never seen. Set in 1912, players assume the role of former Pinkerton agent Booker DeWitt, sent to the flying city of Columbia on a rescue mission. His target? Elizabeth, imprisoned since childhood. During their daring...",
+      "added": "2026-10-28",
+      "art": "library/art/bioshock-infinite.jpg",
+      "video": "library/video/bioshock-infinite.mp4",
+      "files": [
+      ],
+      "parts": { "name": "BioShock Infinite (World) (En,Fr,De,Es,It,Pt).iso", "size": 8738846720, "sha256": "0dd771a6691a709c41ca8bcfebb14eb174566e29322e99b944cba669ecef6211", "pieces": [
+        { "name": "BioShock Infinite (World) (En,Fr,De,Es,It,Pt).iso.part01", "url": "private:bioshock-infinite__BioShock.Infinite.World.En.Fr.De.Es.It.Pt.iso.part01", "size": 1992294400, "sha256": "96b498754abf2a2224a6cacab11b78c7d430847240d7ba4ab6943bdcb73eefb0" },
+        { "name": "BioShock Infinite (World) (En,Fr,De,Es,It,Pt).iso.part02", "url": "private:bioshock-infinite__BioShock.Infinite.World.En.Fr.De.Es.It.Pt.iso.part02", "size": 1992294400, "sha256": "820919a6c9f76cbf3bd1657fd9dab3f0e6106e4e21716ba7c3fb820f60d51694" },
+        { "name": "BioShock Infinite (World) (En,Fr,De,Es,It,Pt).iso.part03", "url": "private:bioshock-infinite__BioShock.Infinite.World.En.Fr.De.Es.It.Pt.iso.part03", "size": 1992294400, "sha256": "6de34de174dd1046b4721b3d1ea0453982d4263e8704544dddb150a316345e29" },
+        { "name": "BioShock Infinite (World) (En,Fr,De,Es,It,Pt).iso.part04", "url": "private:bioshock-infinite__BioShock.Infinite.World.En.Fr.De.Es.It.Pt.iso.part04", "size": 1992294400, "sha256": "b87198c7d74c0dcc5db4b6f7bb12589a7612fcb01729a4fd5c7504acdb9e0aa8" },
+        { "name": "BioShock Infinite (World) (En,Fr,De,Es,It,Pt).iso.part05", "url": "private:bioshock-infinite__BioShock.Infinite.World.En.Fr.De.Es.It.Pt.iso.part05", "size": 769669120, "sha256": "fd879c49593de494c739d4a1139403fde3f0d351fa05a2f2de1801f95af10acf" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
