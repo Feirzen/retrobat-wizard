@@ -1125,8 +1125,9 @@
       "system": "gamecube",
       "players": "1-4",
       "description": "Mario Party 6 offers a new batch of games that require both your fingers and your voice. In this installment in the Mario Party series, you can use the included microphone controller to talk your way to victory. More than 80 minigames are included. You can play as Mario, Bowser,...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/mario-party-6.png",
+      "video": "library/video/mario-party-6.mp4",
       "files": [
         { "name": "Mario Party 6 (USA).ciso", "url": "private:mario-party-6__Mario.Party.6.USA.ciso", "size": 790659648, "sha256": "15ac5519734bf2bfb1a8d04fda8571b9859e55027b206b2d0560801ecd0f0522" }
       ]
