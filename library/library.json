@@ -5542,6 +5542,24 @@
       ] }
     },
     {
+      "id": "bionicle-heroes",
+      "title": "Bionicle Heroes",
+      "system": "xbox360",
+      "players": "1",
+      "description": "Bionicle Heroes is an action game for Xbox 360. In order to fight against the evil Piraka who have invaded the island of Voya Nui, progress by playing as the Bionicle Heroes throughout the 25 levels of the title, and annihilate the relentless horde of opponents that stand in...",
+      "added": "2026-10-28",
+      "art": "library/art/bionicle-heroes.png",
+      "video": "library/video/bionicle-heroes.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Bionicle Heroes (USA, Europe) (En,Fr,De,Es,It,Da).iso", "size": 7834892288, "sha256": "d118681af44e780fec2505e520184a5bd8943d6823da3b1f8879e02aa2619eab", "pieces": [
+        { "name": "Bionicle Heroes (USA, Europe) (En,Fr,De,Es,It,Da).iso.part01", "url": "private:bionicle-heroes__Bionicle.Heroes.USA.Europe.En.Fr.De.Es.It.Da.iso.part01", "size": 1992294400, "sha256": "bfb384e860af5807ee34c8f804e6b4e3dc29fd758c94d80eb1019ae47ff682ba" },
+        { "name": "Bionicle Heroes (USA, Europe) (En,Fr,De,Es,It,Da).iso.part02", "url": "private:bionicle-heroes__Bionicle.Heroes.USA.Europe.En.Fr.De.Es.It.Da.iso.part02", "size": 1992294400, "sha256": "f35b58cd17b4dafd9410f87a70b4646341cdcee9c9d71f94954eb27d291e7dd1" },
+        { "name": "Bionicle Heroes (USA, Europe) (En,Fr,De,Es,It,Da).iso.part03", "url": "private:bionicle-heroes__Bionicle.Heroes.USA.Europe.En.Fr.De.Es.It.Da.iso.part03", "size": 1992294400, "sha256": "d857cfbf89104186b24e2b74441229373aabc40c4c2cf31b1775501a05e37a66" },
+        { "name": "Bionicle Heroes (USA, Europe) (En,Fr,De,Es,It,Da).iso.part04", "url": "private:bionicle-heroes__Bionicle.Heroes.USA.Europe.En.Fr.De.Es.It.Da.iso.part04", "size": 1858009088, "sha256": "589d7f8a30d83e9ccd845483a0901f6d7ecb04addf20f8ef434b63131d5f76af" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
