@@ -1653,6 +1653,19 @@
       ]
     },
     {
+      "id": "tony-hawk-s-underground",
+      "title": "Tony Hawk's Underground",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "You've been chosen by Tony Hawk to compete against Bam Margera's team in the World Destruction Tour. In an all-new storyline, Tony Hawk's Underground 2 takes you to skateparks around the world, where you can spray your custom tag, slap stickers, and even create new skate lines....",
+      "added": "2026-10-28",
+      "art": "library/art/tony-hawk-s-underground.png",
+      "video": "library/video/tony-hawk-s-underground.mp4",
+      "files": [
+        { "name": "Tony Hawk's Underground (USA).ciso", "url": "private:tony-hawk-s-underground__Tony.Hawk.s.Underground.USA.ciso", "size": 1390445120, "sha256": "6f30bde4af1ba633cc92a80055af265b4a73b2314b1cd050706d7a6e433d7bef" }
+      ]
+    },
+    {
       "id": "jungle-strike",
       "title": "Jungle Strike",
       "system": "gb",
