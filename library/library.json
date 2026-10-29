@@ -1393,6 +1393,19 @@
       ]
     },
     {
+      "id": "soulcalibur-ii",
+      "title": "SoulCalibur II",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Open the next chapter in world of Soul Calibur. Soul Calibur II features seven distinctive gameplay modes including: Arcade, Versus, Time Attack, Survival, Team Battle, Practice, and the console exclusive Weapon Master. Collect up to 200 different weapons and battle characters...",
+      "added": "2026-10-28",
+      "art": "library/art/soulcalibur-ii.png",
+      "video": "library/video/soulcalibur-ii.mp4",
+      "files": [
+        { "name": "Soulcalibur II (USA).ciso", "url": "private:soulcalibur-ii__Soulcalibur.II.USA.ciso", "size": 1040220736, "sha256": "5ee9050388065f9595237d92c7cc22e4b7ae1098467c1fef53929124af17f913" }
+      ]
+    },
+    {
       "id": "star-fox-assault",
       "title": "Star Fox : Assault",
       "system": "gamecube",
