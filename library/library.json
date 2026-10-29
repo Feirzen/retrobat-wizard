@@ -1133,6 +1133,19 @@
       ]
     },
     {
+      "id": "mario-party-7",
+      "title": "Mario Party 7",
+      "system": "gamecube",
+      "players": "1-8",
+      "description": "You can play more than 80 new minigames in the most recent Mario-themed party game, Mario Party 7. Mario and pals needed some time off, but they forgot to invite Bowser on their cruise. You can battle against an angry Bowser or up to seven of your friends on a single GameCube...",
+      "added": "2026-10-28",
+      "art": "library/art/mario-party-7.png",
+      "video": "library/video/mario-party-7.mp4",
+      "files": [
+        { "name": "Mario Party 7 (USA) (Rev 1).ciso", "url": "private:mario-party-7__Mario.Party.7.USA.Rev.1.ciso", "size": 599818816, "sha256": "948c7e414135b57bb4b8ced738b68816b86d738de5956698547ac89d55b039fe" }
+      ]
+    },
+    {
       "id": "metroid-prime-2-echoes",
       "title": "Metroid Prime 2 : Echoes",
       "system": "gamecube",
