@@ -5667,6 +5667,24 @@
       ] }
     },
     {
+      "id": "call-of-duty-modern-warfare-2",
+      "title": "Call of Duty : Modern Warfare 2",
+      "system": "xbox360",
+      "players": "18",
+      "description": "The game's campaign follows Task Force 141, a multi-national special forces unit commanded by Captain Soap MacTavish as they hunt Vladimir Makarov, leader of the Russian Ultranationalist party, and U.S. Army Rangers from 1st Battalion/75th Ranger Regiment who are defending the...",
+      "added": "2026-10-29",
+      "art": "library/art/call-of-duty-modern-warfare-2.jpg",
+      "video": "library/video/call-of-duty-modern-warfare-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Call of Duty - Modern Warfare 2 (USA, Europe).iso", "size": 7838695424, "sha256": "2b15c3c463d7d7045a42a58676b3b43a90b938475d124b8394c63362dc13a324", "pieces": [
+        { "name": "Call of Duty - Modern Warfare 2 (USA, Europe).iso.part01", "url": "private:call-of-duty-modern-warfare-2__Call.of.Duty.-.Modern.Warfare.2.USA.Europe.iso.part01", "size": 1992294400, "sha256": "b7ad28bf98213c2309fdd28b8af77e9b37a8e71f74602149a0419cc1591a67bd" },
+        { "name": "Call of Duty - Modern Warfare 2 (USA, Europe).iso.part02", "url": "private:call-of-duty-modern-warfare-2__Call.of.Duty.-.Modern.Warfare.2.USA.Europe.iso.part02", "size": 1992294400, "sha256": "6e59c65fd01d7fccc8979341dfba7b74743f35ada5063d9cb84901383bdeef4d" },
+        { "name": "Call of Duty - Modern Warfare 2 (USA, Europe).iso.part03", "url": "private:call-of-duty-modern-warfare-2__Call.of.Duty.-.Modern.Warfare.2.USA.Europe.iso.part03", "size": 1992294400, "sha256": "7eae6bdcadf5e200acab2c38c5534b995a0d4630cbb362b2c76cfebd1989ea98" },
+        { "name": "Call of Duty - Modern Warfare 2 (USA, Europe).iso.part04", "url": "private:call-of-duty-modern-warfare-2__Call.of.Duty.-.Modern.Warfare.2.USA.Europe.iso.part04", "size": 1861812224, "sha256": "3653e65133277305d3acf9b6a351f345058b3d004c17e240fee75249abdbb58b" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
