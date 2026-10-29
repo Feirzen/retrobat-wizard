@@ -1614,6 +1614,19 @@
       ]
     },
     {
+      "id": "timesplitters-future-perfect",
+      "title": "TimeSplitters : Future Perfect",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "In TimeSplitters: Future Perfect, humanity is on the brink of destruction by the evil TimeSplitters. With the help of some familiar faces, Cortez--the tough hero from previous installments--must chase a mystery foe across different time periods to trace the origins of the...",
+      "added": "2026-10-28",
+      "art": "library/art/timesplitters-future-perfect.png",
+      "video": "library/video/timesplitters-future-perfect.mp4",
+      "files": [
+        { "name": "TimeSplitters - Future Perfect (USA).ciso", "url": "private:timesplitters-future-perfect__TimeSplitters.-.Future.Perfect.USA.ciso", "size": 1432388160, "sha256": "d8d1186fcab6293cef772d857bb18219098c7e9fd7a5d33b3e39505ed27fc41c" }
+      ]
+    },
+    {
       "id": "tony-hawk-s-pro-skater-3",
       "title": "Tony Hawk's Pro Skater 3",
       "system": "gamecube",
