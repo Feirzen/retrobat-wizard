@@ -1692,6 +1692,19 @@
       ]
     },
     {
+      "id": "x-men-legends-ii-rise-of-apocalypse",
+      "title": "X-Men Legends II : Rise of Apocalypse",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "X-Men Legends II: Rise of Apocalypse introduces the epic storyline of an uneasy alliance between the X-Men and the hated Brotherhood in a fight to reclaim Earth from Apocalypse's grasp. Gameplay enhancements include more than double the superpowers and customization...",
+      "added": "2026-10-28",
+      "art": "library/art/x-men-legends-ii-rise-of-apocalypse.png",
+      "video": "library/video/x-men-legends-ii-rise-of-apocalypse.mp4",
+      "files": [
+        { "name": "X-Men Legends II - Rise of Apocalypse (USA).ciso", "url": "private:x-men-legends-ii-rise-of-apocalypse__X-Men.Legends.II.-.Rise.of.Apocalypse.USA.ciso", "size": 1426096704, "sha256": "62f30757b92c18042f4c73b0b906373333c431ed4a601d084d48fd73f73bb678" }
+      ]
+    },
+    {
       "id": "jungle-strike",
       "title": "Jungle Strike",
       "system": "gb",
