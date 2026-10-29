@@ -1645,8 +1645,9 @@
       "system": "gamecube",
       "players": "1-2",
       "description": "You may not be able to live like the legend, but now you can skate like him. Skate as the legendary Tony Hawk or choose from a dream team of 12 top pro skaters, including old favorites like Lasek, Thomas, Muska, and Steamer, as well as new talent like Gilfberg, Caballero,...",
-      "added": "2026-10-11",
+      "added": "2026-10-28",
       "art": "library/art/tony-hawk-s-pro-skater-3.png",
+      "video": "library/video/tony-hawk-s-pro-skater-3.mp4",
       "files": [
         { "name": "Tony Hawk's Pro Skater 3 (USA).ciso", "url": "private:tony-hawk-s-pro-skater-3__Tony.Hawk.s.Pro.Skater.3.USA.ciso", "size": 1457553984, "sha256": "5d84a6371892027e7ad1f8358e6db1470f9c893dcb17d3f295a97a0c1947aa33" }
       ]
