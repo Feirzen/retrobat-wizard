@@ -5717,6 +5717,24 @@
       "min": "3.2.0"
     },
     {
+      "id": "fable-ii",
+      "title": "Fable II",
+      "system": "xbox360",
+      "players": "2",
+      "description": "Fable 2 is an action role-playing game that truly allows players to live the life they choose in an unimaginably open world environment. Set 500 years after the original, Fable 2 will provide gamers with an epic story and innovative real-time gameplay, including a massive amount...",
+      "added": "2026-10-29",
+      "art": "library/art/fable-ii.jpg",
+      "video": "library/video/fable-ii.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Fable II (USA, Europe) (En,Zh,Ko,Pl,Cs,Hu,Sk) (Rev 2).iso", "size": 7838695424, "sha256": "685a0d3bea9718812f17bcd155907a5359a548b6d3d8342dd2a6c944f45e35ff", "pieces": [
+        { "name": "Fable II (USA, Europe) (En,Zh,Ko,Pl,Cs,Hu,Sk) (Rev 2).iso.part01", "url": "private:fable-ii__Fable.II.USA.Europe.En.Zh.Ko.Pl.Cs.Hu.Sk.Rev.2.iso.part01", "size": 1992294400, "sha256": "7bdc3cae0aa6e3bbaf1ca5c6bfc1323d0a67b8fd9eadcd541b5d6869e0e29886" },
+        { "name": "Fable II (USA, Europe) (En,Zh,Ko,Pl,Cs,Hu,Sk) (Rev 2).iso.part02", "url": "private:fable-ii__Fable.II.USA.Europe.En.Zh.Ko.Pl.Cs.Hu.Sk.Rev.2.iso.part02", "size": 1992294400, "sha256": "b319d29da7dc2cfd4a4eaaec1444abec40adf5ccd0773259e3daf0af2da496dd" },
+        { "name": "Fable II (USA, Europe) (En,Zh,Ko,Pl,Cs,Hu,Sk) (Rev 2).iso.part03", "url": "private:fable-ii__Fable.II.USA.Europe.En.Zh.Ko.Pl.Cs.Hu.Sk.Rev.2.iso.part03", "size": 1992294400, "sha256": "705039d4ab260e56f5453193ee1ed3e04e2892d514895380579dc0a15e4b5075" },
+        { "name": "Fable II (USA, Europe) (En,Zh,Ko,Pl,Cs,Hu,Sk) (Rev 2).iso.part04", "url": "private:fable-ii__Fable.II.USA.Europe.En.Zh.Ko.Pl.Cs.Hu.Sk.Rev.2.iso.part04", "size": 1861812224, "sha256": "f0746609e60ae68238abe717ed5815be3f28a0f3516e54cf4052cf91fac38c19" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
