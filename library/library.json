@@ -5615,6 +5615,21 @@
       ] }
     },
     {
+      "id": "bomberman-live",
+      "title": "Bomberman Live",
+      "system": "xbox360",
+      "players": "",
+      "description": "Bomberman Live on the Xbox Live Arcade is a graphical upgrade of the original game. The aim remains the same: you have to eliminate your enemies in a maze using your bombs, which you can place anywhere. The more you progress, the more powerful and sophisticated your bombs...",
+      "added": "2026-10-28",
+      "art": "library/art/bomberman-live.jpg",
+      "video": "library/video/bomberman-live.mp4",
+      "files": [
+        { "name": "Bomberman Live (World) (XBLA).m3u", "url": "private:bomberman-live__Bomberman.Live.World.XBLA.m3u", "size": 91, "sha256": "4a406b7f1599cae859210beeb1a02ca97af26efde320dd401f78502ab5f5822b" },
+        { "name": "Bomberman Live (World) (XBLA)/5841083F/000D0000/423BF8A17D9CEB435A291FE5486EABE1A3CD3D5858", "url": "private:bomberman-live__Bomberman.Live.World.XBLA.5841083F.000D0000.423BF8A17D9CEB435A291FE5486EABE1A3CD3D5858", "size": 46616576, "sha256": "8e527f71304d951c86456450790308e55c8486f51be890d6dba49c23884ebcbc" }
+      ],
+      "min": "3.2.0"
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
