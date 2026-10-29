@@ -1198,6 +1198,19 @@
       ]
     },
     {
+      "id": "need-for-speed-underground-2",
+      "title": "Need for Speed : Underground 2",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "The next installment in the Need for Speed Underground series takes you to a free-roaming city comprised of five neighborhoods. As you explore the city, you'll encounter rival racers who will show you all the hot spots in underground racing. After each race, you can improve your...",
+      "added": "2026-10-28",
+      "art": "library/art/need-for-speed-underground-2.jpg",
+      "video": "library/video/need-for-speed-underground-2.mp4",
+      "files": [
+        { "name": "Need for Speed - Underground 2 (USA).ciso", "url": "private:need-for-speed-underground-2__Need.for.Speed.-.Underground.2.USA.ciso", "size": 1338016320, "sha256": "a05fd4cc8ca0fae5414a288fd403479c1fd4f2c19fba5d7c1f8381f417a29804" }
+      ]
+    },
+    {
       "id": "over-the-hedge",
       "title": "Over the Hedge",
       "system": "gamecube",
