@@ -1107,6 +1107,19 @@
       ]
     },
     {
+      "id": "mario-party-5",
+      "title": "Mario Party 5",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Mario and his friends are trying to restore peace to Dream Depot by racing around a collection of all-new game boards on their quest to collect stars. The second GameCube installment in the multiplayer series that began on N64, Mario Party 5 now sports 3D boards, more than 70...",
+      "added": "2026-10-28",
+      "art": "library/art/mario-party-5.png",
+      "video": "library/video/mario-party-5.mp4",
+      "files": [
+        { "name": "Mario Party 5 (USA).ciso", "url": "private:mario-party-5__Mario.Party.5.USA.ciso", "size": 1002472000, "sha256": "32fbf2d269559fdc22161bf144f90c99730c0b58663e0daf883e1bb9c75e05b2" }
+      ]
+    },
+    {
       "id": "mario-party-6",
       "title": "Mario Party 6",
       "system": "gamecube",
