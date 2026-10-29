@@ -1367,6 +1367,19 @@
       ]
     },
     {
+      "id": "sonic-heroes",
+      "title": "Sonic Heroes",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Sonic Heroes is a 3D action-platformer in which the player takes control of a team of 3 characters, each with a special ability - speed, fly and power. The objective of the game is to race through levels as quickly as possible whilst defeating enemies and collecting rings. Your...",
+      "added": "2026-10-28",
+      "art": "library/art/sonic-heroes.png",
+      "video": "library/video/sonic-heroes.mp4",
+      "files": [
+        { "name": "Sonic Heroes (USA) (En,Ja,Fr,De,Es,It).ciso", "url": "private:sonic-heroes__Sonic.Heroes.USA.En.Ja.Fr.De.Es.It.ciso", "size": 1249935936, "sha256": "3d1fcd764fb4e9e8e859c55b0b2813a3904f18ccb78d5ed6ce1e4445e48fa95c" }
+      ]
+    },
+    {
       "id": "sonic-mega-collection",
       "title": "Sonic Mega Collection",
       "system": "gamecube",
