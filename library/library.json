@@ -1185,6 +1185,19 @@
       ]
     },
     {
+      "id": "nba-street-vol-2",
+      "title": "NBA Street Vol. 2",
+      "system": "gamecube",
+      "players": "1-4",
+      "description": "Basketball returns to the streets in NBA Street Vol. 2, featuring more players, electrifying moves, and online multiplayer battles. Defeat the best players in the game today and even bring legends such as Dr. J, Magic, Bird, Wilt, and Moses out of retirement for some on-court...",
+      "added": "2026-10-28",
+      "art": "library/art/nba-street-vol-2.png",
+      "video": "library/video/nba-street-vol-2.mp4",
+      "files": [
+        { "name": "NBA Street Vol. 2 (USA).ciso", "url": "private:nba-street-vol-2__NBA.Street.Vol.2.USA.ciso", "size": 1084260928, "sha256": "702982ac3612fecc35c8c9d7dd98929982e83190e249126f707c622e113a7306" }
+      ]
+    },
+    {
       "id": "over-the-hedge",
       "title": "Over the Hedge",
       "system": "gamecube",
