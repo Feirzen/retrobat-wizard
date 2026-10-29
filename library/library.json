@@ -5826,6 +5826,24 @@
       ] }
     },
     {
+      "id": "minecraft-xbox-360-edition",
+      "title": "Minecraft - Xbox 360 Edition",
+      "system": "xbox360",
+      "players": "",
+      "description": "",
+      "added": "2026-10-29",
+      "art": "library/art/minecraft-xbox-360-edition.jpg",
+      "video": "library/video/minecraft-xbox-360-edition.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Minecraft - Xbox 360 Edition (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko).iso", "size": 7838695424, "sha256": "5e7e9fd7ed7109a6367dd65fca191615f9048554e3ca2c8da511ec138b849400", "pieces": [
+        { "name": "Minecraft - Xbox 360 Edition (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko).iso.part01", "url": "private:minecraft-xbox-360-edition__Minecraft.-.Xbox.360.Edition.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.iso.part01", "size": 1992294400, "sha256": "7cd642de013e327a3a73bbcc9b951a717e84d49eddab62dd327444ee9d0181b2" },
+        { "name": "Minecraft - Xbox 360 Edition (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko).iso.part02", "url": "private:minecraft-xbox-360-edition__Minecraft.-.Xbox.360.Edition.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.iso.part02", "size": 1992294400, "sha256": "002a22aa4d7a9ad7a3e882ed5cb32c4bcaa07d028f098e2fec3d69a060866e50" },
+        { "name": "Minecraft - Xbox 360 Edition (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko).iso.part03", "url": "private:minecraft-xbox-360-edition__Minecraft.-.Xbox.360.Edition.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.iso.part03", "size": 1992294400, "sha256": "71140c34d6dd7b8375bbcadd517abfcdf13ba787217f0fd36d923b6a23b4d9ef" },
+        { "name": "Minecraft - Xbox 360 Edition (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko).iso.part04", "url": "private:minecraft-xbox-360-edition__Minecraft.-.Xbox.360.Edition.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.iso.part04", "size": 1861812224, "sha256": "42875afc1a29adc0ae6ae77e36dc5328764b767a26964f9788da8de397656be2" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
