@@ -5930,6 +5930,24 @@
       ] }
     },
     {
+      "id": "splosion-man",
+      "title": "'splosion Man",
+      "system": "xbox360",
+      "players": "2-4",
+      "description": "Fools they were, to tread where knowledge should stay forbidden. For what emerged was not a man - it was a Splosion Man. \"And all who saw him were sploded, for he was the fire and they were but meat.\" From Twisted Pixel Games, developer of the award winning \"The Maw\", comes this...",
+      "added": "2026-10-29",
+      "art": "library/art/splosion-man.jpg",
+      "video": "library/video/splosion-man.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Triple Pack - Trials HD & Limbo & 'Splosion Man (World).iso", "size": 7838695424, "sha256": "25b62891de0b25d338094d4f649340f54952f914ce48b07baa59d56fbc6a6d99", "pieces": [
+        { "name": "Triple Pack - Trials HD & Limbo & 'Splosion Man (World).iso.part01", "url": "private:splosion-man__Triple.Pack.-.Trials.HD.Limbo.Splosion.Man.World.iso.part01", "size": 1992294400, "sha256": "93ca1f77c86bb62cea38a797650f927b456aac5724d5c78b31d21b02142baecf" },
+        { "name": "Triple Pack - Trials HD & Limbo & 'Splosion Man (World).iso.part02", "url": "private:splosion-man__Triple.Pack.-.Trials.HD.Limbo.Splosion.Man.World.iso.part02", "size": 1992294400, "sha256": "d30713244b3a51ca9bf177f47d5e7490226333d07ec6ef32495f44dda57edcb3" },
+        { "name": "Triple Pack - Trials HD & Limbo & 'Splosion Man (World).iso.part03", "url": "private:splosion-man__Triple.Pack.-.Trials.HD.Limbo.Splosion.Man.World.iso.part03", "size": 1992294400, "sha256": "82826e922578aff7bfc44bd0a45eaac621d07c5c739a3bd2d37a58f4ba8e69ef" },
+        { "name": "Triple Pack - Trials HD & Limbo & 'Splosion Man (World).iso.part04", "url": "private:splosion-man__Triple.Pack.-.Trials.HD.Limbo.Splosion.Man.World.iso.part04", "size": 1861812224, "sha256": "d285919943609cb55388e3ec5602e1d426ec78b34efbda40657569b4785ea951" }
+      ] }
+    },
+    {
       "id": "supreme-commander",
       "title": "Supreme Commander",
       "system": "xbox360",
