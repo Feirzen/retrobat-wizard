@@ -5880,6 +5880,19 @@
       ] }
     },
     {
+      "id": "scott-pilgrim-vs-the-world-the-game-worl",
+      "title": "Scott Pilgrim vs. the World - The Game (World) (XBLA)",
+      "system": "xbox360",
+      "players": "",
+      "description": "",
+      "added": "2026-10-29",
+      "files": [
+        { "name": "Scott Pilgrim vs. the World - The Game (World) (XBLA).m3u", "url": "private:scott-pilgrim-vs-the-world-the-game-worl__Scott.Pilgrim.vs.the.World.-.The.Game.World.XBLA.m3u", "size": 115, "sha256": "09f801922ab2b8816329fde8265ca44b006092c2cdb8855d61aedd143f260d68" },
+        { "name": "Scott Pilgrim vs. the World - The Game (World) (XBLA)/58410A2C/000D0000/A272FFD4026056CBA1CF011F81CBA8DCCDF9964E58", "url": "private:scott-pilgrim-vs-the-world-the-game-worl__Scott.Pilgrim.vs.the.World.-.The.Game.World.XBLA.58410A2C.000D0000.A272FFD4026056CBA1CF011F81CBA8DCCDF9964E58", "size": 174276608, "sha256": "769618a42877ca42bbfa09162fbe76534aacea7b62c46239a29b06110e1905f3" }
+      ],
+      "min": "3.2.0"
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
