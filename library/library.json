@@ -5630,6 +5630,18 @@
       "min": "3.2.0"
     },
     {
+      "id": "bomberman-live-world-xbla",
+      "title": "Bomberman Live (World) (XBLA)",
+      "system": "xbox360",
+      "players": "",
+      "description": "",
+      "added": "2026-10-29",
+      "files": [
+      ],
+      "bundle": { "folder": "Bomberman Live (World) (XBLA)", "name": "bomberman-live-world-xbla.zip", "size": 46623909, "sha256": "00b5bc2d661b25a40cfa7bfe570e16b578e72773b06001fe99ef6fe3c70fec4f", "url": "private:bomberman-live-world-xbla__bomberman-live-world-xbla.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "borderlands",
       "title": "Borderlands",
       "system": "xbox360",
