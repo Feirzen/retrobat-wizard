@@ -1489,8 +1489,9 @@
       "system": "gamecube",
       "players": "1",
       "description": "Mario, Princess Peach, Toadsworth, and Toad have come to Isle Delfino for some relaxation. Upon arrival, however, they discover the island has been polluted causing its energy source, the Shine Sprites, to disappear. The culprit is similar in appearance to Mario, who is blamed...",
-      "added": "2026-10-11",
+      "added": "2026-10-28",
       "art": "library/art/super-mario-sunshine.png",
+      "video": "library/video/super-mario-sunshine.mp4",
       "files": [
         { "name": "Super Mario Sunshine (USA).iso", "url": "private:super-mario-sunshine__Super.Mario.Sunshine.USA.iso", "size": 1459978240, "sha256": "67cec1634e641227a4cd51e6a0b277730cb9a1adaa867530c9e66de45373e51d" }
       ]
