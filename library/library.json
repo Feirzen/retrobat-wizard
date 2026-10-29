@@ -5524,6 +5524,24 @@
       ] }
     },
     {
+      "id": "banjo-kazooie-nuts-and-bolts",
+      "title": "Banjo-Kazooie : Nuts and Bolts",
+      "system": "xbox360",
+      "players": "1-2",
+      "description": "Famed game developer Rare is reviving one of its most beloved and successful franchises exclusively on Xbox 360 with the third installment of the Banjo-Kazooie series. Banjo-Kazooie: Nuts and Bolts embraces new and old fans alike, as the famous bear and bird duo return in...",
+      "added": "2026-10-28",
+      "art": "library/art/banjo-kazooie-nuts-and-bolts.jpg",
+      "video": "library/video/banjo-kazooie-nuts-and-bolts.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Banjo-Kazooie - Nuts & Bolts (USA) (En,Ja,Fr,De,Es,It,Nl,Sv,No,Zh,Ko,Pl,Ru,Cs).iso", "size": 7835492352, "sha256": "05a027a3cba15b9a7191fb145d0ef752a0997f5eabce7b7c20052d7f91c2e650", "pieces": [
+        { "name": "Banjo-Kazooie - Nuts & Bolts (USA) (En,Ja,Fr,De,Es,It,Nl,Sv,No,Zh,Ko,Pl,Ru,Cs).iso.part01", "url": "private:banjo-kazooie-nuts-and-bolts__Banjo-Kazooie.-.Nuts.Bolts.USA.En.Ja.Fr.De.Es.It.Nl.Sv.No.Zh.Ko.Pl.Ru.Cs.iso.part01", "size": 1992294400, "sha256": "71eab95fa6ed13b289fdb8d3be55b53580b89e468e7fb98b7ca0b0a0eb18f94d" },
+        { "name": "Banjo-Kazooie - Nuts & Bolts (USA) (En,Ja,Fr,De,Es,It,Nl,Sv,No,Zh,Ko,Pl,Ru,Cs).iso.part02", "url": "private:banjo-kazooie-nuts-and-bolts__Banjo-Kazooie.-.Nuts.Bolts.USA.En.Ja.Fr.De.Es.It.Nl.Sv.No.Zh.Ko.Pl.Ru.Cs.iso.part02", "size": 1992294400, "sha256": "3a099355d822d43de3c797b40aae2ab41720bcf5c446f16683b7a3ce38f5b719" },
+        { "name": "Banjo-Kazooie - Nuts & Bolts (USA) (En,Ja,Fr,De,Es,It,Nl,Sv,No,Zh,Ko,Pl,Ru,Cs).iso.part03", "url": "private:banjo-kazooie-nuts-and-bolts__Banjo-Kazooie.-.Nuts.Bolts.USA.En.Ja.Fr.De.Es.It.Nl.Sv.No.Zh.Ko.Pl.Ru.Cs.iso.part03", "size": 1992294400, "sha256": "b1ece139bae37d53c35dbe8e047ea44b711c05b275d50e3e339548e9c1e40970" },
+        { "name": "Banjo-Kazooie - Nuts & Bolts (USA) (En,Ja,Fr,De,Es,It,Nl,Sv,No,Zh,Ko,Pl,Ru,Cs).iso.part04", "url": "private:banjo-kazooie-nuts-and-bolts__Banjo-Kazooie.-.Nuts.Bolts.USA.En.Ja.Fr.De.Es.It.Nl.Sv.No.Zh.Ko.Pl.Ru.Cs.iso.part04", "size": 1858609152, "sha256": "ab93168d57285a4da66f42488feb93881955b07f2883141699fa6684bd9d13ae" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
