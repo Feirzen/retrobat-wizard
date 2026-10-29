@@ -5893,6 +5893,24 @@
       "min": "3.2.0"
     },
     {
+      "id": "skate-3",
+      "title": "Skate 3",
+      "system": "xbox360",
+      "players": "1",
+      "description": "Skate 3 on Xbox 360 is a relatively realistic skateboarding simulation. Explore the city of Port Carverton and its three distinct neighbourhoods: downtown, campus and industrial. Different types of challenges await you, such as races and competitions. You can also create your...",
+      "added": "2026-10-29",
+      "art": "library/art/skate-3.jpg",
+      "video": "library/video/skate-3.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Skate 3 (USA, Europe) (En,Fr,De,Es,It,Nl).iso", "size": 7838695424, "sha256": "bd8d430188aa61b0ebf2e33e5672822dd7e59c9080fc09e802195e1ee75ebff0", "pieces": [
+        { "name": "Skate 3 (USA, Europe) (En,Fr,De,Es,It,Nl).iso.part01", "url": "private:skate-3__Skate.3.USA.Europe.En.Fr.De.Es.It.Nl.iso.part01", "size": 1992294400, "sha256": "8fb7d418aef5dc85a40b8c00a7f782d12964f9e26c27a8c1c9a2460d460a290f" },
+        { "name": "Skate 3 (USA, Europe) (En,Fr,De,Es,It,Nl).iso.part02", "url": "private:skate-3__Skate.3.USA.Europe.En.Fr.De.Es.It.Nl.iso.part02", "size": 1992294400, "sha256": "3decfc110782c53a90195da9b7ebb5ac493e71cde105bab89c1c4e28e1624927" },
+        { "name": "Skate 3 (USA, Europe) (En,Fr,De,Es,It,Nl).iso.part03", "url": "private:skate-3__Skate.3.USA.Europe.En.Fr.De.Es.It.Nl.iso.part03", "size": 1992294400, "sha256": "47fe6cc84dfc16e0ad9aca9c3c7da01464b482f8f04d7a3badf683444ec6a666" },
+        { "name": "Skate 3 (USA, Europe) (En,Fr,De,Es,It,Nl).iso.part04", "url": "private:skate-3__Skate.3.USA.Europe.En.Fr.De.Es.It.Nl.iso.part04", "size": 1861812224, "sha256": "7a75e925ead75f00fb13fd63ce236197607a3cd7571a8a7f88a4e2d80013bad2" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
