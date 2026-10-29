@@ -5630,6 +5630,24 @@
       "min": "3.2.0"
     },
     {
+      "id": "borderlands",
+      "title": "Borderlands",
+      "system": "xbox360",
+      "players": "1-4",
+      "description": "Borderlands is a 2009 open world action role-playing first-person looter shooter video game. The game's story focuses on a group of four \"Vault Hunters\", who travel to the distant planet of Pandora to search for the \"Vault\", which is rumored to contain advanced alien technology...",
+      "added": "2026-10-29",
+      "art": "library/art/borderlands.png",
+      "video": "library/video/borderlands.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Borderlands (World) (En,Fr,De,Es,It).iso", "size": 7838695424, "sha256": "a47a516c3884e6300e4809ec0d9dbab8f7bb055859e83b40656d696b08a61fb8", "pieces": [
+        { "name": "Borderlands (World) (En,Fr,De,Es,It).iso.part01", "url": "private:borderlands__Borderlands.World.En.Fr.De.Es.It.iso.part01", "size": 1992294400, "sha256": "e1f4775fea61b658ad80e26630b0dd3a1f1526d875efd4f2c09e630d1e1c1641" },
+        { "name": "Borderlands (World) (En,Fr,De,Es,It).iso.part02", "url": "private:borderlands__Borderlands.World.En.Fr.De.Es.It.iso.part02", "size": 1992294400, "sha256": "5cf2d24a56994be1d87c52e2819fde97ee88bcc773495d63b8205c21c4d2d760" },
+        { "name": "Borderlands (World) (En,Fr,De,Es,It).iso.part03", "url": "private:borderlands__Borderlands.World.En.Fr.De.Es.It.iso.part03", "size": 1992294400, "sha256": "fd93653f668f698a6335711fdda77550d48d4bac03dabd20697593279e540ea4" },
+        { "name": "Borderlands (World) (En,Fr,De,Es,It).iso.part04", "url": "private:borderlands__Borderlands.World.En.Fr.De.Es.It.iso.part04", "size": 1861812224, "sha256": "457680affd34cb3cd34fca2a189b53ee03c6b0a4d0151c32527db46ce1bf63e3" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
