@@ -5808,6 +5808,24 @@
       ] }
     },
     {
+      "id": "left-4-dead-2",
+      "title": "Left 4 Dead 2",
+      "system": "xbox360",
+      "players": "8",
+      "description": "Battle the infected again in the sequel to Valve's original hit. View larger. Left 4 Dead 2 is set at roughly the same time as the original ? just after the outbreak that turned most of the population into various zombie mutants. Players assume the role of four new \"Survivors,\"...",
+      "added": "2026-10-29",
+      "art": "library/art/left-4-dead-2.jpg",
+      "video": "library/video/left-4-dead-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Left 4 Dead 2 (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko,Pl,Ru).iso", "size": 7838695424, "sha256": "e3fa8d1381e9ecd2c7240cb7142c3448e4c95d705d3f91f727d1d970ef1e2012", "pieces": [
+        { "name": "Left 4 Dead 2 (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko,Pl,Ru).iso.part01", "url": "private:left-4-dead-2__Left.4.Dead.2.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.Pl.Ru.iso.part01", "size": 1992294400, "sha256": "8a15d56cac04bb5e00c760e02df38789b622777328a77c48e089b396ff4f741a" },
+        { "name": "Left 4 Dead 2 (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko,Pl,Ru).iso.part02", "url": "private:left-4-dead-2__Left.4.Dead.2.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.Pl.Ru.iso.part02", "size": 1992294400, "sha256": "aaaf8a30ff699d18a96ca32bf89a9e0d82c251cadf92c79a80741be921848d31" },
+        { "name": "Left 4 Dead 2 (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko,Pl,Ru).iso.part03", "url": "private:left-4-dead-2__Left.4.Dead.2.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.Pl.Ru.iso.part03", "size": 1992294400, "sha256": "ee7ddf628a2d02b2e86dc4f873c29c639bbfbfddd668ea30da453de5c01584e4" },
+        { "name": "Left 4 Dead 2 (World) (En,Ja,Fr,De,Es,It,Pt,Zh,Ko,Pl,Ru).iso.part04", "url": "private:left-4-dead-2__Left.4.Dead.2.World.En.Ja.Fr.De.Es.It.Pt.Zh.Ko.Pl.Ru.iso.part04", "size": 1861812224, "sha256": "59676d52a99ac97845511ed598c1e15e91b8f95f677878cbf13fd8950842c846" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
