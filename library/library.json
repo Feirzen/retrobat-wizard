@@ -1224,6 +1224,19 @@
       ]
     },
     {
+      "id": "pac-man-world-2",
+      "title": "Pac-Man World 2",
+      "system": "gamecube",
+      "players": "1",
+      "description": "Pac-Man is on a brand new adventure and once again dealing with the pesky Ghost Gang. In Pac-Man World 2, the Ghost Gang has picked the magical fruit from an ancient tree, thereby releasing wicked evils upon Pac-Land. You must guide Pac-Man through six new lands with plenty of...",
+      "added": "2026-10-28",
+      "art": "library/art/pac-man-world-2.png",
+      "video": "library/video/pac-man-world-2.mp4",
+      "files": [
+        { "name": "Pac-Man World 2 (USA).ciso", "url": "private:pac-man-world-2__Pac-Man.World.2.USA.ciso", "size": 895517248, "sha256": "6d7c47d21dbdd30561fb8d45ef46b8f4ba38c04e2998a230f21e9712ade37a6c" }
+      ]
+    },
+    {
       "id": "paper-mario-the-thousand-year-door",
       "title": "Paper Mario : The Thousand-Year Door",
       "system": "gamecube",
