@@ -1263,6 +1263,19 @@
       ]
     },
     {
+      "id": "pok-mon-xd-gale-of-darkness",
+      "title": "Pokmon XD : Gale of Darkness",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "XD centers on Dark Pokemon, Pokemon who've had their hearts sealed away and now use Dark Skills to attack you and your Pokemon friends. You play as a nameless main character who adventures with his little sister, Mana. Your quest is to free the Dark Pokemon from their misguided...",
+      "added": "2026-10-28",
+      "art": "library/art/pok-mon-xd-gale-of-darkness.png",
+      "video": "library/video/pok-mon-xd-gale-of-darkness.mp4",
+      "files": [
+        { "name": "Pokemon XD - Gale of Darkness (USA).iso", "url": "private:pok-mon-xd-gale-of-darkness__Pokemon.XD.-.Gale.of.Darkness.USA.iso", "size": 1459978240, "sha256": "806a962155560d191435f7ba670bfb3471404c04f3494ad1a02d833508bf482f" }
+      ]
+    },
+    {
       "id": "pok-mon-colosseum",
       "title": "Pokmon Colosseum",
       "system": "gamecube",
@@ -1273,18 +1286,6 @@
       "video": "library/video/pok-mon-colosseum.mp4",
       "files": [
         { "name": "Pokemon Colosseum (USA).ciso", "url": "private:pok-mon-colosseum__Pokemon.Colosseum.USA.ciso", "size": 664830528, "sha256": "39864d2e53505b1ead42d5fe8d6e875d5335af1a423290ce4c3730794a1f706c" }
-      ]
-    },
-    {
-      "id": "pok-mon-xd-gale-of-darkness",
-      "title": "Pokmon XD : Gale of Darkness",
-      "system": "gamecube",
-      "players": "1-2",
-      "description": "XD centers on Dark Pokemon, Pokemon who've had their hearts sealed away and now use Dark Skills to attack you and your Pokemon friends. You play as a nameless main character who adventures with his little sister, Mana. Your quest is to free the Dark Pokemon from their misguided...",
-      "added": "2026-10-11",
-      "art": "library/art/pok-mon-xd-gale-of-darkness.png",
-      "files": [
-        { "name": "Pokemon XD - Gale of Darkness (USA).iso", "url": "private:pok-mon-xd-gale-of-darkness__Pokemon.XD.-.Gale.of.Darkness.USA.iso", "size": 1459978240, "sha256": "806a962155560d191435f7ba670bfb3471404c04f3494ad1a02d833508bf482f" }
       ]
     },
     {
