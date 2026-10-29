@@ -5735,6 +5735,24 @@
       ] }
     },
     {
+      "id": "gears-of-war",
+      "title": "Gears Of War",
+      "system": "xbox360",
+      "players": "1-8",
+      "description": "Gears of War on Xbox 360 is a tactical shooter in which you lead Marcus, a big guy, against a horde of slobbering aliens. But you're not alone and a team operates with you. Your comrades move at their own will and help you in gunfights. Covered combat allows you to use the...",
+      "added": "2026-10-29",
+      "art": "library/art/gears-of-war.jpg",
+      "video": "library/video/gears-of-war.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Gears of War (World) (En,Fr,De,Es,It,Zh,Ko).iso", "size": 7834892288, "sha256": "5b52cc0de1e1b94510cccc776182bdb50b69ae44103ee981f54d4988717f2906", "pieces": [
+        { "name": "Gears of War (World) (En,Fr,De,Es,It,Zh,Ko).iso.part01", "url": "private:gears-of-war__Gears.of.War.World.En.Fr.De.Es.It.Zh.Ko.iso.part01", "size": 1992294400, "sha256": "bdcbca2294534476aef3da67cce50b51593d1ee9f5ccc403ffe8ccb05227000d" },
+        { "name": "Gears of War (World) (En,Fr,De,Es,It,Zh,Ko).iso.part02", "url": "private:gears-of-war__Gears.of.War.World.En.Fr.De.Es.It.Zh.Ko.iso.part02", "size": 1992294400, "sha256": "5b9a931bbe50f60d91d25387b076d9aa1e352177dd22578f1ad2c7e38478a1f2" },
+        { "name": "Gears of War (World) (En,Fr,De,Es,It,Zh,Ko).iso.part03", "url": "private:gears-of-war__Gears.of.War.World.En.Fr.De.Es.It.Zh.Ko.iso.part03", "size": 1992294400, "sha256": "904eb30c37492ac7577f65f0272793cd4203a251127c39a1266914c3d3b2edeb" },
+        { "name": "Gears of War (World) (En,Fr,De,Es,It,Zh,Ko).iso.part04", "url": "private:gears-of-war__Gears.of.War.World.En.Fr.De.Es.It.Zh.Ko.iso.part04", "size": 1858009088, "sha256": "79bd7c9b393ffdab5c8953b9f7a65658cc0e3014a5d50dba579c072ed024fb8f" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
