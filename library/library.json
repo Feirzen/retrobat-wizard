@@ -5771,6 +5771,25 @@
       ] }
     },
     {
+      "id": "gears-of-war-3",
+      "title": "Gears Of War 3",
+      "system": "xbox360",
+      "players": "1-4",
+      "description": "Microsoft's Gears of War 3 is the spectacular conclusion to one of the most memorable and celebrated sagas in video game history. Developed by Epic Games exclusively for Xbox 360, Gears of War 3 plunges players into a harrowing tale of hope, survival and brotherhood. In Gears of...",
+      "added": "2026-10-29",
+      "art": "library/art/gears-of-war-3.jpg",
+      "video": "library/video/gears-of-war-3.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Gears of War 3 (World) (En,Fr,Pt,Zh,Ko,Pl,Ru,Cs,Hu).iso", "size": 8738846720, "sha256": "c4345f21dff32924cc9d131fb2528d03b2d242a49ee1b230ecf9dc4f22d0978e", "pieces": [
+        { "name": "Gears of War 3 (World) (En,Fr,Pt,Zh,Ko,Pl,Ru,Cs,Hu).iso.part01", "url": "private:gears-of-war-3__Gears.of.War.3.World.En.Fr.Pt.Zh.Ko.Pl.Ru.Cs.Hu.iso.part01", "size": 1992294400, "sha256": "28c6f808e56c50594fc98898812133b64a967512b2105b703f12cfe024363808" },
+        { "name": "Gears of War 3 (World) (En,Fr,Pt,Zh,Ko,Pl,Ru,Cs,Hu).iso.part02", "url": "private:gears-of-war-3__Gears.of.War.3.World.En.Fr.Pt.Zh.Ko.Pl.Ru.Cs.Hu.iso.part02", "size": 1992294400, "sha256": "4384662360e7f6c88958392d70f1bd05c1efe47f8610520f630b1d443ab69164" },
+        { "name": "Gears of War 3 (World) (En,Fr,Pt,Zh,Ko,Pl,Ru,Cs,Hu).iso.part03", "url": "private:gears-of-war-3__Gears.of.War.3.World.En.Fr.Pt.Zh.Ko.Pl.Ru.Cs.Hu.iso.part03", "size": 1992294400, "sha256": "c85f4f9fccb3ca471185a0e20b04b050f55925caabc72b351cd3149750f72ecd" },
+        { "name": "Gears of War 3 (World) (En,Fr,Pt,Zh,Ko,Pl,Ru,Cs,Hu).iso.part04", "url": "private:gears-of-war-3__Gears.of.War.3.World.En.Fr.Pt.Zh.Ko.Pl.Ru.Cs.Hu.iso.part04", "size": 1992294400, "sha256": "89afb5a4784acd7282e65a50691c835ad361cf5fd624cd63c73e74af3bc72e7a" },
+        { "name": "Gears of War 3 (World) (En,Fr,Pt,Zh,Ko,Pl,Ru,Cs,Hu).iso.part05", "url": "private:gears-of-war-3__Gears.of.War.3.World.En.Fr.Pt.Zh.Ko.Pl.Ru.Cs.Hu.iso.part05", "size": 769669120, "sha256": "26f45f1a0908bd4d4c803444db2fa6af1de1c6dbb223817f004d14a40333f047" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
