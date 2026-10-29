@@ -1354,6 +1354,19 @@
       ]
     },
     {
+      "id": "sonic-adventure-dx-director-s-cut",
+      "title": "Sonic Adventure DX : Director's Cut",
+      "system": "gamecube",
+      "players": "1-2",
+      "description": "Dr. Eggman is up to his old tricks again, but in this special Director's Cut version, there are a whole lot more of them to trip up Sonic and his pals. Get ready to go on 50 new adventures in the all-new Mission Mode as you strive to dismantle the evil genius' plans to rule the...",
+      "added": "2026-10-28",
+      "art": "library/art/sonic-adventure-dx-director-s-cut.png",
+      "video": "library/video/sonic-adventure-dx-director-s-cut.mp4",
+      "files": [
+        { "name": "Sonic Adventure DX - Director's Cut (USA) (En,Ja,Fr,De,Es).ciso", "url": "private:sonic-adventure-dx-director-s-cut__Sonic.Adventure.DX.-.Director.s.Cut.USA.En.Ja.Fr.De.Es.ciso", "size": 1411416640, "sha256": "e373169c79fd426b528b7c66826b584e5b77f7eeeb1da9a41fd3e3fd19d0d659" }
+      ]
+    },
+    {
       "id": "sonic-mega-collection",
       "title": "Sonic Mega Collection",
       "system": "gamecube",
