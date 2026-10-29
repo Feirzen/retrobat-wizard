@@ -1450,8 +1450,9 @@
       "system": "gamecube",
       "players": "1-4",
       "description": "Team Star Fox is back for more intense combat as they engage a new threat by air and by land. A few years after disaster was barely averted on Dinosaur Planet, Lylat Central Command gets wind of a new threat spreading throughout the solar system. The Star Fox team--composed of...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/star-fox-assault.png",
+      "video": "library/video/star-fox-assault.mp4",
       "files": [
         { "name": "Star Fox - Assault (USA).rvz", "url": "private:star-fox-assault__Star.Fox.-.Assault.USA.rvz", "size": 1323839144, "sha256": "1f69b92e2c6dafbc6fcb9e27b000daeb3fd8bcaf37a6f765ec879e8521d2a3be" }
       ]
