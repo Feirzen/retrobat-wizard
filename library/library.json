@@ -5560,6 +5560,24 @@
       ] }
     },
     {
+      "id": "bioshock",
+      "title": "Bioshock",
+      "system": "xbox360",
+      "players": "1",
+      "description": "Bioshock on Xbox 360 is a first-person shooter that takes you deep into the Atlantic Ocean to explore the ruins of a gigantic underwater city ravaged by the madness of its creators. Lost in the heart of this utopia transformed into a scientific abomination, you will have to...",
+      "added": "2026-10-28",
+      "art": "library/art/bioshock.jpg",
+      "video": "library/video/bioshock.mp4",
+      "files": [
+      ],
+      "parts": { "name": "BioShock (World) (En,Fr,De,Es,It).iso", "size": 7835492352, "sha256": "f3c8de05adc2ab54ec7091341a358d0bc8d0cdd38029373fb90fcb4814382bc6", "pieces": [
+        { "name": "BioShock (World) (En,Fr,De,Es,It).iso.part01", "url": "private:bioshock__BioShock.World.En.Fr.De.Es.It.iso.part01", "size": 1992294400, "sha256": "a3b4b4751628ab1ee6a04a6b1671a8f3c84f7dac57f01d85356e14a26afe146e" },
+        { "name": "BioShock (World) (En,Fr,De,Es,It).iso.part02", "url": "private:bioshock__BioShock.World.En.Fr.De.Es.It.iso.part02", "size": 1992294400, "sha256": "0f65222771e46abd94f7bbdc97dbe984403e375e44e0537ecad11db18f626772" },
+        { "name": "BioShock (World) (En,Fr,De,Es,It).iso.part03", "url": "private:bioshock__BioShock.World.En.Fr.De.Es.It.iso.part03", "size": 1992294400, "sha256": "b5e1746577e2f2ae8a7ee415e1a68e386688039443a4f86956edd4677ebe87e3" },
+        { "name": "BioShock (World) (En,Fr,De,Es,It).iso.part04", "url": "private:bioshock__BioShock.World.En.Fr.De.Es.It.iso.part04", "size": 1858609152, "sha256": "68937e948f6728aefd082e5c4ecda2b74aa04d3fe4b134d9c1ed0fff72de6a8d" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
