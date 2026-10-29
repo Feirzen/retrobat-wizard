@@ -1385,8 +1385,9 @@
       "system": "gamecube",
       "players": "1-2",
       "description": "Sonic has appeared in many games in the last decade, and now you can relive seven of them from Sonic Mega Collection. This compilation includes the first three Sonic the Hedgehog titles, plus Sonic & Knuckles, Sonic 3D Flickies' Island, Sonic the Hedgehog Spinball, and Dr....",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/sonic-mega-collection.png",
+      "video": "library/video/sonic-mega-collection.mp4",
       "files": [
         { "name": "Sonic Mega Collection (USA).ciso", "url": "private:sonic-mega-collection__Sonic.Mega.Collection.USA.ciso", "size": 1027637824, "sha256": "8ef875aa078e47d86c52dc3ce4438c7ea768b95b1b53ae2ccce78582de4e4307" }
       ]
