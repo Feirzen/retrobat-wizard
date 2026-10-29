@@ -5862,6 +5862,24 @@
       ] }
     },
     {
+      "id": "scene-it-box-office-smash",
+      "title": "Scene It? Box Office Smash",
+      "system": "xbox360",
+      "players": "4",
+      "description": "Scene It? Box Office Smash brings movie and trivia fans together for a game that provides hours of laughter as you challenge your friends and family to see whose movie knowledge reigns supreme reliving some of your favorite moments from the silver screen. Continuing the...",
+      "added": "2026-10-29",
+      "art": "library/art/scene-it-box-office-smash.jpg",
+      "video": "library/video/scene-it-box-office-smash.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Scene It Box Office Smash! (USA, Europe) (En,Fr,Es,Sv,No).iso", "size": 7835492352, "sha256": "362ef757627b7257af3d64e09e3572698073fb03c120368cc109735bb1fb9ed9", "pieces": [
+        { "name": "Scene It Box Office Smash! (USA, Europe) (En,Fr,Es,Sv,No).iso.part01", "url": "private:scene-it-box-office-smash__Scene.It.Box.Office.Smash.USA.Europe.En.Fr.Es.Sv.No.iso.part01", "size": 1992294400, "sha256": "038bc7e232a3fe1f3c81c21dd55ef1fac0032fff3cf84d49f91f3eb36788ea9c" },
+        { "name": "Scene It Box Office Smash! (USA, Europe) (En,Fr,Es,Sv,No).iso.part02", "url": "private:scene-it-box-office-smash__Scene.It.Box.Office.Smash.USA.Europe.En.Fr.Es.Sv.No.iso.part02", "size": 1992294400, "sha256": "a01d07a8be33be926b15f2b3e00ea305a4fb1be31bbbedf2396db86e72b63bf2" },
+        { "name": "Scene It Box Office Smash! (USA, Europe) (En,Fr,Es,Sv,No).iso.part03", "url": "private:scene-it-box-office-smash__Scene.It.Box.Office.Smash.USA.Europe.En.Fr.Es.Sv.No.iso.part03", "size": 1992294400, "sha256": "98a014bef93327712dd50d45361b518c429f279bba4c765aec0be731aad1b187" },
+        { "name": "Scene It Box Office Smash! (USA, Europe) (En,Fr,Es,Sv,No).iso.part04", "url": "private:scene-it-box-office-smash__Scene.It.Box.Office.Smash.USA.Europe.En.Fr.Es.Sv.No.iso.part04", "size": 1858609152, "sha256": "d3e231dcb32f99abda5e93b503f703bbdb19fbe5b48dcb980e3ed4b2cc383003" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
