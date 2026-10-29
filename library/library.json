@@ -1400,8 +1400,9 @@
       "system": "gamecube",
       "players": "1",
       "description": "Someone has stolen King Neptune's crown, and Mr. Krabs is the main suspect. Despite having been passed over for a promotion by Mr. Krabs, SpongeBob and his faithful (but dimwitted) friend Patrick volunteer to make the perilous journey to Shell City to retrieve the crown and save...",
-      "added": "2026-10-12",
+      "added": "2026-10-28",
       "art": "library/art/the-spongebob-squarepants-movie.png",
+      "video": "library/video/the-spongebob-squarepants-movie.mp4",
       "files": [
         { "name": "Nickelodeon The SpongeBob SquarePants Movie (USA) (Rev 1).ciso", "url": "private:the-spongebob-squarepants-movie__Nickelodeon.The.SpongeBob.SquarePants.Movie.USA.Rev.1.ciso", "size": 834699840, "sha256": "f89ef6da2331cf91b9fc98a2911a19ffccee95ae21bd465c35ac04fa3bcf99aa" }
       ]
