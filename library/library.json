@@ -1177,8 +1177,9 @@
       "system": "gamecube",
       "players": "1-4",
       "description": "In this highly anticipated sequel to Metroid Prime, become the bounty hunter behind the visor once more and travel to a planet torn into light and darkness. Hunted by a mysterious entity and a warring race called the Ing, Samus Aran must explore the light and dark worlds of this...",
-      "added": "2026-10-11",
+      "added": "2026-10-28",
       "art": "library/art/metroid-prime-2-echoes.png",
+      "video": "library/video/metroid-prime-2-echoes.mp4",
       "files": [
         { "name": "Metroid Prime 2 - Echoes (USA).ciso", "url": "private:metroid-prime-2-echoes__Metroid.Prime.2.-.Echoes.USA.ciso", "size": 1459651136, "sha256": "046e663ff39268a8351221a37cead1aaf1cca95ef0efefa007ea2d17abb90405" }
       ]
