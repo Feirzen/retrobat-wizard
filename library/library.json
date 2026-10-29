@@ -5904,6 +5904,18 @@
       ] }
     },
     {
+      "id": "scott-pilgrim-vs",
+      "title": "Scott Pilgrim vs",
+      "system": "xbox360",
+      "players": "",
+      "description": "",
+      "added": "2026-10-29",
+      "files": [
+      ],
+      "bundle": { "folder": "Scott Pilgrim vs. the World - The Game (World) (XBLA)", "name": "scott-pilgrim-vs.zip", "size": 174303426, "sha256": "286cfd2f0f4496bfe5e7bb83c7eff300ea80fe5cf3ff5689d35a0f316f31c0c7", "url": "private:scott-pilgrim-vs__scott-pilgrim-vs.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "scott-pilgrim-vs-the-world-the-game-worl",
       "title": "Scott Pilgrim vs. the World - The Game (World) (XBLA)",
       "system": "xbox360",
