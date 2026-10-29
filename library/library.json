@@ -5984,6 +5984,19 @@
       ] }
     },
     {
+      "id": "uno",
+      "title": "Uno",
+      "system": "xbox360",
+      "players": "1-4",
+      "description": "Bring the classic card game to the Xbox Live Arcade with Uno. Match shapes and colours with up to three friends and become a card madman in this adrenaline-pumping game. There are three variations to choose from, as well as the ability to create your own rules and download...",
+      "added": "2026-10-29",
+      "files": [
+        { "name": "UNO (World) (XBLA).m3u", "url": "private:uno__UNO.World.XBLA.m3u", "size": 80, "sha256": "073b53c81e1614e64f648cf97fc66eb18085af175e603a52bbb6345cf433a634" },
+        { "name": "UNO (World) (XBLA)/584107F3/000D0000/097C82E1F461E48F7E3AAF6CE946814080DBA0AF58", "url": "private:uno__UNO.World.XBLA.584107F3.000D0000.097C82E1F461E48F7E3AAF6CE946814080DBA0AF58", "size": 25509888, "sha256": "84e7340c08b1e4fdcd456aeee306797f78007a92ca0a7439c8ec57c2f8ba1f56" }
+      ],
+      "min": "3.2.0"
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
