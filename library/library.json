@@ -5753,6 +5753,24 @@
       ] }
     },
     {
+      "id": "gears-of-war-2",
+      "title": "Gears Of War 2",
+      "system": "xbox360",
+      "players": "1-10",
+      "description": "In Gears of War 2 on Xbox 360, you find an old acquaintance, Marcus Fenix ??and the Delta team against the Locusts, in a bloody and intense fight. You will have to advance alone or in a team to follow the course of the scenario which is a direct continuation of the first part.",
+      "added": "2026-10-29",
+      "art": "library/art/gears-of-war-2.jpg",
+      "video": "library/video/gears-of-war-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Gears of War 2 (USA, Canada) (En,Fr,De,Es,It,Zh,Ko,Pl,Ru,Cs,Hu).iso", "size": 7835492352, "sha256": "1e76f91fa3bd804381c0ce5458bdb8dd2329c783b1be03b67d111136ce337230", "pieces": [
+        { "name": "Gears of War 2 (USA, Canada) (En,Fr,De,Es,It,Zh,Ko,Pl,Ru,Cs,Hu).iso.part01", "url": "private:gears-of-war-2__Gears.of.War.2.USA.Canada.En.Fr.De.Es.It.Zh.Ko.Pl.Ru.Cs.Hu.iso.part01", "size": 1992294400, "sha256": "06fd0bf71b37f7223d584d630cf28e89b9bdf1836c490dfcb6e8c5bbe499d5c6" },
+        { "name": "Gears of War 2 (USA, Canada) (En,Fr,De,Es,It,Zh,Ko,Pl,Ru,Cs,Hu).iso.part02", "url": "private:gears-of-war-2__Gears.of.War.2.USA.Canada.En.Fr.De.Es.It.Zh.Ko.Pl.Ru.Cs.Hu.iso.part02", "size": 1992294400, "sha256": "b22555857b449300d2724cc63eb879a766fa9e1e65c4fad3eef6a70f779ab83e" },
+        { "name": "Gears of War 2 (USA, Canada) (En,Fr,De,Es,It,Zh,Ko,Pl,Ru,Cs,Hu).iso.part03", "url": "private:gears-of-war-2__Gears.of.War.2.USA.Canada.En.Fr.De.Es.It.Zh.Ko.Pl.Ru.Cs.Hu.iso.part03", "size": 1992294400, "sha256": "d22d2af27e784aa0e9c3bfe42f61aecdbae7de95a31772a57f90e51bfaf7ba46" },
+        { "name": "Gears of War 2 (USA, Canada) (En,Fr,De,Es,It,Zh,Ko,Pl,Ru,Cs,Hu).iso.part04", "url": "private:gears-of-war-2__Gears.of.War.2.USA.Canada.En.Fr.De.Es.It.Zh.Ko.Pl.Ru.Cs.Hu.iso.part04", "size": 1858609152, "sha256": "878a169a88d7888e893675be83461c201ed6d77c78c17f6e428bd703c329b2ac" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
