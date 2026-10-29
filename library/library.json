@@ -5578,6 +5578,24 @@
       ] }
     },
     {
+      "id": "bioshock-2",
+      "title": "Bioshock 2",
+      "system": "xbox360",
+      "players": "1",
+      "description": "BioShock 2 is a first-person shooter for Xbox 360. It takes place 10 years after the first game and puts you in the role of a Protector. As a Protector, you must traverse the streets of Rapture, the sunken city, and attempt to finally gain your freedom. To do so, you'll have to...",
+      "added": "2026-10-28",
+      "art": "library/art/bioshock-2.jpg",
+      "video": "library/video/bioshock-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "BioShock 2 (USA, Europe) (En,Fr,Es).iso", "size": 7838695424, "sha256": "06d64a2edcf9cb4667ba38d166644292eded894a2aa4f01552a915c591757278", "pieces": [
+        { "name": "BioShock 2 (USA, Europe) (En,Fr,Es).iso.part01", "url": "private:bioshock-2__BioShock.2.USA.Europe.En.Fr.Es.iso.part01", "size": 1992294400, "sha256": "80ea07d961349250b427531c622fbd3c459ff4f5b88bfcba1ea4e7ebf7972964" },
+        { "name": "BioShock 2 (USA, Europe) (En,Fr,Es).iso.part02", "url": "private:bioshock-2__BioShock.2.USA.Europe.En.Fr.Es.iso.part02", "size": 1992294400, "sha256": "38e1c5ab59613f0def876fe7990a9b3c1f5492bc1747be4b1680e90d005068f7" },
+        { "name": "BioShock 2 (USA, Europe) (En,Fr,Es).iso.part03", "url": "private:bioshock-2__BioShock.2.USA.Europe.En.Fr.Es.iso.part03", "size": 1992294400, "sha256": "a9733f20a673d6aff9bf441732bebef2a4b0e7f7423d41fbb4a4b0d520c81987" },
+        { "name": "BioShock 2 (USA, Europe) (En,Fr,Es).iso.part04", "url": "private:bioshock-2__BioShock.2.USA.Europe.En.Fr.Es.iso.part04", "size": 1861812224, "sha256": "10f27bb144233e504d04880403afb081e2b70922071d150734bd843758e7ac80" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
