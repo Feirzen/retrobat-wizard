@@ -5911,6 +5911,25 @@
       ] }
     },
     {
+      "id": "sonic-generations",
+      "title": "Sonic Generations",
+      "system": "xbox360",
+      "players": "1",
+      "description": "Sonic Generations on Xbox 360 is a platformer in which you control the famous blue hedgehog. You can choose a classic 2D view or opt for a more modern 3D viewpoint to navigate the levels from previous installments in the series.",
+      "added": "2026-10-29",
+      "art": "library/art/sonic-generations.jpg",
+      "video": "library/video/sonic-generations.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Sonic Generations (World).iso", "size": 8738846720, "sha256": "f04b0648435bac4e106043809877797373eab40dab4e335fa3ac9eb6efa38664", "pieces": [
+        { "name": "Sonic Generations (World).iso.part01", "url": "private:sonic-generations__Sonic.Generations.World.iso.part01", "size": 1992294400, "sha256": "694bcca523af9890eaaa1cb03f859342937d63fae3f10af65c0b6b4ef083183c" },
+        { "name": "Sonic Generations (World).iso.part02", "url": "private:sonic-generations__Sonic.Generations.World.iso.part02", "size": 1992294400, "sha256": "88620c0dbf643ac341b7807d3572d91faddeebe454396db5ae2ddb3dcaa47b76" },
+        { "name": "Sonic Generations (World).iso.part03", "url": "private:sonic-generations__Sonic.Generations.World.iso.part03", "size": 1992294400, "sha256": "00c5a8345843fa6fd2a94101ea73d37de544240aff0aa90a679d22661f1a0b5e" },
+        { "name": "Sonic Generations (World).iso.part04", "url": "private:sonic-generations__Sonic.Generations.World.iso.part04", "size": 1992294400, "sha256": "99425979393c0450767e6d3b81b56077ca3d006ddb19394a61b87d32210ec562" },
+        { "name": "Sonic Generations (World).iso.part05", "url": "private:sonic-generations__Sonic.Generations.World.iso.part05", "size": 769669120, "sha256": "2e340c5d1c233ef1d9e22fe2c1aabd8b0d74fd6c51f603a3fcc3fddfbb169b98" }
+      ] }
+    },
+    {
       "id": "viva-pi-ata",
       "title": "Viva Piata",
       "system": "xbox360",
