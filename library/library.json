@@ -5188,6 +5188,22 @@
       ]
     },
     {
+      "id": "wario-land-shake-it",
+      "title": "Wario Land : Shake It!",
+      "system": "wii",
+      "players": "1",
+      "description": "Wario!!! Nintendo's greedy, uncouth and rude anti-hero, returns to his roots. The Wario Land series is where Wario first appeared, and it's back in all its side-scrolling, platform-jumping glory.",
+      "added": "2026-10-30",
+      "art": "library/art/wario-land-shake-it.jpg",
+      "video": "library/video/wario-land-shake-it.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Wario Land - Shake It! (USA) (En,Fr,Es).wbfs", "size": 3806330880, "sha256": "c0526235fc790af14692215e2520a67deabbd46f26b6180c0fe2de5bf1162079", "pieces": [
+        { "name": "Wario Land - Shake It! (USA) (En,Fr,Es).wbfs.part01", "url": "private:wario-land-shake-it__Wario.Land.-.Shake.It.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "975cd6d8e0cbf9fb965901e299c87935a7685e98447f9080cc51ae28d7c8aebf" },
+        { "name": "Wario Land - Shake It! (USA) (En,Fr,Es).wbfs.part02", "url": "private:wario-land-shake-it__Wario.Land.-.Shake.It.USA.En.Fr.Es.wbfs.part02", "size": 1814036480, "sha256": "ff5875480e90bf42a6ad6fcecc942383edc4286388a26866ad00149b7d7ce2e4" }
+      ] }
+    },
+    {
       "id": "wario-ware-smooth-moves",
       "title": "Wario Ware : Smooth Moves",
       "system": "wii",
