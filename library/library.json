@@ -4800,6 +4800,22 @@
       ]
     },
     {
+      "id": "kami",
+      "title": "kami",
+      "system": "wii",
+      "players": "1",
+      "description": "Wii port of the first original title from Capcom's now defunct Clover Studio -- headed up by Viewtiful Joe producer Atsushi Inaba.The multiple award-winning action adventure ?kami is now available on the Wii! Use the Wii Remote as a paintbrush to solve puzzles, create pathways,...",
+      "added": "2026-10-30",
+      "art": "library/art/kami.jpg",
+      "video": "library/video/kami.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Okami (USA).wbfs", "size": 3821010944, "sha256": "9eec9c17799328a870d9bd362058d8b468003ab2abc7b8cdbdead7ff0b02cbdd", "pieces": [
+        { "name": "Okami (USA).wbfs.part01", "url": "private:kami__Okami.USA.wbfs.part01", "size": 1992294400, "sha256": "8d257aa522c0058405c3517d917f1f5cf8fddeafb702356f9733d4954e0de4e5" },
+        { "name": "Okami (USA).wbfs.part02", "url": "private:kami__Okami.USA.wbfs.part02", "size": 1828716544, "sha256": "cf0287a104470ce691c528ee7d9efa5a66612fa0a49d6d54bb590aba4d574a10" }
+      ] }
+    },
+    {
       "id": "pikmin-2",
       "title": "Pikmin 2",
       "system": "wii",
