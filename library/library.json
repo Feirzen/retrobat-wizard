@@ -4951,8 +4951,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote for the menus. Made for Rock Band guitar and drum controllers. Rock Band 2 is the sequel to the 2007 musical simulation game Rock Band and offers similar gameplay. Directly competing with Guitar Hero: World Tour, the game allows different people to play...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/rock-band-2.jpg",
+      "video": "library/video/rock-band-2.mp4",
       "files": [
       ],
       "parts": { "name": "Rock Band 2 (USA).wbfs", "size": 3611295744, "sha256": "34c19c35d1e0cbbaaf6a5a4bce2874bb5e3646415e62808bce61340c7dba8fb6", "pieces": [
