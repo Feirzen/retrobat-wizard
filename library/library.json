@@ -4661,6 +4661,22 @@
       ] }
     },
     {
+      "id": "mario-sonic-at-the-olympic-winter-games",
+      "title": "Mario & Sonic at the Olympic Winter Games",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Mario & Sonic at the Olympic Winter Games on Wii is a party game that offers different sliding sports in which the two mascots compete. The events are varied and range from speed skating where good rhythm management is necessary, to bobsleigh where respect for the trajectory is...",
+      "added": "2026-10-30",
+      "art": "library/art/mario-sonic-at-the-olympic-winter-games.jpg",
+      "video": "library/video/mario-sonic-at-the-olympic-winter-games.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Mario & Sonic at the Olympic Winter Games (USA) (En,Ja,Fr,Es).wbfs", "size": 3632267264, "sha256": "eb67cddc22816b68e6a9edfdc10fbb2ce17e5513a71c45022bd1231be71a79a6", "pieces": [
+        { "name": "Mario & Sonic at the Olympic Winter Games (USA) (En,Ja,Fr,Es).wbfs.part01", "url": "private:mario-sonic-at-the-olympic-winter-games__Mario.Sonic.at.the.Olympic.Winter.Games.USA.En.Ja.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "6895aefe56cdd66ab747a7d98b9f19ee6aca511bceb2ce91bd3a6504f0501815" },
+        { "name": "Mario & Sonic at the Olympic Winter Games (USA) (En,Ja,Fr,Es).wbfs.part02", "url": "private:mario-sonic-at-the-olympic-winter-games__Mario.Sonic.at.the.Olympic.Winter.Games.USA.En.Ja.Fr.Es.wbfs.part02", "size": 1639972864, "sha256": "2a79d1c50583bbefb4cdc4eedc3ac519b82947c31edaa14315564b59afd5200a" }
+      ] }
+    },
+    {
       "id": "mario-kart-wii",
       "title": "Mario Kart Wii",
       "system": "wii",
