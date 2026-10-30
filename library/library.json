@@ -4336,6 +4336,19 @@
       ]
     },
     {
+      "id": "fortune-street",
+      "title": "Fortune Street",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Close the biggest deals to make the biggest bucks in this game where the one with the biggest bank account wins! Play as your favorite characters from the Super Mario and Dragon Quest game worlds, or as your Mii. Move around the board, buying and selling shops and collecting...",
+      "added": "2026-10-30",
+      "art": "library/art/fortune-street.png",
+      "video": "library/video/fortune-street.mp4",
+      "files": [
+        { "name": "Fortune Street (USA).wbfs", "url": "private:fortune-street__Fortune.Street.USA.wbfs", "size": 786432000, "sha256": "dd85babb0ff94740aaeec789ff601574e5ca2eb7eecb297141e2e1066e2d2f72" }
+      ]
+    },
+    {
       "id": "just-dance-2014",
       "title": "Just Dance 2014",
       "system": "wii",
