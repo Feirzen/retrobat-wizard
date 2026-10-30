@@ -4466,8 +4466,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, or a controller (Xbox, PlayStation, Switch Pro, etc.) which acts as a GameCube controller. On a Wii Remote, hold it sideways. Celebrate 20 Years of Kirby Fun with a Special Collection for Wii The pink, surprisingly powerful Kirby character is one of the...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/kirby-s-dream-collection-special-edition.jpg",
+      "video": "library/video/kirby-s-dream-collection-special-edition.mp4",
       "files": [
         { "name": "Kirby's Dream Collection - Special Edition (USA).wbfs", "url": "private:kirby-s-dream-collection-special-edition__Kirby.s.Dream.Collection.-.Special.Edition.USA.wbfs", "size": 1910505472, "sha256": "30057def3274c0fd28122eb5d50175bb00e1ed2a2f34b3dac07f0a36c5d6dc2b" }
       ]
