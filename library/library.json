@@ -5209,8 +5209,9 @@
       "system": "wii",
       "players": "1-12",
       "description": "Controllers: Wii Remote. Wario and his pals learn fun, wacky moves after discovering a strange book and a mystical device called the Form Baton. Familiar characters from the WarioWare universe will return to this installment and some new ones will appear. Players must clear...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/wario-ware-smooth-moves.jpg",
+      "video": "library/video/wario-ware-smooth-moves.mp4",
       "files": [
       ],
       "parts": { "name": "WarioWare - Smooth Moves (USA) (En,Fr,Es).wbfs", "size": 3502243840, "sha256": "9c9e3c27b40279a21a98a97bfd68f2f2d732fbea54b605ce5bed965b8ded0c12", "pieces": [
