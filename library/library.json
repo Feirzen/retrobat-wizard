@@ -5233,6 +5233,19 @@
       ]
     },
     {
+      "id": "wii-play-motion",
+      "title": "Wii Play : Motion",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote Plus (a Wii Remote with MotionPlus). Wii Play: Motion is a minigame collection that features Miis as playable characters. All the minigames require use of the Wii MotionPlus accessory, which allows Wii Remote movement to be detected with greater accuracy....",
+      "added": "2026-10-30",
+      "art": "library/art/wii-play-motion.jpg",
+      "video": "library/video/wii-play-motion.mp4",
+      "files": [
+        { "name": "Wii Play - Motion (USA) (En,Fr,Es).wbfs", "url": "private:wii-play-motion__Wii.Play.-.Motion.USA.En.Fr.Es.wbfs", "size": 530579456, "sha256": "d8c66cac487afdc08432f75b79138002fde8f4dce505a406b8e2f4e415527434" }
+      ]
+    },
+    {
       "id": "call-of-duty-black-ops-ii",
       "title": "Call of Duty : Black Ops II",
       "system": "wiiu",
