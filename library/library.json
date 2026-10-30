@@ -4400,8 +4400,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, held in your right hand. World Dance Floor: Dance with anyone anywhere in the world in Just Dance's first-ever online multiplayer mode! Players join a virtual crew--made up of real-life friends or other Just Dance fans--and compete based on different...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/just-dance-2014.jpg",
+      "video": "library/video/just-dance-2014.mp4",
       "files": [
       ],
       "parts": { "name": "Just Dance 2014 (USA) (En,Fr,Es).wbfs", "size": 4404019200, "sha256": "b375aef9664b4db8194a325e6956fc733649acc048a33e36d7e104f7cc426a9f", "pieces": [
