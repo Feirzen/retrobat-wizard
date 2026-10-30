@@ -4833,16 +4833,16 @@
       ] }
     },
     {
-      "id": "pok-mon-rumble",
-      "title": "Pokmon Rumble",
+      "id": "pok-park-2-wonders-beyond",
+      "title": "PokPark 2: Wonders Beyond",
       "system": "wii",
       "players": "1-4",
-      "description": "Controllers: Wii Remote, held sideways. Introducing a new kind of Pokmon challenge ? exclusive to WiiWare! Pokmon Rumble is an action game in which you control Toy Pokmon and battle against waves of enemy Pokmon in order to be the last Pokmon standing!Defeated Toy Pokmon...",
+      "description": "Step into PokPark and play as Pikachu, Oshawott, Snivy, and Tepig to rescue the missing Pokmon in PokPark 2: Wonders Beyond for the Wii console! Pikachu will need the help of his Pals and their unique abilities to make it through PokPark and discover the secrets of a...",
       "added": "2026-10-30",
-      "art": "library/art/pok-mon-rumble.png",
-      "video": "library/video/pok-mon-rumble.mp4",
+      "art": "library/art/pok-park-2-wonders-beyond.jpg",
+      "video": "library/video/pok-park-2-wonders-beyond.mp4",
       "files": [
-        { "name": "Pokemon Rumble (USA) (WiiWare).wad", "url": "private:pok-mon-rumble__Pokemon.Rumble.USA.WiiWare.wad", "size": 27330304, "sha256": "3edf8518c33ea03a04a0c519ae586a29e9b40a32327be72623277773ac88f680" }
+        { "name": "PokePark 2 - Wonders Beyond (USA).wbfs", "url": "private:pok-park-2-wonders-beyond__PokePark.2.-.Wonders.Beyond.USA.wbfs", "size": 952107008, "sha256": "7ac17271e4cdc22b4c57b412052e3b95d550a1efff0d3c29cd356d7b8e62fa61" }
       ]
     },
     {
@@ -4856,6 +4856,19 @@
       "video": "library/video/pok-mon-battle-revolution.mp4",
       "files": [
         { "name": "Pokemon Battle Revolution (USA).wbfs", "url": "private:pok-mon-battle-revolution__Pokemon.Battle.Revolution.USA.wbfs", "size": 1059061760, "sha256": "b3940ecd4f7c10591339ef4b3c671110f2c9ddb2b9ce553242ec0b7656196a57" }
+      ]
+    },
+    {
+      "id": "pok-mon-rumble",
+      "title": "Pokmon Rumble",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote, held sideways. Introducing a new kind of Pokmon challenge ? exclusive to WiiWare! Pokmon Rumble is an action game in which you control Toy Pokmon and battle against waves of enemy Pokmon in order to be the last Pokmon standing!Defeated Toy Pokmon...",
+      "added": "2026-10-30",
+      "art": "library/art/pok-mon-rumble.png",
+      "video": "library/video/pok-mon-rumble.mp4",
+      "files": [
+        { "name": "Pokemon Rumble (USA) (WiiWare).wad", "url": "private:pok-mon-rumble__Pokemon.Rumble.USA.WiiWare.wad", "size": 27330304, "sha256": "3edf8518c33ea03a04a0c519ae586a29e9b40a32327be72623277773ac88f680" }
       ]
     },
     {
