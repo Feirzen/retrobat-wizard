@@ -4573,8 +4573,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote + Nunchuk. Players collect Lego studs, which have been the Lego games currency used in every Lego game. Like other titles, these studs can be used to unlock characters, extras, and different Pirate ships.",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/lego-pirates-of-the-caribbean-the-video.png",
+      "video": "library/video/lego-pirates-of-the-caribbean-the-video.mp4",
       "files": [
       ],
       "parts": { "name": "LEGO Pirates of the Caribbean - The Video Game (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 2061500416, "sha256": "86bb64708af48f93e91e4b3b781a6328297138377ae8dee94d50d386e0797e72", "pieces": [
