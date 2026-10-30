@@ -4984,8 +4984,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote. Scene It? Bright Lights! Big Screen! is a trivia video game developed by Artificial Mind and Movement and published by Warner Bros. Interactive Entertainment (WBIE), and part of the Scene It? series of games. It was released for Xbox 360, PlayStation 3...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/scene-it-bright-lights-big-screen.jpg",
+      "video": "library/video/scene-it-bright-lights-big-screen.mp4",
       "files": [
       ],
       "parts": { "name": "Scene It Bright Lights! Big Screen! (USA).wbfs", "size": 2858418176, "sha256": "b2ad863f0c2e191ff6907ac89f7b6fc064dd1647e303530576b5fe8087823577", "pieces": [
