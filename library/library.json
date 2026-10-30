@@ -4618,8 +4618,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote + Nunchuk. LEGO The Lord of the Rings is based on The Lord of the Rings motion picture trilogy and follows the original storylines of The Lord of the Rings: The Fellowship of the Ring, The Lord of the Rings: The Two Towers, and The Lord of the Rings: The...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/lego-the-lord-of-the-rings.jpg",
+      "video": "library/video/lego-the-lord-of-the-rings.mp4",
       "files": [
       ],
       "parts": { "name": "LEGO LOTR .wbfs", "size": 3697278976, "sha256": "42b3c1136ebe18752ac9af347a59d7de1ace2f5ef54fe6781930f37a9ec9026a", "pieces": [
