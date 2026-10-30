@@ -4903,6 +4903,19 @@
       ] }
     },
     {
+      "id": "rayman-raving-rabbids",
+      "title": "Rayman Raving Rabbids",
+      "system": "wii",
+      "players": "4",
+      "description": "Rayman Raving Rabbids marks the return of the iconic video-game hero, Rayman, in his funniest and zaniest adventure ever. When the world of Rayman is threatened by a devastating invasion of crazed, out-of-control bunnies Rayman must rise up against his furry foes to foil their...",
+      "added": "2026-10-30",
+      "art": "library/art/rayman-raving-rabbids.jpg",
+      "video": "library/video/rayman-raving-rabbids.mp4",
+      "files": [
+        { "name": "Rayman - Raving Rabbids (USA) (En,Fr,Es) (Rev 2).wbfs", "url": "private:rayman-raving-rabbids__Rayman.-.Raving.Rabbids.USA.En.Fr.Es.Rev.2.wbfs", "size": 1738539008, "sha256": "56de5b4761f76ece7af3b5deacce2815e639b8267f6f6e409980fba8d1e3f1eb" }
+      ]
+    },
+    {
       "id": "rayman-raving-rabbids-tv-party",
       "title": "Rayman Raving Rabbids : TV Party",
       "system": "wii",
