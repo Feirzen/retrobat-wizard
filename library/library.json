@@ -5233,6 +5233,23 @@
       ]
     },
     {
+      "id": "wii-play",
+      "title": "Wii Play",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Controllers: Wii Remote. Bundled with a Wii Remote, Wii Play offers a little something for everyone who enjoyed the pick-up-and-play gaming of Wii Sports.Wii Play is made up of nine games that will test the physical and mental reflexes of players of all ages.Whether you pick up...",
+      "added": "2026-10-30",
+      "art": "library/art/wii-play.jpg",
+      "video": "library/video/wii-play.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Wii Play (USA) (Rev 1).iso", "size": 4699979776, "sha256": "1131654fe606a3b2929ca2173ca9fd9277c2906f153e8d5c067e7f3b39b60745", "pieces": [
+        { "name": "Wii Play (USA) (Rev 1).iso.part01", "url": "private:wii-play__Wii.Play.USA.Rev.1.iso.part01", "size": 1992294400, "sha256": "a230b1fa0df64ecdefe8626f704c05a8fee538eadd37cb2f9b74c03f872323db" },
+        { "name": "Wii Play (USA) (Rev 1).iso.part02", "url": "private:wii-play__Wii.Play.USA.Rev.1.iso.part02", "size": 1992294400, "sha256": "a57268ce08c1d185e135b144692be08432eb486af985953974f6417dfd383938" },
+        { "name": "Wii Play (USA) (Rev 1).iso.part03", "url": "private:wii-play__Wii.Play.USA.Rev.1.iso.part03", "size": 715390976, "sha256": "6bcb8ba8da3e3351f0dab512594c0b53ebdfb223fe60adae281c95c123140f0d" }
+      ] }
+    },
+    {
       "id": "wii-play-motion",
       "title": "Wii Play : Motion",
       "system": "wii",
