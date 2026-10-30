@@ -4903,6 +4903,22 @@
       ] }
     },
     {
+      "id": "rayman-raving-rabbids-tv-party",
+      "title": "Rayman Raving Rabbids : TV Party",
+      "system": "wii",
+      "players": "2-4",
+      "description": "Join the rabbids in the wackiest TV party ever! Play over 50 hilarious games to get the rabbids out of your TV - including the first game you can play with your butt on the Wii Balance Board! Monster truck race, surf through space, and dance with those wacky rabbids and up to...",
+      "added": "2026-10-30",
+      "art": "library/art/rayman-raving-rabbids-tv-party.png",
+      "video": "library/video/rayman-raving-rabbids-tv-party.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Rayman - Raving Rabbids - TV Party (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 3919577088, "sha256": "d264deaa169a65b35d1f733955817da2c2657b16dc8c096644a1d7a732a63f8f", "pieces": [
+        { "name": "Rayman - Raving Rabbids - TV Party (USA) (En,Fr,Es) (Rev 1).wbfs.part01", "url": "private:rayman-raving-rabbids-tv-party__Rayman.-.Raving.Rabbids.-.TV.Party.USA.En.Fr.Es.Rev.1.wbfs.part01", "size": 1992294400, "sha256": "07197474f9017e09e864946994c8f5a6883657f8c3e2eddb3bbf67f9b0c939b1" },
+        { "name": "Rayman - Raving Rabbids - TV Party (USA) (En,Fr,Es) (Rev 1).wbfs.part02", "url": "private:rayman-raving-rabbids-tv-party__Rayman.-.Raving.Rabbids.-.TV.Party.USA.En.Fr.Es.Rev.1.wbfs.part02", "size": 1927282688, "sha256": "803866a21d606fc28d4811fcef05606606d264abbec032badd6974dc74870c25" }
+      ] }
+    },
+    {
       "id": "rhythm-heaven-fever",
       "title": "Rhythm Heaven Fever",
       "system": "wii",
