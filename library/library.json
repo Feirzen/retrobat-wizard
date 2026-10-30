@@ -5263,6 +5263,19 @@
       ]
     },
     {
+      "id": "wii-sports",
+      "title": "Wii Sports",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. This is what video games should be: fun for everyone. Wii Sports offers five distinct sports experiences, each using the Wii Remote controller to provide a natural, intuitive and realistic feel. To play a Wii Sports game, all you need to do is pick up a...",
+      "added": "2026-10-30",
+      "art": "library/art/wii-sports.jpg",
+      "video": "library/video/wii-sports.mp4",
+      "files": [
+        { "name": "Wii Sports [RSPE01].wbfs", "url": "private:wii-sports__Wii.Sports.RSPE01.wbfs", "size": 337641472, "sha256": "f9012284e447a96213db1353870543de1199fd5694130331c725bbc84e866cb3" }
+      ]
+    },
+    {
       "id": "call-of-duty-black-ops-ii",
       "title": "Call of Duty : Black Ops II",
       "system": "wiiu",
