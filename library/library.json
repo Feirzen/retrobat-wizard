@@ -4181,8 +4181,9 @@
       "system": "wii",
       "players": "1",
       "description": "Controllers: Wii Remote + Nunchuk. If life were an endless vacation, what would you do? Go fishing, collect shells or watch fireworks with friends? Build a snowman, exchange presents with family or decorate your house for the holidays? Take a trip to the city, go on a shopping...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/animal-crossing-city-folk.jpg",
+      "video": "library/video/animal-crossing-city-folk.mp4",
       "files": [
         { "name": "Animal Crossing - City Folk (USA) (En,Fr,Es).wbfs", "url": "private:animal-crossing-city-folk__Animal.Crossing.-.City.Folk.USA.En.Fr.Es.wbfs", "size": 339738624, "sha256": "aae9fd1d0c1d9270875c7438edb2aa820ee5a40fd040e8647ac4f8c3f0784220" }
       ]
