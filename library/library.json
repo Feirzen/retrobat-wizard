@@ -4295,8 +4295,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote + Nunchuk. Epic Mickey 2 takes place in a world based on classic and retired Disney characters and attractions. The story begins sometime after the conclusion of the original Epic Mickey, with Oswald and the other Wasteland characters starting to rebuild...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/disney-epic-mickey-2-the-power-of-two.jpg",
+      "video": "library/video/disney-epic-mickey-2-the-power-of-two.mp4",
       "files": [
       ],
       "parts": { "name": "Disney Epic Mickey 2 - The Power of Two (USA) (En,Fr,Es,Pt).iso", "size": 4699979776, "sha256": "2c1f91631c25a0bbf20658f4a1170b7cbcf1a938e15a7969f78fdcbe9b36928d", "pieces": [
