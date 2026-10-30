@@ -4792,8 +4792,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, held sideways. New Super Mario Bros. Wii offers a combination of cooperation and competition. Players can pick each other up to save them from danger or toss them into it.* Mario, Luigi and two Toads are all playable characters, while many others from...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/new-super-mario-bros-wii.jpg",
+      "video": "library/video/new-super-mario-bros-wii.mp4",
       "files": [
         { "name": "New Super Mario Bros. Wii (USA) (En,Fr,Es) (Rev 2).nkit.iso", "url": "private:new-super-mario-bros-wii__New.Super.Mario.Bros.Wii.USA.En.Fr.Es.Rev.2.nkit.iso", "size": 352518144, "sha256": "8a3575742cc1f133bc306b614333f5ce38bace2062a61cb55ce519a44c82d033" }
       ]
