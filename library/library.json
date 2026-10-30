@@ -4723,6 +4723,22 @@
       ]
     },
     {
+      "id": "mario-sports-mix",
+      "title": "Mario Sports Mix",
+      "system": "wii",
+      "players": "1-4",
+      "description": "The games include volleyball, hockey (both field and ice), dodgeball, and basketball in the vein of the two companies earlier collaboration, Mario Hoops 3 on 3. There are power-up items which give advantages to the team that attains them. Each game has an Exhibition mode, in...",
+      "added": "2026-10-30",
+      "art": "library/art/mario-sports-mix.jpg",
+      "video": "library/video/mario-sports-mix.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Mario Sports Mix (USA) (En,Fr,Es).wbfs", "size": 2436890624, "sha256": "2e2b45caeb89fd0fdd543a61a4e29e2c74ceb9973be4f1e32e96831f74f4ee34", "pieces": [
+        { "name": "Mario Sports Mix (USA) (En,Fr,Es).wbfs.part01", "url": "private:mario-sports-mix__Mario.Sports.Mix.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "331135199ba513becfbf78fbfbe0c372277365c78cd692efe62f1b9fc67b6090" },
+        { "name": "Mario Sports Mix (USA) (En,Fr,Es).wbfs.part02", "url": "private:mario-sports-mix__Mario.Sports.Mix.USA.En.Fr.Es.wbfs.part02", "size": 444596224, "sha256": "40a92a11e474676fa451b758e6f99c9501402306062e567c975bafd990444d4a" }
+      ] }
+    },
+    {
       "id": "mario-strikers-charged",
       "title": "Mario Strikers Charged",
       "system": "wii",
