@@ -4931,8 +4931,9 @@
       "system": "wii",
       "players": "1",
       "description": "Controllers: Wii Remote Plus (with MotionPlus) + Nunchuk. The Legend of Zelda: Skyward Sword once again places the player in control of Link, a Hylian boy who this time around lives in the floating nation of Skyloft. Link is in love with a local girl called Zelda but one day...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/the-legend-of-zelda-skyward-sword.jpg",
+      "video": "library/video/the-legend-of-zelda-skyward-sword.mp4",
       "files": [
       ],
       "parts": { "name": "Legend of Zelda, The - Skyward Sword (USA) (En,Fr,Es) (Rev 2).rvz", "size": 3991419996, "sha256": "ef37bc836dee4138f2aa90767063a5ccd7340b1264f4ab0c17a0e8a56dd4600b", "pieces": [
