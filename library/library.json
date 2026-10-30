@@ -4323,6 +4323,19 @@
       ] }
     },
     {
+      "id": "excite-truck",
+      "title": "Excite Truck",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Excite Truck is an arcade off-road racing game focused on speed and stunts rather than realism. You race big trucks through wild courses, hit ramps for huge airtime, and use boosts and Excite moves to surge ahead while dodging hazards and smashing rivals. It supports motion...",
+      "added": "2026-10-30",
+      "art": "library/art/excite-truck.jpg",
+      "video": "library/video/excite-truck.mp4",
+      "files": [
+        { "name": "Excite Truck (USA).wbfs", "url": "private:excite-truck__Excite.Truck.USA.wbfs", "size": 610271232, "sha256": "40e644ebaba9c9578adef1318418e1342d837ac931e681d3af86252b8df7fda3" }
+      ]
+    },
+    {
       "id": "just-dance-2014",
       "title": "Just Dance 2014",
       "system": "wii",
