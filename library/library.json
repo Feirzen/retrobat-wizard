@@ -4962,6 +4962,23 @@
       ] }
     },
     {
+      "id": "rock-band-3",
+      "title": "Rock Band 3",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Rock Band 3 is the next generation of the ultimate social and interactive music gaming platform developed by the category's leading pioneers, Harmonix Music Systems. Featuring innovative game modes and instruments, Rock Band 3 will change the way fans think about and play music...",
+      "added": "2026-10-30",
+      "art": "library/art/rock-band-3.png",
+      "video": "library/video/rock-band-3.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Rock Band 3 (USA) (En,Fr,De).wbfs", "size": 4112515072, "sha256": "e784167996c8e1abd418cb5d450b4da4c09f5a5cd649d208fad4990919d57296", "pieces": [
+        { "name": "Rock Band 3 (USA) (En,Fr,De).wbfs.part01", "url": "private:rock-band-3__Rock.Band.3.USA.En.Fr.De.wbfs.part01", "size": 1992294400, "sha256": "d6c87a4b04281a2cc6872ec92feb00cac4378806718b8bfccc6c1e7341f0962a" },
+        { "name": "Rock Band 3 (USA) (En,Fr,De).wbfs.part02", "url": "private:rock-band-3__Rock.Band.3.USA.En.Fr.De.wbfs.part02", "size": 1992294400, "sha256": "de75321604ddb9564a5346515dca61c0a7a75fec47b90d09be18f85ee9c573ce" },
+        { "name": "Rock Band 3 (USA) (En,Fr,De).wbfs.part03", "url": "private:rock-band-3__Rock.Band.3.USA.En.Fr.De.wbfs.part03", "size": 127926272, "sha256": "d26a71abdf84a8f7af0a6c25a4512e1ea48aed1bb996c949dce0593f2b03a888" }
+      ] }
+    },
+    {
       "id": "scene-it-bright-lights-big-screen",
       "title": "Scene It? Bright Lights! Big Screen!",
       "system": "wii",
