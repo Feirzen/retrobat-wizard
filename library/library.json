@@ -4362,6 +4362,23 @@
       ]
     },
     {
+      "id": "guitar-hero-world-tour",
+      "title": "Guitar Hero : World Tour",
+      "system": "wii",
+      "players": "4",
+      "description": "You'll be in rock-and-roll paradise with Guitar Hero World Tour. The game has advanced modes, options and tools for your rocking pleasure. Enjoy a vast amount of master recordings from some of the biggest acts of all time, including Van Halen, Linkin Park, the Eagles, Sublime...",
+      "added": "2026-10-30",
+      "art": "library/art/guitar-hero-world-tour.jpg",
+      "video": "library/video/guitar-hero-world-tour.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Guitar Hero World Tour (USA) (En,Fr).wbfs", "size": 4227858432, "sha256": "4dbdbc9e265f8c8c2662008e508c988a7018cedc2cfc56119af8446cecc8e624", "pieces": [
+        { "name": "Guitar Hero World Tour (USA) (En,Fr).wbfs.part01", "url": "private:guitar-hero-world-tour__Guitar.Hero.World.Tour.USA.En.Fr.wbfs.part01", "size": 1992294400, "sha256": "f8184f6bb028426b573f7b8797335c419ce6a93900480e8e13ad8908d9db3f9c" },
+        { "name": "Guitar Hero World Tour (USA) (En,Fr).wbfs.part02", "url": "private:guitar-hero-world-tour__Guitar.Hero.World.Tour.USA.En.Fr.wbfs.part02", "size": 1992294400, "sha256": "14d98970ed6e95679bbff1045b960d52fb0773897b0fe19829cdd2534002f7b2" },
+        { "name": "Guitar Hero World Tour (USA) (En,Fr).wbfs.part03", "url": "private:guitar-hero-world-tour__Guitar.Hero.World.Tour.USA.En.Fr.wbfs.part03", "size": 243269632, "sha256": "5f6c507a66b089e073499e20310e72758f34cb965357fab32a04676a9d3e2a4e" }
+      ] }
+    },
+    {
       "id": "just-dance-2014",
       "title": "Just Dance 2014",
       "system": "wii",
