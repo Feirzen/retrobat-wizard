@@ -5013,8 +5013,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote + Nunchuk. The next chapter in Sonic's storybook series, following Sonic and the Secret Rings?. Are You Worthy?When the Black Knight begins terrorizing King Arthur's Camelot, Sonic and friends suit up in armor to save the enchanted kingdom. Armed with a...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/sonic-and-the-black-knight.jpg",
+      "video": "library/video/sonic-and-the-black-knight.mp4",
       "files": [
       ],
       "parts": { "name": "Sonic and the Black Knight (USA) (En,Ja,Fr,De,Es,It).wbfs", "size": 3649044480, "sha256": "4a01db7a96ed86dbb617aa7c199a1eacd9425f72deda17ce045325dac5229002", "pieces": [
