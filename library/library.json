@@ -4541,8 +4541,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote + Nunchuk. The game allows players to recreate moments (albeit more humorously) from the first three Indiana Jones films: Indiana Jones and the Raiders of the Lost Ark, Indiana Jones and the Temple of Doom, and Indiana Jones and the Last Crusade. However,...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/lego-indiana-jones-the-original-adventur.jpg",
+      "video": "library/video/lego-indiana-jones-the-original-adventur.mp4",
       "files": [
       ],
       "parts": { "name": "LEGO Indiana Jones The Original Adventures [RLIE64].wbfs", "size": 2120220672, "sha256": "deec32d9d52891df883c090b661b182c3fea49ad721ac908895d80cdc1f01375", "pieces": [
