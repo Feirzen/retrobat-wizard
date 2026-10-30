@@ -5117,8 +5117,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, or a controller (Xbox, PlayStation, Switch Pro, etc.) which acts as a GameCube controller. On a Wii Remote, hold it sideways or add a Nunchuk. Welcome to a brawl for the ages, where anything can happen, anyone can show up and all bets are off.Game...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/super-smash-bros-brawl.jpg",
+      "video": "library/video/super-smash-bros-brawl.mp4",
       "files": [
       ],
       "parts": { "name": "Super Smash Bros. Brawl (USA) (Rev 2).rvz", "size": 5952572196, "sha256": "f25c2ae49c1a35de91e0f4a44715d2c1a92ecbb5acd3240d5d036b749d202028", "pieces": [
