@@ -4698,8 +4698,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote. Hold it sideways for most minigames. Mario and friends are invited to the Star Carnival. Of course, they are thrilled to join. Whoever wins the main event, the Star Battle, receives a year's supply of candy. To win they must play through board games...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/mario-party-8.jpg",
+      "video": "library/video/mario-party-8.mp4",
       "files": [
       ],
       "parts": { "name": "Mario Party 8 (USA) (Rev 1).iso", "size": 4699979776, "sha256": "b85039810f4bf4a63fc7b9690580eb07adb01bb7412e284c5bc577244b062d97", "pieces": [
