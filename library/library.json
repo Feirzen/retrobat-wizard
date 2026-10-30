@@ -4244,6 +4244,22 @@
       ]
     },
     {
+      "id": "bully-scholarship-edition",
+      "title": "Bully : Scholarship Edition",
+      "system": "wii",
+      "players": "1",
+      "description": "The story follows Jimmy Hopkins, a teenager who?s been expelled from every school he?s ever attended. Left to fend for himself after his mother abandons him at Bullworth to go on her fifth honeymoon, Jimmy has a whole year at Bullworth ahead of him, working his way up the social...",
+      "added": "2026-10-30",
+      "art": "library/art/bully-scholarship-edition.jpg",
+      "video": "library/video/bully-scholarship-edition.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Bully - Scholarship Edition (USA) (En,Fr,Es).wbfs", "size": 3535798272, "sha256": "bd2fadc5df0f361ef73fc2206b98b2269ff643ee84cd5b72bf8d67ff950aeb73", "pieces": [
+        { "name": "Bully - Scholarship Edition (USA) (En,Fr,Es).wbfs.part01", "url": "private:bully-scholarship-edition__Bully.-.Scholarship.Edition.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "d1d7bfb5766e2513abcc6abd969df7420b0b0e5e1ca5f5d1b49b2d5134f689b5" },
+        { "name": "Bully - Scholarship Edition (USA) (En,Fr,Es).wbfs.part02", "url": "private:bully-scholarship-edition__Bully.-.Scholarship.Edition.USA.En.Fr.Es.wbfs.part02", "size": 1543503872, "sha256": "04f47b10793add55f4bd9aa484e8747f3f908810e1454baf2b8e551df529ef7f" }
+      ] }
+    },
+    {
       "id": "disney-epic-mickey-2-the-power-of-two",
       "title": "Disney Epic Mickey 2 : The Power Of Two",
       "system": "wii",
