@@ -5180,8 +5180,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote. The Trivial Pursuit video game from EA builds on the original gameplay with stunning visual presentation, new question types and all-new questions, and the innovative Facts & Friends game mode. The quick-playing Facts & Friends mode adds a whole new...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/trivial-pursuit.jpg",
+      "video": "library/video/trivial-pursuit.mp4",
       "files": [
         { "name": "Trivial Pursuit (USA) (En,Fr).wbfs", "url": "private:trivial-pursuit__Trivial.Pursuit.USA.En.Fr.wbfs", "size": 379584512, "sha256": "2425b8d64c5445c9c583545a6eea61243abf5f51ecd04bc3a597cb732e8f5cbe" }
       ]
