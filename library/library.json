@@ -3317,19 +3317,6 @@
       ]
     },
     {
-      "id": "punch-out",
-      "title": "Punch-Out!!",
-      "system": "nes",
-      "players": "1",
-      "description": "\"Punch-Out!! featuring Mr. Dream\" is the reedition of the previous version \"Mike Tyson's Punch-Out!!\". Contrary to popular belief, Tyson was not removed because of his rape conviction (which did not occur until a year after the changeover), but because his contract expired....",
-      "added": "2026-10-26",
-      "art": "library/art/punch-out.png",
-      "video": "library/video/punch-out.mp4",
-      "files": [
-        { "name": "Punch-Out!! (USA).nes", "url": "private:punch-out__Punch-Out.USA.nes", "size": 262160, "sha256": "2f06867500d5bc105cfa30f041fcb6bf5934d6b464779fbc4b041203af72b052" }
-      ]
-    },
-    {
       "id": "river-city-ransom",
       "title": "River City Ransom",
       "system": "nes",
@@ -4833,19 +4820,6 @@
       ] }
     },
     {
-      "id": "pok-park-wii-pikachu-s-adventure",
-      "title": "PokPark Wii : Pikachu's Adventure",
-      "system": "wii",
-      "players": "1",
-      "description": "Only Pikachu Can Save the PokPark! The first Pokmon adventure game on the Wii console puts Pikachu at the center of a fun, expansive playground filled with adventure, Attractions and Pokmon. The Rare Pokmon Mew summons Pikachu to the PokPark to find the missing Sky Prism...",
-      "added": "2026-10-30",
-      "art": "library/art/pok-park-wii-pikachu-s-adventure.jpg",
-      "video": "library/video/pok-park-wii-pikachu-s-adventure.mp4",
-      "files": [
-        { "name": "PokePark Wii - Pikachu's Adventure (USA).wbfs", "url": "private:pok-park-wii-pikachu-s-adventure__PokePark.Wii.-.Pikachu.s.Adventure.USA.wbfs", "size": 1451229184, "sha256": "58b43b80ec57efb5b0a8efedf1caa7fcac0b3b63e2fca7dcfc1d33a2ab3b6b94" }
-      ]
-    },
-    {
       "id": "pok-mon-battle-revolution",
       "title": "Pokmon Battle Revolution",
       "system": "wii",
@@ -4883,6 +4857,35 @@
       "files": [
         { "name": "PokePark 2 - Wonders Beyond (USA).wbfs", "url": "private:pok-park-2-wonders-beyond__PokePark.2.-.Wonders.Beyond.USA.wbfs", "size": 952107008, "sha256": "7ac17271e4cdc22b4c57b412052e3b95d550a1efff0d3c29cd356d7b8e62fa61" }
       ]
+    },
+    {
+      "id": "pok-park-wii-pikachu-s-adventure",
+      "title": "PokPark Wii : Pikachu's Adventure",
+      "system": "wii",
+      "players": "1",
+      "description": "Only Pikachu Can Save the PokPark! The first Pokmon adventure game on the Wii console puts Pikachu at the center of a fun, expansive playground filled with adventure, Attractions and Pokmon. The Rare Pokmon Mew summons Pikachu to the PokPark to find the missing Sky Prism...",
+      "added": "2026-10-30",
+      "art": "library/art/pok-park-wii-pikachu-s-adventure.jpg",
+      "video": "library/video/pok-park-wii-pikachu-s-adventure.mp4",
+      "files": [
+        { "name": "PokePark Wii - Pikachu's Adventure (USA).wbfs", "url": "private:pok-park-wii-pikachu-s-adventure__PokePark.Wii.-.Pikachu.s.Adventure.USA.wbfs", "size": 1451229184, "sha256": "58b43b80ec57efb5b0a8efedf1caa7fcac0b3b63e2fca7dcfc1d33a2ab3b6b94" }
+      ]
+    },
+    {
+      "id": "punch-out",
+      "title": "Punch-Out!!",
+      "system": "wii",
+      "players": "1-2",
+      "description": "One of the biggest names in boxing returns after a 15-year hiatus. In Punch-Out!! you play as young up-and-coming fighter Little Mac who, with the help of his ringside trainer Doc Lewis, is working his way through the ranks of a wide variety of boxing caricatures, each with...",
+      "added": "2026-10-30",
+      "art": "library/art/punch-out.jpg",
+      "video": "library/video/punch-out.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Punch-Out!! (USA, Asia) (En,Fr,Es) (Rev 1).wbfs", "size": 3906994176, "sha256": "b12ff8c4f5f3c9616d4326ca67d4eafce41ab4c12d1ec557c5a411d47f3c972e", "pieces": [
+        { "name": "Punch-Out!! (USA, Asia) (En,Fr,Es) (Rev 1).wbfs.part01", "url": "private:punch-out__Punch-Out.USA.Asia.En.Fr.Es.Rev.1.wbfs.part01", "size": 1992294400, "sha256": "a847873d09c146df72acd9a49bcd277a66590d97614b16db48ec86af1f48e1e5" },
+        { "name": "Punch-Out!! (USA, Asia) (En,Fr,Es) (Rev 1).wbfs.part02", "url": "private:punch-out__Punch-Out.USA.Asia.En.Fr.Es.Rev.1.wbfs.part02", "size": 1914699776, "sha256": "e071913b58bc71d2e428128036acdfb9ec427fb98854eb36c45c8fe0d15c85ed" }
+      ] }
     },
     {
       "id": "rayman-origins",
