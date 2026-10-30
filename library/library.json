@@ -4349,6 +4349,19 @@
       ]
     },
     {
+      "id": "ghost-squad",
+      "title": "Ghost Squad",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Sega?s top-grossing light-gun game, Ghost Squad, comes to the Wii system and replicates the excitement of the arcade experience in your home!.The Ghost Squad is a Special Forces unit established in strict secrecy by the U.N. to combat terrorism and carry out special...",
+      "added": "2026-10-30",
+      "art": "library/art/ghost-squad.png",
+      "video": "library/video/ghost-squad.mp4",
+      "files": [
+        { "name": "Ghost Squad (USA).wbfs", "url": "private:ghost-squad__Ghost.Squad.USA.wbfs", "size": 666894336, "sha256": "f184cc133ab8abbb95126a151597201ac3d39a7ac2a87f14ea790167a9df7590" }
+      ]
+    },
+    {
       "id": "just-dance-2014",
       "title": "Just Dance 2014",
       "system": "wii",
