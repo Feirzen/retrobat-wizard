@@ -4637,8 +4637,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote + Nunchuk. Anyone can pick up the Wii Zapper and become a master marksman in the quick-play shooting galleries of Link's Crossbow Training. Dozens of fast-paced stages offer a wide variety of game play, from shooting stationary targets to defending a...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/link-s-crossbow-training.jpg",
+      "video": "library/video/link-s-crossbow-training.mp4",
       "files": [
         { "name": "Link's Crossbow Training (USA) (En,Fr,Es) (Rev 1).wbfs", "url": "private:link-s-crossbow-training__Link.s.Crossbow.Training.USA.En.Fr.Es.Rev.1.wbfs", "size": 216006656, "sha256": "06e34701b0be865f7efb2bc157e3368997a30f5e7fa24d55a8c9113b762b2651" }
       ]
