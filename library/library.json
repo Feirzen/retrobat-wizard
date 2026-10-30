@@ -4774,8 +4774,9 @@
       "system": "wii",
       "players": "1",
       "description": "Controllers: Wii Remote + Nunchuk. Metroid Prime 3: Corruption set a new standard for first-person motion controls in video games. Now it's bringing those controls to the rest of the celebrated series, allowing players to experience the entire Metroid Prime story arc with the...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/metroid-prime-trilogy.jpg",
+      "video": "library/video/metroid-prime-trilogy.mp4",
       "files": [
       ],
       "parts": { "name": "Metroid Prime Trilogy (USA).rvz", "size": 7142274304, "sha256": "9e12e697a1b6613b1307d4e7801d005d60d91def6997a0e622f119907b997c77", "pieces": [
