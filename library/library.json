@@ -5289,6 +5289,19 @@
       ]
     },
     {
+      "id": "world-of-goo",
+      "title": "World of Goo",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. Point it at the screen. World of Goo is an award-winning physics-based puzzle/construction game made entirely by two guys. Grab living, squirming, talking globs of goo to build structures, bridges, cannonballs, zeppelins, and giant tongues. The millions...",
+      "added": "2026-10-30",
+      "art": "library/art/world-of-goo.jpg",
+      "video": "library/video/world-of-goo.mp4",
+      "files": [
+        { "name": "World of Goo (USA) (WiiWare).wad", "url": "private:world-of-goo__World.of.Goo.USA.WiiWare.wad", "size": 45989504, "sha256": "ea14b7ede9a735356b09a304ea9d8969fded8bfbe7bf0078e6b21bb26ffe9442" }
+      ]
+    },
+    {
       "id": "call-of-duty-black-ops-ii",
       "title": "Call of Duty : Black Ops II",
       "system": "wiiu",
