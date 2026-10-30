@@ -5220,6 +5220,19 @@
       ] }
     },
     {
+      "id": "wii-party",
+      "title": "Wii Party",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote. The whole family stars in its own electronic board game. Most video games require players to focus their attention on a screen. Now Nintendo brings the action into the living room with Wii Party, a game that changes the way people interact with other...",
+      "added": "2026-10-30",
+      "art": "library/art/wii-party.jpg",
+      "video": "library/video/wii-party.mp4",
+      "files": [
+        { "name": "Wii Party (USA) (En,Fr,Es).wbfs", "url": "private:wii-party__Wii.Party.USA.En.Fr.Es.wbfs", "size": 897581056, "sha256": "c4d48f8ae3170c226a9e0a1a8642e4be0ac11310c563c381252414b9b763d87b" }
+      ]
+    },
+    {
       "id": "call-of-duty-black-ops-ii",
       "title": "Call of Duty : Black Ops II",
       "system": "wiiu",
