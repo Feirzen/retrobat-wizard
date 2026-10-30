@@ -4479,8 +4479,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote, held sideways. While walking through Dream Land, Kirby discovers a tomato and decides to eat it. Yin-Yarn, the evil sorceror who possessed the tomato (revealed to be a Metamato), appears and magically banishes Kirby into Patch Land, a world completely...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/kirby-s-epic-yarn.jpg",
+      "video": "library/video/kirby-s-epic-yarn.mp4",
       "files": [
       ],
       "parts": { "name": "Kirby's Epic Yarn (USA) (En,Fr,Es).iso", "size": 4699979776, "sha256": "bfd33f41eaf8c8cffe8eabb72bc8eb5f10a473446ab23990c3b71f3fa5acfa7b", "pieces": [
