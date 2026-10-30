@@ -4833,6 +4833,19 @@
       ] }
     },
     {
+      "id": "pok-mon-battle-revolution",
+      "title": "Pokmon Battle Revolution",
+      "system": "wii",
+      "players": "1-2",
+      "description": "Pokmon Battle Revolution takes place on an island called Poktopia, where your goal is to battle your way through challenging Colosseums to become the Poktopia Master. Pokmon Battle Revolution is the first Wii / Nintendo DS linked title, which means that you can transfer your...",
+      "added": "2026-10-30",
+      "art": "library/art/pok-mon-battle-revolution.jpg",
+      "video": "library/video/pok-mon-battle-revolution.mp4",
+      "files": [
+        { "name": "Pokemon Battle Revolution (USA).wbfs", "url": "private:pok-mon-battle-revolution__Pokemon.Battle.Revolution.USA.wbfs", "size": 1059061760, "sha256": "b3940ecd4f7c10591339ef4b3c671110f2c9ddb2b9ce553242ec0b7656196a57" }
+      ]
+    },
+    {
       "id": "pok-mon-rumble",
       "title": "Pokmon Rumble",
       "system": "wii",
