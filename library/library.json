@@ -5091,8 +5091,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote + Nunchuk. Mario returns to the stars as the everlasting villain Bowser has kidnapped Princess Peach once more. This time while she was baking a cake... Once again Mario is determined to fight Bowser and free Princess Peach. The basic goal of each level...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/super-mario-galaxy-2.jpg",
+      "video": "library/video/super-mario-galaxy-2.mp4",
       "files": [
         { "name": "Super Mario Galaxy 2 (USA) (En,Fr,Es).rvz", "url": "private:super-mario-galaxy-2__Super.Mario.Galaxy.2.USA.En.Fr.Es.rvz", "size": 1438368956, "sha256": "e6d4238efc145caf2d447cc9b9ecf567b8eda68b9d52db7240b5ccb069739c34" }
       ]
