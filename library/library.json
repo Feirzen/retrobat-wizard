@@ -5276,6 +5276,19 @@
       ]
     },
     {
+      "id": "wii-sports-resort",
+      "title": "Wii Sports Resort",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Controllers: Wii Remote Plus (a Wii Remote with MotionPlus). Wii Sports Resort for Wii is a new version of the game traditionally sold with the console. A series of new challenges await you, some of them using the WiiMotion Plus, offering more precision for the controller's...",
+      "added": "2026-10-30",
+      "art": "library/art/wii-sports-resort.jpg",
+      "video": "library/video/wii-sports-resort.mp4",
+      "files": [
+        { "name": "Wii Sports Resort [RZTE01].wbfs", "url": "private:wii-sports-resort__Wii.Sports.Resort.RZTE01.wbfs", "size": 734003200, "sha256": "92ee5d339957ca3a7eb82d63883e18e4c5c99487a247d1b7655825923a2db023" }
+      ]
+    },
+    {
       "id": "call-of-duty-black-ops-ii",
       "title": "Call of Duty : Black Ops II",
       "system": "wiiu",
