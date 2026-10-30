@@ -5129,6 +5129,19 @@
       ] }
     },
     {
+      "id": "tatsunoko-vs-capcom-ultimate-all-stars",
+      "title": "Tatsunoko vs. Capcom: Ultimate All-Stars",
+      "system": "wii",
+      "players": "1-2",
+      "description": "From Capcom's 30-year history comes characters like Ryu and Chun-Li from the Street Fighter series, Morrigan from Darkstalkers and company mascot Mega Man Volnutt from Mega Man Legends. Tatsunoko's near half-century of Japanese animation excellence is represented by the likes of...",
+      "added": "2026-10-30",
+      "art": "library/art/tatsunoko-vs-capcom-ultimate-all-stars.jpg",
+      "video": "library/video/tatsunoko-vs-capcom-ultimate-all-stars.mp4",
+      "files": [
+        { "name": "Tatsunoko vs. Capcom - Ultimate All-Stars (USA).wbfs", "url": "private:tatsunoko-vs-capcom-ultimate-all-stars__Tatsunoko.vs.Capcom.-.Ultimate.All-Stars.USA.wbfs", "size": 1507852288, "sha256": "54b341bc3ab1764bab2ea07a0eb15c702b4ad715caaa045dc181ef4e18f75aaa" }
+      ]
+    },
+    {
       "id": "the-house-of-the-dead-2-3-return",
       "title": "The House of the Dead 2 & 3 Return",
       "system": "wii",
