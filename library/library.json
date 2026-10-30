@@ -5099,6 +5099,19 @@
       ]
     },
     {
+      "id": "super-paper-mario",
+      "title": "Super Paper Mario",
+      "system": "wii",
+      "players": "1",
+      "description": "In this action-platformer, Bowser and Peach find themselves at the wedding altar, forced into marriage by the evil Count Bleck. With this union, a void will engulf the entire universe as foretold by the book, the Dark Prognosticus. Before Luigi can stop Count Bleck, the villain...",
+      "added": "2026-10-30",
+      "art": "library/art/super-paper-mario.jpg",
+      "video": "library/video/super-paper-mario.mp4",
+      "files": [
+        { "name": "Super Paper Mario (USA) (Rev 2).wbfs", "url": "private:super-paper-mario__Super.Paper.Mario.USA.Rev.2.wbfs", "size": 427819008, "sha256": "b403a6835824b459410586d40f0ad0fb2de496ad953bb417ddcb99f4b920c1e7" }
+      ]
+    },
+    {
       "id": "super-smash-bros-brawl",
       "title": "Super Smash Bros. Brawl",
       "system": "wii",
