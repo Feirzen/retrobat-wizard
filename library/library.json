@@ -4744,8 +4744,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote + Nunchuk. Supercharged Characters! - The captains from Super Mario Strikers are back, joined by four new ones, and now you can create your own original team by mixing and matching your captain with an all-new cast of sidekicks. All characters have their...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/mario-strikers-charged.jpg",
+      "video": "library/video/mario-strikers-charged.mp4",
       "files": [
       ],
       "parts": { "name": "Mario Strikers Charged (USA) (En,Fr,Es) (Rev 1).iso", "size": 4699979776, "sha256": "4c764211f11aa18e3fb9ba42978f3196985fa4b9d136ed54b74d5156020688fe", "pieces": [
