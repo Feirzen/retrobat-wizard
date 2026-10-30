@@ -4756,6 +4756,19 @@
       ] }
     },
     {
+      "id": "mario-super-sluggers",
+      "title": "Mario Super Sluggers",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Mario Super Sluggers stars the ever-lovable Mario and his crew of friends. Players make a throwing motion with the Wii Remote controller to pitch the Newcomers to gaming or sports titles will be up and running on Mario Super Sluggers in no time. Simply swing the Wii Remote to...",
+      "added": "2026-10-30",
+      "art": "library/art/mario-super-sluggers.jpg",
+      "video": "library/video/mario-super-sluggers.mp4",
+      "files": [
+        { "name": "Mario Super Sluggers (USA) (En,Fr,Es).wbfs", "url": "private:mario-super-sluggers__Mario.Super.Sluggers.USA.En.Fr.Es.wbfs", "size": 1509949440, "sha256": "4836ea8dcd146a264e92aff3f969bb42d09c04a17c215b64cbe8dbebf492403e" }
+      ]
+    },
+    {
       "id": "metroid-prime-trilogy",
       "title": "Metroid Prime: Trilogy",
       "system": "wii",
