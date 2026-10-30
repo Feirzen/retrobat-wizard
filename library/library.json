@@ -4449,8 +4449,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, held in your right hand. Just Dance 4 features more than 40 new tracks, ranging from chart-topping Billboard hits to classic dance party tracks. Whether it's pop, Hip-Hop, rock, R&B, country or funk, there is something for everyone.",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/just-dance-4.jpg",
+      "video": "library/video/just-dance-4.mp4",
       "files": [
       ],
       "parts": { "name": "Just Dance 4 (USA) (En,Fr,Es).iso", "size": 4699979776, "sha256": "85e63c785d043bb0b10ea0356c46d496c9d5dae925c29aceef2067fb41a0e3a0", "pieces": [
