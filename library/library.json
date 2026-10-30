@@ -4277,6 +4277,19 @@
       ] }
     },
     {
+      "id": "carnival-games",
+      "title": "Carnival Games",
+      "system": "wii",
+      "players": "2-4",
+      "description": "The twisted fairytale humor of Shrek meets the fun of the renaissance midway in Shrek s Carnival Craze. This game includes 28 hilarious carnival mini-games. Play as your favorite Shrek characters and compete to become the King or Queen of the carnival.",
+      "added": "2026-10-30",
+      "art": "library/art/carnival-games.jpg",
+      "video": "library/video/carnival-games.mp4",
+      "files": [
+        { "name": "Carnival Games (USA) (Rev 2).wbfs", "url": "private:carnival-games__Carnival.Games.USA.Rev.2.wbfs", "size": 346030080, "sha256": "8c94ed7b68dabc99fb749db254fbe94573efd58f333e8b7f4839b804416bb040" }
+      ]
+    },
+    {
       "id": "disney-epic-mickey-2-the-power-of-two",
       "title": "Disney Epic Mickey 2 : The Power Of Two",
       "system": "wii",
