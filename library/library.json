@@ -4509,8 +4509,9 @@
       "system": "wii",
       "players": "1-2",
       "description": "Controllers: Wii Remote + Nunchuk. Lego Harry Potter s gameplay is similar to that of most previous Lego games, with an emphasis on collecting, exploring, and solving puzzles. Casting spells is an integral part of the gameplay, with a wide range of spells available for unlocking...",
-      "added": "2026-10-16",
+      "added": "2026-10-30",
       "art": "library/art/lego-harry-potter-years-1-4.jpg",
+      "video": "library/video/lego-harry-potter-years-1-4.mp4",
       "files": [
       ],
       "parts": { "name": "LEGO Harry Potter - Years 1-4 (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 3235905536, "sha256": "7fb6cabfcd31ac508e1c60e363ff7e7339fbd23959b5f984d60711f911c0ca93", "pieces": [
