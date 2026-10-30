@@ -4379,6 +4379,22 @@
       ] }
     },
     {
+      "id": "just-dance-2",
+      "title": "Just Dance 2",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Just Dance 2 is the follow-up to Just Dance, a Nintendo Wii title that utilizes the Wii Remote's motion controls to make players mimic dance moves to commercially licensed songs, keeping score for certain players and declaring a winner at the end. The game is purely a party...",
+      "added": "2026-10-30",
+      "art": "library/art/just-dance-2.jpg",
+      "video": "library/video/just-dance-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Just Dance 2 (USA) (En,Fr,Es).wbfs", "size": 3242196992, "sha256": "7fd1255364d7e13f1ec1a56a8233a8ed9c7979d0f448ae66fe0963d434739f3a", "pieces": [
+        { "name": "Just Dance 2 (USA) (En,Fr,Es).wbfs.part01", "url": "private:just-dance-2__Just.Dance.2.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "5bd3716e17c515768c68786e5dcb50c0495e0011f466573e4b368b2f73ed1e6c" },
+        { "name": "Just Dance 2 (USA) (En,Fr,Es).wbfs.part02", "url": "private:just-dance-2__Just.Dance.2.USA.En.Fr.Es.wbfs.part02", "size": 1249902592, "sha256": "306bfc1620556b72ffc5a76137fabbfa1f829c2fa5b2ee60b1c3089e14421e5f" }
+      ] }
+    },
+    {
       "id": "just-dance-2014",
       "title": "Just Dance 2014",
       "system": "wii",
