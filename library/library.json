@@ -4433,8 +4433,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, held in your right hand. Just Dance 3 expands the popular dance series with over 40 hit songs and new gameplay modes. Players mimic onscreen choreography using simple motion controls, earning points for timing, energy, and style. Alongside returning...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/just-dance-3.jpg",
+      "video": "library/video/just-dance-3.mp4",
       "files": [
       ],
       "parts": { "name": "Just Dance 3 (USA) (En,Fr,Es) (Rev 1).wbfs", "size": 3946840064, "sha256": "74e9cd2acf4bce48221127b5861db407f80ccd8d4d8294648f4902cff64e425e", "pieces": [
