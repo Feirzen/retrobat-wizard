@@ -4833,16 +4833,16 @@
       ] }
     },
     {
-      "id": "pok-park-2-wonders-beyond",
-      "title": "PokPark 2: Wonders Beyond",
+      "id": "pok-park-wii-pikachu-s-adventure",
+      "title": "PokPark Wii : Pikachu's Adventure",
       "system": "wii",
-      "players": "1-4",
-      "description": "Step into PokPark and play as Pikachu, Oshawott, Snivy, and Tepig to rescue the missing Pokmon in PokPark 2: Wonders Beyond for the Wii console! Pikachu will need the help of his Pals and their unique abilities to make it through PokPark and discover the secrets of a...",
+      "players": "1",
+      "description": "Only Pikachu Can Save the PokPark! The first Pokmon adventure game on the Wii console puts Pikachu at the center of a fun, expansive playground filled with adventure, Attractions and Pokmon. The Rare Pokmon Mew summons Pikachu to the PokPark to find the missing Sky Prism...",
       "added": "2026-10-30",
-      "art": "library/art/pok-park-2-wonders-beyond.jpg",
-      "video": "library/video/pok-park-2-wonders-beyond.mp4",
+      "art": "library/art/pok-park-wii-pikachu-s-adventure.jpg",
+      "video": "library/video/pok-park-wii-pikachu-s-adventure.mp4",
       "files": [
-        { "name": "PokePark 2 - Wonders Beyond (USA).wbfs", "url": "private:pok-park-2-wonders-beyond__PokePark.2.-.Wonders.Beyond.USA.wbfs", "size": 952107008, "sha256": "7ac17271e4cdc22b4c57b412052e3b95d550a1efff0d3c29cd356d7b8e62fa61" }
+        { "name": "PokePark Wii - Pikachu's Adventure (USA).wbfs", "url": "private:pok-park-wii-pikachu-s-adventure__PokePark.Wii.-.Pikachu.s.Adventure.USA.wbfs", "size": 1451229184, "sha256": "58b43b80ec57efb5b0a8efedf1caa7fcac0b3b63e2fca7dcfc1d33a2ab3b6b94" }
       ]
     },
     {
@@ -4869,6 +4869,19 @@
       "video": "library/video/pok-mon-rumble.mp4",
       "files": [
         { "name": "Pokemon Rumble (USA) (WiiWare).wad", "url": "private:pok-mon-rumble__Pokemon.Rumble.USA.WiiWare.wad", "size": 27330304, "sha256": "3edf8518c33ea03a04a0c519ae586a29e9b40a32327be72623277773ac88f680" }
+      ]
+    },
+    {
+      "id": "pok-park-2-wonders-beyond",
+      "title": "PokPark 2: Wonders Beyond",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Step into PokPark and play as Pikachu, Oshawott, Snivy, and Tepig to rescue the missing Pokmon in PokPark 2: Wonders Beyond for the Wii console! Pikachu will need the help of his Pals and their unique abilities to make it through PokPark and discover the secrets of a...",
+      "added": "2026-10-30",
+      "art": "library/art/pok-park-2-wonders-beyond.jpg",
+      "video": "library/video/pok-park-2-wonders-beyond.mp4",
+      "files": [
+        { "name": "PokePark 2 - Wonders Beyond (USA).wbfs", "url": "private:pok-park-2-wonders-beyond__PokePark.2.-.Wonders.Beyond.USA.wbfs", "size": 952107008, "sha256": "7ac17271e4cdc22b4c57b412052e3b95d550a1efff0d3c29cd356d7b8e62fa61" }
       ]
     },
     {
