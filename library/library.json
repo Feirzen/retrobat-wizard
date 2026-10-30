@@ -4417,8 +4417,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote, held in your right hand. There are more than 100 million Just Dance players around the world, and in Just Dance 2015 the community is as important as ever with the introduction of the all-new Community Remix feature. The feature allows players to record...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/just-dance-2015.jpg",
+      "video": "library/video/just-dance-2015.mp4",
       "files": [
       ],
       "parts": { "name": "Just Dance 2015 (USA) (En,Fr,Es).wbfs", "size": 3391094784, "sha256": "0b5ca07a9fa57ab7c6e1d2169460dde735086b4e18adfd757fe4ac613f72b6e3", "pieces": [
