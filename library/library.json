@@ -4260,6 +4260,23 @@
       ] }
     },
     {
+      "id": "call-of-duty-black-ops",
+      "title": "Call of Duty : Black Ops",
+      "system": "wii",
+      "players": "10",
+      "description": "Black Ops is a first-person shooter. The player assumes the role of a foot soldier and thus has access to various firearms, of which two at a time can be carried, as well as explosives such as grenades and other equipment to fight enemies. When players are close enough to an...",
+      "added": "2026-10-30",
+      "art": "library/art/call-of-duty-black-ops.jpg",
+      "video": "library/video/call-of-duty-black-ops.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Call of Duty - Black Ops (USA).wbfs", "size": 4383047680, "sha256": "6d934f0be8943104f85a9887945baacd3098738659f3f2972a082ebf20583507", "pieces": [
+        { "name": "Call of Duty - Black Ops (USA).wbfs.part01", "url": "private:call-of-duty-black-ops__Call.of.Duty.-.Black.Ops.USA.wbfs.part01", "size": 1992294400, "sha256": "6ba10dae59f0aab0fd1d09393b33698d4dbd10b0f0b48de9f7e8e7b57dd03731" },
+        { "name": "Call of Duty - Black Ops (USA).wbfs.part02", "url": "private:call-of-duty-black-ops__Call.of.Duty.-.Black.Ops.USA.wbfs.part02", "size": 1992294400, "sha256": "3cc795f0a51c751fb7fdc632cfea392d7eff7a1fb96a981b38b229e1d5fceca8" },
+        { "name": "Call of Duty - Black Ops (USA).wbfs.part03", "url": "private:call-of-duty-black-ops__Call.of.Duty.-.Black.Ops.USA.wbfs.part03", "size": 398458880, "sha256": "15d3eec1134d547cfad8de9823d004640fd675193e3b2707b450716f2677bd4b" }
+      ] }
+    },
+    {
       "id": "disney-epic-mickey-2-the-power-of-two",
       "title": "Disney Epic Mickey 2 : The Power Of Two",
       "system": "wii",
