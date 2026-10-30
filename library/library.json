@@ -4231,6 +4231,19 @@
       ]
     },
     {
+      "id": "boom-blox-bash-party",
+      "title": "Boom Blox : Bash Party",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Like the original BOOM BLOX game Bash Party is based around fast-paced gameplay that utilizes players' reflexes, dexterity, and problem-solving skills. During the action players use the Wii Remote to direct objects and forces toward structures made of blocks in order to knock...",
+      "added": "2026-10-30",
+      "art": "library/art/boom-blox-bash-party.jpg",
+      "video": "library/video/boom-blox-bash-party.mp4",
+      "files": [
+        { "name": "Boom Blox Bash Party (USA) (En,Fr,Es).wbfs", "url": "private:boom-blox-bash-party__Boom.Blox.Bash.Party.USA.En.Fr.Es.wbfs", "size": 1201668096, "sha256": "74bc1355ceed8c0bdc351d560e01110945daa023195bcda753992a6ee9b6c801" }
+      ]
+    },
+    {
       "id": "disney-epic-mickey-2-the-power-of-two",
       "title": "Disney Epic Mickey 2 : The Power Of Two",
       "system": "wii",
