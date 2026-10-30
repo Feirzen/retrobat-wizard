@@ -4645,6 +4645,22 @@
       ]
     },
     {
+      "id": "mario-sonic-at-the-olympic-games",
+      "title": "Mario & Sonic at the Olympic Games",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Mario & Sonic on the Wii is a collection of twenty-four events based on the Olympic Games. Players can assume the role of a Nintendo or Sega character while competing against the others in these events. Players use the Wii Remote to mimic actions performed in real life sports,...",
+      "added": "2026-10-30",
+      "art": "library/art/mario-sonic-at-the-olympic-games.png",
+      "video": "library/video/mario-sonic-at-the-olympic-games.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Mario & Sonic at the Olympic Games (USA) (En,Fr,Es).wbfs", "size": 2248146944, "sha256": "8f229cf1408b4c5437009cfd3c8d8b0ad340a58271c7f2ea1b6eb6e9cc62c0d4", "pieces": [
+        { "name": "Mario & Sonic at the Olympic Games (USA) (En,Fr,Es).wbfs.part01", "url": "private:mario-sonic-at-the-olympic-games__Mario.Sonic.at.the.Olympic.Games.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "9c50da0790fc065fcdf2ab0c1dc304cf4b9760d0cc241c8bcaec52130f813fc2" },
+        { "name": "Mario & Sonic at the Olympic Games (USA) (En,Fr,Es).wbfs.part02", "url": "private:mario-sonic-at-the-olympic-games__Mario.Sonic.at.the.Olympic.Games.USA.En.Fr.Es.wbfs.part02", "size": 255852544, "sha256": "f3dd611212fe5fee70a4ecbc5fe2b15e2149d2ecc6d4de5544eeb757e8f01f03" }
+      ] }
+    },
+    {
       "id": "mario-kart-wii",
       "title": "Mario Kart Wii",
       "system": "wii",
