@@ -4887,6 +4887,22 @@
       ] }
     },
     {
+      "id": "the-house-of-the-dead-2-3-return",
+      "title": "The House of the Dead 2 & 3 Return",
+      "system": "wii",
+      "players": "1-2",
+      "description": "\"Two grisly titles from the popular THE HOUSE OF THE DEAD? series are being compiled into one action-packed horror shooter for the Wii?. Both THE HOUSE OF THE DEAD 2 and III will feature the original arcade experience, complete with branching storylines, over six ghoul-filled...",
+      "added": "2026-10-30",
+      "art": "library/art/the-house-of-the-dead-2-3-return.jpg",
+      "video": "library/video/the-house-of-the-dead-2-3-return.mp4",
+      "files": [
+      ],
+      "parts": { "name": "House of the Dead 2 & 3 Return, The (USA) (En,Fr,Es).wbfs", "size": 3483369472, "sha256": "541e1e6b7e97960522dce148db56f9f07af26f3fce69de1aed93304612c19d60", "pieces": [
+        { "name": "House of the Dead 2 & 3 Return, The (USA) (En,Fr,Es).wbfs.part01", "url": "private:the-house-of-the-dead-2-3-return__House.of.the.Dead.2.3.Return.The.USA.En.Fr.Es.wbfs.part01", "size": 1992294400, "sha256": "aba80db69ac424983c70d661d6689af54ef6b0500ea4309faff5a60f09b189ac" },
+        { "name": "House of the Dead 2 & 3 Return, The (USA) (En,Fr,Es).wbfs.part02", "url": "private:the-house-of-the-dead-2-3-return__House.of.the.Dead.2.3.Return.The.USA.En.Fr.Es.wbfs.part02", "size": 1491075072, "sha256": "a0f183734ea2d7c950de02c7ceed5481add09c6f700a710b4ac1f7dffdd61357" }
+      ] }
+    },
+    {
       "id": "the-legend-of-zelda-skyward-sword",
       "title": "The Legend of Zelda : Skyward Sword",
       "system": "wii",
