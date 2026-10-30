@@ -4218,6 +4218,19 @@
       ]
     },
     {
+      "id": "boom-blox",
+      "title": "Boom Blox",
+      "system": "wii",
+      "players": "1-4",
+      "description": "Boom Blox is a action puzzle game developed in conjunction with Steven Spielberg. The objective of Boom Blox is to keep a structure made of blocks from being knocked down or to knock over a structure using the Wii Remote to throw, shoot or grab colorful character-based blocks...",
+      "added": "2026-10-30",
+      "art": "library/art/boom-blox.jpg",
+      "video": "library/video/boom-blox.mp4",
+      "files": [
+        { "name": "Boom Blox (USA) (En,Fr,Es).wbfs", "url": "private:boom-blox__Boom.Blox.USA.En.Fr.Es.wbfs", "size": 1402994688, "sha256": "cbb02ad3b52aa8f547933b7297c2db168a1334e5b1b7eb061f3e1f5b948f0026" }
+      ]
+    },
+    {
       "id": "disney-epic-mickey-2-the-power-of-two",
       "title": "Disney Epic Mickey 2 : The Power Of Two",
       "system": "wii",
