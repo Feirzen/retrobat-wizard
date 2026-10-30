@@ -4210,8 +4210,9 @@
       "system": "wii",
       "players": "1-4",
       "description": "Controllers: Wii Remote. Some of the six games want it sideways, one wants a Nunchuk. Retro-classic meets modern-cool in this collection of games built on a creative combination of 8-bit graphics and addictive, quick-hit, arcade-style play that dares you to escape its...",
-      "added": "2026-10-14",
+      "added": "2026-10-30",
       "art": "library/art/bit-trip-complete.jpg",
+      "video": "library/video/bit-trip-complete.mp4",
       "files": [
         { "name": "Bit.Trip Complete (USA).wbfs", "url": "private:bit-trip-complete__Bit.Trip.Complete.USA.wbfs", "size": 924844032, "sha256": "1e59c571d356e537821362b3f931a4c78979c4b05cc01cfbfe09dbdd3c18c315" }
       ]
