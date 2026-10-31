@@ -203,7 +203,11 @@ body.in #site { display: block; }
   .vid:hover, .vid:focus { transform: scale(1.12); background: color-mix(in srgb, var(--accent) 18%, transparent); outline: none; }
   .tl, .row .txt span.tl { display: flex !important; align-items: center; gap: 2px; color: inherit; font-size: inherit; overflow: visible; }
   .row .txt span.vid { display: inline-flex !important; width: auto !important; white-space: nowrap; overflow: visible; padding: 1px 3px; margin-top: 0; font-size: inherit; }
-  .mnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+  .mnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding: 0 6px 6px 0; }
+  /* (night shift) the arrows only switch games: the box keeps one size, and a
+     pressed arrow button (it nudges 3px) no longer pokes out and brings up scroll bars */
+  .modal-box { overflow-x: hidden; }
+  .modal-box .game { min-height: 448px; }
   video.pv { width: 100%; max-height: 70vh; border-radius: 10px; background: #000; display: block; }
 </style>
 </head>
@@ -221,8 +225,8 @@ body.in #site { display: block; }
 <div id="site">
   <nav class="rail" aria-label="Sections">
     <a href="#home" data-p="home"><img src="site/pad-anim.svg" alt=""><span>Home</span></a>
-    <a href="#start" data-p="start"><img src="drive/wizard/page-help.png" alt=""><span>Start</span></a>
-    <a href="#library" data-p="library"><img src="drive/wizard/page-saves.png" alt=""><span>Games</span></a>
+    <a href="#start" data-p="start"><img src="drive/Program/wizard/page-help.png" alt=""><span>Start</span></a>
+    <a href="#library" data-p="library"><img src="drive/Program/wizard/page-saves.png" alt=""><span>Games</span></a>
   </nav>
   <main><div class="wrap">
 
