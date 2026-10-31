@@ -29,5 +29,11 @@ $sentBody = ($script:posts[0][1] | ConvertFrom-Json)
 A ($sentBody.title -eq '[bug] t' -and $sentBody.body.Trim() -eq $body.Trim()) 'outbox round-trip intact'
 $r = Send-BugReport $Ws '[bug] t2' 'short'
 A ($r.Ok -and $r.Url -eq 'https://github.com/x/1' -and @(Get-ChildItem "$Ws/People/social/reports/sent").Count -eq 2) 'direct send ok'
+# (2026-10-31) the phone ping names the kind and who sent it
+A ((Get-BugPing '[game request] Sonic 3' "x`n- **From:** Steven (abc123)`n- **tier:** low").Title -eq 'Game request from Steven') 'ping: game request from'
+A ((Get-BugPing '[game request] Sonic 3' "- **From:** Steven (abc123)").Text -eq 'Sonic 3') 'ping: text without prefix'
+A ((Get-BugPing '[idea] more maps' "- **From:** guest").Title -eq 'Idea from a guest') 'ping: guest'
+A ((Get-BugPing '[bug] froze' $body).Title -eq 'Bug report from a guest') 'ping: real report body'
+A ((Get-BugPing 'odd title' '').Title -eq 'New report') 'ping: unknown kind'
 Remove-Item -Recurse -Force $Ws
 "bug tests: $pass passed, $fail failed"

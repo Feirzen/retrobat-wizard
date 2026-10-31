@@ -126,6 +126,30 @@ function Get-BugTitle([string]$What, [string]$Extra = '', [string]$Kind = 'bug')
     return ($prefix + $w)
 }
 
+# The phone ping for a report: "Game request from Steven" over the report's
+# own words. Who sent it comes from the report's From line, so a report that
+# waited in the outbox still names the person who wrote it. That line has the
+# Windows user name blanked out (<user>), so when a profile name matches it,
+# the name comes from the profile signed in on this drive instead.
+function Get-BugPing([string]$Title, [string]$Body, [string]$Ws = '') {
+    $kinds = [ordered]@{ '[game request] ' = 'Game request'; '[idea] ' = 'Idea'; '[bug] ' = 'Bug report'; '[password] ' = 'Password reset' }
+    $kind = 'New report'; $text = [string]$Title
+    foreach ($k in $kinds.Keys) {
+        if ($text.StartsWith($k)) { $kind = $kinds[$k]; $text = $text.Substring($k.Length); break }
+    }
+    $who = ''
+    $m = [regex]::Match([string]$Body, '(?m)^- \*\*From:\*\* (.+?)\s*$')
+    if ($m.Success) { $who = ($m.Groups[1].Value -replace '\s*\([^()]*\)$', '').Trim() }
+    if ($who -match '[<?]' -and $Ws -ne '') {
+        $who = ''
+        try { $p = Read-SocialProfile $Ws; if ($null -ne $p -and -not $p.Guest) { $who = [string]$p.Username } } catch { }
+    }
+    $who = ($who -replace '[^\x20-\x7E]', '').Trim()   # the ping's title travels as a web header: plain letters only
+    $from = $(if ($who -eq '') { '' } elseif ($who -eq 'guest') { ' from a guest' } else { ' from ' + $who })
+    if ($text.Trim() -eq '') { $text = [string]$Title }
+    return @{ Title = ($kind + $from); Text = $text }
+}
+
 # Sends one report. Returns @{ Ok; Url; Message }. On failure the report is
 # put in the outbox so it goes next time.
 function Send-BugReport([string]$Ws, [string]$Title, [string]$Body, [bool]$Queue = $true) {
@@ -145,7 +169,10 @@ function Send-BugReport([string]$Ws, [string]$Title, [string]$Body, [bool]$Queue
         } catch { } }
         Write-SocialLog $Ws ("bug report sent: " + $Title)
         # Pings the admins' phones when they set that up (ntfy). Best effort.
-        [void](Send-SocialNotify $Ws 'New report' $Title)
+        # (2026-10-31, Steven) The ping says what kind it is and who sent it.
+        $ping = @{ Title = 'New report'; Text = $Title }
+        try { $ping = Get-BugPing $Title $Body $Ws } catch { }
+        [void](Send-SocialNotify $Ws $ping.Title $ping.Text)
         return $res
     }
     $res.Message = $(if ($r.Status -eq 0) { 'Could not reach GitHub.' } else { "GitHub said $($r.Status)." })
