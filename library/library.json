@@ -3,6 +3,19 @@
   "note": "The online game library. Only games that may be shared: homebrew, freeware, fan-made. Read by scripts\\GameLibrary.ps1 and the website.",
   "games": [
     {
+      "id": "animal-crossing-happy-home-designer",
+      "title": "Animal Crossing : Happy Home Designer",
+      "system": "3ds",
+      "players": "1",
+      "description": "As the latest employee of Nook's Homes, a real estate agency ran by the one and only Tom Nook, it's up to you to design wonderful homes to suit any animal. Chat with potential clients to find out what sort of pad they'd prefer, then put your decorating skills to the test and put...",
+      "added": "2026-11-04",
+      "art": "library/art/animal-crossing-happy-home-designer.png",
+      "video": "library/video/animal-crossing-happy-home-designer.mp4",
+      "files": [
+        { "name": "Animal Crossing - Happy Home Designer (USA) (En,Fr,Es) (Rev 1).cci", "url": "private:animal-crossing-happy-home-designer__Animal.Crossing.-.Happy.Home.Designer.USA.En.Fr.Es.Rev.1.cci", "size": 1073741824, "sha256": "a823ba3ebdf3babcf6dbf74199a1955e9591d9d7e99ffbccf5c8cab67bee712f" }
+      ]
+    },
+    {
       "id": "animal-crossing-new-leaf",
       "title": "Animal Crossing : New Leaf",
       "system": "3ds",
@@ -227,19 +240,6 @@
       ]
     },
     {
-      "id": "pok-mon-picross",
-      "title": "Pokmon Picross",
-      "system": "3ds",
-      "players": "1",
-      "description": "Turn puzzles into portraits with Pokmon Picross! Solve over 300 number puzzles to complete pictures of your favourite Pokmon. When you complete a puzzle, youll add that Pokmon to your collection! Collected Pokmon can help you solve puzzles using a variety of skills. There...",
-      "added": "2026-11-04",
-      "art": "library/art/pok-mon-picross.png",
-      "video": "library/video/pok-mon-picross.mp4",
-      "files": [
-        { "name": "000400000017C100 Pokemon Picross (CTR-N-JFJA) (v0.0.0) (W).piratelegit.cia", "url": "private:pok-mon-picross__000400000017C100.Pokemon.Picross.CTR-N-JFJA.v0.0.0.W.piratelegit.cia", "size": 95265792, "sha256": "66bdb9f021ee36238772371a91714984a5e570d565d912cd7bb993122f21cffd" }
-      ]
-    },
-    {
       "id": "pokemon-rumble-blast",
       "title": "Pokemon Rumble Blast",
       "system": "3ds",
@@ -323,6 +323,19 @@
         { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "f3986e685cc0ed7fd337fff17dd7d68a0fbc87bbe50434cd5e02c0d43ac09e8a" },
         { "name": "Pokemon Omega Ruby (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-omega-ruby__Pokemon.Omega.Ruby.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
+    },
+    {
+      "id": "pok-mon-picross",
+      "title": "Pokmon Picross",
+      "system": "3ds",
+      "players": "1",
+      "description": "Turn puzzles into portraits with Pokmon Picross! Solve over 300 number puzzles to complete pictures of your favourite Pokmon. When you complete a puzzle, youll add that Pokmon to your collection! Collected Pokmon can help you solve puzzles using a variety of skills. There...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-picross.png",
+      "video": "library/video/pok-mon-picross.mp4",
+      "files": [
+        { "name": "000400000017C100 Pokemon Picross (CTR-N-JFJA) (v0.0.0) (W).piratelegit.cia", "url": "private:pok-mon-picross__000400000017C100.Pokemon.Picross.CTR-N-JFJA.v0.0.0.W.piratelegit.cia", "size": 95265792, "sha256": "66bdb9f021ee36238772371a91714984a5e570d565d912cd7bb993122f21cffd" }
+      ]
     },
     {
       "id": "pok-mon-sun",
