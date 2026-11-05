@@ -3193,6 +3193,19 @@
       ]
     },
     {
+      "id": "kirby-squeak-squad",
+      "title": "Kirby : Squeak Squad",
+      "system": "nds",
+      "players": "1-4",
+      "description": "Kirby - Squeak Squad is a platform game for Nintendo DS. You play the famous and adorable Kirby, who can breathe in air to inflate like a balloon and thus cross the many levels of the game while gliding. The small creature is also able to swallow its enemies and take their...",
+      "added": "2026-11-04",
+      "art": "library/art/kirby-squeak-squad.png",
+      "video": "library/video/kirby-squeak-squad.mp4",
+      "files": [
+        { "name": "Kirby - Squeak Squad (USA).zip", "url": "private:kirby-squeak-squad__Kirby.-.Squeak.Squad.USA.zip", "size": 13231879, "sha256": "e9442b12f6f10780ac3b1613aef5333ff131d8884bb38ea6bd5dcddf8fc438f2" }
+      ]
+    },
+    {
       "id": "kirby-super-star-ultra",
       "title": "Kirby Super Star Ultra",
       "system": "nds",
