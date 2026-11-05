@@ -1744,6 +1744,19 @@
       ]
     },
     {
+      "id": "legend-of-zelda-the-link-s-awakening",
+      "title": "Legend Of Zelda, The - Link'S Awakening",
+      "system": "gb",
+      "players": "1",
+      "description": "",
+      "added": "2026-11-04",
+      "art": "library/art/legend-of-zelda-the-link-s-awakening.png",
+      "video": "library/video/legend-of-zelda-the-link-s-awakening.mp4",
+      "files": [
+        { "name": "Legend of Zelda, The - Link's Awakening (USA, Europe) (Rev 2).zip", "url": "private:legend-of-zelda-the-link-s-awakening__Legend.of.Zelda.The.-.Link.s.Awakening.USA.Europe.Rev.2.zip", "size": 287088, "sha256": "fa6eb851c1c257e544865efed7511a63d90a58db3d12647dd034b7bddd3992c9" }
+      ]
+    },
+    {
       "id": "pok-mon-blue-version",
       "title": "Pokmon : Blue Version",
       "system": "gb",
@@ -1813,18 +1826,6 @@
       "art": "library/art/tetris.png",
       "files": [
         { "name": "Tetris (World) (Rev 1).zip", "url": "private:tetris__Tetris.World.Rev.1.zip", "size": 19284, "sha256": "7b910d5979ba10ef2acffbccf6a2d5ad7a11600936906a1f20062184b98eda27" }
-      ]
-    },
-    {
-      "id": "the-legend-of-zelda-link-s-awakening",
-      "title": "The Legend of Zelda : Link's Awakening",
-      "system": "gb",
-      "players": "1",
-      "description": "After being attacked at sea, Link's ship sinks, and he finds himself stranded on Koholint Island. He awakens to see a beautiful woman looking down at him. He soon learns the island has a giant egg on top of a mountain that the Wind Fish inhabits deep inside. Link is told to...",
-      "added": "2026-10-12",
-      "art": "library/art/the-legend-of-zelda-link-s-awakening.png",
-      "files": [
-        { "name": "Legend of Zelda, The - Link's Awakening (USA, Europe) (Rev 2).zip", "url": "private:the-legend-of-zelda-link-s-awakening__Legend.of.Zelda.The.-.Link.s.Awakening.USA.Europe.Rev.2.zip", "size": 287088, "sha256": "fa6eb851c1c257e544865efed7511a63d90a58db3d12647dd034b7bddd3992c9" }
       ]
     },
     {
