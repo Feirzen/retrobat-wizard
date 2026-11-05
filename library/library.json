@@ -1900,6 +1900,19 @@
       ]
     },
     {
+      "id": "castlevania-aria-of-sorrow",
+      "title": "Castlevania : Aria of Sorrow",
+      "system": "gba",
+      "players": "1",
+      "description": "The year is 2035 and Soma Cruz is about to witness the first solar eclipse of the 21st century when he suddenly blacks out -- only to awaken inside a mysterious castle. As Soma, you must navigate the castle's labyrinths while confronting perilous monsters at every turn. But...",
+      "added": "2026-11-04",
+      "art": "library/art/castlevania-aria-of-sorrow.png",
+      "video": "library/video/castlevania-aria-of-sorrow.mp4",
+      "files": [
+        { "name": "Castlevania - Aria of Sorrow (USA).zip", "url": "private:castlevania-aria-of-sorrow__Castlevania.-.Aria.of.Sorrow.USA.zip", "size": 4299573, "sha256": "ef6f17120411b7e0ef0bc1e0fe59c0036ac3777cebcb9662b73e0a7d25f58ee5" }
+      ]
+    },
+    {
       "id": "classic-nes-series-the-legend-of-zelda",
       "title": "Classic NES Series : The Legend of Zelda",
       "system": "gba",
