@@ -3513,8 +3513,9 @@
       "system": "nds",
       "players": "1",
       "description": "All aboard for adventure as Link sets off on a quest to restore the spirit tracks and keep an ancient demon locked away. Take control of your own train as you explore the vast land by rail. As the conductor you plan the route, set the speed and watch out for enemies and...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/the-legend-of-zelda-spirit-tracks.png",
+      "video": "library/video/the-legend-of-zelda-spirit-tracks.mp4",
       "files": [
         { "name": "Legend of Zelda, The_ Spirit Tracks.zip", "url": "private:the-legend-of-zelda-spirit-tracks__Legend.of.Zelda.The_.Spirit.Tracks.zip", "size": 68005592, "sha256": "f3f82dad7a521468dfcd491217b8e92758fce35b8dd2e5a3f73589c4b7aee23d" }
       ]
