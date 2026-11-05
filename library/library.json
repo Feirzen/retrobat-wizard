@@ -3167,6 +3167,19 @@
       ]
     },
     {
+      "id": "dragon-quest-ix-sentinels-of-the-starry",
+      "title": "Dragon Quest IX - Sentinels of the Starry Skies",
+      "system": "nds",
+      "players": "1-4",
+      "description": "In Dragon Quest IX: Sentinels of the Starry Skies, players begin their adventure as a city guardian who is sent to retrieve a sacred trees fruits, which have the power to grant wishes. Players travel the world, conquer fearsome monsters and unravel an epic storyline. During...",
+      "added": "2026-11-04",
+      "art": "library/art/dragon-quest-ix-sentinels-of-the-starry.png",
+      "video": "library/video/dragon-quest-ix-sentinels-of-the-starry.mp4",
+      "files": [
+        { "name": "Dragon Quest IX - Sentinels of the Starry Skies (USA) (En,Fr,Es).zip", "url": "private:dragon-quest-ix-sentinels-of-the-starry__Dragon.Quest.IX.-.Sentinels.of.the.Starry.Skies.USA.En.Fr.Es.zip", "size": 178998125, "sha256": "ca371c409e1c0d88ed5ae69c79cf2763330462105766d7063def285b5cb6b679" }
+      ]
+    },
+    {
       "id": "kirby-super-star-ultra",
       "title": "Kirby Super Star Ultra",
       "system": "nds",
