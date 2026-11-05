@@ -3674,6 +3674,19 @@
       ]
     },
     {
+      "id": "super-mario-64-ds",
+      "title": "Super Mario 64 DS",
+      "system": "nds",
+      "players": "1",
+      "description": "Mario, Luigi, and Wario have all gone to the Mushroom Palace for some of Princess Peach's famous home made cake. However, when they don't return its up to the heroic dino Yoshi to find out what's wrong. In this portable remake of the original Super Mario 64 You' are able to play...",
+      "added": "2026-11-04",
+      "art": "library/art/super-mario-64-ds.png",
+      "video": "library/video/super-mario-64-ds.mp4",
+      "files": [
+        { "name": "Super Mario 64 DS (USA, Australia) (Rev 1).zip", "url": "private:super-mario-64-ds__Super.Mario.64.DS.USA.Australia.Rev.1.zip", "size": 12141536, "sha256": "843485f73d6233363eb87296556610343fdd573f3314101a76948b93e6a1c423" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
