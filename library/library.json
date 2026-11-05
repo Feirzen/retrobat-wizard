@@ -1874,6 +1874,19 @@
       ]
     },
     {
+      "id": "advance-wars",
+      "title": "Advance Wars",
+      "system": "gba",
+      "players": "1-4",
+      "description": "The battle lines have been drawn, and an elite group of sly strategists is massing troops at your borders. You'll have to command ground, air and naval forces if you hope to survive the coming wars, and it won't be easy. With 114 maps to battle on and both the Single-Pak and...",
+      "added": "2026-11-04",
+      "art": "library/art/advance-wars.png",
+      "video": "library/video/advance-wars.mp4",
+      "files": [
+        { "name": "Advance Wars (USA) (Rev 1).zip", "url": "private:advance-wars__Advance.Wars.USA.Rev.1.zip", "size": 2323408, "sha256": "7cdeb5e16c43c5d3c76e5b2e070e8052d84b8b30360fb4807b50eadcdb964d53" }
+      ]
+    },
+    {
       "id": "classic-nes-series-the-legend-of-zelda",
       "title": "Classic NES Series : The Legend of Zelda",
       "system": "gba",
