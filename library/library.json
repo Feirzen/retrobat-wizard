@@ -3388,16 +3388,16 @@
       ]
     },
     {
-      "id": "pok-mon-ranger-guardian-signs",
-      "title": "Pokmon Ranger : Guardian Signs",
+      "id": "pok-mon-ranger-shadows-of-almia",
+      "title": "Pokmon Ranger : Shadows of Almia",
       "system": "nds",
       "players": "1",
-      "description": "Channel the power of legends!The third installment in the action-packed Pokmon Ranger series lets players take on the role of a Pokmon Ranger tasked with protecting Pokmon, people, and nature in the Oblivia region. As a Pokmon Ranger, players investigate the nefarious...",
+      "description": "In the second in the Pokemon Ranger series, you once again play as a Pokemon Ranger, working to help people, Pokemon and nature in a new area called the Almia Region. Starting out as a Student Ranger, you quickly earn the title of a full-fledged Pokemon Ranger. As you succeed in...",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-ranger-guardian-signs.png",
-      "video": "library/video/pok-mon-ranger-guardian-signs.mp4",
+      "art": "library/art/pok-mon-ranger-shadows-of-almia.png",
+      "video": "library/video/pok-mon-ranger-shadows-of-almia.mp4",
       "files": [
-        { "name": "Pokemon Ranger - Guardian Signs (USA, Australia).zip", "url": "private:pok-mon-ranger-guardian-signs__Pokemon.Ranger.-.Guardian.Signs.USA.Australia.zip", "size": 92381686, "sha256": "4df25d0189194e8b107024dee5a5c72b12a493da02397cca100c3fbc0cbe8e5a" }
+        { "name": "Pokemon Ranger - Shadows of Almia (USA).zip", "url": "private:pok-mon-ranger-shadows-of-almia__Pokemon.Ranger.-.Shadows.of.Almia.USA.zip", "size": 34660348, "sha256": "075c6b0976305dbe6e29d157d3f810599dc050cf9a8cd8d52cbc24ba88f57d9e" }
       ]
     },
     {
@@ -3526,6 +3526,19 @@
       "art": "library/art/pok-mon-ranger.png",
       "files": [
         { "name": "Pokemon Ranger (USA).zip", "url": "private:pok-mon-ranger__Pokemon.Ranger.USA.zip", "size": 14557174, "sha256": "35321c4dffbce68e5ae0cbb07ffe17f1218bdbff132be03b7e59f4a5f6a41e31" }
+      ]
+    },
+    {
+      "id": "pok-mon-ranger-guardian-signs",
+      "title": "Pokmon Ranger : Guardian Signs",
+      "system": "nds",
+      "players": "1",
+      "description": "Channel the power of legends!The third installment in the action-packed Pokmon Ranger series lets players take on the role of a Pokmon Ranger tasked with protecting Pokmon, people, and nature in the Oblivia region. As a Pokmon Ranger, players investigate the nefarious...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-ranger-guardian-signs.png",
+      "video": "library/video/pok-mon-ranger-guardian-signs.mp4",
+      "files": [
+        { "name": "Pokemon Ranger - Guardian Signs (USA, Australia).zip", "url": "private:pok-mon-ranger-guardian-signs__Pokemon.Ranger.-.Guardian.Signs.USA.Australia.zip", "size": 92381686, "sha256": "4df25d0189194e8b107024dee5a5c72b12a493da02397cca100c3fbc0cbe8e5a" }
       ]
     },
     {
