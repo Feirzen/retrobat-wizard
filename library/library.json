@@ -624,8 +624,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Created and developed by 5TH Cell, Scribblenauts Unlimited features a huge side-scrolling open world with new, high-definition hand-drawn scenery and objects where players can help the game's hero, Maxwell, solve robust puzzles and challenges by summoning any object they can...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/scribblenauts-unlimited.png",
+      "video": "library/video/scribblenauts-unlimited.mp4",
       "files": [
         { "name": "Scribblenauts Unlimited (USA) (En,Fr,Es,Pt).cci", "url": "private:scribblenauts-unlimited__Scribblenauts.Unlimited.USA.En.Fr.Es.Pt.cci", "size": 536870912, "sha256": "2b80a8f0df8629cef55d4d870f529293cab0497dbbb32e2e1c52fd60a4aabca8" }
       ]
