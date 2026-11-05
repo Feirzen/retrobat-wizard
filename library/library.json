@@ -764,6 +764,22 @@
       ]
     },
     {
+      "id": "warioware-gold",
+      "title": "Warioware Gold",
+      "system": "3ds",
+      "players": "1",
+      "description": "Play his brand-new microgame collection, where you?ll have seconds to complete 300 different microgames. Better think fast to succeed! You?ll use the touchscreen, tilt the system, push buttons, and rock the mic as you laugh through fully voiced stories featuring new and classic...",
+      "added": "2026-11-04",
+      "art": "library/art/warioware-gold.png",
+      "video": "library/video/warioware-gold.mp4",
+      "files": [
+      ],
+      "parts": { "name": "WarioWare Gold (USA) (Rev 1).cci", "size": 2147483648, "sha256": "03fc72045e50c196576f8b554247fd2090830e99babd3e52b71f8d8e9f45c41d", "pieces": [
+        { "name": "WarioWare Gold (USA) (Rev 1).cci.part01", "url": "private:warioware-gold__WarioWare.Gold.USA.Rev.1.cci.part01", "size": 1992294400, "sha256": "af81805d7ae6c27190ee4ae92cc3dab695ab30f097561c21554b1b820f77a382" },
+        { "name": "WarioWare Gold (USA) (Rev 1).cci.part02", "url": "private:warioware-gold__WarioWare.Gold.USA.Rev.1.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "yoshi-s-new-island",
       "title": "Yoshi's New Island",
       "system": "3ds",
