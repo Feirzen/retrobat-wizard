@@ -195,15 +195,52 @@ function Add-LibGameFile([string]$File, $System, $Progress = $null) {
 # ---------------------------------------------------------------------------
 #  The online library
 # ---------------------------------------------------------------------------
-function Invoke-LibFetch([string]$Url, [string]$OutFile, [string]$Ws = '') {
-    if ($null -ne $script:LibFetchOverride) { & $script:LibFetchOverride $Url $OutFile; return }
-    try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
-    $old = $ProgressPreference; $ProgressPreference = 'SilentlyContinue'
-    try {
-        if ($Url -like 'private:*') { Get-LibPrivateFile $Ws $Url.Substring(8) $OutFile }
-        else { Invoke-WebRequest -Uri $Url -OutFile $OutFile -UseBasicParsing -TimeoutSec 600 -ErrorAction Stop }
+# $Progress (2026-10-31, Steven: "it jumped from 0 to 42 to 85"): a
+# synchronized hashtable from the wizard. Bytes goes up as each piece of the
+# download lands, so the Games tab can show real progress, speed and time
+# left. The old way read the size of the half-written file, which Windows
+# only updates now and then.
+function Invoke-LibFetch([string]$Url, [string]$OutFile, [string]$Ws = '', $Progress = $null) {
+    if ($null -ne $script:LibFetchOverride) {
+        & $script:LibFetchOverride $Url $OutFile
+        if ($null -ne $Progress -and (Test-Path -LiteralPath $OutFile)) { $Progress.Bytes = [long]$Progress.Bytes + (Get-Item -LiteralPath $OutFile).Length }
+        return
     }
-    finally { $ProgressPreference = $old }
+    try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+    if ($Url -like 'private:*') { Get-LibPrivateFile $Ws $Url.Substring(8) $OutFile $Progress }
+    else { Save-LibStream $Url $OutFile $null $Progress }
+}
+
+# Downloads $Url into $OutFile a quarter megabyte at a time, adding each
+# piece to $Progress.Bytes. Throws on any failure, like Invoke-WebRequest.
+# Follows redirects; an Authorization header is dropped on a redirect by
+# Windows itself, which is what GitHub's file store wants.
+function Save-LibStream([string]$Url, [string]$OutFile, $Headers = $null, $Progress = $null) {
+    $req = [System.Net.HttpWebRequest]::Create($Url)
+    $req.UserAgent = 'RetroBat-Wizard'
+    $req.AllowAutoRedirect = $true
+    $req.Timeout = 60000
+    $req.ReadWriteTimeout = 120000
+    if ($null -ne $Headers) {
+        foreach ($k in @($Headers.Keys)) {
+            if ([string]$k -eq 'Accept') { $req.Accept = [string]$Headers[$k] }
+            else { $req.Headers[[string]$k] = [string]$Headers[$k] }
+        }
+    }
+    $resp = $req.GetResponse()
+    try {
+        $in = $resp.GetResponseStream()
+        $out = [System.IO.File]::Create($OutFile)
+        try {
+            $buf = New-Object byte[] (256KB)
+            while (($n = $in.Read($buf, 0, $buf.Length)) -gt 0) {
+                $out.Write($buf, 0, $n)
+                if ($null -ne $Progress) { $Progress.Bytes = [long]$Progress.Bytes + $n }
+            }
+        }
+        finally { $out.Close(); $in.Close() }
+    }
+    finally { $resp.Close() }
 }
 
 # One file from the private repo's "library" release. Throws with plain
@@ -213,7 +250,7 @@ function Invoke-LibFetch([string]$Url, [string]$OutFile, [string]$Ws = '') {
 #   3. the file itself, asked for as raw bytes. GitHub answers with a short
 #      redirect to its file store; Windows drops the key on that hop by
 #      itself, which is what the file store wants.
-function Get-LibPrivateFile([string]$Ws, [string]$Name, [string]$OutFile) {
+function Get-LibPrivateFile([string]$Ws, [string]$Name, [string]$OutFile, $Progress = $null) {
     if (-not (Get-Command Get-SocialToken -ErrorAction SilentlyContinue)) {
         $se = Join-LibPath ([string]$script:LibScriptsDir) 'SocialEngine.ps1'
         if (-not (Test-Path -LiteralPath $se)) { throw 'the friends part of the wizard is missing (SocialEngine.ps1)' }
@@ -229,7 +266,7 @@ function Get-LibPrivateFile([string]$Ws, [string]$Name, [string]$OutFile) {
     $asset = @((([string]$c) | ConvertFrom-Json).assets | Where-Object { $null -ne $_ -and [string]$_.name -eq $Name })
     if ($asset.Count -eq 0) { throw 'that game is not in the private library any more' }
     $h.Accept = 'application/octet-stream'
-    Invoke-WebRequest -Uri ([string]$asset[0].url) -Headers $h -OutFile $OutFile -UseBasicParsing -TimeoutSec 3600 -ErrorAction Stop
+    Save-LibStream ([string]$asset[0].url) $OutFile $h $Progress
 }
 
 function Get-LibCacheDir([string]$Ws) { return (Join-LibPath $Ws 'Cache\library') }
@@ -238,8 +275,15 @@ function Get-LibCacheDir([string]$Ws) { return (Join-LibPath $Ws 'Cache\library'
 # @{ Ok; Games; Message; FromCache }. Every entry is checked before use:
 # a console name that is not a plain word, a file name with a path in it, a
 # download that is not from GitHub, or a bad checksum means it is dropped.
-function Get-LibCatalog([string]$Ws) {
-    $res = @{ Ok = $false; Games = @(); Message = ''; FromCache = $false }
+#
+# $FetchArt (2026-11-04, Steven: "the online library showing so slow"): with
+# $false the list comes back at once, with only the pictures already here,
+# and ArtNeeded lists the ones that are missing or a week old, for
+# Update-LibArt to fetch in the background. Fetching them here first, one at
+# a time, held the whole list back: about a minute every week (they all go
+# stale together) and on a new setup's first look.
+function Get-LibCatalog([string]$Ws, [bool]$FetchArt = $true) {
+    $res = @{ Ok = $false; Games = @(); Message = ''; FromCache = $false; ArtNeeded = @() }
     $dir = Get-LibCacheDir $Ws
     if (-not (Test-Path -LiteralPath $dir)) { [void](New-Item -ItemType Directory -Path $dir -Force) }
     $cache = Join-LibPath $dir 'library.json'
@@ -325,6 +369,7 @@ function Get-LibCatalog([string]$Ws) {
     # it was replaced. Offline, the copy already here is used. A picture that
     # cannot be had just means the console's picture shows instead.
     $artDir = Join-LibPath $dir 'art'
+    $need = New-Object System.Collections.ArrayList
     foreach ($gm in $games) {
         if ($gm.ArtRel -eq '') { continue }
         try {
@@ -332,7 +377,8 @@ function Get-LibCatalog([string]$Ws) {
             $leaf = $gm.ArtRel.Substring(12)
             $local = Join-LibPath $artDir $leaf
             $fresh = (Test-Path -LiteralPath $local) -and ((Get-Item -LiteralPath $local).LastWriteTime -gt (Get-Date).AddDays(-7))
-            if (-not $fresh -and -not $res.FromCache) {
+            if (-not $fresh -and -not $res.FromCache -and -not $FetchArt) { [void]$need.Add([pscustomobject]@{ Rel = $gm.ArtRel; Local = $local }) }
+            elseif (-not $fresh -and -not $res.FromCache) {
                 $part = $local + '.part'
                 try {
                     Invoke-LibFetch ('https://raw.githubusercontent.com/{0}/main/{1}?t={2}' -f $script:LibRepo, $gm.ArtRel, [DateTime]::UtcNow.Ticks) $part
@@ -345,7 +391,54 @@ function Get-LibCatalog([string]$Ws) {
     }
     $res.Ok = $true
     $res.Games = @($games | Sort-Object System, Title)
+    $res.ArtNeeded = @($need | Sort-Object Rel -Unique)
     return $res
+}
+
+# After Update-LibArt: each game whose picture is here now gets it.
+function Set-LibArtPaths([string]$Ws, $Games) {
+    $artDir = Join-LibPath (Get-LibCacheDir $Ws) 'art'
+    foreach ($gm in @($Games)) {
+        if ($null -eq $gm -or [string]$gm.ArtRel -eq '' -or [string]$gm.Art -ne '') { continue }
+        $local = Join-LibPath $artDir ([string]$gm.ArtRel).Substring(12)
+        if (Test-Path -LiteralPath $local) { $gm.Art = $local }
+    }
+}
+
+# The box art Get-LibCatalog left out (its ArtNeeded), 8 pictures at a time.
+# A picture that cannot be had is skipped; the old copy, if any, stays.
+# Returns how many arrived.
+function Update-LibArt([string]$Ws, $Items) {
+    $list = @($Items | Where-Object { $null -ne $_ })
+    if ($list.Count -eq 0) { return 0 }
+    try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+    try { [Net.ServicePointManager]::DefaultConnectionLimit = [Math]::Max([Net.ServicePointManager]::DefaultConnectionLimit, 16) } catch { }
+    Add-Type -AssemblyName System.Net.Http
+    $client = New-Object System.Net.Http.HttpClient
+    $client.Timeout = [TimeSpan]::FromSeconds(45)
+    [void]$client.DefaultRequestHeaders.UserAgent.TryParseAdd('RetroBat-Wizard')
+    $got = 0
+    try {
+        for ($i = 0; $i -lt $list.Count; $i += 8) {
+            $batch = @($list[$i..([Math]::Min($i + 7, $list.Count - 1))])
+            $tasks = @($batch | ForEach-Object { $client.GetByteArrayAsync(('https://raw.githubusercontent.com/{0}/main/{1}?t={2}' -f $script:LibRepo, $_.Rel, [DateTime]::UtcNow.Ticks)) })
+            try { [void][System.Threading.Tasks.Task]::WaitAll([System.Threading.Tasks.Task[]]$tasks, 60000) } catch { }
+            for ($k = 0; $k -lt $batch.Count; $k++) {
+                $t = $tasks[$k]
+                if ($t.Status -ne 'RanToCompletion') { continue }
+                $bytes = $t.Result
+                if ($null -eq $bytes -or $bytes.Length -eq 0 -or $bytes.Length -gt 3MB) { continue }
+                try {
+                    $part = $batch[$k].Local + '.part'
+                    [System.IO.File]::WriteAllBytes($part, $bytes)
+                    Move-Item -LiteralPath $part -Destination $batch[$k].Local -Force
+                    $got++
+                } catch { }
+            }
+        }
+    }
+    finally { $client.Dispose() }
+    return $got
 }
 
 # A name inside a console folder, / between folders (3.2): plain letters,
@@ -444,7 +537,7 @@ function Test-LibGameInstalled($Game, $Systems) {
 # download carries on), glues them in order into $OutFile, and deletes each
 # piece as soon as it is glued, so the drive never needs room for much more
 # than the game itself. The whole file is checked by the caller.
-function Join-LibPieces([string]$Ws, $File, [string]$Dir, [string]$OutFile) {
+function Join-LibPieces([string]$Ws, $File, [string]$Dir, [string]$OutFile, $Progress = $null) {
     $res = @{ Ok = $false; Message = '' }
     $paths = @()
     $i = 0
@@ -452,8 +545,9 @@ function Join-LibPieces([string]$Ws, $File, [string]$Dir, [string]$OutFile) {
         $i++
         $pp = Join-LibPath $Dir ('{0}.piece{1:D2}' -f $File.Name, $i)
         $good = (Test-Path -LiteralPath $pp) -and ((Get-Item -LiteralPath $pp).Length -eq $pc.Size) -and ((Get-LibHash $pp) -eq $pc.Sha)
+        if ($good -and $null -ne $Progress) { $Progress.Bytes = [long]$Progress.Bytes + [long]$pc.Size }
         if (-not $good) {
-            try { Invoke-LibFetch $pc.Url $pp $Ws }
+            try { Invoke-LibFetch $pc.Url $pp $Ws $Progress }
             catch { $res.Message = ('The download stopped on piece {0}: {1}' -f $i, $_.Exception.Message); return $res }
             if ((Get-Item -LiteralPath $pp).Length -ne $pc.Size -or (Get-LibHash $pp) -ne $pc.Sha) {
                 Remove-Item -LiteralPath $pp -Force
@@ -463,6 +557,7 @@ function Join-LibPieces([string]$Ws, $File, [string]$Dir, [string]$OutFile) {
         }
         $paths += $pp
     }
+    if ($null -ne $Progress) { $Progress.Stage = 'join' }
     try {
         $out = [System.IO.File]::Create($OutFile)
         try {
@@ -481,7 +576,7 @@ function Join-LibPieces([string]$Ws, $File, [string]$Dir, [string]$OutFile) {
 
 # Downloads a library game, checks every file, then moves it into place.
 # Returns @{ Ok; Message }.
-function Install-LibGame([string]$Ws, $Game, $Systems) {
+function Install-LibGame([string]$Ws, $Game, $Systems, $Progress = $null) {
     $res = @{ Ok = $false; Message = '' }
     $sys = @($Systems | Where-Object { $_.Name -eq $Game.System })
     if ($sys.Count -eq 0) { $res.Message = "This RetroBat has no '$($Game.System)' console."; return $res }
@@ -491,20 +586,23 @@ function Install-LibGame([string]$Ws, $Game, $Systems) {
     foreach ($f in $Game.Files) {
         $tmp = Join-LibPath $dl (($f.Name -replace '/', '~') + '.part')
         if ($null -ne $f.PSObject.Properties['Pieces'] -and @($f.Pieces).Count -gt 0) {
-            $j = Join-LibPieces $Ws $f $dl $tmp
+            $j = Join-LibPieces $Ws $f $dl $tmp $Progress
             if (-not $j.Ok) { $res.Message = $j.Message; return $res }
         }
         else {
-        try { Invoke-LibFetch $f.Url $tmp $Ws }
+        try { Invoke-LibFetch $f.Url $tmp $Ws $Progress }
         catch { $res.Message = 'The download stopped: ' + $_.Exception.Message; return $res }
         }
+        if ($null -ne $Progress) { $Progress.Stage = 'check' }
         if ((Get-Item -LiteralPath $tmp).Length -ne $f.Size -or (Get-LibHash $tmp) -ne $f.Sha) {
             Remove-Item -LiteralPath $tmp -Force
             $res.Message = "$($f.Name) did not match its checksum, so it was not added."
             return $res
         }
         $ready += ,@($tmp, $f.Name, $(if ($null -ne $f.PSObject.Properties['Unpack']) { [string]$f.Unpack } else { '' }))
+        if ($null -ne $Progress) { $Progress.Stage = 'download' }
     }
+    if ($null -ne $Progress) { $Progress.Stage = 'place' }
     if (-not (Test-Path -LiteralPath $sys[0].Folder)) { [void](New-Item -ItemType Directory -Path $sys[0].Folder -Force) }
     foreach ($r in $ready) {
         if ($r[2] -ne '') {

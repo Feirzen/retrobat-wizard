@@ -172,13 +172,18 @@ $script:ffCount = @{ Hidden = 0; Shown = 0 }
 $script:ffChanged = $false
 
 # RetroBat's own "show hidden games" off, or the filter would do nothing.
+# RetroBat calls it ShowHiddenFiles and it is ON when the line is missing.
+# (2026-11-04: this used to write "ShowHiddenGames", a name RetroBat does not
+# know. It dropped that line the next time it saved its settings and kept
+# showing every hidden game, so the filter looked like it did nothing.)
 function Set-FfShowHiddenOff([string]$Root) {
     $p = Join-FfPath $Root 'emulationstation\.emulationstation\es_settings.cfg'
     if (-not (Test-Path -LiteralPath $p)) { return $false }
     $t = [System.IO.File]::ReadAllText($p)
-    if ($t -match '<bool name="ShowHiddenGames" value="false"\s*/>') { return $false }
-    if ($t -match '<bool name="ShowHiddenGames" value="true"\s*/>') { $t = $t -replace '<bool name="ShowHiddenGames" value="true"\s*/>', '<bool name="ShowHiddenGames" value="false" />' }
-    elseif ($t -match '</config>') { $t = $t -replace '</config>', ("`t<bool name=`"ShowHiddenGames`" value=`"false`" />`r`n</config>") }
+    $t = [regex]::Replace($t, '[ \t]*<bool name="ShowHiddenGames" value="(true|false)"\s*/>\r?\n?', '')
+    if ($t -match '<bool name="ShowHiddenFiles" value="false"\s*/>') { return $false }
+    if ($t -match '<bool name="ShowHiddenFiles" value="true"\s*/>') { $t = $t -replace '<bool name="ShowHiddenFiles" value="true"\s*/>', '<bool name="ShowHiddenFiles" value="false" />' }
+    elseif ($t -match '</config>') { $t = $t -replace '</config>', ("`t<bool name=`"ShowHiddenFiles`" value=`"false`" />`r`n</config>") }
     else { return $false }
     [System.IO.File]::WriteAllText($p, $t, (New-Object System.Text.UTF8Encoding($false)))
     return $true

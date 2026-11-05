@@ -9,7 +9,7 @@
 
     REBUILT 2026-10-25 after Steven sat through 30+ minutes at a friend's
     house watching a black window. What changed:
-      - A real window with three bars, a mage riding each one, and how long
+      - A real window with three bars, a mage standing at the end of each one, and how long
         is left.
       - Step 1 is ONE download (package/wizard-package.zip on main, about
         17 MB) instead of 263 separate ones. Its files go where
@@ -544,7 +544,10 @@ $paint = {
     $w = $sender.ClientSize.Width; $h = $sender.ClientSize.Height
     $st = [string]$RBI["St$i"]
     $f = [double]$script:shown[$i]
-    $x0 = 20; $x1 = $w - 20; $ty = $h - 16; $th = 10
+    # (3.3, Steven: "I don't want the wizard to ride the loading bar as much
+    # as I want him to stand at the end while it loads") The bar stops short
+    # of the right edge and the mage stands there, waiting for it.
+    $x0 = 20; $x1 = $w - 64; $ty = $h - 16; $th = 10
     $g.FillRectangle($brTrack, $x0, $ty, ($x1 - $x0), $th)
     $fw = [int][math]::Round(($x1 - $x0) * [math]::Max(0.0, [math]::Min(1.0, $f)))
     $br = $brGold
@@ -554,16 +557,20 @@ $paint = {
         $g.FillRectangle($br, $x0, $ty, $fw, $th)
         if ($br -eq $brGold) { $g.FillRectangle($brGoldHi, $x0, $ty, $fw, 2) }
     }
-    if ($st -eq 'run' -and $null -ne $mage) {
+    if ($null -ne $mage -and @('run', 'done', 'skip') -contains $st) {
         $t = $script:tick
-        $mx = [math]::Max(0, [math]::Min($w - 36, $x0 + $fw - 18))
-        $bob = [int][math]::Round([math]::Sin(($t / 4.0) + $i) * 2.0)
-        $my = $ty - 52 + 5 + $bob
-        # a few sparks trailing behind
-        for ($k = 1; $k -le 4; $k++) {
-            $sx = $mx - (7 * $k) - ($t % 7)
-            $sy = $ty - 6 - ((($t + ($k * 5)) % 14))
-            if ($sx -gt $x0) { $g.FillRectangle($brGoldHi, $sx, $sy, 2, 2) }
+        $mx = $x1 + 10
+        # feet on the bar's line; a small breath while it works, still once done
+        $bob = $(if ($st -eq 'run') { [int][math]::Round([math]::Sin(($t / 6.0) + $i) * 1.0) } else { 0 })
+        $my = $ty + $th - 52 + $bob
+        if ($st -eq 'run') {
+            # a few sparks rising off the front of the bar, towards him
+            $edge = $x0 + $fw
+            for ($k = 0; $k -lt 4; $k++) {
+                $sx = $edge + (($t * 2 + $k * 9) % [math]::Max(1, ($x1 - $edge + 8)))
+                $sy = $ty - 3 - ((($t + ($k * 5)) % 12))
+                if ($sx -gt $x0 -and $sx -lt $mx) { $g.FillRectangle($brGoldHi, $sx, $sy, 2, 2) }
+            }
         }
         $g.DrawImage($mage, $mx, $my, 36, 52)
     }

@@ -207,6 +207,39 @@ function Set-FirstRunDefaults([string]$Root, [string]$Ws, [string]$Key = '') {
     catch { return @{ Ok = $false; Changed = 0; Message = ('The defaults could not be written: ' + $_.Exception.Message) } }
 }
 
+# Only the scraper login, for a setup made before it was shared (2026-11-04,
+# Steven's flag: "there's nowhere on anyone else's wizard to import that
+# login ... make it so that's not even a necessary step"). Run at PLAY while
+# RetroBat is closed. Never replaces a login RetroBat already has.
+# Returns 'set', 'have' (RetroBat already has one), 'none' (nothing to use)
+# or 'failed'.
+function Set-FrdScraperIfMissing([string]$Root, [string]$Ws, [string]$Key = '') {
+    $p = Get-FrdEsPath $Root
+    if (-not (Test-Path -LiteralPath $p)) { return 'failed' }
+    try {
+        [xml]$x = [System.IO.File]::ReadAllText($p)
+        $c = $x.SelectSingleNode('/config')
+        if ($null -eq $c) { return 'failed' }
+        $have = $c.SelectSingleNode("string[@name='ScreenScraperUser']")
+        if ($null -ne $have -and [string]$have.GetAttribute('value') -ne '') { return 'have' }
+        $sc = Read-FrdScraper $Ws $Key
+        if ($sc.User -eq '' -or $sc.Pass -eq '') { return 'none' }
+        [void](Set-FrdNode $x $c 'string' 'ScreenScraperUser' $sc.User)
+        [void](Set-FrdNode $x $c 'string' 'ScreenScraperPass' $sc.Pass)
+        [void](Set-FrdNode $x $c 'string' 'Scraper' 'ScreenScraper')
+        $bak = [System.IO.Path]::Combine([System.IO.Path]::Combine($Ws, 'Backups', 'Archive'), ('settings-scraper_' + (Get-Date -Format 'yyyy-MM-dd_HHmmss')))
+        [void](New-Item -ItemType Directory -Path $bak -Force)
+        Copy-Item -LiteralPath $p -Destination ([System.IO.Path]::Combine($bak, 'es_settings.cfg')) -Force
+        $set = New-Object System.Xml.XmlWriterSettings
+        $set.Indent = $true; $set.IndentChars = '  '
+        $set.Encoding = New-Object System.Text.UTF8Encoding($false)
+        $w = [System.Xml.XmlWriter]::Create($p, $set)
+        try { $x.Save($w) } finally { $w.Close() }
+        return 'set'
+    }
+    catch { return 'failed' }
+}
+
 # The owner's own login -> defaults\scraper.txt, so new setups scrape by
 # themselves. Only from the Admin page, after a warning. @{ Ok; Message }.
 function Save-FrdScraperFromThisSetup([string]$Root, [string]$Ws) {

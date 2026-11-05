@@ -72,8 +72,17 @@ function Get-FeatureCatalogue {
         reverts = $true
     }
 
-    # separatesaves: held back to the next update (2026-10-25), see
-    # SocialEngine.ps1. Off unless features.ini says on.
+    # separatesaves: taken out for good (2026-11-04). Everybody shares saves.
+
+    # 2026-11-04: box art for games that have no pictures at all
+    # (scripts\AutoArt.ps1), so nobody has to learn RetroBat's scraper.
+    $c['autoart'] = @{
+        title   = 'Box art for games with none'
+        desc    = 'A game with no pictures at all gets its box art by itself, from the free libretro thumbnails, in time for the next PLAY. Games that already have any picture are never touched.'
+        off     = 'Off stops looking. Box art already added stays.'
+        scripts = @()
+        reverts = $false
+    }
 
     # 2026-10-25: M-rated games out of sight (scripts\FamilyFilter.ps1).
     $c['familyfilter'] = @{

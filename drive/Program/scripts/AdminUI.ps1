@@ -135,19 +135,23 @@ function Add-AdminScraperCard($panel) {
     $card.Background = (New-Brush $ColPanel); $card.Padding = '16,12'; $card.Margin = '0,12,0,0'; $card.CornerRadius = '6'
     $sp = New-Object System.Windows.Controls.StackPanel
     [void]$sp.Children.Add((New-Text 'Box art for new setups' $ColText 15 $true))
-    $has = Test-Path -LiteralPath (Join-Path $Ws 'Owner\scraper.txt')
-    $t = New-Text $(if ($has) { 'New setups start signed in to ScreenScraper with the shared login, so they find box art and videos by themselves.' } else { 'New setups are not signed in to ScreenScraper yet. Share the login saved in RetroBat here, and they find box art and videos by themselves.' }) $ColDim 13
+    # 2026-11-04: "shared" means it reached the friends store (the mark is
+    # written only then), not just that Owner\scraper.txt is on this drive.
+    # A 3.1 login saved here was never sent, yet the card said it was.
+    $has = Test-Path -LiteralPath (Join-Path $Ws 'Owner\scraper-shared.txt')
+    $t = New-Text $(if ($has) { 'Shared. Every setup that is not signed in to ScreenScraper signs in with it by itself the next time it presses PLAY, so it finds box art and videos.' } else { 'Not shared yet. Share the login saved in RetroBat here, and every friend''s setup signs in to ScreenScraper by itself the next time it presses PLAY.' }) $ColDim 13
     $t.Margin = '0,4,0,8'
     [void]$sp.Children.Add($t)
     $b = New-SocialButton $(if ($has) { 'Share my login again' } else { 'Share my ScreenScraper login' }) {
-        $pick = Show-Choice $WizardName "Share the ScreenScraper login saved in RetroBat on this setup with every new setup?`n`nIt goes to the private friends store, locked with the friends key, never into the public download. Every new setup signs in with it during its setup. ScreenScraper may slow down an account many people use at once." @('Share it', 'Cancel')
+        $pick = Show-Choice $WizardName "Share the ScreenScraper login saved in RetroBat on this setup with every friend's setup?`n`nIt goes to the private friends store, locked with the friends key, never into the public download. Any setup not signed in to ScreenScraper signs in with it the next time it presses PLAY. ScreenScraper may slow down an account many people use at once." @('Share it', 'Cancel')
         if ($pick -ne 'Share it') { return }
         $r = Save-FrdScraperFromThisSetup $Root $Ws
         Log ('admin: scraper login - ' + $r.Message)
         if ($r.Ok) {
             $txt = Get-FrdSharedScraperText $Ws (Get-SocialToken $Ws)
             $ok = ($txt -ne '') -and (Set-AdminRepoFile $Ws 'shared/scraper.txt' $txt 'Shared ScreenScraper login (locked with the friends key)')
-            $msg = $(if ($ok) { 'Shared. Every new setup signs in to ScreenScraper with it during its setup.' } else { 'Saved on this drive, but it could not be sent to the friends store (no internet, or no friends key). Try again later.' })
+            if ($ok) { try { [System.IO.File]::WriteAllText((Join-Path $Ws 'Owner\scraper-shared.txt'), ('shared ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))) } catch { } }
+            $msg = $(if ($ok) { 'Shared. Every friend''s setup signs in to ScreenScraper with it the next time it presses PLAY.' } else { 'Saved on this drive, but it could not be sent to the friends store (no internet, or no friends key). Try again later.' })
             Log ('admin: scraper login shared - ' + $ok)
             [void](Show-Choice $WizardName $msg @('OK'))
         }

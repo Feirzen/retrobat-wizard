@@ -2,6 +2,37 @@
 
 Newest first. Written for players: what you will notice.
 
+## 3.3.0 (2026-11-04) - ready for friends
+
+**Fixed**
+- Family-friendly really hides games now. It switched off the wrong RetroBat setting, so RetroBat kept showing every hidden game. Turn it on and press PLAY.
+- Your three favourite games come back when you log in on another computer, and are no longer wiped online when the wizard closes. A favourite that computer does not have is still kept.
+- Play-together invites arrive. Every invite, and every Join or No answer, was being thrown away by the other wizard because of how its time was written. A friend still on 3.2 can invite you too.
+- Every setup signs in to ScreenScraper with the shared login by itself the next time it presses PLAY, not only brand-new ones. A setup that already has a login keeps its own.
+- The online library shows in a couple of seconds. It used to wait for every box art picture to download first, one at a time (about a minute every week, and longer on a new setup); now the list comes straight away and the pictures fill in behind it, eight at a time.
+
+**New**
+- Play time follows you. Your time on every game is kept online, so most played and recently played on your profile count every computer you play on, including games that computer does not have.
+- Box art for games with none: a game with no pictures at all gets its box art by itself, from the free libretro thumbnails, in time for the next PLAY. Games that already have any picture are never touched, and RetroBat's own scraper still works as before. Switch it off on Features.
+- Steam on this computer is on the Games tab now, with the other places games come from.
+- The installer's mage stands at the end of each bar while it fills, instead of riding it.
+
+**Games tab**
+- Downloads show real progress that moves smoothly, with speed and time left. The banner at the top fills for real while something downloads or uploads.
+- Less freezing: starting, finishing or reordering a download only redraws that game and the download line, and a console's games are only built when you first open it.
+
+**Tidier pages**
+- Help is just Help now: the website, what's new, Send feedback and updates.
+- How this setup works is rewritten for how the wizard works today (with a part for coding nerds), and opens in its own window from the What the Wizard is box.
+- Set this computer up moved to Settings, This computer. Add a shortcut to a game moved to Features. Make this drive R: moved next to the other several-computers settings. Rename the button is gone from the window (Buttons\Rename The Wizard Button.bat still does it).
+
+**Admins**
+- The ScreenScraper card says whether the login really reached the friends store, instead of saying it was shared when it was only saved on this drive.
+- Phone pings say what kind of report it is and who sent it.
+
+**Taken out**
+- Separate saves per person. It was never switched on, and everybody shares the drive's saves.
+
 ## Admin tools refresh (2026-10-26) - no player update
 
 Only the Admin tab's files changed, so the wizard stays 3.2.0 and players are offered nothing.

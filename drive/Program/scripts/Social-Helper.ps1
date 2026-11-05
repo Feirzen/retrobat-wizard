@@ -212,7 +212,9 @@ function Show-Popup($Player, [string]$Title, [string]$Line) {
 function Get-HelperLive($p) {
     $now = Get-SocialNowUtc
     $favs = @()
-    try { $favs = @(Get-SocialFavs $Root $p | Where-Object { $null -ne $_ }) } catch { }
+    # one per slot, $null kept (2026-11-04): the online file fills a $null
+    # slot from the profile's by-name favourite
+    try { $favs = @(Get-SocialFavs $Root $p) } catch { }
     $inv = $null; $rep = $null
     try { $inv = Read-SocialInvite $Ws $now } catch { }
     try { $rep = Read-SocialReply $Ws $now } catch { }
@@ -348,13 +350,18 @@ function Send-CheckIn([string]$State) {
     }
     # played games for the profile (only sent when shared with someone)
     $stats = $null
+    # (2026-10-17) this person's own play time, not the whole drive's.
+    # (2026-11-04) Sent online too, so it follows them to any drive, and the
+    # other drives' time is counted in.
+    $led = $null
+    try { $led = Update-SocialPlayLedger $Root $Ws ([string]$p.Id) } catch { Write-SocialLog $Ws ("play ledger: " + $_.Exception.Message) }
+    $others = $null
+    if ($null -ne $led -and $State -ne 'offline') {
+        try { $pt = Sync-SocialPlaytime $Root $Ws ([string]$p.Id) $led; if ($pt -eq 'sent') { Write-SocialLog $Ws 'play time online: sent' } } catch { Write-SocialLog $Ws ("play time online: " + $_.Exception.Message) }
+    }
+    try { $others = Get-SocialOtherPlaytime $Ws ([string]$p.Id) $false } catch { }
     if (@($p.Share).Count -gt 0) {
-        try {
-            # (2026-10-17) this person's own play time, not the whole drive's
-            $led = $null
-            try { $led = Update-SocialPlayLedger $Root $Ws ([string]$p.Id) } catch { Write-SocialLog $Ws ("play ledger: " + $_.Exception.Message) }
-            $stats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) 3 3 6 $led
-        } catch { Write-SocialLog $Ws ("stats: " + $_.Exception.Message) }
+        try { $stats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) 3 3 6 $led $others } catch { Write-SocialLog $Ws ("stats: " + $_.Exception.Message) }
     }
     $live = Get-HelperLive $p
     $r = Publish-SocialRecord $Ws $p $pres $script:version '' $stats $live

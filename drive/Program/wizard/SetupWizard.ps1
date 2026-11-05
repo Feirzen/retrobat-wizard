@@ -260,6 +260,14 @@ if (Test-Path -LiteralPath $helpLib) {
 }
 else { Log 'HelpText.ps1 not found - the Help tab will point at the docs' }
 
+# --- box art for games with none (3.3) --------------------------------------
+$script:autoArtOk = $false
+$autoArtLib = Join-Path $ScriptsDir 'AutoArt.ps1'
+if (Test-Path -LiteralPath $autoArtLib) {
+    try { . $autoArtLib; $script:autoArtOk = $true }
+    catch { Log "could not load AutoArt.ps1: $_" }
+}
+
 $script:shortcutsOk = $false
 $shortcutLib = Join-Path $ScriptsDir 'Shortcuts.ps1'
 if (Test-Path -LiteralPath $shortcutLib) {
@@ -1477,6 +1485,37 @@ function Start-PlayFlow {
     if ($script:familyOk) {
         try { $ff = Sync-FamilyFilter $Root $Ws; Log ('family filter: ' + $ff.Message) }
         catch { Log ('family filter: could not apply - ' + $_.Exception.Message) }
+    }
+
+    # --- the shared ScreenScraper login, for setups made before it ---------
+    #  (2026-11-04) First-run setup was the only place that fetched it, so a
+    #  setup made earlier never got it. Now any setup whose RetroBat is not
+    #  signed in to ScreenScraper fetches it here, at most once a day, and
+    #  signs in. A login RetroBat already has is never replaced.
+    if ($script:frdOk -and $script:socialOk) {
+        try {
+            $mark = Join-Path $Ws 'Cache\social\scraper-check.txt'
+            $due = (-not (Test-Path -LiteralPath $mark)) -or (((Get-Date) - (Get-Item -LiteralPath $mark).LastWriteTime).TotalHours -ge 20)
+            $esCfg = Join-Path $Root 'emulationstation\.emulationstation\es_settings.cfg'
+            $signedIn = (Test-Path -LiteralPath $esCfg) -and ([System.IO.File]::ReadAllText($esCfg) -match '<string name="ScreenScraperUser" value="[^"]+"')
+            if ($due -and -not $signedIn) {
+                New-Item -ItemType Directory -Force -Path (Split-Path $mark -Parent) | Out-Null
+                [System.IO.File]::WriteAllText($mark, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+                [void](Get-SocialSharedScraper $Ws)
+                $sr = Set-FrdScraperIfMissing $Root $Ws (Get-SocialToken $Ws)
+                Log ('scraper login: ' + $sr)
+            }
+        }
+        catch { Log ('scraper login: could not apply - ' + $_.Exception.Message) }
+    }
+
+    # --- box art for games with none (3.3, scripts\AutoArt.ps1) -------------
+    #  RetroBat is closed here, so the pictures fetched since last time go
+    #  into the game lists now; then the hidden fetch looks for more (at most
+    #  once a day) while people play, ready for the next PLAY.
+    if ($script:autoArtOk -and (Test-AaOn $Root)) {
+        try { $aan = Sync-AutoArt $Root $Ws; if ($aan -gt 0) { Log ("box art: put in the game lists for {0} game(s)" -f $aan) } } catch { Log ('box art: ' + $_.Exception.Message) }
+        try { if (Start-AutoArt $Root $Ws) { Log 'box art: looking for games with no pictures' } } catch { }
     }
 
     # --- ckau-book, once it has arrived (2026-10-10) --------------------------
@@ -3411,17 +3450,19 @@ function Get-RunningWork {
         $j = $script:adminLibJob
         if ($null -ne $j -and -not $j.Handle.IsCompleted) {
             $st = [string]$j.Sync.Stage
-            if ($st -eq 'Uploading...') { $st = 'Uploading... {0}%' -f $j.Sync.Percent }
-            $out += @{ Label = ('Uploading ' + [string]$j.Title); Detail = ([string]$j.Sync.Prefix + $st); Safe = $true }
+            $pc = -1
+            if ($st -eq 'Uploading...') { $st = 'Uploading... {0}%' -f $j.Sync.Percent; try { $pc = [double]$j.Sync.Percent } catch { $pc = -1 } }
+            $out += @{ Label = ('Uploading ' + [string]$j.Title); Detail = ([string]$j.Sync.Prefix + $st); Safe = $true; Percent = $pc }
         }
     } catch { }
     try {
         foreach ($lj in @($script:libJobs)) {
             if ($null -eq $lj -or $lj.Kind -ne 'install' -or $lj.Handle.IsCompleted) { continue }
             $d = ''; try { $d = Get-LibJobProgress $lj.Game } catch { }
-            $out += @{ Label = ('Downloading ' + [string]$lj.Game.Title); Detail = $d; Safe = $true }
+            $pc = -1; try { $pc = Get-LibJobPercent $lj.Game } catch { }
+            $out += @{ Label = ('Downloading ' + [string]$lj.Game.Title); Detail = $d; Safe = $true; Percent = $pc }
         }
-        foreach ($qg in @($script:libQueue)) { $out += @{ Label = ('Waiting to download ' + [string]$qg.Title); Detail = ''; Safe = $true } }
+        foreach ($qg in @($script:libQueue)) { $out += @{ Label = ('Waiting to download ' + [string]$qg.Title); Detail = ''; Safe = $true; Waiting = $true } }
     } catch { }
     return $out
 }
@@ -3526,8 +3567,15 @@ function Update-WorkingBar {
             $script:busyBlockedSeen = $b
             $script:busyNudge = 4
         }
-        $parts = @($work | ForEach-Object { if ([string]$_.Detail -ne '') { '{0} - {1}' -f $_.Label, $_.Detail } else { [string]$_.Label } })
+        # (2026-10-31, Steven: "an actual progress bar instead of just a
+        # scrolling bar") Waiting downloads are one short note, and the bar
+        # fills for real whenever the work says how far along it is.
+        $now = @($work | Where-Object { -not $_.Waiting })
+        $waiting = @($work | Where-Object { $_.Waiting }).Count
+        $parts = @($now | ForEach-Object { if ([string]$_.Detail -ne '') { '{0} - {1}' -f $_.Label, $_.Detail } else { [string]$_.Label } })
+        if ($waiting -gt 0) { $parts += ('{0} more waiting to download' -f $waiting) }
         $text = ($parts -join '     |     ')
+        $known = @($now | Where-Object { $null -ne $_.Percent -and [double]$_.Percent -ge 0 })
         if ($script:afterWork -eq 'play') { $text += '     (PLAY starts when this is done)' }
         elseif ($script:afterWork -eq 'close') { $text += '     (the wizard closes when this is done)' }
         if ($script:busyNudge -gt 0) {
@@ -3539,7 +3587,14 @@ function Update-WorkingBar {
             $script:workingText.Text = $text
             $script:workingBar.Background = (New-Brush '#FF2A2440')
         }
-        if ($null -ne $script:workingProg) { $script:workingProg.IsIndeterminate = $true }
+        if ($null -ne $script:workingProg) {
+            if ($known.Count -gt 0) {
+                $avg = (($known | ForEach-Object { [double]$_.Percent }) | Measure-Object -Average).Average
+                $script:workingProg.IsIndeterminate = $false
+                $script:workingProg.Value = [math]::Max(0, [math]::Min(100, [double]$avg))
+            }
+            else { $script:workingProg.IsIndeterminate = $true }
+        }
         $script:workingBar.Visibility = 'Visible'
     } catch { }
 }
@@ -4619,7 +4674,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
          runs beside the window; see "STAYING ALIVE WHILE WORKING". -->
     <Border x:Name="WorkingBar" DockPanel.Dock="Top" Background="#FF2A2440" Padding="14,8" Visibility="Collapsed">
       <StackPanel Orientation="Horizontal">
-        <ProgressBar x:Name="WorkingProg" Width="110" Height="8" VerticalAlignment="Center"
+        <ProgressBar x:Name="WorkingProg" Width="160" Height="10" Minimum="0" Maximum="100" VerticalAlignment="Center"
                      Foreground="#FF6FC3FF" Background="#FF1B1B22" BorderThickness="0"/>
         <TextBlock x:Name="WorkingText" Foreground="#FFCFE6FF" FontSize="14" VerticalAlignment="Center" Margin="14,0,0,0"/>
       </StackPanel>
@@ -4813,7 +4868,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                   <Image x:Name="TileGamesIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="icon-chest"/>
                   <TextBlock Grid.Column="1" Text="Games" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Add games, controllers and player counts." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Add games, the online library, and Steam." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
               <Button x:Name="TileSocial" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
@@ -5148,7 +5203,7 @@ function Show-MainWindow($status, [string]$startTab = 'play') {
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                   <Image x:Name="HubMachineIcon" Grid.Column="0" Stretch="None" VerticalAlignment="Center" Margin="0,0,14,0" RenderOptions.BitmapScalingMode="NearestNeighbor" Tag="profile-pc"/>
                   <TextBlock Grid.Column="1" Text="This computer" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="How hard it is pushed, screen fixes, Steam." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                  <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="How hard it is pushed, screen fixes, set it up here." FontSize="13" Foreground="#FFA8A8B4" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </Grid>
               </Button>
               <Button x:Name="HubFeatures" Style="{StaticResource HomeTile}" HorizontalContentAlignment="Stretch">
@@ -6053,138 +6108,60 @@ function Render-PlaySummary($s) {
 }
 
 
-# The Help tab. Every word comes from scripts\HelpText.ps1, which is also
-# what Buttons\Show Help.bat prints, so the tab and the button can
-# never disagree. If that file is missing the tab says where to read instead
-# of being blank.
-# The "set this computer up" button, and anything else the Help tab can DO
-# rather than say. It is a separate function because Render-Help returns early
-# in two places and the button has to appear on all three paths - somebody
-# whose HelpText.ps1 is missing still needs to be able to set their computer
-# up.
+# The Help tab's own tools (3.3, Steven's flag, 2026-10-27): only the update
+# buttons stay here. Each other button moved to the page it belongs on:
+#     Set this computer up         Settings, This computer   (Add-LocalSetupAction)
+#     Add a shortcut to a game     Features                  (Add-ShortcutAction)
+#     Make this drive R:           Settings, This computer, in the part about
+#                                  using this setup on more than one computer
+#                                                            (Add-DriveLetterAction)
+# "Rename the button in the RetroBat folder" is gone from the window; the
+# rare person who renames the wizard still has Buttons\Rename The Wizard
+# Button.bat.
 function Add-HelpActions {
     if ($null -eq $script:helpPanel) { return }
-
     Add-UpdateActions
-
-    # Each button below stands on its own: a missing LocalSetup.ps1 must not
-    # take the rename button away with it, and the other way round.
-    if ($script:localSetupOk) {
-        $row = New-Object System.Windows.Controls.StackPanel
-        $row.Orientation = 'Horizontal'; $row.Margin = '0,16,0,0'
-
-        $b = New-Object System.Windows.Controls.Button
-        $b.Padding = '10,3'; $b.FontSize = 13; $b.VerticalAlignment = 'Top'   # Top: the row would otherwise stretch it to the height of the text beside it
-        if (Test-LocalSetupInstalled) { $b.Content = 'Set this computer up again' }
-        else                          { $b.Content = 'Set this computer up' }
-        $b.Add_Click({ Invoke-LocalSetup })
-        [void]$row.Children.Add($b)
-
-        $t = New-Text 'Puts Play, this wizard and a Controllers button on this computer, with icons copied onto the computer (so on a carry-about drive they stay put when it is unplugged).' $ColDim 13
-        $t.Margin = '12,7,0,0'; $t.MaxWidth = 470; $t.TextWrapping = 'Wrap'
-        [void]$row.Children.Add($t)
-
-        [void]$script:helpPanel.Children.Add($row)
-    }
-
-    # --- a shortcut to one game -------------------------------------------
-    #  It sits beside "set this computer up" because it is the same kind of
-    #  job: something written onto the COMPUTER, not onto the drive.
-    if ($script:shortcutMakerOk) {
-        $row2 = New-Object System.Windows.Controls.StackPanel
-        $row2.Orientation = 'Horizontal'; $row2.Margin = '0,16,0,0'
-
-        $b2 = New-Object System.Windows.Controls.Button
-        $b2.Content = 'Add a shortcut to a game'
-        $b2.Padding = '10,3'; $b2.FontSize = 13; $b2.VerticalAlignment = 'Top'   # Top: the row would otherwise stretch it to the height of the text beside it
-        $b2.Add_Click({ Invoke-ShortcutMakerFromWizard })
-        [void]$row2.Children.Add($b2)
-
-        $t2 = New-Text 'Puts one game on the desktop or Start Menu, with its own artwork as the icon. You choose which picture, because box art and logos read very differently once they are icon sized.' $ColDim 13
-        $t2.Margin = '12,7,0,0'; $t2.MaxWidth = 470; $t2.TextWrapping = 'Wrap'
-        [void]$row2.Children.Add($t2)
-
-        [void]$script:helpPanel.Children.Add($row2)
-    }
-
-    # --- the drive letter --------------------------------------------------
-    #  Only drawn when there is something to do. On a computer where the drive
-    #  is already R:, or where R: belongs to somebody else, a button offering
-    #  it would be a dead end.
-    if ($script:driveLetterOk) {
-        $dls = $null
-        try { $dls = Get-DriveLetterStatus -Root $Root } catch { }
-        if ($null -ne $dls -and ($dls.State -eq 'canchange' -or $dls.State -eq 'needsadmin')) {
-            $row3 = New-Object System.Windows.Controls.StackPanel
-            $row3.Orientation = 'Horizontal'; $row3.Margin = '0,16,0,0'
-
-            $b3 = New-Object System.Windows.Controls.Button
-            $b3.Content = 'Make this drive R:'
-            $b3.Padding = '10,3'; $b3.FontSize = 13; $b3.VerticalAlignment = 'Top'   # Top: the row would otherwise stretch it to the height of the text beside it
-            $b3.Add_Click({ Invoke-DriveLetterFromWizard })
-            [void]$row3.Children.Add($b3)
-
-            $why = $dls.Line + ' Nothing here needs it - it is a safety net for the odd emulator setting that insists on a letter.'
-            $t3 = New-Text $why $ColDim 13
-            $t3.Margin = '12,7,0,0'; $t3.MaxWidth = 470; $t3.TextWrapping = 'Wrap'
-            [void]$row3.Children.Add($t3)
-
-            [void]$script:helpPanel.Children.Add($row3)
-        }
-    }
-
-    Add-RenameAction
 }
 
-
-# The drive's name lives in ONE place, the name line in Settings\wizard.ini, and
-# everything follows it by itself - except the .bat file at the top of the
-# drive, because a file cannot rename itself while Windows is running it. This
-# is that one exception, as a button.
-#
-# The old .bat is MOVED into _Wizard\Cache\Trash\, never deleted,
-# which is this drive's rule for everything.
-function Add-RenameAction {
-    if ($null -eq $script:helpPanel) { return }
-    if (-not (Test-Path -LiteralPath (Join-Path $ScriptsDir 'Rename-WizardButton.ps1'))) { return }
-
-    # Tucked inside an Expander since 2026-09-18. It is a real button that
-    # does a real job, but that job only exists for somebody who has renamed
-    # the whole drive in Settings\wizard.ini - which is once, ever, and
-    # probably never. On the open page it read like something you were
-    # supposed to do.
-    $exp = New-Object System.Windows.Controls.Expander
-    $exp.Margin = '0,18,0,0'; $exp.FontSize = 14
-    $exp.Foreground = (New-Brush $ColDim)
-    $exp.Header = 'Advanced'
-
+# One button with a line beside it, the way every tool row on the wizard is
+# drawn.
+function New-ActionRow([string]$Label, [string]$Text, [scriptblock]$OnClick) {
     $row = New-Object System.Windows.Controls.StackPanel
-    $row.Orientation = 'Horizontal'; $row.Margin = '0,8,0,0'
-
+    $row.Orientation = 'Horizontal'; $row.Margin = '0,12,0,0'
     $b = New-Object System.Windows.Controls.Button
-    $b.Content = 'Rename the button in the RetroBat folder'
+    $b.Content = $Label
     $b.Padding = '10,3'; $b.FontSize = 13; $b.VerticalAlignment = 'Top'   # Top: the row would otherwise stretch it to the height of the text beside it
-    $b.Add_Click({
-        if (Test-RetroBatRunning) {
-            [void](Show-Choice $WizardName 'RetroBat is open. Close it completely first - Windows will not rename a file that something else is holding.' @('OK'))
-            return
-        }
-        $code = Invoke-Step 'Rename-WizardButton.ps1' 'renaming the wizard button'
-        if ($code -eq 0) {
-            [void](Show-Choice $WizardName ("Done.`n`nThe button in the RetroBat folder now matches the name in _Wizard\Settings\wizard.ini. The old one was moved into _Wizard\Cache\Trash - nothing was deleted.") @('OK'))
-        }
-        else {
-            [void](Show-Choice $WizardName ("That did not finish, and nothing was left half-done.`n`nThe details are in wizard.log.") @('OK'))
-        }
-    })
+    $b.Add_Click($OnClick)
     [void]$row.Children.Add($b)
-
-    $t = New-Text 'Only needed after the drive is given a new name in Settings\wizard.ini. A file cannot rename itself while Windows is running it, which is the whole reason this is a button.' $ColDim 13
-    $t.Margin = '12,7,0,0'; $t.MaxWidth = 420; $t.TextWrapping = 'Wrap'
+    $t = New-Text $Text $ColDim 13
+    $t.Margin = '12,7,0,0'; $t.MaxWidth = 470; $t.TextWrapping = 'Wrap'
     [void]$row.Children.Add($t)
+    return $row
+}
 
-    $exp.Content = $row
-    [void]$script:helpPanel.Children.Add($exp)
+# Play, this wizard and a Controllers button on this computer.
+function Add-LocalSetupAction($panel) {
+    if (-not $script:localSetupOk -or $null -eq $panel) { return }
+    $label = $(if (Test-LocalSetupInstalled) { 'Set this computer up again' } else { 'Set this computer up' })
+    [void]$panel.Children.Add((New-ActionRow $label 'Puts Play, this wizard and a Controllers button on this computer, with icons copied onto the computer (so on a carry-about drive they stay put when it is unplugged).' { Invoke-LocalSetup }))
+}
+
+# One game on the desktop or Start Menu.
+function Add-ShortcutAction($panel) {
+    if (-not $script:shortcutMakerOk -or $null -eq $panel) { return }
+    [void]$panel.Children.Add((New-ActionRow 'Add a shortcut to a game' 'Puts one game on the desktop or Start Menu, with its own artwork as the icon. You choose which picture, because box art and logos read very differently once they are icon sized.' { Invoke-ShortcutMakerFromWizard }))
+}
+
+# The drive letter. Only drawn when there is something to do: on a computer
+# where the drive is already R:, or where R: belongs to somebody else, a
+# button offering it would be a dead end.
+function Add-DriveLetterAction($panel) {
+    if (-not $script:driveLetterOk -or $null -eq $panel) { return }
+    $dls = $null
+    try { $dls = Get-DriveLetterStatus -Root $Root } catch { }
+    if ($null -eq $dls -or ($dls.State -ne 'canchange' -and $dls.State -ne 'needsadmin')) { return }
+    $why = $dls.Line + ' Nothing here needs it - it is a safety net for the odd emulator setting that insists on a letter.'
+    [void]$panel.Children.Add((New-ActionRow 'Make this drive R:' $why { Invoke-DriveLetterFromWizard }))
 }
 
 
@@ -6257,6 +6234,10 @@ $script:libBusy      = @{}       # game id -> 'Downloading...'
 $script:libBusyText  = @{}       # game id -> the words on its row, kept up to date while it downloads
 $script:libDone      = @{}       # game id -> @{ Ok; Message }, the last download's result
 $script:libJobs      = @()       # running downloads
+$script:libBusyBars  = @{}       # game id -> its bar in the download line (2026-10-31)
+$script:libRowRight  = @{}       # game id -> its row's right side, for redrawing one row
+$script:libLazy      = @{}       # console -> its games, built when the console is opened
+$script:libQueueHost = $null     # where the download line is drawn
 $script:libQueue     = New-Object System.Collections.ArrayList   # games waiting their turn (3.2)
 $script:LibAtOnce    = 2         # downloads at the same time (Steven, 2026-10-26)
 $script:libTimer     = $null
@@ -6379,13 +6360,21 @@ function Start-LibraryJob([string]$Kind, $Game = $null) {
         # SocialEngine too since 2026-10-11: private library files are
         # fetched with the friends key.
         $se = Join-Path $ScriptsDir 'SocialEngine.ps1'
+        # (2026-11-04) The list comes back at once with the pictures already
+        # here; the missing or week-old ones are fetched after, by 'art'.
         if ($Kind -eq 'catalog') {
-            [void]$ps.AddScript('param($lib, $ws) . $lib; Get-LibCatalog $ws').AddArgument($lib).AddArgument($Ws)
+            [void]$ps.AddScript('param($lib, $ws) . $lib; Get-LibCatalog $ws $false').AddArgument($lib).AddArgument($Ws)
         }
-        else {
-            [void]$ps.AddScript('param($se, $lib, $ws, $root, $game) . $se; . $lib; $s = @(Get-LibSystems $root); Install-LibGame $ws $game $s').AddArgument($se).AddArgument($lib).AddArgument($Ws).AddArgument($Root).AddArgument($Game)
+        if ($Kind -eq 'art') {
+            [void]$ps.AddScript('param($lib, $ws, $items) . $lib; @{ Ok = $true; Got = (Update-LibArt $ws $items) }').AddArgument($lib).AddArgument($Ws).AddArgument(@($Game))
         }
-        $script:libJobs += [pscustomobject]@{ Kind = $Kind; Game = $Game; Ps = $ps; Handle = $ps.BeginInvoke() }
+        $prog = $null
+        if ($Kind -eq 'install') {
+            # (2026-10-31) How far along, straight from the download itself.
+            $prog = [hashtable]::Synchronized(@{ Bytes = [long]0; Stage = 'download' })
+            [void]$ps.AddScript('param($se, $lib, $ws, $root, $game, $prog) . $se; . $lib; $s = @(Get-LibSystems $root); Install-LibGame $ws $game $s $prog').AddArgument($se).AddArgument($lib).AddArgument($Ws).AddArgument($Root).AddArgument($Game).AddArgument($prog)
+        }
+        $script:libJobs += [pscustomobject]@{ Kind = $Kind; Game = $Game; Ps = $ps; Handle = $ps.BeginInvoke(); Prog = $prog; Samples = (New-Object System.Collections.ArrayList); Speed = [double]0; Started = (Get-Date) }
         if ($Kind -eq 'install') { Start-WorkWatch }
         if ($null -eq $script:libTimer) {
             $script:libTimer = New-Object System.Windows.Threading.DispatcherTimer
@@ -6402,6 +6391,9 @@ function Invoke-LibraryTick {
         $still = @()
         $failNote = ''
         $redraw = $false
+        $full = $false
+        $changed = @()
+        $artStart = $null
         foreach ($j in @($script:libJobs)) {
             if (-not $j.Handle.IsCompleted) { $still += $j; continue }
             $out = $null
@@ -6409,8 +6401,19 @@ function Invoke-LibraryTick {
             try { $j.Ps.Runspace.Dispose(); $j.Ps.Dispose() } catch { }
             $r = $(if ($out.Count -gt 0) { $out[-1] } else { @{ Ok = $false; Message = 'No answer.' } })
             if ($j.Kind -eq 'catalog') {
+                Log ("library: list ready in {0:0.0}s ({1})" -f ((Get-Date) - $j.Started).TotalSeconds, $(if ($r.Ok) { '{0} games, {1} picture(s) to fetch' -f @($r.Games).Count, @($r.ArtNeeded).Count } else { [string]$r.Message }))
                 $script:libCatalog = $r
                 $script:libNote = $(if ($r.Ok) { $(if ($r.Message) { $r.Message } else { 'Updated ' + (Get-Date -Format 'h:mm tt') + '.' }) } else { $r.Message })
+                $full = $true
+                if ($r.Ok -and @($r.ArtNeeded).Count -gt 0) { $artStart = @($r.ArtNeeded) }
+            }
+            elseif ($j.Kind -eq 'art') {
+                # the pictures fetched after the list: put them on the rows
+                Log ("library: {0} picture(s) fetched in {1:0.0}s" -f [int]$r.Got, ((Get-Date) - $j.Started).TotalSeconds)
+                if ([int]$r.Got -gt 0 -and $null -ne $script:libCatalog -and $script:libCatalog.Ok) {
+                    try { Set-LibArtPaths $Ws @($script:libCatalog.Games) } catch { }
+                    $full = $true
+                }
             }
             else {
                 $script:libBusy.Remove($j.Game.Id)
@@ -6422,20 +6425,36 @@ function Invoke-LibraryTick {
                 # looked like nothing had happened.
                 $script:libDone[$j.Game.Id] = @{ Ok = [bool]$r.Ok; Message = [string]$r.Message }
                 if (-not $r.Ok) { $failNote = ("{0} was not added.`n`n{1}" -f $j.Game.Title, $r.Message) }
+                $changed += [string]$j.Game.Id
             }
             $redraw = $true
         }
         $script:libJobs = $still
-        if ($redraw -and $script:libQueue.Count -gt 0) { Start-LibQueue; $still = $script:libJobs }
+        if ($null -ne $artStart) { Start-LibraryJob 'art' $artStart; $still = $script:libJobs }
+        if ($redraw -and $script:libQueue.Count -gt 0) {
+            $before = @($script:libQueue | ForEach-Object { [string]$_.Id })
+            Start-LibQueue; $still = $script:libJobs
+            $after = @($script:libQueue | ForEach-Object { [string]$_.Id })
+            $changed += @($before | Where-Object { $after -notcontains $_ })
+        }
         foreach ($j in $still) {
             if ($j.Kind -ne 'install') { continue }
+            Update-LibJobSpeed $j
             $tb = $script:libBusyText[$j.Game.Id]
             if ($null -ne $tb) { try { $tb.Text = Get-LibJobProgress $j.Game } catch { } }
             $qb = $script:libBusyText[('q:' + [string]$j.Game.Id)]
             if ($null -ne $qb) { try { $qb.Text = ('{0}  -  {1}' -f $j.Game.Title, (Get-LibJobProgress $j.Game)) } catch { } }
+            $pb = $script:libBusyBars[[string]$j.Game.Id]
+            if ($null -ne $pb) { try { $p = Get-LibJobPercent $j.Game; if ($p -ge 0) { $pb.IsIndeterminate = $false; $pb.Value = $p } else { $pb.IsIndeterminate = $true } } catch { } }
         }
+        $qh = $script:libBusyText['q:head']
+        if ($null -ne $qh) { try { $qh.Text = Get-LibLineHeading } catch { } }
         if ($still.Count -eq 0 -and $script:libQueue.Count -eq 0) { $script:libTimer.Stop() }
-        if ($redraw) { Render-Games }
+        # (2026-10-31, Steven: "it freezes up a lot on that screen") A
+        # finished download redraws only the download line and that game's
+        # row, not the whole library. A new catalog still redraws it all.
+        if ($full) { $rgT = Get-Date; Render-Games; Log ("library: drawn in {0:0.0}s" -f ((Get-Date) - $rgT).TotalSeconds) }
+        elseif ($redraw) { Update-LibLive $changed }
         if ($failNote) { [void](Show-Choice $WizardName $failNote @('OK')) }
     }
     catch { Log ("library tick: {0}" -f $_.Exception.Message) }
@@ -6500,17 +6519,86 @@ function Show-LibGameDetails($Game) {
 
 # How far a library download has got, from the size of what has landed in
 # library\downloads so far (the pieces of a big game, then the joined file).
-function Get-LibJobProgress($Game) {
+# (2026-10-31) A download now reports its own bytes as they land (see
+# Invoke-LibFetch), so the numbers move every tick instead of jumping. The
+# old way, the size of the half-written file on disk, is kept for a job
+# started without it.
+function Get-LibJob($Game) {
+    foreach ($j in @($script:libJobs)) { if ($null -ne $j -and $j.Kind -eq 'install' -and [string]$j.Game.Id -eq [string]$Game.Id) { return $j } }
+    return $null
+}
+
+function Get-LibJobBytes($Game, $Job = $null) {
+    if ($null -eq $Job) { $Job = Get-LibJob $Game }
+    if ($null -ne $Job -and $null -ne $Job.Prog) { try { return [long]$Job.Prog.Bytes } catch { } }
     $dl = Join-Path $Ws 'Cache\library\downloads'
     $have = [long]0
     foreach ($f in @($Game.Files)) {
         $fn = ([string]$f.Name) -replace '/', '~'
         foreach ($p in @(Get-ChildItem -LiteralPath $dl -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq ($fn + '.part') -or $_.Name.StartsWith($fn + '.piece') })) { $have += $p.Length }
     }
+    return $have
+}
+
+# 0 to 100 while downloading, 100 while it is checked and put in place.
+function Get-LibJobPercent($Game) {
     $total = [math]::Max([long]1, [long]$Game.Size)
-    if ($have -ge $total) { return $(if (@($Game.Files | Where-Object { $null -ne $_.PSObject.Properties['Unpack'] }).Count -gt 0) { 'Checking it and unpacking the folder...' } else { 'Checking it matches the library...' }) }
-    $pc = [int](100 * $have / $total)
-    return ('Downloading... {0}% ({1:N0} of {2:N0} MB)' -f $pc, ($have / 1MB), ($total / 1MB))
+    $have = Get-LibJobBytes $Game
+    return [math]::Min(100, [math]::Floor(100 * $have / $total))
+}
+
+function Format-LibSpeed([double]$BytesPerSec) {
+    if ($BytesPerSec -ge 1MB) { return ('{0:N1} MB/s' -f ($BytesPerSec / 1MB)) }
+    return ('{0:N0} KB/s' -f ($BytesPerSec / 1KB))
+}
+
+function Format-LibLeft([double]$Seconds) {
+    if ($Seconds -lt 60) { return 'under a minute left' }
+    $m = [int][math]::Ceiling($Seconds / 60)
+    if ($m -lt 60) { return ('about {0} min left' -f $m) }
+    return ('about {0} h {1} min left' -f [int][math]::Floor($m / 60), ($m % 60))
+}
+
+# Speed over the last few seconds, so one slow moment does not throw the
+# time left around.
+function Update-LibJobSpeed($Job) {
+    if ($null -eq $Job -or $null -eq $Job.Prog -or $null -eq $Job.Samples) { return }
+    $now = [DateTime]::UtcNow
+    $b = [long]0; try { $b = [long]$Job.Prog.Bytes } catch { return }
+    [void]$Job.Samples.Add(@($now, $b))
+    while ($Job.Samples.Count -gt 2 -and ($now - $Job.Samples[0][0]).TotalSeconds -gt 8) { $Job.Samples.RemoveAt(0) }
+    $dt = ($now - $Job.Samples[0][0]).TotalSeconds
+    if ($dt -ge 1.5) { $Job.Speed = [double]($b - [long]$Job.Samples[0][1]) / $dt }
+}
+
+function Get-LibJobProgress($Game) {
+    $j = Get-LibJob $Game
+    $total = [math]::Max([long]1, [long]$Game.Size)
+    $have = Get-LibJobBytes $Game $j
+    $stage = 'download'
+    if ($null -ne $j -and $null -ne $j.Prog) { try { $stage = [string]$j.Prog.Stage } catch { } }
+    if ($stage -eq 'join') { return 'Putting the pieces together...' }
+    if ($stage -eq 'place') { return $(if (@($Game.Files | Where-Object { $null -ne $_.PSObject.Properties['Unpack'] }).Count -gt 0) { 'Unpacking the folder...' } else { 'Putting it in place...' }) }
+    if ($stage -eq 'check' -or $have -ge $total) { return 'Checking it matches the library...' }
+    $pc = [int][math]::Floor(100 * $have / $total)
+    $txt = ('Downloading... {0}% ({1:N0} of {2:N0} MB)' -f $pc, ($have / 1MB), ($total / 1MB))
+    if ($null -ne $j -and [double]$j.Speed -gt 0) { $txt += ('  -  {0}  -  {1}' -f (Format-LibSpeed $j.Speed), (Format-LibLeft (($total - $have) / [double]$j.Speed))) }
+    return $txt
+}
+
+# The download line's heading, with the time left for everything in it.
+function Get-LibLineHeading {
+    $running = @($script:libJobs | Where-Object { $null -ne $_ -and $_.Kind -eq 'install' })
+    $left = [double]0; $speed = [double]0
+    foreach ($j in $running) {
+        $left += [math]::Max([long]0, [long]$j.Game.Size - (Get-LibJobBytes $j.Game $j))
+        $speed += [math]::Max([double]0, [double]$j.Speed)
+    }
+    foreach ($g in @($script:libQueue)) { $left += [long]$g.Size }
+    $n = $running.Count + $script:libQueue.Count
+    $h = ('Downloads  -  {0} game{1}, {2} at a time' -f $n, $(if ($n -eq 1) { '' } else { 's' }), $script:LibAtOnce)
+    if ($speed -gt 0 -and $left -gt 0) { $h += ('  -  ' + ((Format-LibLeft ($left / $speed)) -replace ' left$', '') + ' for all of it') }
+    return $h
 }
 
 # THE DOWNLOAD LINE (3.2, 2026-10-26). Steven: "a queue, 2 at a time". Every
@@ -6529,7 +6617,7 @@ function Invoke-LibraryAdd($Game) {
     [void]$script:libQueue.Add($Game)
     Log ("library: {0} joins the download line ({1} waiting)" -f $Game.Title, $script:libQueue.Count)
     Start-LibQueue
-    Render-Games
+    Update-LibLive @([string]$Game.Id)
 }
 
 # Starts waiting games while fewer than $script:LibAtOnce are downloading.
@@ -6548,7 +6636,7 @@ function Move-LibQueued([string]$Id, [int]$By) {
         if ($j -ne $i) { $g = $script:libQueue[$i]; $script:libQueue.RemoveAt($i); $script:libQueue.Insert($j, $g) }
         break
     }
-    Render-Games
+    Update-LibLive @()
 }
 
 function Remove-LibQueued([string]$Id) {
@@ -6556,7 +6644,23 @@ function Remove-LibQueued([string]$Id) {
         if ([string]$script:libQueue[$i].Id -eq $Id) { Log ("library: {0} taken out of the line" -f $script:libQueue[$i].Title); $script:libQueue.RemoveAt($i); break }
     }
     $script:libBusy.Remove($Id)
-    Render-Games
+    Update-LibLive @($Id)
+}
+
+# Redraws just the download line and the rows of these games (2026-10-31).
+# Before the Games tab has been drawn there is nothing to touch.
+function Update-LibLive($Ids) {
+    if ($null -eq $script:libQueueHost) { Render-Games; return }
+    try {
+        $script:libQueueHost.Children.Clear()
+        $script:libBusyBars = @{}
+        Add-LibQueueBox $script:libQueueHost
+        foreach ($id in @($Ids)) {
+            $rr = $script:libRowRight[[string]$id]
+            if ($null -ne $rr) { Set-LibRowState $rr.Panel $rr.Game $rr.Systems }
+        }
+    }
+    catch { Log ("library: live update - {0}" -f $_.Exception.Message); Render-Games }
 }
 
 # The line, drawn at the top of the online library while anything is in it.
@@ -6566,13 +6670,22 @@ function Add-LibQueueBox($panel) {
     $box = New-Object System.Windows.Controls.Border
     $box.Background = (New-Brush $ColPanel); $box.Padding = '14,10'; $box.Margin = '0,10,0,4'; $box.CornerRadius = '6'
     $sp = New-Object System.Windows.Controls.StackPanel
-    [void]$sp.Children.Add((New-Text ('Downloads ({0} at a time)' -f $script:LibAtOnce) $ColText 14 $true))
+    $head = New-Text ('Downloads ({0} at a time)' -f $script:LibAtOnce) $ColText 14 $true
+    try { $head.Text = Get-LibLineHeading } catch { }
+    $script:libBusyText['q:head'] = $head
+    [void]$sp.Children.Add($head)
     foreach ($j in $running) {
         $t = New-Text ('{0}  -  ' -f $j.Game.Title) $ColText 13
         try { $t.Text += (Get-LibJobProgress $j.Game) } catch { }
-        $t.Margin = '0,4,0,0'
+        $t.Margin = '0,6,0,0'
         $script:libBusyText[('q:' + [string]$j.Game.Id)] = $t
         [void]$sp.Children.Add($t)
+        $pb = New-Object System.Windows.Controls.ProgressBar
+        $pb.Height = 6; $pb.Minimum = 0; $pb.Maximum = 100; $pb.Margin = '0,4,0,0'; $pb.BorderThickness = '0'
+        $pb.Foreground = (New-Brush '#FF6FC3FF'); $pb.Background = (New-Brush '#FF1B1B22')
+        try { $pv = Get-LibJobPercent $j.Game; $pb.Value = [math]::Max(0, $pv) } catch { }
+        $script:libBusyBars[[string]$j.Game.Id] = $pb
+        [void]$sp.Children.Add($pb)
     }
     $n = 0
     foreach ($g in @($script:libQueue)) {
@@ -6596,10 +6709,97 @@ function Add-LibQueueBox($panel) {
     [void]$panel.Children.Add($box)
 }
 
+# One game's row, right side: busy words, 'In your games', or the button.
+function Set-LibRowState($right, $g, $systems) {
+    $right.Children.Clear()
+    $done = $script:libDone[$g.Id]
+    if ($script:libBusy.ContainsKey($g.Id)) {
+        $bt = New-Text $script:libBusy[$g.Id] $ColAway 12
+        if ($null -ne (Get-LibJob $g)) { try { $bt.Text = Get-LibJobProgress $g } catch { } }
+        $script:libBusyText[$g.Id] = $bt
+        [void]$right.Children.Add($bt)
+    }
+    elseif (Test-LibGameInstalled $g $systems) {
+        $script:libBusyText.Remove($g.Id)
+        $okTxt = $(if ($null -ne $done -and $done.Ok) { 'Added - checked, it matches the library' } else { 'In your games' })
+        [void]$right.Children.Add((New-Text $okTxt $ColOnline 12))
+    }
+    else {
+        $script:libBusyText.Remove($g.Id)
+        if ($null -ne $done -and -not $done.Ok) {
+            $ft = New-Text 'Did not work: ' $ColBusy 12; $ft.ToolTip = $done.Message; $ft.VerticalAlignment = 'Center'; $ft.Margin = '0,0,6,0'
+            [void]$right.Children.Add($ft)
+        }
+        $b = New-Object System.Windows.Controls.Button
+        $b.Content = $(if ($null -ne $done -and -not $done.Ok) { 'Try again' } else { 'Add to my games' }); $b.Padding = '10,3'; $b.FontSize = 13; $b.Tag = $g
+        $b.Add_Click({ param($s2, $e2) Invoke-LibraryAdd $s2.Tag })
+        [void]$right.Children.Add($b)
+    }
+}
+
+# One game's whole row in the online library.
+function New-LibGameRow($g, $systems, $bmp) {
+    $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,6,0,0'
+    $right = New-Object System.Windows.Controls.StackPanel; $right.Orientation = 'Horizontal'; $right.VerticalAlignment = 'Top'
+    [System.Windows.Controls.DockPanel]::SetDock($right, 'Right')
+    Set-LibRowState $right $g $systems
+    $script:libRowRight[[string]$g.Id] = @{ Panel = $right; Game = $g; Systems = $systems }
+    [void]$row.Children.Add($right)
+    # small box art (2026-10-12), the console's picture when none
+    $artBox = New-Object System.Windows.Controls.Border; $artBox.Width = 56; $artBox.Margin = '0,2,10,0'; $artBox.VerticalAlignment = 'Top'
+    [System.Windows.Controls.DockPanel]::SetDock($artBox, 'Left')
+    $ai = New-Object System.Windows.Controls.Image; $ai.MaxHeight = 56; $ai.MaxWidth = 56; $ai.Stretch = 'Uniform'
+    $shown = $false
+    if ([string]$g.Art -ne '') {
+        try {
+            $ab = New-Object System.Windows.Media.Imaging.BitmapImage
+            $ab.BeginInit(); $ab.UriSource = New-Object System.Uri([string]$g.Art); $ab.CacheOption = 'OnLoad'; $ab.DecodePixelHeight = 112; $ab.EndInit()
+            $ai.Source = $ab; $shown = $true
+        } catch { }
+    }
+    if (-not $shown -and $null -ne $bmp) {
+        $ai.Source = $bmp; $ai.MaxHeight = 30
+        [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($ai, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
+    }
+    $artBox.Child = $ai
+    [void]$row.Children.Add($artBox)
+    $info = New-Object System.Windows.Controls.StackPanel; $info.Margin = '0,0,12,0'
+    $meta = @()
+    if ($g.Players -ne '') { $meta += ('{0} players' -f $g.Players) }
+    $meta += ('{0} MB' -f [math]::Round($g.Size / 1MB, 1))
+    # The name opens a bigger look at the game (2026-10-17).
+    $tl = New-Object System.Windows.Controls.TextBlock; $tl.FontSize = 14; $tl.FontWeight = 'Bold'
+    $hl = New-Object System.Windows.Documents.Hyperlink; $hl.Foreground = (New-Brush $ColText); $hl.TextDecorations = $null
+    [void]$hl.Inlines.Add($g.Title); $hl.Tag = $g; $hl.ToolTip = 'More about this game'
+    $hl.Add_Click({ param($s2, $e2) Show-LibGameDetails $s2.Tag })
+    [void]$tl.Inlines.Add($hl)
+    [void]$info.Children.Add($tl)
+    [void]$info.Children.Add((New-Text ($meta -join '  -  ') $ColDim 12))
+    if ($g.Description -ne '') { $d = New-Text $g.Description $ColDim 12; $d.TextWrapping = 'Wrap'; [void]$info.Children.Add($d) }
+    [void]$row.Children.Add($info)
+    return $row
+}
+
+# (2026-10-31, Steven: "it freezes up a lot on that screen") A console's
+# games are built the first time it is opened, not every time the tab is
+# drawn: folded consoles cost nothing, and their box art is only fetched
+# once somebody looks.
+function Build-LibConsoleBody($exp) {
+    $d = $script:libLazy[[string]$exp.Tag]
+    if ($null -eq $d) { return }
+    $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,2,0,4'
+    foreach ($g in @($d.List)) { [void]$body.Children.Add((New-LibGameRow $g $d.Systems $d.Bmp)) }
+    $exp.Content = $body
+}
+
 function Render-Games {
     $panel = $script:gamesPanel
     if ($null -eq $panel) { return }
     $panel.Children.Clear()
+    $script:libRowRight = @{}
+    $script:libLazy = @{}
+    $script:libBusyBars = @{}
+    $script:libQueueHost = $null
     if (-not $script:gamesOk) {
         [void]$panel.Children.Add((New-Text 'Program\scripts\GameLibrary.ps1 is missing, so this tab is empty.' $ColDim 14))
         return
@@ -6618,12 +6818,17 @@ function Render-Games {
     $script:gamesStatus = $st
     [void]$panel.Children.Add($st)
 
+    # --- Steam on this computer (moved here from Settings, This computer, 3.3)
+    if ($script:steamOk) { Add-SteamSection $panel }
+
     # --- the online library -------------------------------------------------
     [void]$panel.Children.Add((New-IconHeader 'E896' 'Online library'))
     $lt = New-Text 'Free, homebrew and fan-made games, picked out and put online for you. Add any you like.' $ColDim 13
     $lt.TextWrapping = 'Wrap'
     [void]$panel.Children.Add($lt)
-    Add-LibQueueBox $panel
+    $script:libQueueHost = New-Object System.Windows.Controls.StackPanel
+    [void]$panel.Children.Add($script:libQueueHost)
+    Add-LibQueueBox $script:libQueueHost
     $cat = $script:libCatalog
     # Family-friendly on: M-rated games are left out of the list (2026-10-25).
     if ($null -ne $cat -and $cat.Ok -and (Test-FamilyOn)) {
@@ -6693,70 +6898,10 @@ function Render-Games {
             $exp.Header = $head; $exp.Margin = '0,12,0,0'; $exp.Tag = $sn
             # Folded until opened (Steven, 2026-10-14); one you open stays open.
             $exp.IsExpanded = ($script:libFold.ContainsKey($sn) -and $script:libFold[$sn])
-            $exp.Add_Expanded({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $true } })
+            $script:libLazy[$sn] = @{ List = $list; Systems = $systems; Bmp = $bmp }
+            $exp.Add_Expanded({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $true; if ($null -eq $s2.Content) { Build-LibConsoleBody $s2 } } })
             $exp.Add_Collapsed({ param($s2, $e2) if ($e2.OriginalSource -eq $s2) { $script:libFold[[string]$s2.Tag] = $false } })
-            $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,2,0,4'
-            foreach ($g in $list) {
-                $row = New-Object System.Windows.Controls.DockPanel; $row.Margin = '0,6,0,0'
-                $right = New-Object System.Windows.Controls.StackPanel; $right.Orientation = 'Horizontal'; $right.VerticalAlignment = 'Top'
-                [System.Windows.Controls.DockPanel]::SetDock($right, 'Right')
-                $done = $script:libDone[$g.Id]
-                if ($script:libBusy.ContainsKey($g.Id)) {
-                    $bt = New-Text $script:libBusy[$g.Id] $ColAway 12
-                    try { $bt.Text = Get-LibJobProgress $g } catch { }
-                    $script:libBusyText[$g.Id] = $bt
-                    [void]$right.Children.Add($bt)
-                }
-                elseif (Test-LibGameInstalled $g $systems) {
-                    $okTxt = $(if ($null -ne $done -and $done.Ok) { 'Added - checked, it matches the library' } else { 'In your games' })
-                    [void]$right.Children.Add((New-Text $okTxt $ColOnline 12))
-                }
-                else {
-                    if ($null -ne $done -and -not $done.Ok) {
-                        $ft = New-Text 'Did not work: ' $ColBusy 12; $ft.ToolTip = $done.Message; $ft.VerticalAlignment = 'Center'; $ft.Margin = '0,0,6,0'
-                        [void]$right.Children.Add($ft)
-                    }
-                    $b = New-Object System.Windows.Controls.Button
-                    $b.Content = $(if ($null -ne $done -and -not $done.Ok) { 'Try again' } else { 'Add to my games' }); $b.Padding = '10,3'; $b.FontSize = 13; $b.Tag = $g
-                    $b.Add_Click({ param($s2, $e2) Invoke-LibraryAdd $s2.Tag })
-                    [void]$right.Children.Add($b)
-                }
-                [void]$row.Children.Add($right)
-                # small box art (2026-10-12), the console's picture when none
-                $artBox = New-Object System.Windows.Controls.Border; $artBox.Width = 56; $artBox.Margin = '0,2,10,0'; $artBox.VerticalAlignment = 'Top'
-                [System.Windows.Controls.DockPanel]::SetDock($artBox, 'Left')
-                $ai = New-Object System.Windows.Controls.Image; $ai.MaxHeight = 56; $ai.MaxWidth = 56; $ai.Stretch = 'Uniform'
-                $shown = $false
-                if ([string]$g.Art -ne '') {
-                    try {
-                        $ab = New-Object System.Windows.Media.Imaging.BitmapImage
-                        $ab.BeginInit(); $ab.UriSource = New-Object System.Uri([string]$g.Art); $ab.CacheOption = 'OnLoad'; $ab.DecodePixelHeight = 112; $ab.EndInit()
-                        $ai.Source = $ab; $shown = $true
-                    } catch { }
-                }
-                if (-not $shown -and $null -ne $bmp) {
-                    $ai.Source = $bmp; $ai.MaxHeight = 30
-                    [System.Windows.Media.RenderOptions]::SetBitmapScalingMode($ai, [System.Windows.Media.BitmapScalingMode]::NearestNeighbor)
-                }
-                $artBox.Child = $ai
-                [void]$row.Children.Add($artBox)
-                $info = New-Object System.Windows.Controls.StackPanel; $info.Margin = '0,0,12,0'
-                $meta = @()
-                if ($g.Players -ne '') { $meta += ('{0} players' -f $g.Players) }
-                $meta += ('{0} MB' -f [math]::Round($g.Size / 1MB, 1))
-                # The name opens a bigger look at the game (2026-10-17).
-                $tl = New-Object System.Windows.Controls.TextBlock; $tl.FontSize = 14; $tl.FontWeight = 'Bold'
-                $hl = New-Object System.Windows.Documents.Hyperlink; $hl.Foreground = (New-Brush $ColText); $hl.TextDecorations = $null
-                [void]$hl.Inlines.Add($g.Title); $hl.Tag = $g; $hl.ToolTip = 'More about this game'
-                $hl.Add_Click({ param($s2, $e2) Show-LibGameDetails $s2.Tag })
-                [void]$tl.Inlines.Add($hl)
-                [void]$info.Children.Add($tl)
-                [void]$info.Children.Add((New-Text ($meta -join '  -  ') $ColDim 12))
-                if ($g.Description -ne '') { $d = New-Text $g.Description $ColDim 12; $d.TextWrapping = 'Wrap'; [void]$info.Children.Add($d) }
-                [void]$row.Children.Add($info)
-                [void]$body.Children.Add($row)
-            }
-            $exp.Content = $body
+            if ($exp.IsExpanded) { Build-LibConsoleBody $exp }
             [void]$coBody.Children.Add($exp)
         }
     }
@@ -7222,6 +7367,9 @@ function Start-GotoWatch {
 }
 
 function Start-SocialSession {
+    # (3.3) box art for games with none, looked for in the background as the
+    # wizard opens (at most once a day), so it is usually ready by PLAY
+    if ($script:autoArtOk) { try { if (Start-AutoArt $Root $Ws) { Log 'box art: looking for games with no pictures' } } catch { } }
     if (-not $script:socialOk) { return }
     Start-GotoWatch
     $prof = $null
@@ -7592,6 +7740,11 @@ function Invoke-FavPick([int]$Index) {
     while ($f.Count -lt 3) { $f += '' }
     $f[$Index] = [string]$r
     $prof.Favs = $f
+    # and by name, so it is still sent online on a drive without the game (2026-11-04)
+    $names = Get-SocialFavNames $prof
+    $fv = $null; if ([string]$r -ne '') { $fv = Resolve-SocialFav $Root ([string]$r) }
+    $names[$Index] = $(if ($null -ne $fv) { ConvertTo-SocialFavName ($fv.System + '|' + $fv.Name) } else { '' })
+    if ($null -eq $prof.PSObject.Properties['FavNames']) { $prof | Add-Member -NotePropertyName FavNames -NotePropertyValue $names } else { $prof.FavNames = $names }
     if (Save-SocialProfile $prof) { Log ("profile: favorite {0} = {1}" -f ($Index + 1), $(if ($r -eq '') { '(empty)' } else { $r.Split('|')[0] })) }
     Render-Social
 }
@@ -7889,8 +8042,12 @@ function Get-MyGameStats {
         try {
             # (2026-10-17) the logged-in person's own play time, not the drive's
             $led = $null
+            $pid0 = 'guest'
             try { $me = Read-SocialProfile $Ws; $pid0 = $(if ($null -ne $me -and -not $me.Guest) { [string]$me.Id } else { 'guest' }); $led = Update-SocialPlayLedger $Root $Ws $pid0 } catch { Log ('profile: play ledger - ' + $_.Exception.Message) }
-            $script:myGameStats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) 3 3 6 $led
+            # (2026-11-04) plus their time on other drives, from the last copy here
+            $oth = $null
+            if ($pid0 -ne 'guest') { try { $oth = Get-SocialOtherPlaytime $Ws $pid0 $false } catch { } }
+            $script:myGameStats = Get-SocialGameStats $Root (Get-SocialHiddenGames $Ws) 3 3 6 $led $oth
         }
         catch { Log ("profile: could not read play times - {0}" -f $_.Exception.Message); $script:myGameStats = @{ Top = @(); Recent = @(); Fav = @(); All = @() } }
     }
@@ -7906,6 +8063,8 @@ $script:ConsolePics = @{ nes = 'nes'; snes = 'snes'; n64 = 'n64'; gamecube = 'ga
                          xbox = 'xbox'; xbox360 = 'xboxone'; psx = 'playstation'; ps2 = 'playstation'; ps3 = 'playstation' }
 function Get-ConsolePicPath([string]$System) {
     $n = $(if ($script:ConsolePics.ContainsKey($System)) { $script:ConsolePics[$System] } else { 'pc' })
+    # (3.3) Steam gets profile-steam.png once there is one; the PC till then
+    if ($System -eq 'steam' -and (Test-Path -LiteralPath (Join-Path $WizardDir 'profile-steam.png'))) { $n = 'steam' }
     return (Join-Path $WizardDir ('profile-' + $n + '.png'))
 }
 
@@ -8391,6 +8550,10 @@ function Enter-SocialPerson([string]$Id, $Rec, [bool]$Trusted) {
             if ($f -ne '') { New-SocialDir $P.ProfileDir; Copy-Item -LiteralPath $f -Destination $P.Avatar -Force }
             else { $prof.Avatar = 'icon:gameboy' }
         }
+        # 2026-11-04: the three favourites come back too, looked up on this drive by name
+        try { $prof = Merge-SocialFavsFromRecord $Root $prof $Rec } catch { Log ("profile: favourites from online - {0}" -f $_.Exception.Message) }
+        # and their play time on other drives, so the profile shows it at once
+        try { [void](Get-SocialOtherPlaytime $Ws $Id $true) } catch { Log ("profile: play time from online - {0}" -f $_.Exception.Message) }
     }
     if ($null -eq $prof -or $prof.Guest -or $prof.Id -ne $Id) { return $null }
     if (-not (Save-SocialProfile $prof)) { return $null }
@@ -9395,6 +9558,13 @@ function Render-Help {
         [void]$st.Children.Add($h)
         $t = New-Text $pair[1] $ColText 14; $t.LineHeight = 21
         [void]$st.Children.Add($t)
+        # 3.3 (Steven's flag): the how-it-works text opens in its own window
+        # from here, instead of a fold at the bottom of the page.
+        if ($pair[0] -eq 'What the Wizard is' -and $script:helpOk) {
+            $hl = New-HelpLink 'How this setup works' { Show-HowItWorks } 14
+            $hl.Margin = '0,12,0,0'
+            [void]$st.Children.Add($hl)
+        }
         $c.Child = $st
         [void]$two.Children.Add($c)
     }
@@ -9416,25 +9586,41 @@ function Render-Help {
     $th = New-Text 'TOOLS' $ColDim 12 $true; $th.Margin = '2,6,0,0'
     [void]$p.Children.Add($th)
     Add-HelpActions
+}
 
-    # --- the old how-it-works text, folded ------------------------------------
-    if ($script:helpOk) {
-        $sections = @()
-        try { $sections = @(Get-HelpSections -WizardName $WizardName -Version $WizardVersion) } catch { Log ("help: {0}" -f $_.Exception.Message) }
-        if ($sections.Count -gt 0) {
-            $exp = New-Object System.Windows.Controls.Expander
-            $exp.Header = (New-Text 'How this setup works' $ColText 15 $true)
-            $exp.Margin = '0,20,0,0'; $exp.IsExpanded = $false
-            $body = New-Object System.Windows.Controls.StackPanel; $body.Margin = '22,6,0,0'
-            foreach ($sec in $sections) {
-                $heading = [string]$sec.heading
-                if ($heading -ne '') { $hh = New-Text $heading $ColText 13 $true; $hh.Margin = '0,8,0,2'; [void]$body.Children.Add($hh) }
-                foreach ($line in @($sec.lines)) { $tl = New-Text ([string]$line) $ColDim 13; $tl.Margin = '12,0,0,1'; [void]$body.Children.Add($tl) }
-            }
-            $exp.Content = $body
-            [void]$p.Children.Add($exp)
-        }
+# How this setup works, in its own window (3.3). The words are in
+# scripts\HelpText.ps1, which Buttons\Show Help.bat prints too.
+function Show-HowItWorks {
+    try { Show-HowItWorksWindow } catch { Log ("help: how it works - {0}" -f $_.Exception.Message) }
+}
+function Show-HowItWorksWindow {
+    $sections = @()
+    try { $sections = @(Get-HelpSections -WizardName $WizardName -Version $WizardVersion) } catch { Log ("help: {0}" -f $_.Exception.Message) }
+    if ($sections.Count -eq 0) { [void](Show-Choice $WizardName 'The help text (scripts\HelpText.ps1) is missing from this setup.' @('OK')); return }
+    $w = New-Object System.Windows.Window
+    Start-PadForDialogs
+    $w.Title = 'How this setup works'; $w.Width = 680; $w.Height = 640
+    $w.WindowStartupLocation = 'CenterScreen'; $w.Background = (New-Brush $ColBg)
+    $dp = New-Object System.Windows.Controls.DockPanel; $dp.Margin = '24,20,24,18'
+    $ok = New-Object System.Windows.Controls.Button
+    $ok.Content = 'Close'; $ok.Padding = '18,5'; $ok.FontSize = 14; $ok.HorizontalAlignment = 'Right'; $ok.Margin = '0,14,0,0'; $ok.IsDefault = $true; $ok.IsCancel = $true
+    $ok.Add_Click({ $w.Close() }.GetNewClosure())
+    [System.Windows.Controls.DockPanel]::SetDock($ok, 'Bottom'); [void]$dp.Children.Add($ok)
+    $sv = New-Object System.Windows.Controls.ScrollViewer; $sv.VerticalScrollBarVisibility = 'Auto'
+    $body = New-Object System.Windows.Controls.StackPanel
+    [void]$body.Children.Add((New-Text 'How this setup works' '#FFE5B83B' 22 $true))
+    foreach ($sec in $sections) {
+        $heading = [string]$sec.heading
+        if ($heading -ne '') { $hh = New-Text $heading $ColText 14 $true; $hh.Margin = '0,16,0,4'; [void]$body.Children.Add($hh) }
+        $tl = New-Text ((@($sec.lines) | ForEach-Object { [string]$_ }) -join ' ') $ColDim 14
+        $tl.TextWrapping = 'Wrap'; $tl.LineHeight = 21; $tl.Margin = $(if ($heading -eq '') { '0,18,0,0' } else { '0' })
+        [void]$body.Children.Add($tl)
     }
+    $sv.Content = $body
+    [void]$dp.Children.Add($sv)
+    $w.Content = $dp
+    try { if ($null -ne $script:win -and $script:win.IsVisible) { $w.Owner = $script:win; $w.WindowStartupLocation = 'CenterOwner' } } catch { }
+    [void]$w.ShowDialog()
 }
 
 
@@ -9834,6 +10020,8 @@ function Render-Profiles {
         $t.Margin = '0,6,0,0'
         [void]$panel.Children.Add($t)
     }
+    # Play and the wizard on this computer (moved here from Help, 3.3)
+    Add-LocalSetupAction $panel
 
     # --- machine tier -------------------------------------------------------
     [void]$panel.Children.Add((New-SectionHeader 'How hard this computer is pushed'))
@@ -9914,13 +10102,15 @@ function Render-Profiles {
     # do not come into it, so the list folds away under Advanced.
     $isPortable = $true
     try { $isPortable = Get-SetupPortable } catch { }
-    if ($isPortable) { Render-ProfileList $panel; Add-PortableSwitch $panel $true }
+    # The drive letter belongs with the other several-computers things (3.3).
+    if ($isPortable) { Render-ProfileList $panel; Add-PortableSwitch $panel $true; Add-DriveLetterAction $panel }
     else {
         $ex2 = New-Object System.Windows.Controls.Expander
         $ex2.Margin = '0,22,0,0'; $ex2.FontSize = 15; $ex2.Foreground = (New-Brush $ColText)
         $ex2.Header = 'Advanced: using this setup on more than one computer'
         $in2 = New-Object System.Windows.Controls.StackPanel; $in2.Margin = '0,8,0,0'
         Add-PortableSwitch $in2 $false
+        Add-DriveLetterAction $in2
         Render-ProfileList $in2
         $ex2.Content = $in2
         [void]$panel.Children.Add($ex2)
@@ -10055,9 +10245,9 @@ function Render-ProfileList($panel) {
     }
     [void]$panel.Children.Add($btnRow)
 
-    # Steam belongs on THIS tab because it is exactly what this tab is for: a
-    # setting that lives in this computer's profile rather than on the drive.
-    if ($script:steamOk) { Add-SteamSection $panel }
+    # Steam moved to the Games tab (3.3, Steven: "I want the connect to steam
+    # option and setup stuff to be on that tab ... listed with a steam
+    # logo"). It is still remembered per computer, as below.
 }
 
 # ===========================================================================
@@ -10077,19 +10267,23 @@ function Add-SteamSection($panel) {
     if (-not $script:steamOk) { return }
 
     try {
-        $sep = New-Object System.Windows.Controls.Border
-        $sep.Height = 1
-        $sep.Background = (New-Brush '#FF3A3A46')
-        $sep.Margin = '0,22,0,16'
-        [void]$panel.Children.Add($sep)
+        # (3.3) on the Games tab, with the Steam picture beside the heading
+        $hr = New-Object System.Windows.Controls.StackPanel; $hr.Orientation = 'Horizontal'; $hr.Margin = '0,22,0,6'
+        $pic = New-Object System.Windows.Controls.Image; $pic.Margin = '0,0,10,0'; $pic.VerticalAlignment = 'Center'
+        $pb = $null; try { $pb = Get-PixelBitmap (Get-ConsolePicPath 'steam') } catch { }
+        if ($null -ne $pb) { Set-FitPicture $pic $pb 40 32; [void]$hr.Children.Add($pic) }
+        $h = New-Text 'Steam on this computer' $ColText 17 $true
+        $h.VerticalAlignment = 'Center'
+        [void]$hr.Children.Add($h)
+        [void]$panel.Children.Add($hr)
 
-        $h = New-Text 'Steam on this computer' $ColText 16 $true
-        $h.Margin = '0,0,0,6'
-        [void]$panel.Children.Add($h)
-
-        $state = Get-SteamProfileState -Root $Root
-        $games = @()
-        try { $games = @(Get-SteamWantedGames -Root $Root) } catch { }
+        # read once (about half a second), again only after Set up / Turn off
+        if ($null -eq $script:steamCache) {
+            $gl = @(); try { $gl = @(Get-SteamWantedGames -Root $Root) } catch { }
+            $script:steamCache = @{ State = (Get-SteamProfileState -Root $Root); Games = $gl }
+        }
+        $state = $script:steamCache.State
+        $games = @($script:steamCache.Games)
 
         if ($state.Connected) {
             $who = ''
@@ -10153,7 +10347,8 @@ function Invoke-ConnectSteamFromWizard {
         Log ('steam: connect window returned ' + $r)
     }
     catch { Log ('steam: connect window failed - ' + $_.Exception.Message) }
-    Render-Profiles
+    $script:steamCache = $null
+    Render-Games
 }
 
 function Invoke-ShortcutMakerFromWizard {
@@ -10172,7 +10367,7 @@ function Invoke-DriveLetterFromWizard {
         $dls = Get-DriveLetterStatus -Root $Root
         if ($dls.State -ne 'canchange' -and $dls.State -ne 'needsadmin') {
             [void](Show-Choice $WizardName $dls.Line @('OK'))
-            Render-Help
+            Render-Profiles
             return
         }
 
@@ -10188,7 +10383,7 @@ function Invoke-DriveLetterFromWizard {
             return
         }
         [void](Show-Choice $WizardName $r.Message @('OK'))
-        Render-Help
+        Render-Profiles
     }
     catch { Log ('drive letter button failed - ' + $_.Exception.Message) }
 }
@@ -10201,7 +10396,8 @@ function Invoke-DisconnectSteamFromWizard {
         Log ('steam: disconnect window returned ' + $r)
     }
     catch { Log ('steam: disconnect window failed - ' + $_.Exception.Message) }
-    Render-Profiles
+    $script:steamCache = $null
+    Render-Games
 }
 
 
@@ -11239,7 +11435,7 @@ function Render-Features {
     if ($script:familyOk) {
         [void]$panel.Children.Add((New-SectionHeader 'Family-friendly'))
         $fon = Test-FamilyOn
-        $ft = New-Text $(if ($fon) { 'On: M-rated games are hidden from RetroBat (from the next PLAY), the online library and Jump in. Switch it on or off on the Features page.' } else { 'Off. Switch it on on the Features page to hide M-rated games from RetroBat, the online library and Jump in.' }) $ColDim 13
+        $ft = New-Text $(if ($fon) { 'On: M-rated games are hidden from RetroBat (from the next PLAY), the online library and Jump in. Untick Family-friendly above to switch it off.' } else { 'Off. Tick Family-friendly above to hide M-rated games from RetroBat, the online library and Jump in.' }) $ColDim 13
         $ft.TextWrapping = 'Wrap'
         [void]$panel.Children.Add($ft)
         $ft2 = New-Text 'A list of M-rated games comes with the wizard. Add your own games (custom games, ROM hacks) or let one through:' $ColDim 13
@@ -11264,6 +11460,12 @@ function Render-Features {
     $kb2.Content = 'Set up a game''s keys...'; $kb2.Padding = '12,4'; $kb2.FontSize = 13; $kb2.Margin = '0,8,0,0'; $kb2.HorizontalAlignment = 'Left'
     $kb2.Add_Click({ Show-KeyLayoutPicker })
     [void]$panel.Children.Add($kb2)
+
+    # --- a shortcut to one game (moved here from Help, 3.3) -----------------
+    if ($script:shortcutMakerOk) {
+        [void]$panel.Children.Add((New-SectionHeader 'A game on the desktop'))
+        Add-ShortcutAction $panel
+    }
 
     $foot = New-Text 'The same switches live in _Wizard\Settings\features.ini, and Show My Features.bat lists them without this window.' $ColDim 12
     $foot.Margin = '0,22,0,0'

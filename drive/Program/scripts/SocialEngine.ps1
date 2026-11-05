@@ -97,10 +97,24 @@ function Get-SocialTimeValue($Value) {
 
 function ConvertFrom-SocialTime([string]$Text) {
     $d = [DateTime]::MinValue
-    $ok = [DateTime]::TryParseExact($Text, 'yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture,
-        ([Globalization.DateTimeStyles]::AdjustToUniversal -bor [Globalization.DateTimeStyles]::AssumeUniversal), [ref]$d)
+    $st = ([Globalization.DateTimeStyles]::AdjustToUniversal -bor [Globalization.DateTimeStyles]::AssumeUniversal)
+    $ok = [DateTime]::TryParseExact($Text, 'yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture, $st, [ref]$d)
+    if ($ok) { return $d }
+    # Wizard 3.2.0 and older sent invite and reply times as "10/27/2026
+    # 02:59:36" (a UTC time in US style, no Z), which never matched the line
+    # above, so every invite was thrown away as unreadable (Steven's flag,
+    # 2026-10-27). Still read, so a friend on 3.2.0 can invite a newer one.
+    $ok = [DateTime]::TryParseExact($Text, [string[]]@('M/d/yyyy H:mm:ss', 'MM/dd/yyyy HH:mm:ss'), [Globalization.CultureInfo]::InvariantCulture, $st, [ref]$d)
     if ($ok) { return $d }
     return $null
+}
+
+# A time for the online file, always "yyyy-MM-ddTHH:mm:ssZ" whether it
+# arrives as a DateTime or as text (2026-11-04; see above).
+function ConvertTo-SocialTimeText($Value) {
+    $t = Get-SocialTimeValue $Value
+    if ($null -eq $t) { return '' }
+    return (Format-SocialTime $t)
 }
 
 # Printable ASCII only, trimmed, capped. Everything that came from somebody
@@ -226,8 +240,35 @@ function Read-SocialProfile([string]$Ws, [string]$File = '') {
         # paths relative to roms\<system>\), and whether the helper stays
         # running after the wizard and RetroBat close, so invites still arrive.
         Favs     = @((ConvertTo-SocialFavSlot ([string]$ini['fav1'])), (ConvertTo-SocialFavSlot ([string]$ini['fav2'])), (ConvertTo-SocialFavSlot ([string]$ini['fav3'])))
+        # 2026-11-04: the same three by name ("system|name"), as they are
+        # online. Kept so a favourite this drive does not have is still sent
+        # online, instead of being wiped by the next check-in.
+        FavNames = @((ConvertTo-SocialFavName ([string]$ini['favname1'])), (ConvertTo-SocialFavName ([string]$ini['favname2'])), (ConvertTo-SocialFavName ([string]$ini['favname3'])))
         Reach    = (OnOff $ini['reach'] $true)
     }
+}
+
+# One favourite by name as written in profile.ini: "system|name", or ''.
+function ConvertTo-SocialFavName([string]$Text) {
+    $t = $Text.Trim()
+    $bar = $t.IndexOf('|')
+    if ($bar -lt 1) { return '' }
+    $sys = $t.Substring(0, $bar).Trim().ToLower()
+    if ($sys -notmatch '^[a-z0-9\-]{1,20}$') { return '' }
+    $n = Get-SocialClean $t.Substring($bar + 1) 60
+    if ($n -eq '') { return '' }
+    return ($sys + '|' + $n)
+}
+
+# A profile's three by-name favourites, always three strings (an older
+# profile object may not have them at all).
+function Get-SocialFavNames($Prof) {
+    $out = @('', '', '')
+    if ($null -ne $Prof -and $null -ne $Prof.PSObject.Properties['FavNames']) {
+        $n = @($Prof.FavNames)
+        for ($i = 0; $i -lt 3 -and $i -lt $n.Count; $i++) { $out[$i] = ConvertTo-SocialFavName ([string]$n[$i]) }
+    }
+    return $out
 }
 
 # One favourite slot as written in profile.ini: "system|rom|picture", or ''.
@@ -286,6 +327,8 @@ function Write-SocialProfile([string]$Ws, $Prof) {
             if ($i -lt $favs.Count) { $v = ConvertTo-SocialFavSlot ([string]$favs[$i]) }
             $lines += ('fav{0}     = {1}' -f ($i + 1), $v)
         }
+        $names = Get-SocialFavNames $Prof
+        for ($i = 0; $i -lt 3; $i++) { $lines += ('favname{0} = {1}' -f ($i + 1), $names[$i]) }
         $reach = $true
         if ($null -ne $Prof.PSObject.Properties['Reach']) { $reach = [bool]$Prof.Reach }
         $lines += ('reach    = ' + (& $oo $reach))
@@ -298,7 +341,7 @@ function New-SocialProfile([string]$Username, [string]$Avatar) {
         Guest = $false; Id = (New-SocialId); Username = $Username.Trim(); Avatar = $Avatar
         Status = 'online'; Text = ''; ShowGame = $true; Popups = $true
         Friends = @(); Declined = @(); Share = @(); Created = (Format-SocialTime (Get-SocialNowUtc))
-        Pw = ''; PwSet = ''; NameReq = ''; Favs = @('', '', ''); Reach = $true
+        Pw = ''; PwSet = ''; NameReq = ''; Favs = @('', '', ''); FavNames = @('', '', ''); Reach = $true
     }
 }
 
@@ -313,6 +356,10 @@ function Invoke-SocialApi([string]$Ws, [string]$Method, [string]$Url, [string]$B
     $token = Get-SocialToken $Ws
     if ($token -eq '') { $r.Body = 'no token'; return $r }
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+    # (2026-11-04) Windows waits up to a third of a second for a "go ahead"
+    # before every PUT and POST unless told not to, and allows only two
+    # connections to one site at once.
+    try { [Net.ServicePointManager]::Expect100Continue = $false; [Net.ServicePointManager]::DefaultConnectionLimit = [Math]::Max([Net.ServicePointManager]::DefaultConnectionLimit, 16) } catch { }
     $oldPref = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
@@ -401,11 +448,21 @@ function ConvertTo-SocialRecordJson($Prof, $Presence, [string]$Version, $Stats =
     }
     # 2026-10-12: the three favourite games (always sent: they are chosen to
     # be shown), the play-together invite, and the answer to one.
+    # 2026-11-04: slot by slot. A slot this drive can show goes as it is; one
+    # it cannot (the game is not on this drive) goes by the name kept in the
+    # profile, so it is never wiped online. An empty slot is one the person
+    # emptied. Always sent, also on the "gone offline" check-in.
+    $liveFavs = $(if ($null -ne $Live) { @($Live.Favs) } else { @() })
+    $names = Get-SocialFavNames $Prof
+    $fv = @()
+    for ($i = 0; $i -lt 3; $i++) {
+        $n = ''; $s = ''
+        if ($i -lt $liveFavs.Count -and $null -ne $liveFavs[$i]) { $n = Get-SocialClean ([string]$liveFavs[$i].Name) 60; $s = [string]$liveFavs[$i].System }
+        elseif ($names[$i] -ne '') { $bar = $names[$i].IndexOf('|'); $s = $names[$i].Substring(0, $bar); $n = $names[$i].Substring($bar + 1) }
+        if ($n -ne '') { $fv += ('{"n":' + (ConvertTo-SocialJsonString $n) + ',"s":' + (ConvertTo-SocialJsonString $s) + '}') }
+    }
+    [void]$j.Append(',"favs":[' + ($fv -join ',') + ']')
     if ($null -ne $Live) {
-        $fv = @(@($Live.Favs) | Where-Object { $null -ne $_ } | Select-Object -First 3 | ForEach-Object {
-            '{"n":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$_.Name) 60)) + ',"s":' + (ConvertTo-SocialJsonString ([string]$_.System)) + '}'
-        })
-        [void]$j.Append(',"favs":[' + ($fv -join ',') + ']')
         $inv = $Live.Invite
         if ($null -ne $inv) {
             $to = @(@($inv.To) | Where-Object { $_ -match $script:SocialIdPattern } | ForEach-Object { '"' + $_ + '"' })
@@ -414,12 +471,12 @@ function ConvertTo-SocialRecordJson($Prof, $Presence, [string]$Version, $Stats =
                 ',"s":' + (ConvertTo-SocialJsonString ([string]$inv.System)) +
                 ',"note":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$inv.Note) 60)) +
                 ',"code":' + (ConvertTo-SocialJsonString (Get-SocialClean ([string]$inv.Code) 40)) +
-                ',"at":' + (ConvertTo-SocialJsonString ([string]$inv.At)) + '}')
+                ',"at":' + (ConvertTo-SocialJsonString (ConvertTo-SocialTimeText $inv.At)) + '}')
         }
         $rp = $Live.Reply
         if ($null -ne $rp) {
             [void]$j.Append(',"reply":{"to":' + (ConvertTo-SocialJsonString ([string]$rp.To)) + ',"inv":' + (ConvertTo-SocialJsonString ([string]$rp.Inv)) +
-                ',"ans":' + (ConvertTo-SocialJsonString ([string]$rp.Ans)) + ',"at":' + (ConvertTo-SocialJsonString ([string]$rp.At)) + '}')
+                ',"ans":' + (ConvertTo-SocialJsonString ([string]$rp.Ans)) + ',"at":' + (ConvertTo-SocialJsonString (ConvertTo-SocialTimeText $rp.At)) + '}')
         }
     }
     [void]$j.Append('}')
@@ -527,6 +584,14 @@ function Publish-SocialRecord([string]$Ws, $Prof, $Presence, [string]$Version, [
     if ($null -eq $Prof -or $Prof.Guest -or $Prof.Id -notmatch $script:SocialIdPattern) { $res.Message = 'No profile, nothing to send.'; return $res }
     $repo = Get-SocialRepo $Ws
     $url = "https://api.github.com/repos/$repo/contents/players/$($Prof.Id).json"
+    # 2026-11-04: the "gone offline" check-ins send no $Live, and used to send
+    # no favourites with it, which wiped them online every time the wizard
+    # closed. The favourites are read from this drive here instead.
+    if ($null -eq $Live) {
+        $favs = @()
+        try { $favs = @(Get-SocialFavs (Split-Path $Ws -Parent) $Prof) } catch { }
+        $Live = @{ Favs = $favs; Invite = $null; Reply = $null }
+    }
     $json = ConvertTo-SocialRecordJson $Prof $Presence $Version $Stats $Live
     $b64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
 
@@ -781,7 +846,7 @@ function New-SocialProfileFromRecord($Rec) {
         ShowGame = $true; Popups = $true; Friends = @($Rec.Friends); Declined = @()
         Share = $(if ($null -ne $Rec.Games) { @($Rec.Games.For) } else { @() })
         Created = ''; Pw = $Rec.Pw; PwSet = $Rec.PwSet; NameReq = $Rec.NameReq
-        Favs = @('', '', ''); Reach = $true
+        Favs = @('', '', ''); FavNames = @('', '', ''); Reach = $true
     }
 }
 
@@ -1089,115 +1154,16 @@ function Switch-SocialFavorites([string]$Root, [string]$Ws, [string]$FromId, [st
     [void](Set-SocialFavorites $Root $want)
 }
 
-# ---- separate saves per person (2026-10-17, "streaming profiles") --------
-#  Steven: "his profile keeps the drive's current saves, every other profile
-#  gets its own separate saves". When a DIFFERENT person with a profile picks
-#  PLAY, the save places below are MOVED (a rename on the same drive: instant,
-#  nothing copied) into profile\saves-of\<who was playing>\, and the new
-#  person's own are moved back in (empty folders the first time). Guests use
-#  whatever saves are in place, as before. Only while RetroBat is closed.
-#  Switched by 'separatesaves' in features.ini (on unless it says off).
+# ---- who is in place (2026-10-17) -----------------------------------------
+#  Whose favourite stars are in RetroBat's game lists right now is written
+#  down in People\saves-of\owner.txt (the folder keeps its old name), so a
+#  switch puts the right person's stars away and brings the next one's in.
 #
-#  WHAT MOVES. Every console folder in saves\ that holds only saves (NES,
-#  SNES, N64, GB/GBC/GBA, DS, PlayStation 1 and so on) moves whole. Consoles
-#  whose folder also holds system files keep that folder, and only their
-#  save folder moves:
-#      Wii        wii\dolphin-emu\User\Wii\title\00010000   (disc game saves)
-#      GameCube   gamecube\dolphin-emu\User\GC, dolphin\User\GC (memory cards)
-#      Wii U      wiiu\cemu\mlc01\usr\save\00050000
-#      PS2        ps2\pcsx2\memcards, ps2\pcsx2-16\memcards
-#      PS3        ps3\rpcs3\dev_hdd0\home
-#      PS Vita    psvita\vita3k\ux0\user
-#  Left shared on purpose (the save sits among installed content, accounts or
-#  system files, so moving it could break the console): 3DS, Switch, Xbox,
-#  Xbox 360, PSP, Flash, PC, Steam, arcade (mame and friends) and the ports.
-#
-#  A JOURNAL (profile\saves-of\switch.txt) lists every move before it starts
-#  and is deleted when all are done, so a switch cut short (power, unplugged
-#  drive) is finished the next time, never half-done for good.
-#
-#  REBUILT 2026-10-25 after it went wrong on Steven's drive: the background
-#  helper and the wizard both ran a switch at the same moment, and the two
-#  tripped over each other (saves renamed aside, nothing lost; all put back
-#  by hand). Now:
-#    - ONE place decides: Switch-SocialPerson, called only when someone signs
-#      in to the wizard or picks at PLAY. Reading play time never switches.
-#    - ONE at a time: a lock file held for the whole switch, across programs.
-#    - WHOSE SAVES ARE IN PLACE is written down (profile\saves-of\owner.txt),
-#      not guessed from the play-time records.
-#    - A folder that has saves in it is NEVER moved aside or replaced: that
-#      place is skipped and logged instead.
-$script:SwapShared = @('3ds', 'switch', 'xbox', 'xbox360', 'psp', 'flash', 'windows', 'steam', 'ports', 'mame', 'hbmame', 'psxmame',
-                       'wii', 'wiiu', 'gamecube', 'dolphin', 'ps2', 'ps3', 'ps4', 'psvita', 'teknoparrot', 'epic', 'gog', 'eagames', 'amazon')
-$script:SwapInner = @('wii\dolphin-emu\User\Wii\title\00010000', 'gamecube\dolphin-emu\User\GC', 'dolphin\User\GC',
-                      'wiiu\cemu\mlc01\usr\save\00050000', 'ps2\pcsx2\memcards', 'ps2\pcsx2-16\memcards',
-                      'ps3\rpcs3\dev_hdd0\home', 'psvita\vita3k\ux0\user')
-
-# OFF unless features.ini says "separatesaves = on" (2026-10-25: held back
-# from 3.1 after the mix-up on Steven's drive; ready, tested, not yet tried
-# on real hardware). Not on the Features page until then.
-function Test-SocialSeparateSaves([string]$Ws) {
-    $f = Join-SocialPath $Ws 'Settings\features.ini'
-    if (-not (Test-Path -LiteralPath $f)) { return $false }
-    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*separatesaves\s*=\s*(on|true|yes|1)\b') { return $true } }
-    return $false
-}
-
-function Test-SocialHasFiles([string]$Dir) {
-    if (-not (Test-Path -LiteralPath $Dir)) { return $false }
-    try { foreach ($f in [System.IO.Directory]::EnumerateFiles($Dir, '*', [System.IO.SearchOption]::AllDirectories)) { return $true } } catch { return $true }
-    return $false
-}
-
-function Get-SocialSavePlaces([string]$Root, [string]$Ws, [string]$Ids) {
-    $places = New-Object System.Collections.ArrayList
-    $saves = Join-SocialPath $Root 'saves'
-    $tops = @{}
-    if (Test-Path -LiteralPath $saves) { foreach ($d in [System.IO.Directory]::GetDirectories($saves)) { $tops[[System.IO.Path]::GetFileName($d).ToLower()] = [System.IO.Path]::GetFileName($d) } }
-    foreach ($id in ($Ids -split ',')) {
-        $st = Join-SocialPath $Ws ('People\saves-of\' + $id)
-        if (Test-Path -LiteralPath $st) { foreach ($d in [System.IO.Directory]::GetDirectories($st)) { $n = [System.IO.Path]::GetFileName($d); if (-not $tops.ContainsKey($n.ToLower())) { $tops[$n.ToLower()] = $n } } }
-    }
-    foreach ($k in @($tops.Keys | Sort-Object)) {
-        if ($script:SwapShared -contains $k) { continue }
-        if ($k -match '\.kept-\d') { continue }   # never treat a set-aside folder as a console
-        [void]$places.Add($tops[$k])
-    }
-    foreach ($p in $script:SwapInner) { [void]$places.Add($p) }
-    return @($places)
-}
-
-# Moves a save folder. The place it goes to must be missing or EMPTY (an
-# empty one is cleared first); one with files in it is never touched.
-function Move-SocialPlace([string]$From, [string]$To) {
-    if (-not (Test-Path -LiteralPath $From)) { return $true }
-    if (Test-Path -LiteralPath $To) {
-        if (Test-SocialHasFiles $To) { return $false }
-        Remove-Item -LiteralPath $To -Recurse -Force
-    }
-    $parent = Split-Path $To -Parent
-    if (-not (Test-Path -LiteralPath $parent)) { [void](New-Item -ItemType Directory -Path $parent -Force) }
-    Move-Item -LiteralPath $From -Destination $To
-    return $true
-}
-
-# Runs (or finishes) the moves in the journal. Each line: from|to, or mkdir|path.
-# Call only while holding the lock.
-function Invoke-SocialSwapJournal([string]$Ws) {
-    $j = Join-SocialPath $Ws 'People\saves-of\switch.txt'
-    if (-not (Test-Path -LiteralPath $j)) { return 0 }
-    $skipped = 0
-    foreach ($l in [System.IO.File]::ReadAllLines($j)) {
-        if ($l -eq '' -or $l.StartsWith(';')) { continue }
-        $p = $l.Split('|')
-        if ($p.Count -lt 2) { continue }
-        if ($p[0] -eq 'mkdir') { if (-not (Test-Path -LiteralPath $p[1])) { [void](New-Item -ItemType Directory -Path $p[1] -Force) }; continue }
-        if (-not (Move-SocialPlace $p[0] $p[1])) { $skipped++; Write-SocialLog $Ws ('saves switch: left alone, it already has saves in it: ' + $p[1]) }
-    }
-    if (Test-Path -LiteralPath $j) { Remove-Item -LiteralPath $j -Force }
-    return $skipped
-}
-
+#  SEPARATE SAVES PER PERSON WERE TAKEN OUT (2026-11-04). They moved save
+#  folders aside whenever somebody else picked PLAY; after the mix-up on
+#  Steven's drive (2026-10-25) they stayed switched off, and Steven decided
+#  they are not wanted at all. Everybody shares the drive's saves. The old
+#  code is in Backups\Archive\favourites_2026-11-04\SocialEngine.ps1.
 function Get-SocialSavesOwner([string]$Ws) {
     $f = Join-SocialPath $Ws 'People\saves-of\owner.txt'
     if (-not (Test-Path -LiteralPath $f)) { return '' }
@@ -1210,41 +1176,9 @@ function Set-SocialSavesOwner([string]$Ws, [string]$Id) {
     [System.IO.File]::WriteAllText((Join-SocialPath $Ws 'People\saves-of\owner.txt'), $Id)
 }
 
-# The saves of $FromId go to profile\saves-of\<FromId>, those of $ToId come in.
-# Call only while holding the lock (Switch-SocialPerson does).
-function Switch-SocialSaves([string]$Root, [string]$Ws, [string]$FromId, [string]$ToId) {
-    [void](Invoke-SocialSwapJournal $Ws)     # a switch cut short last time is finished first
-    if ($FromId -eq $ToId -or $FromId -eq '' -or $ToId -eq '') { return $false }
-    if ($FromId -notmatch '^[A-Za-z0-9_\-]{1,40}$' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return $false }
-    $saves = Join-SocialPath $Root 'saves'
-    if (-not (Test-Path -LiteralPath $saves)) { return $false }
-    $out = Join-SocialPath $Ws ('People\saves-of\' + $FromId)
-    $in  = Join-SocialPath $Ws ('People\saves-of\' + $ToId)
-    $places = Get-SocialSavePlaces $Root $Ws ($FromId + ',' + $ToId)
-    $lines = New-Object System.Collections.ArrayList
-    [void]$lines.Add(('; Saves switching from {0} to {1}, {2}. Finished by the wizard if it was cut short.' -f $FromId, $ToId, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')))
-    foreach ($pl in $places) {
-        $live = Join-SocialPath $saves $pl
-        $mineOut = Join-SocialPath $out $pl
-        $theirs = Join-SocialPath $in $pl
-        $liveHas = Test-SocialHasFiles $live
-        $theirsHas = Test-SocialHasFiles $theirs
-        if (-not $liveHas -and -not $theirsHas) { continue }   # nothing either way
-        if ($liveHas) { [void]$lines.Add(($live + '|' + $mineOut)) }
-        if ($theirsHas) { [void]$lines.Add(($theirs + '|' + $live)) }
-        else { [void]$lines.Add(('mkdir|' + $live)) }
-    }
-    New-SocialDir (Join-SocialPath $Ws 'People\saves-of')
-    [System.IO.File]::WriteAllLines((Join-SocialPath $Ws 'People\saves-of\switch.txt'), [string[]]$lines.ToArray())
-    $sk = Invoke-SocialSwapJournal $Ws
-    if ($sk -gt 0) { Write-SocialLog $Ws ("saves switch: {0} place(s) left as they were" -f $sk) }
-    return $true
-}
-
 # THE one entry point (2026-10-25). $ToId is now using this setup: their
-# favourite stars, and their saves (when 'separatesaves' is on), are put in
-# place. Guests use whatever is in place. Returns 'switched', 'same', 'skip'
-# or 'busy'.
+# favourite stars are put in place (saves are shared, see above). Guests use
+# whatever is in place. Returns 'switched', 'same', 'skip' or 'busy'.
 function Switch-SocialPerson([string]$Root, [string]$Ws, [string]$ToId) {
     if ($ToId -eq '' -or $ToId -eq 'guest' -or $ToId -notmatch '^[A-Za-z0-9_\-]{1,40}$') { return 'skip' }
     if (Test-SocialRetroBatOpen) { return 'skip' }
@@ -1263,9 +1197,8 @@ function Switch-SocialPerson([string]$Root, [string]$Ws, [string]$ToId) {
             if ($owner -eq '') { $owner = $ToId }
             Set-SocialSavesOwner $Ws $owner
         }
-        if ($owner -eq $ToId) { [void](Invoke-SocialSwapJournal $Ws); return 'same' }
+        if ($owner -eq $ToId) { return 'same' }
         try { Switch-SocialFavorites $Root $Ws $owner $ToId } catch { Write-SocialLog $Ws ('favourites switch: ' + $_.Exception.Message) }
-        if (Test-SocialSeparateSaves $Ws) { [void](Switch-SocialSaves $Root $Ws $owner $ToId) }
         Set-SocialSavesOwner $Ws $ToId
         Write-SocialLog $Ws ("switched this setup from {0} to {1}" -f $owner, $ToId)
         return 'switched'
@@ -1314,7 +1247,185 @@ function Update-SocialPlayLedger([string]$Root, [string]$Ws, [string]$PersonId =
     return @{}
 }
 
-function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6, $Ledger = $null) {
+# ---------------------------------------------------------------------------
+#  PLAY TIME ONLINE                                              (2026-11-04)
+# ---------------------------------------------------------------------------
+#  Steven: "make it so the playtime is tracked per account and ALL the games
+#  there tracked ... make sure if I log in somewhere else it displays all that
+#  info still". Each person has one file in the friends store,
+#  playtime/<id>.json, with one part per drive:
+#      { "v":1, "drives": { "<drive id>": { "at":"...", "games":
+#          [ ["snes","Super Mario World",5400,"20261101T203000"], ... ] } } }
+#  A drive only ever rewrites its own part (its ledger for that person, by
+#  console and game name, since file names differ from drive to drive), so
+#  two drives never undo each other. Every drive adds the OTHER drives' parts
+#  to its own count; a game that only another drive has still shows, without
+#  a picture. The helper sends it at check-in when it changed, and keeps the
+#  last copy in People\play\<id>-online.json for showing it offline.
+
+# This drive's own id for that file, made once.
+function Get-SocialDriveId([string]$Ws) {
+    $dir = Get-SocialPlayDir $Ws
+    New-SocialDir $dir
+    $f = Join-SocialPath $dir 'drive-id.ini'
+    if (Test-Path -LiteralPath $f) { $t = ([System.IO.File]::ReadAllText($f)).Trim(); if ($t -match '^[a-z0-9]{10}$') { return $t } }
+    $id = (New-SocialId).Substring(0, 10)
+    [System.IO.File]::WriteAllText($f, $id)
+    return $id
+}
+
+# A ledger ("sys|path" -> @{ Secs; Last }) by console and game name:
+# "sys|name in lower case" -> @{ System; Name; Secs; Last }.
+function ConvertTo-SocialNamedTimes([string]$Root, $Ledger) {
+    $out = @{}
+    if ($null -eq $Ledger -or $Ledger.Count -eq 0) { return $out }
+    $names = @{}
+    foreach ($sys in @($Ledger.Keys | ForEach-Object { ([string]$_).Split('|')[0] } | Select-Object -Unique)) {
+        if ($sys -notmatch '^[a-z0-9\-]{1,20}$') { continue }
+        $gl = Join-SocialPath (Join-SocialPath (Join-SocialPath $Root 'roms') $sys) 'gamelist.xml'
+        if (-not (Test-Path -LiteralPath $gl)) { continue }
+        try { [xml]$x = [System.IO.File]::ReadAllText($gl) } catch { continue }
+        foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+            $pn = $g.SelectSingleNode('path'); $nn = $g.SelectSingleNode('name')
+            if ($null -eq $pn -or $null -eq $nn) { continue }
+            $names[('{0}|{1}' -f $sys, ([string]$pn.InnerText).Trim())] = ([string]$nn.InnerText).Trim()
+        }
+    }
+    foreach ($k in $Ledger.Keys) {
+        $bar = ([string]$k).IndexOf('|'); if ($bar -lt 1) { continue }
+        $sys = ([string]$k).Substring(0, $bar)
+        $name = [string]$names[[string]$k]
+        if ($name -eq '') { $name = [System.IO.Path]::GetFileNameWithoutExtension(([string]$k).Substring($bar + 1)) }
+        $name = Get-SocialClean $name 60
+        if ($name -eq '') { continue }
+        $nk = ($sys + '|' + $name).ToLower()
+        $secs = [int]$Ledger[$k].Secs; $last = [string]$Ledger[$k].Last
+        if ($out.ContainsKey($nk)) {
+            $out[$nk].Secs = [int]$out[$nk].Secs + $secs
+            if ($last -gt [string]$out[$nk].Last) { $out[$nk].Last = $last }
+        }
+        else { $out[$nk] = @{ System = $sys; Name = $name; Secs = $secs; Last = $last } }
+    }
+    return $out
+}
+
+# The online file as it is now: @{ Ok; Sha; Data } (Data $null when there is none yet).
+function Get-SocialPlaytimeFile([string]$Ws, [string]$Id) {
+    $res = @{ Ok = $false; Sha = ''; Data = $null }
+    if ($Id -notmatch $script:SocialIdPattern) { return $res }
+    $repo = Get-SocialRepo $Ws
+    $r = Invoke-SocialApi $Ws 'GET' "https://api.github.com/repos/$repo/contents/playtime/$Id.json"
+    if ($r.Status -eq 404) { $res.Ok = $true; return $res }
+    if ($r.Status -ne 200) { return $res }
+    try {
+        $o = $r.Body | ConvertFrom-Json
+        $res.Sha = [string]$o.sha
+        $b64 = ([string]$o.content) -replace '\s', ''
+        $txt = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64))
+        $res.Data = $txt | ConvertFrom-Json
+        $res.Ok = $true
+    } catch { }
+    return $res
+}
+
+# The other drives' play time for $Id, from a file's Data: "sys|name" -> @{ System; Name; Secs; Last }.
+function ConvertFrom-SocialPlaytimeData($Data, [string]$SkipDrive) {
+    $out = @{}
+    if ($null -eq $Data -or $null -eq $Data.drives) { return $out }
+    foreach ($dp in @($Data.drives.PSObject.Properties)) {
+        if ([string]$dp.Name -eq $SkipDrive -or [string]$dp.Name -notmatch '^[a-z0-9]{10}$') { continue }
+        foreach ($row in @($dp.Value.games)) {
+            $a = @($row)
+            if ($a.Count -lt 4) { continue }
+            $sys = ([string]$a[0]).ToLower(); $name = Get-SocialClean ([string]$a[1]) 60
+            $secs = 0; [int]::TryParse([string]$a[2], [ref]$secs) | Out-Null
+            $last = [string]$a[3]
+            if ($sys -notmatch '^[a-z0-9\-]{1,20}$' -or $name -eq '' -or $secs -lt 0 -or $secs -gt 100000000) { continue }
+            if ($last -notmatch '^\d{8}T\d{6}$') { $last = '' }
+            $nk = ($sys + '|' + $name).ToLower()
+            if ($out.ContainsKey($nk)) {
+                $out[$nk].Secs = [int]$out[$nk].Secs + $secs
+                if ($last -gt [string]$out[$nk].Last) { $out[$nk].Last = $last }
+            }
+            else { $out[$nk] = @{ System = $sys; Name = $name; Secs = $secs; Last = $last } }
+        }
+    }
+    return $out
+}
+
+# Sends this drive's part for $Id when it changed since the last send, and
+# keeps the whole file in People\play\<id>-online.json. Returns 'sent',
+# 'same' or 'failed'.
+function Sync-SocialPlaytime([string]$Root, [string]$Ws, [string]$Id, $Ledger) {
+    if ($Id -notmatch $script:SocialIdPattern -or $null -eq $Ledger) { return 'failed' }
+    $dir = Get-SocialPlayDir $Ws
+    $drive = Get-SocialDriveId $Ws
+    $named = ConvertTo-SocialNamedTimes $Root $Ledger
+    $rows = @($named.Keys | Sort-Object | ForEach-Object {
+        $v = $named[$_]
+        '[' + (ConvertTo-SocialJsonString $v.System) + ',' + (ConvertTo-SocialJsonString $v.Name) + ',' + [int]$v.Secs + ',' + (ConvertTo-SocialJsonString ([string]$v.Last)) + ']'
+    })
+    $mine = '[' + ($rows -join ',') + ']'
+    $markF = Join-SocialPath $dir ($Id + '-sent.sum')
+    $sum = ''
+    try { $sha = [System.Security.Cryptography.SHA256]::Create(); $sum = (($sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($mine)) | ForEach-Object { $_.ToString('x2') }) -join '') } catch { }
+    $cacheF = Join-SocialPath $dir ($Id + '-online.json')
+    $stale = (-not (Test-Path -LiteralPath $cacheF)) -or (((Get-Date) - (Get-Item -LiteralPath $cacheF).LastWriteTime).TotalMinutes -ge 60)
+    if ((Test-Path -LiteralPath $markF) -and ([System.IO.File]::ReadAllText($markF)).Trim() -eq $sum -and -not $stale) { return 'same' }
+    $repo = Get-SocialRepo $Ws
+    for ($try = 1; $try -le 2; $try++) {
+        $cur = Get-SocialPlaytimeFile $Ws $Id
+        if (-not $cur.Ok) { return 'failed' }
+        # every other drive's part kept exactly as it is
+        $parts = New-Object System.Collections.ArrayList
+        if ($null -ne $cur.Data -and $null -ne $cur.Data.drives) {
+            foreach ($dp in @($cur.Data.drives.PSObject.Properties)) {
+                if ([string]$dp.Name -eq $drive -or [string]$dp.Name -notmatch '^[a-z0-9]{10}$') { continue }
+                [void]$parts.Add(((ConvertTo-SocialJsonString ([string]$dp.Name)) + ':' + ($dp.Value | ConvertTo-Json -Depth 5 -Compress)))
+            }
+        }
+        [void]$parts.Add(((ConvertTo-SocialJsonString $drive) + ':{"at":' + (ConvertTo-SocialJsonString (Format-SocialTime (Get-SocialNowUtc))) + ',"games":' + $mine + '}'))
+        $json = '{"v":1,"id":' + (ConvertTo-SocialJsonString $Id) + ',"drives":{' + ($parts -join ',') + '}}'
+        if ($sum -ne '' -and (Test-Path -LiteralPath $markF) -and ([System.IO.File]::ReadAllText($markF)).Trim() -eq $sum) {
+            # nothing new from here: only the copy of the others was stale
+            try { [System.IO.File]::WriteAllText($cacheF, $(if ($null -ne $cur.Data) { $cur.Data | ConvertTo-Json -Depth 6 -Compress } else { $json })) } catch { }
+            return 'same'
+        }
+        $body = '{"message":' + (ConvertTo-SocialJsonString ("play time " + $Id)) + ',"content":"' + [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json)) + '"'
+        if ($cur.Sha -ne '') { $body += ',"sha":"' + $cur.Sha + '"' }
+        $body += '}'
+        $r = Invoke-SocialApi $Ws 'PUT' "https://api.github.com/repos/$repo/contents/playtime/$Id.json" $body
+        if ($r.Status -eq 200 -or $r.Status -eq 201) {
+            try { [System.IO.File]::WriteAllText($markF, $sum); [System.IO.File]::WriteAllText($cacheF, $json) } catch { }
+            return 'sent'
+        }
+        Write-SocialLog $Ws ("play time online: GitHub said {0}" -f $r.Status)
+        if ($r.Status -ne 409 -and $r.Status -ne 422) { return 'failed' }   # 409/422: another drive wrote first, read again
+    }
+    return 'failed'
+}
+
+# The other drives' play time for $Id: from GitHub when $Fetch, else the last
+# copy here. "sys|name" -> @{ System; Name; Secs; Last }.
+function Get-SocialOtherPlaytime([string]$Ws, [string]$Id, [bool]$Fetch = $false) {
+    if ($Id -notmatch $script:SocialIdPattern) { return @{} }
+    $drive = Get-SocialDriveId $Ws
+    $cacheF = Join-SocialPath (Get-SocialPlayDir $Ws) ($Id + '-online.json')
+    if ($Fetch) {
+        $cur = Get-SocialPlaytimeFile $Ws $Id
+        if ($cur.Ok -and $null -ne $cur.Data) {
+            try { [System.IO.File]::WriteAllText($cacheF, ($cur.Data | ConvertTo-Json -Depth 6 -Compress)) } catch { }
+            return (ConvertFrom-SocialPlaytimeData $cur.Data $drive)
+        }
+    }
+    if (-not (Test-Path -LiteralPath $cacheF)) { return @{} }
+    try { return (ConvertFrom-SocialPlaytimeData ([System.IO.File]::ReadAllText($cacheF) | ConvertFrom-Json) $drive) } catch { return @{} }
+}
+
+# $Others (2026-11-04): Get-SocialOtherPlaytime's table. Its time is added
+# to the same game here (by console and name), and a game only another drive
+# has is listed too, without a picture.
+function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]$RecentN = 3, [int]$FavN = 6, $Ledger = $null, $Others = $null) {
     $all = New-Object System.Collections.ArrayList
     $roms = Join-SocialPath $Root 'roms'
     if (Test-Path -LiteralPath $roms) {
@@ -1362,6 +1473,29 @@ function Get-SocialGameStats([string]$Root, $Hidden = @{}, [int]$TopN = 3, [int]
                 [void]$all.Add([pscustomobject]@{ Name = $name; System = $sys; Path = $path; Minutes = [math]::Round($secs / 60.0, 1)
                                                  Last = $last; Image = $img; Favorite = $fav })
             }
+        }
+    }
+    if ($null -ne $Others -and $Others.Count -gt 0) {
+        $toDate = {
+            param($t) $d = [DateTime]::MinValue
+            if ([DateTime]::TryParseExact([string]$t, 'yyyyMMddTHHmmss', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$d)) { $d } else { $null }
+        }
+        $used = @{}
+        foreach ($it in $all) {
+            $nk = ($it.System + '|' + (Get-SocialClean $it.Name 60)).ToLower()
+            if (-not $Others.ContainsKey($nk) -or $used.ContainsKey($nk)) { continue }
+            $used[$nk] = $true
+            $o = $Others[$nk]
+            $it.Minutes = [math]::Round(([double]$it.Minutes * 60 + [int]$o.Secs) / 60.0, 1)
+            $ol = & $toDate $o.Last
+            if ($null -ne $ol -and ($null -eq $it.Last -or $ol -gt $it.Last)) { $it.Last = $ol }
+        }
+        foreach ($nk in $Others.Keys) {
+            if ($used.ContainsKey($nk)) { continue }
+            $o = $Others[$nk]
+            if ([int]$o.Secs -le 0 -and [string]$o.Last -eq '') { continue }
+            [void]$all.Add([pscustomobject]@{ Name = [string]$o.Name; System = [string]$o.System; Path = ''; Minutes = [math]::Round([int]$o.Secs / 60.0, 1)
+                                             Last = (& $toDate $o.Last); Image = ''; Favorite = $false })
         }
     }
     $list = @($all.ToArray())
@@ -1465,6 +1599,69 @@ function Get-SocialRelPath([string]$Root, [string]$System, [string]$Full) {
     $b = $base.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
     if (-not $Full.StartsWith($b, [StringComparison]::OrdinalIgnoreCase)) { return '' }
     return ($Full.Substring($b.Length) -replace '\\', '/')
+}
+
+# --- favourites that follow the person (2026-11-04) --------------------------
+#  Steven's flag: logging in on another computer brought back the picture but
+#  not the three favourites. Online they are kept by name and console only, so
+#  at login each one is looked up in this drive's game list by its name.
+
+# A favourite slot ("system|rom|picture") for the game called $Name in
+# roms\<System>\gamelist.xml, or '' when this drive does not have it.
+function Find-SocialFavSlot([string]$Root, [string]$System, [string]$Name) {
+    $sys = ([string]$System).ToLower()
+    if ($sys -notmatch '^[a-z0-9\-]{1,20}$' -or ([string]$Name).Trim() -eq '') { return '' }
+    $gl = Join-SocialPath (Join-SocialPath (Join-SocialPath $Root 'roms') $sys) 'gamelist.xml'
+    if (-not (Test-Path -LiteralPath $gl)) { return '' }
+    try { [xml]$x = [System.IO.File]::ReadAllText($gl) } catch { return '' }
+    $want = (Get-SocialClean $Name 60).ToLower()
+    foreach ($g in @($x.SelectNodes('/gameList/game'))) {
+        if ($null -eq $g) { continue }
+        $nn = $g.SelectSingleNode('name'); $pn = $g.SelectSingleNode('path')
+        if ($null -eq $nn -or $null -eq $pn) { continue }
+        if ((Get-SocialClean ([string]$nn.InnerText).Trim() 60).ToLower() -ne $want) { continue }
+        $rom = (([string]$pn.InnerText).Trim() -replace '\\', '/') -replace '^\./', ''
+        $pic = ''
+        $im = $g.SelectSingleNode('image')
+        if ($null -ne $im) { $pic = (([string]$im.InnerText).Trim() -replace '\\', '/') -replace '^\./', '' }
+        $slot = ConvertTo-SocialFavSlot ('{0}|{1}|{2}' -f $sys, $rom, $pic)
+        if ($slot -eq '') { $slot = ConvertTo-SocialFavSlot ('{0}|{1}|' -f $sys, $rom) }
+        if ($slot -ne '' -and $null -ne (Resolve-SocialFav $Root $slot)) { return $slot }
+    }
+    return ''
+}
+
+# After a login: the online favourites ($Rec.Favs) win, as the name and the
+# picture do. Each is kept by name and, where this drive has the game, put in
+# its slot. A slot already holding that same game is left as it is.
+# Without online favourites (an older record), the by-name list is filled
+# from the slots this drive can show, so they are kept from now on.
+function Merge-SocialFavsFromRecord([string]$Root, $Prof, $Rec) {
+    if ($null -eq $Prof -or $Prof.Guest) { return $Prof }
+    $slots = @($Prof.Favs); while ($slots.Count -lt 3) { $slots += '' }
+    $names = Get-SocialFavNames $Prof
+    $online = @(); if ($null -ne $Rec) { $online = @(@($Rec.Favs) | Where-Object { $null -ne $_ }) }
+    if ($online.Count -gt 0) {
+        for ($i = 0; $i -lt 3; $i++) {
+            if ($i -ge $online.Count) { $slots[$i] = ''; $names[$i] = ''; continue }
+            $o = $online[$i]
+            $names[$i] = ConvertTo-SocialFavName ([string]$o.System + '|' + [string]$o.Name)
+            $have = Resolve-SocialFav $Root ([string]$slots[$i])
+            if ($null -ne $have -and $have.System -eq [string]$o.System -and (Get-SocialClean $have.Name 60) -eq (Get-SocialClean ([string]$o.Name) 60)) { continue }
+            $slots[$i] = Find-SocialFavSlot $Root ([string]$o.System) ([string]$o.Name)
+        }
+    }
+    else {
+        for ($i = 0; $i -lt 3; $i++) {
+            if ($names[$i] -ne '') { continue }
+            $have = Resolve-SocialFav $Root ([string]$slots[$i])
+            if ($null -ne $have) { $names[$i] = ConvertTo-SocialFavName ($have.System + '|' + $have.Name) }
+        }
+    }
+    $Prof.Favs = $slots
+    if ($null -eq $Prof.PSObject.Properties['FavNames']) { $Prof | Add-Member -NotePropertyName FavNames -NotePropertyValue $names }
+    else { $Prof.FavNames = $names }
+    return $Prof
 }
 
 # --- play together ------------------------------------------------------------

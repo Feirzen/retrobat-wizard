@@ -62,6 +62,10 @@ A ($null -ne $pg -and $pg.Files[0].Url -eq 'private:priv__Priv.nes') 'private fi
 $r = Install-LibGame "$Root/_Wizard" $pg $sys
 A ($r.Ok -and (Test-Path "$Root/roms/nes/Priv.nes")) "private game installs: $($r.Message)"
 A (-not (Test-LibGameInstalled $c.Games[0] $sys)) 'not installed yet'
+# (2026-10-31) the download reports its own bytes, and where it is up to
+$prog = [hashtable]::Synchronized(@{ Bytes = [long]0; Stage = 'download' })
+$r = Install-LibGame "$Root/_Wizard" $c.Games[0] $sys $prog
+A ($r.Ok -and [long]$prog.Bytes -eq 100 -and $prog.Stage -eq 'place') "progress counts the bytes ($($prog.Bytes), $($prog.Stage))"
 $r = Install-LibGame "$Root/_Wizard" $c.Games[0] $sys
 A ($r.Ok -and (Test-Path "$Root/roms/nes/Cool Game.nes")) "installed: $($r.Message)"
 A (Test-LibGameInstalled $c.Games[0] $sys) 'now installed'

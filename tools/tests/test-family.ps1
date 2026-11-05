@@ -36,7 +36,9 @@ Check 'cod hidden' ($t -match '(?s)Black Ops II</name>\s*<hidden>true</hidden>\s
 Check 'mario not hidden' ($t -notmatch '(?s)Mario Kart 8</name>\s*<hidden>')
 Check 'indent kept' ($t -match "`r`n`t`t<hidden>true</hidden>`r`n`t</game>")
 Check 'xml still reads' ($null -ne ([xml]$t).gameList)
-Check 'show hidden switched off' ([System.IO.File]::ReadAllText("$Root/emulationstation/.emulationstation/es_settings.cfg") -match 'ShowHiddenGames" value="false"')
+$esT = [System.IO.File]::ReadAllText("$Root/emulationstation/.emulationstation/es_settings.cfg")
+Check 'show hidden switched off (RetroBat calls it ShowHiddenFiles)' ($esT -match 'ShowHiddenFiles" value="false"')
+Check 'the old wrong ShowHiddenGames line is taken out' ($esT -notmatch 'ShowHiddenGames')
 Check 'recorded' ((Get-Content "$Ws/Settings/family-hidden.txt" -Raw) -match 'wiiu\|\./Call of Duty')
 $r = Sync-FamilyFilter $Root $Ws
 Check 'again: nothing new' ($r.Hidden -eq 0 -and ([System.IO.File]::ReadAllText($gl) -split '<hidden>').Count -eq 3)
