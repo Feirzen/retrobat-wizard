@@ -160,8 +160,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Cut down entire legions of enemies as fan-favorite Legend of Zelda characters using powerful moves as Hyrule Warriors comes to the Nintendo 3DS. Control multiple characters to enhance your strategies and enjoy new story elements with playable characters from The Legend of Zelda:...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/hyrule-warriors-legends.png",
+      "video": "library/video/hyrule-warriors-legends.mp4",
       "files": [
       ],
       "parts": { "name": "Hyrule Warriors Legends (USA).cci", "size": 4294967296, "sha256": "414b236ad2bfd37db99173bc91706467537d04934a14f1d449c95be19e40b2d8", "pieces": [
