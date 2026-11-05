@@ -658,6 +658,19 @@
       ]
     },
     {
+      "id": "super-mario-maker",
+      "title": "Super Mario Maker",
+      "system": "3ds",
+      "players": "1",
+      "description": "The ultimate evolution of Super Mario Bros. is here! The Mario experience of your dreams has arrived and is bursting with creativity... including yours! Play a near-limitless number of intensely creative Super Mario levels from players around the world. Its easy enough to create...",
+      "added": "2026-11-04",
+      "art": "library/art/super-mario-maker.png",
+      "video": "library/video/super-mario-maker.mp4",
+      "files": [
+        { "name": "Super Mario Maker for Nintendo 3DS (USA) (En,Fr,Es) (Rev 3).cci", "url": "private:super-mario-maker__Super.Mario.Maker.for.Nintendo.3DS.USA.En.Fr.Es.Rev.3.cci", "size": 536870912, "sha256": "51a3973a5a34a81a6b553a39fbc9ed3560b26d5ae29ecd75c85fb94645168c53" }
+      ]
+    },
+    {
       "id": "super-smash-bros-for-nintendo-3ds",
       "title": "Super Smash Bros. for Nintendo 3DS",
       "system": "3ds",
