@@ -214,6 +214,19 @@
       ]
     },
     {
+      "id": "kirby-battle-royale",
+      "title": "Kirby Battle Royale",
+      "system": "3ds",
+      "players": "1",
+      "description": "Kirby? is about to enter a tournament against his toughest rival yet?himself! In local* or online ** battle arenas, up to 4 players can fight until the last Kirby standing wins. There are other modes too, like Ore Express, a mad dash to hoard treasure. Choose an ability and...",
+      "added": "2026-11-04",
+      "art": "library/art/kirby-battle-royale.png",
+      "video": "library/video/kirby-battle-royale.mp4",
+      "files": [
+        { "name": "Kirby Battle Royale (USA) (En,Ja,Fr,De,Es,It,Nl,Ko) (Rev 2).cci", "url": "private:kirby-battle-royale__Kirby.Battle.Royale.USA.En.Ja.Fr.De.Es.It.Nl.Ko.Rev.2.cci", "size": 536870912, "sha256": "0712303bd9df3c88ad0d880633d33c725deec0a436d4b405610502940dd39ac8" }
+      ]
+    },
+    {
       "id": "luigi-s-mansion-dark-moon",
       "title": "Luigi's Mansion : Dark Moon",
       "system": "3ds",
