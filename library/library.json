@@ -29,6 +29,23 @@
       ]
     },
     {
+      "id": "bravely-default",
+      "title": "Bravely Default",
+      "system": "3ds",
+      "players": "1",
+      "description": "After a Great Chasm suddenly tears the earth apart, the world of Luxendarc is plunged into darkness. The four elemental crystals which bring light to the world  fire and water, wind and earth  are consumed by an overwhelming force, disrupting the very balance of nature....",
+      "added": "2026-11-04",
+      "art": "library/art/bravely-default.png",
+      "video": "library/video/bravely-default.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Bravely Default (USA) (En,Ja,Fr,De,Es,It).cci", "size": 4294967296, "sha256": "6b4a89fa3385e967ab1db282b1616dc58df659c90a0626850d468334c70a0af2", "pieces": [
+        { "name": "Bravely Default (USA) (En,Ja,Fr,De,Es,It).cci.part01", "url": "private:bravely-default__Bravely.Default.USA.En.Ja.Fr.De.Es.It.cci.part01", "size": 1992294400, "sha256": "4dfcb7538c59bd957db93c80676223f781e252e40ecb72a56ee76592aabd205f" },
+        { "name": "Bravely Default (USA) (En,Ja,Fr,De,Es,It).cci.part02", "url": "private:bravely-default__Bravely.Default.USA.En.Ja.Fr.De.Es.It.cci.part02", "size": 1992294400, "sha256": "3f46c617194937c9ee209bb96fe4342feda81d841eb2e815737135448a956aae" },
+        { "name": "Bravely Default (USA) (En,Ja,Fr,De,Es,It).cci.part03", "url": "private:bravely-default__Bravely.Default.USA.En.Ja.Fr.De.Es.It.cci.part03", "size": 310378496, "sha256": "7bf8bb492f3ec0997960594812dfd4a0c61355e9015b9b8923927fff8cf40e28" }
+      ] }
+    },
+    {
       "id": "captain-toad-treasure-tracker",
       "title": "Captain Toad: Treasure Tracker",
       "system": "3ds",
