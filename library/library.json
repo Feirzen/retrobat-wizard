@@ -2200,6 +2200,19 @@
       ]
     },
     {
+      "id": "wario-land-ii",
+      "title": "Wario Land II",
+      "system": "gbc",
+      "players": "1",
+      "description": "Seeking revenge on Wario after he stole their treasure in Wario Land: Super Mario Land 3, special agents from the Black Sugar Gang of Kitchen Island sneak into Wario's newly built castle, steal back the treasure, and leave the castle and the surrounding area a mess. As Wario,...",
+      "added": "2026-11-04",
+      "art": "library/art/wario-land-ii.png",
+      "video": "library/video/wario-land-ii.mp4",
+      "files": [
+        { "name": "Wario Land II (USA, Europe) (SGB Enhanced) (GB Compatible).zip", "url": "private:wario-land-ii__Wario.Land.II.USA.Europe.SGB.Enhanced.GB.Compatible.zip", "size": 512301, "sha256": "f794c228b36902c44336cf90eabddad6fa0d516cef74a590d9021af9011faa1c" }
+      ]
+    },
+    {
       "id": "aladdin",
       "title": "Aladdin",
       "system": "megadrive",
