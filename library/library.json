@@ -227,6 +227,19 @@
       ]
     },
     {
+      "id": "pok-mon-picross",
+      "title": "Pokmon Picross",
+      "system": "3ds",
+      "players": "1",
+      "description": "Turn puzzles into portraits with Pokmon Picross! Solve over 300 number puzzles to complete pictures of your favourite Pokmon. When you complete a puzzle, youll add that Pokmon to your collection! Collected Pokmon can help you solve puzzles using a variety of skills. There...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-picross.png",
+      "video": "library/video/pok-mon-picross.mp4",
+      "files": [
+        { "name": "000400000017C100 Pokemon Picross (CTR-N-JFJA) (v0.0.0) (W).piratelegit.cia", "url": "private:pok-mon-picross__000400000017C100.Pokemon.Picross.CTR-N-JFJA.v0.0.0.W.piratelegit.cia", "size": 95265792, "sha256": "66bdb9f021ee36238772371a91714984a5e570d565d912cd7bb993122f21cffd" }
+      ]
+    },
+    {
       "id": "pokemon-rumble-blast",
       "title": "Pokemon Rumble Blast",
       "system": "3ds",
