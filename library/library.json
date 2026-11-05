@@ -361,6 +361,19 @@
       ] }
     },
     {
+      "id": "new-super-mario-bros-2",
+      "title": "New Super Mario Bros. 2",
+      "system": "3ds",
+      "players": "1",
+      "description": "New Super Mario Bros. 2 is a traditional side-scrolling adventure game featuring Mario, Luigi and loads of other favorite characters from the popular Mario series. The game was created specifically as a pick-up-and-play experience that can be instantly enjoyed by players of all...",
+      "added": "2026-11-04",
+      "art": "library/art/new-super-mario-bros-2.png",
+      "video": "library/video/new-super-mario-bros-2.mp4",
+      "files": [
+        { "name": "New Super Mario Bros. 2 (USA) (En,Fr,Es).cci", "url": "private:new-super-mario-bros-2__New.Super.Mario.Bros.2.USA.En.Fr.Es.cci", "size": 536870912, "sha256": "dc527d76c2b77a8eae1488addce253a269c623e69a9723b416e09e27170c5d09" }
+      ]
+    },
+    {
       "id": "pokemon-mystery-dungeon-gates-to-infinit",
       "title": "Pokemon Mystery Dungeon - Gates To Infinity",
       "system": "3ds",
