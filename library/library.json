@@ -3335,6 +3335,19 @@
       ]
     },
     {
+      "id": "phoenix-wright-ace-attorney-justice-for",
+      "title": "Phoenix Wright : Ace Attorney - Justice for All",
+      "system": "nds",
+      "players": "1",
+      "description": "The second game in the popular court room battle series from Japan introduces four new cases featuring new characters, plot twists and gameplay features. Players resume the role of Phoenix Wright, a defence attorney who must prove his client's innocence against the toughest of...",
+      "added": "2026-11-04",
+      "art": "library/art/phoenix-wright-ace-attorney-justice-for.png",
+      "video": "library/video/phoenix-wright-ace-attorney-justice-for.mp4",
+      "files": [
+        { "name": "Phoenix Wright - Ace Attorney - Justice for All (USA).zip", "url": "private:phoenix-wright-ace-attorney-justice-for__Phoenix.Wright.-.Ace.Attorney.-.Justice.for.All.USA.zip", "size": 13338193, "sha256": "51afd9b00d883f3586146860cd0153b0f2e1e2c9b6500c19a145ad2bfb6c1f20" }
+      ]
+    },
+    {
       "id": "plants-vs-zombies",
       "title": "Plants vs Zombies",
       "system": "nds",
