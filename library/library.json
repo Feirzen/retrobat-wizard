@@ -3622,6 +3622,19 @@
       ]
     },
     {
+      "id": "professor-layton-and-the-diabolical-box",
+      "title": "Professor Layton and the Diabolical Box",
+      "system": "nds",
+      "players": "1",
+      "description": "When Professor Layton and his assistant, Luke, receive a letter from the Professor's mentor, Dr. Andrew Schrader, Layton feels uneasy. The letter mentions that Schrader has acquired an elusive artifact called the Elysian Box - legend has it that anyone who tries to open it dies....",
+      "added": "2026-11-04",
+      "art": "library/art/professor-layton-and-the-diabolical-box.png",
+      "video": "library/video/professor-layton-and-the-diabolical-box.mp4",
+      "files": [
+        { "name": "Professor Layton and the Diabolical Box (USA).zip", "url": "private:professor-layton-and-the-diabolical-box__Professor.Layton.and.the.Diabolical.Box.USA.zip", "size": 98308585, "sha256": "46bcdcb8daea1394f16a538f53a28b98ac081162ed311e257fd4fcb3daa3d11c" }
+      ]
+    },
+    {
       "id": "professor-layton-and-the-last-specter",
       "title": "Professor Layton and the Last Specter",
       "system": "nds",
