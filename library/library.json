@@ -3154,6 +3154,19 @@
       ]
     },
     {
+      "id": "clubhouse-games",
+      "title": "Clubhouse Games",
+      "system": "nds",
+      "players": "1-8",
+      "description": "This game presents 42 (mostly) well-known games including 18 card games, 12 board games, 4 \"variety\" games, 5 \"action\" games and 3 single-player games; although a few of the games must be unlocked before being played. Each game has options that can be used to create further...",
+      "added": "2026-11-04",
+      "art": "library/art/clubhouse-games.png",
+      "video": "library/video/clubhouse-games.mp4",
+      "files": [
+        { "name": "Clubhouse Games (USA) (En,Fr,De,Es,It) (Rev 1).zip", "url": "private:clubhouse-games__Clubhouse.Games.USA.En.Fr.De.Es.It.Rev.1.zip", "size": 8665705, "sha256": "45a4da79a4c7cfa183837e2e8562ce55be7fae03cd58854e48238b5cca3cf06e" }
+      ]
+    },
+    {
       "id": "kirby-super-star-ultra",
       "title": "Kirby Super Star Ultra",
       "system": "nds",
