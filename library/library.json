@@ -3726,6 +3726,19 @@
       ]
     },
     {
+      "id": "warioware-touched",
+      "title": "WarioWare : Touched!",
+      "system": "nds",
+      "players": "1",
+      "description": "Wario makes his debut on the Nintendo DS with hundreds of all-new minigames. Now you must complete your goals by using the touch screen and a stylus. Tap, scratch, and rub your stylus on the touch screen to play minigames that have you do everything from milking a cow and...",
+      "added": "2026-11-04",
+      "art": "library/art/warioware-touched.png",
+      "video": "library/video/warioware-touched.mp4",
+      "files": [
+        { "name": "WarioWare - Touched! (USA).zip", "url": "private:warioware-touched__WarioWare.-.Touched.USA.zip", "size": 23298654, "sha256": "4269187f6b1d51cd3b2c320385158bd80f536bbf2073e38d6581fc757deb17b7" }
+      ]
+    },
+    {
       "id": "battletoads",
       "title": "Battletoads",
       "system": "nes",
