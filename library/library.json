@@ -193,8 +193,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Kirby: Planet Robobot is a 2.5D side-scrolling platform game that uses traditional Kirby platform gameplay; the aim of the game is to guide Kirby towards the end of the level while utilizing his copy abilities to defeat enemies and interact with the environment. This time...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/kirby-planet-robobot.png",
+      "video": "library/video/kirby-planet-robobot.mp4",
       "files": [
         { "name": "Kirby - Planet Robobot (USA).cci", "url": "private:kirby-planet-robobot__Kirby.-.Planet.Robobot.USA.cci", "size": 1073741824, "sha256": "2d369c0601869fff9aafd5f510ccdfa81e46007780384dfd367ee714b1b1b957" }
       ]
