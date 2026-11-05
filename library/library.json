@@ -3211,8 +3211,9 @@
       "system": "nds",
       "players": "1",
       "description": "Kirby's back with a bunch of fun adventures! Explore Dream Land and defeat King Dedede, tame the ferocious Dynablade, explore a huge cave, take part in a gluttonous race, vandalize Meta Knight's ship, the Halberd, explore the entire galaxy, and more! Kirby Super Star Ultra is an...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/kirby-super-star-ultra.png",
+      "video": "library/video/kirby-super-star-ultra.mp4",
       "files": [
         { "name": "Kirby Super Star Ultra (USA).zip", "url": "private:kirby-super-star-ultra__Kirby.Super.Star.Ultra.USA.zip", "size": 62697096, "sha256": "da56661221abc4c6336f7f069a01f5a87574536441332d55260562a2430232b4" }
       ]
