@@ -177,8 +177,9 @@
       "system": "3ds",
       "players": "1",
       "description": "One of the most beloved franchises in Nintendos long history makes its glorious return in spectacular 3D! Pit of Kid Icarus fame is back in a new game designed specifically for the Nintendo 3DS system, by Masahiro Sakurai, creator of the Kirby and Super Smash Bros. franchises,...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/kid-icarus-uprising.png",
+      "video": "library/video/kid-icarus-uprising.mp4",
       "files": [
       ],
       "parts": { "name": "Kid Icarus - Uprising (USA) (En,Fr,Es) (Rev 1).cci", "size": 2147483648, "sha256": "cfb4fdb15375449249d991b2e57611e449b0a7e37c55499349665b0577c4e07a", "pieces": [
