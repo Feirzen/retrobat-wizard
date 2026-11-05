@@ -96,8 +96,9 @@
       "system": "3ds",
       "players": "1",
       "description": "In the visually stunning world of the Fire Emblem Awakening game, you command and fight alongside an army of spirited heroes standing against an enemy with the power to destroy empires; a dark dragon whose agents include armies of the undead.Plan your attack, customize your...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/fire-emblem-awakening.png",
+      "video": "library/video/fire-emblem-awakening.mp4",
       "files": [
       ],
       "parts": { "name": "Fire Emblem - Awakening (USA).cci", "size": 2147483648, "sha256": "85fd5f5e904fa13fa7b5883ac589d28bf913d07f569fb109aeb6aa328928eaf4", "pieces": [
