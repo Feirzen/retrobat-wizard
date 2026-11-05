@@ -3144,10 +3144,11 @@
       "id": "chrono-trigger",
       "title": "Chrono Trigger",
       "system": "nds",
-      "players": "1-2",
+      "players": "1",
       "description": "What begins as a carefree day at the Millennial Fair for a young man named Crono turns into a huge adventure. He will be thrusted into the ultimate trip through time and space, encountering new friends, defeating the forces of evil, and encountering the one who would destroy the...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/chrono-trigger.png",
+      "video": "library/video/chrono-trigger.mp4",
       "files": [
         { "name": "Chrono Trigger (USA) (En,Fr).zip", "url": "private:chrono-trigger__Chrono.Trigger.USA.En.Fr.zip", "size": 62603055, "sha256": "b54865890276153943220fc293c164e48fcb15ef3c63da9d6f2ed53bbd689263" }
       ]
