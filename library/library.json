@@ -282,8 +282,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Laugh your way through a hilarious story told from three perspectives! Search the Mushroom Kingdom for a cure as Bowser, explore his innards as the Mario Bros., and discover the untold story of Bowser Jr.?s Journey. Overcome the fury of Fawful, action-packed battles, puzzling...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/mario-luigi-bowser-s-inside-story-bowser.png",
+      "video": "library/video/mario-luigi-bowser-s-inside-story-bowser.mp4",
       "files": [
         { "name": "Mario & Luigi - Bowser's Inside Story + Bowser Jr.'s Journey (USA).cci", "url": "private:mario-luigi-bowser-s-inside-story-bowser__Mario.Luigi.-.Bowser.s.Inside.Story.Bowser.Jr.s.Journey.USA.cci", "size": 1073741824, "sha256": "a4a5f33cb3d7b1cfd01a12450f94a000e9891e2de955c3ec6e3784d13915b3ab" }
       ]
