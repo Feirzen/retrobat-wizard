@@ -64,8 +64,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Follow the story of Tim Goodman, an 18-year-old university student with a strong sense of justice, and form an unlikely partnership with a peculiar talking Pikachu! Gather evidence, interview witnesses, and piece together a variety of clues to unravel the many mysteries...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/detective-pikachu.png",
+      "video": "library/video/detective-pikachu.mp4",
       "files": [
       ],
       "parts": { "name": "Detective Pikachu (USA) (En,Ja,Fr,De,Es,It,Zh).cci", "size": 2147483648, "sha256": "90ebf2baf66d1536a9d50893cf3a01bb07857643db147e1cb0bdd1227c2cc35f", "pieces": [
