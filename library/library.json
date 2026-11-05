@@ -3609,6 +3609,19 @@
       ]
     },
     {
+      "id": "professor-layton-and-the-curious-village",
+      "title": "Professor Layton and the Curious Village",
+      "system": "nds",
+      "players": "1",
+      "description": "After hearing about a strange inheritance dispute in the town of St. Mystere, Professor Layton and his young apprentice, Luke, travel there on behalf of Lady Dahlia, who has requested their presence to resolve the issue. However, it quickly becomes apparent that St. Mystere is...",
+      "added": "2026-11-04",
+      "art": "library/art/professor-layton-and-the-curious-village.png",
+      "video": "library/video/professor-layton-and-the-curious-village.mp4",
+      "files": [
+        { "name": "Professor Layton and the Curious Village (USA, Australia).zip", "url": "private:professor-layton-and-the-curious-village__Professor.Layton.and.the.Curious.Village.USA.Australia.zip", "size": 53412898, "sha256": "3e435f0d054445ceda0ad4c9035bd32f2e3313cbc6c1c5fc0dc35f9a4a62168b" }
+      ]
+    },
+    {
       "id": "professor-layton-and-the-last-specter",
       "title": "Professor Layton and the Last Specter",
       "system": "nds",
