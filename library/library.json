@@ -3128,6 +3128,19 @@
       ]
     },
     {
+      "id": "brain-age-train-your-brain-in-minutes-a",
+      "title": "Brain Age - Train Your Brain in Minutes a Day!",
+      "system": "nds",
+      "players": "1-16",
+      "description": "Brain Age: Train Your Brain in Minutes a Day for Nintendo DS is a fun, rewarding form of entertainment everyone can enjoy, as it helps players flex their mental muscles. Brain Age is inspired by the research of Professor Ryuta Kawashima, a prominent Japanese neuroscientist. His...",
+      "added": "2026-11-04",
+      "art": "library/art/brain-age-train-your-brain-in-minutes-a.png",
+      "video": "library/video/brain-age-train-your-brain-in-minutes-a.mp4",
+      "files": [
+        { "name": "Brain Age - Train Your Brain in Minutes a Day! (USA) (Rev 1).zip", "url": "private:brain-age-train-your-brain-in-minutes-a__Brain.Age.-.Train.Your.Brain.in.Minutes.a.Day.USA.Rev.1.zip", "size": 4667780, "sha256": "de4e2563df5aa9251143ad8db9d70611087a505c95e9adbbe50b0f4f406837f0" }
+      ]
+    },
+    {
       "id": "chrono-trigger",
       "title": "Chrono Trigger",
       "system": "nds",
