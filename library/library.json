@@ -2030,6 +2030,19 @@
       ]
     },
     {
+      "id": "mario-kart-super-circuit",
+      "title": "Mario Kart : Super Circuit",
+      "system": "gba",
+      "players": "1-4",
+      "description": "All your favourite kart-racing characters are back and ready to kick it into high gear! 20 brand-new tracks await on Game Boy Advance, loaded with classic power-ups and primed for the type of frenzied racing that only Mario Kart: Super Circuit can deliver. It's time to burn...",
+      "added": "2026-11-04",
+      "art": "library/art/mario-kart-super-circuit.png",
+      "video": "library/video/mario-kart-super-circuit.mp4",
+      "files": [
+        { "name": "Mario Kart - Super Circuit (USA).zip", "url": "private:mario-kart-super-circuit__Mario.Kart.-.Super.Circuit.USA.zip", "size": 2104298, "sha256": "1a92287ff92d74e3f5597711b9f2a2b1e1357724ef3f8e59a09acb1dce5b6568" }
+      ]
+    },
+    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
