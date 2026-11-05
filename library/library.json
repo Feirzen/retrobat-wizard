@@ -1853,8 +1853,9 @@
       "system": "gb",
       "players": "1",
       "description": "Wario, Mario's greedy rival from Super Mario Land 2: 6 Golden Coins, is more determined than ever to get a castle after being booted out of Mario's. He has heard that the pirates of Kitchen Island have a golden Statue of Princess Toadstool that's worth a king's ransom! Wario...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/wario-land-super-mario-land-3.png",
+      "video": "library/video/wario-land-super-mario-land-3.mp4",
       "files": [
         { "name": "Wario Land - Super Mario Land 3 (World).zip", "url": "private:wario-land-super-mario-land-3__Wario.Land.-.Super.Mario.Land.3.World.zip", "size": 274746, "sha256": "1d58a031a54dd2849f5697b69e766dc81d355dfeddb407e67fa95a074ebd36dc" }
       ]
