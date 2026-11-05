@@ -123,6 +123,22 @@
       ] }
     },
     {
+      "id": "fire-emblem-fates-birthright",
+      "title": "Fire Emblem Fates : Birthright",
+      "system": "3ds",
+      "players": "1",
+      "description": "A youth has grown up as one of the royal children of the glory-seeking nation of Nohr. Though their father has forbidden them to leave the castle, they still live a happy life with their four siblings. However, when they finally are sent to the outside world, it is on a mission...",
+      "added": "2026-11-04",
+      "art": "library/art/fire-emblem-fates-birthright.png",
+      "video": "library/video/fire-emblem-fates-birthright.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Fire Emblem Fates - Birthright (USA).cci", "size": 2147483648, "sha256": "0f65c4a77992ba14110a8ab29d78a96a5d143184659e78c30d1a1287662b46db", "pieces": [
+        { "name": "Fire Emblem Fates - Birthright (USA).cci.part01", "url": "private:fire-emblem-fates-birthright__Fire.Emblem.Fates.-.Birthright.USA.cci.part01", "size": 1992294400, "sha256": "5730140c45fe40e5dfb7320bc17af3cd930ebb0e183ddef549c7f5c13dc0e508" },
+        { "name": "Fire Emblem Fates - Birthright (USA).cci.part02", "url": "private:fire-emblem-fates-birthright__Fire.Emblem.Fates.-.Birthright.USA.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "hyrule-warriors-legends",
       "title": "Hyrule Warriors Legends",
       "system": "3ds",
