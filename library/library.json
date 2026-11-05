@@ -139,6 +139,22 @@
       ] }
     },
     {
+      "id": "fire-emblem-fates-conquest",
+      "title": "Fire Emblem Fates : Conquest",
+      "system": "3ds",
+      "players": "1",
+      "description": "Two kingdoms are on the brink of war. Whose side will you choose? Torn between two families, you're an heir of Hoshido, raised by Nohrian royals. If you walk the path of Conquest, you must fight to change your misguided kingdom from within. Command warriors with expert precision...",
+      "added": "2026-11-04",
+      "art": "library/art/fire-emblem-fates-conquest.png",
+      "video": "library/video/fire-emblem-fates-conquest.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Fire Emblem Fates - Conquest (USA).cci", "size": 2147483648, "sha256": "16f9852f3040415f41aea51d99ed310840cf8d008ffcb2b51a5ac57f9379a4a9", "pieces": [
+        { "name": "Fire Emblem Fates - Conquest (USA).cci.part01", "url": "private:fire-emblem-fates-conquest__Fire.Emblem.Fates.-.Conquest.USA.cci.part01", "size": 1992294400, "sha256": "0fbdb3890c2def695e926c8c2d500ec5461ad928aeab855c4ece8e3ac9a2d1fe" },
+        { "name": "Fire Emblem Fates - Conquest (USA).cci.part02", "url": "private:fire-emblem-fates-conquest__Fire.Emblem.Fates.-.Conquest.USA.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "hyrule-warriors-legends",
       "title": "Hyrule Warriors Legends",
       "system": "3ds",
