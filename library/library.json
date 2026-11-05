@@ -2044,19 +2044,6 @@
       ]
     },
     {
-      "id": "pok-mon-trading-card-game",
-      "title": "Pokmon Trading Card Game",
-      "system": "gbc",
-      "players": "1",
-      "description": "The greatest Pokemon Trading Card Game players of all time - the Grand Masters - are looking for one player worthy of inheriting the four rare, Legendary Pokemon Cards! Build new decks with the Auto Deck Machine, hone your skills on the Challenge Machine and test your ability in...",
-      "added": "2026-11-04",
-      "art": "library/art/pok-mon-trading-card-game.png",
-      "video": "library/video/pok-mon-trading-card-game.mp4",
-      "files": [
-        { "name": "Pokemon Trading Card Game (USA, Australia) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-trading-card-game__Pokemon.Trading.Card.Game.USA.Australia.SGB.Enhanced.GB.Compatible.zip", "size": 454268, "sha256": "df99d4db02aeccbaf47e0efcd59228effd2241d6d1519bd05f01c325bb937ae9" }
-      ]
-    },
-    {
       "id": "pok-mon-silver-version",
       "title": "Pokmon : Silver Version",
       "system": "gbc",
@@ -2122,13 +2109,27 @@
       ]
     },
     {
+      "id": "pok-mon-trading-card-game",
+      "title": "Pokmon Trading Card Game",
+      "system": "gbc",
+      "players": "1",
+      "description": "The greatest Pokemon Trading Card Game players of all time - the Grand Masters - are looking for one player worthy of inheriting the four rare, Legendary Pokemon Cards! Build new decks with the Auto Deck Machine, hone your skills on the Challenge Machine and test your ability in...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-trading-card-game.png",
+      "video": "library/video/pok-mon-trading-card-game.mp4",
+      "files": [
+        { "name": "Pokemon Trading Card Game (USA, Australia) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-trading-card-game__Pokemon.Trading.Card.Game.USA.Australia.SGB.Enhanced.GB.Compatible.zip", "size": 454268, "sha256": "df99d4db02aeccbaf47e0efcd59228effd2241d6d1519bd05f01c325bb937ae9" }
+      ]
+    },
+    {
       "id": "super-mario-bros-deluxe",
       "title": "Super Mario Bros. Deluxe",
       "system": "gbc",
-      "players": "1-2",
+      "players": "1",
       "description": "The Mushroom Kingdom has been invaded by the Koopa, a tribe of turtles who possess dark magic. Their king Bowser has transformed all its inhabitants into stones, bricks, and mushrooms; he has also captured Princess Toadstool. She is the only one who can break the evil spell....",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/super-mario-bros-deluxe.png",
+      "video": "library/video/super-mario-bros-deluxe.mp4",
       "files": [
         { "name": "Super Mario Bros. Deluxe (Europe) (Rev 2).zip", "url": "private:super-mario-bros-deluxe__Super.Mario.Bros.Deluxe.Europe.Rev.2.zip", "size": 336071, "sha256": "9682738cc29315921ed0980bcebbcee80d61fd2f13b6f4b74a7ab445e83110d2" }
       ]
