@@ -3648,6 +3648,19 @@
       ]
     },
     {
+      "id": "professor-layton-and-the-unwound-future",
+      "title": "Professor Layton and the Unwound Future",
+      "system": "nds",
+      "players": "1",
+      "description": "Professor Layton and his assistant Luke attend the unveiling of a new invention called a time machine. The Prime Minister of London is volunteered as a test subject, but the machine explodes and there is no trace of him. With the Prime Minister missing, London is in chaos!...",
+      "added": "2026-11-04",
+      "art": "library/art/professor-layton-and-the-unwound-future.png",
+      "video": "library/video/professor-layton-and-the-unwound-future.mp4",
+      "files": [
+        { "name": "Professor Layton and the Unwound Future (USA).zip", "url": "private:professor-layton-and-the-unwound-future__Professor.Layton.and.the.Unwound.Future.USA.zip", "size": 217845312, "sha256": "e38f507c98f0877960f15b3d80693757d5e584eba92a0afaa9f1b15f8ac1b1b5" }
+      ]
+    },
+    {
       "id": "sonic-classic-collection",
       "title": "Sonic Classic Collection",
       "system": "nds",
