@@ -82,6 +82,8 @@ function Get-FeatureCatalogue {
         off     = 'Off stops looking. Box art already added stays.'
         scripts = @()
         reverts = $false
+        # (3.3.1, Steven) off until someone ticks it: RetroBat's own scraper is the first choice
+        default = $false
     }
 
     # 2026-10-25: M-rated games out of sight (scripts\FamilyFilter.ps1).

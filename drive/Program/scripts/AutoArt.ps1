@@ -24,7 +24,7 @@
                             Only while RetroBat is closed: at PLAY, and at the
                             end of a fetch when RetroBat is not running.
     A game whose picture was not found is tried again after a week.
-    Switched by 'autoart' in features.ini (on unless it says off).
+    Switched by 'autoart' in features.ini (off unless it says on; 3.3.1).
 
     FUNCTIONS ONLY. Dot-source it (no param block on purpose: the wizard
     dot-sources it, and one would overwrite the wizard's own $Root).
@@ -53,11 +53,13 @@ function Join-AaPath([string]$Base, [string]$Rel) {
     return $p
 }
 
+# OFF unless features.ini says "autoart = on" (3.3.1, Steven: RetroBat's own
+# ScreenScraper tool is the first choice; this is for whoever ticks it).
 function Test-AaOn([string]$Root) {
     $f = Join-AaPath $Root '_Wizard\Settings\features.ini'
-    if (-not (Test-Path -LiteralPath $f)) { return $true }
-    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*autoart\s*=\s*(off|false|no|0)\b') { return $false } }
-    return $true
+    if (-not (Test-Path -LiteralPath $f)) { return $false }
+    foreach ($l in [System.IO.File]::ReadAllLines($f)) { if ($l -match '^\s*autoart\s*=\s*(on|true|yes|1)\b') { return $true } }
+    return $false
 }
 
 function Test-AaRetroBatOpen {

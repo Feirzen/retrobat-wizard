@@ -2,6 +2,10 @@
 
 Newest first. Written for players: what you will notice.
 
+## 3.3.1 (2026-11-04) - box art is your choice
+
+- Box art for games with none is now off until you tick it on the Features page. RetroBat's own scraper (START, Scraper) is still the way to get box art, videos and descriptions; the tick box is there for whoever would rather not.
+
 ## 3.3.0 (2026-11-04) - ready for friends
 
 **Fixed**
