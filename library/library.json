@@ -3289,8 +3289,9 @@
       "system": "nds",
       "players": "1",
       "description": "In an all new 2D side-scrolling adventure, Mario and Luigi return after nearly fifteen years. The first traditional Mario Bros. game since Super Mario World. The character models are rendered in real time 3D, allowing for a far greater number of moves ever before seen in a Mario...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/new-super-mario-bros.png",
+      "video": "library/video/new-super-mario-bros.mp4",
       "files": [
         { "name": "New Super Mario Bros. (USA, Australia).zip", "url": "private:new-super-mario-bros__New.Super.Mario.Bros.USA.Australia.zip", "size": 14513879, "sha256": "6c457d27deeb06ce3c003290e5cb84f96d843b2ebaff7630c38fbda85e1afbab" }
       ]
