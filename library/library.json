@@ -590,6 +590,22 @@
       ] }
     },
     {
+      "id": "professor-layton-vs-phoenix-wright-ace-a",
+      "title": "Professor Layton vs. Phoenix Wright - Ace Attorney",
+      "system": "3ds",
+      "players": "1",
+      "description": "Ace Attorney and Ace Investigator Join Forces! Two of gaming's biggest sleuths team up to solve the most puzzling mystery they have ever encountered. For the first time ever, the mind-bending puzzles of the Professor Layton series meet the courtroom drama of Phoenix Wright: Ace...",
+      "added": "2026-11-04",
+      "art": "library/art/professor-layton-vs-phoenix-wright-ace-a.png",
+      "video": "library/video/professor-layton-vs-phoenix-wright-ace-a.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Professor Layton vs. Phoenix Wright - Ace Attorney (USA) (En,Fr,Es).cci", "size": 2147483648, "sha256": "ce08b98df726de16862114d543bb43f9b3f9954ad9998123968ee10fc590431e", "pieces": [
+        { "name": "Professor Layton vs. Phoenix Wright - Ace Attorney (USA) (En,Fr,Es).cci.part01", "url": "private:professor-layton-vs-phoenix-wright-ace-a__Professor.Layton.vs.Phoenix.Wright.-.Ace.Attorney.USA.En.Fr.Es.cci.part01", "size": 1992294400, "sha256": "68525a1983943a8aa9dabe5204ef6261d34bc583225961f5187ad9326d4bb249" },
+        { "name": "Professor Layton vs. Phoenix Wright - Ace Attorney (USA) (En,Fr,Es).cci.part02", "url": "private:professor-layton-vs-phoenix-wright-ace-a__Professor.Layton.vs.Phoenix.Wright.-.Ace.Attorney.USA.En.Fr.Es.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "scribblenauts-unlimited",
       "title": "Scribblenauts Unlimited",
       "system": "3ds",
