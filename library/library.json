@@ -3232,6 +3232,19 @@
       ]
     },
     {
+      "id": "mario-kart-ds",
+      "title": "Mario Kart DS",
+      "system": "nds",
+      "players": "1-8",
+      "description": "Mario Kart DS is the continuation of the long running racing game series that began on the Super Nintendo. It features 16 new tracks as well as 16 tracks from the previous 4 games, with each set split up into the Nitro and Retro Grand Prix respectively. Eight racers are...",
+      "added": "2026-11-04",
+      "art": "library/art/mario-kart-ds.png",
+      "video": "library/video/mario-kart-ds.mp4",
+      "files": [
+        { "name": "Mario Kart DS (USA, Australia) (En,Fr,De,Es,It).zip", "url": "private:mario-kart-ds__Mario.Kart.DS.USA.Australia.En.Fr.De.Es.It.zip", "size": 18907700, "sha256": "0c3821681f663c3c7b9705971c14d7a8b79d4540f130685dc9c6842a6e8dc8b7" }
+      ]
+    },
+    {
       "id": "mario-vs-donkey-kong-mini-land-mayhem",
       "title": "Mario vs. Donkey Kong: Mini-Land Mayhem!",
       "system": "nds",
