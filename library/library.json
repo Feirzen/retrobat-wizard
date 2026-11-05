@@ -3367,8 +3367,9 @@
       "system": "nds",
       "players": "1",
       "description": "Now you can zap zombies on the go in PopCap's award-winning game! Enjoy thrilling new minigames, take on a friend in Versus mode, and make your own zombie with the Zombatar! Plus, you'll get all the fun of the original hit game: Fight the fun-dead with your arsenal of plants...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/plants-vs-zombies.png",
+      "video": "library/video/plants-vs-zombies.mp4",
       "files": [
         { "name": "Plants vs. Zombies (USA).zip", "url": "private:plants-vs-zombies__Plants.vs.Zombies.USA.zip", "size": 25197071, "sha256": "21d61321a224fc279273f3f11591f22aafbe311289cb693d8e1bdbd498e902d3" }
       ]
