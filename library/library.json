@@ -637,8 +637,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Shovel Knight is a 2014 action platformer video game developed and published by independent developer Yacht Club Games for the Nintendo 3DS, Wii U, and personal computer platforms. The game was released worldwide on June 26, 2014. Shovel Knight was directed by former WayForward...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/shovel-knight-treasure-trove.png",
+      "video": "library/video/shovel-knight-treasure-trove.mp4",
       "files": [
         { "name": "Shovel Knight (USA).cci", "url": "private:shovel-knight-treasure-trove__Shovel.Knight.USA.cci", "size": 268435456, "sha256": "6fe68940d11a1eb5643fc47360347414c052832bc236f9cbdc895906eeeb95ae" }
       ]
