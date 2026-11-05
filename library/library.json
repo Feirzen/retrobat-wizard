@@ -3180,6 +3180,19 @@
       ]
     },
     {
+      "id": "kirby-canvas-curse",
+      "title": "Kirby : Canvas Curse",
+      "system": "nds",
+      "players": "1",
+      "description": "Your DS stylus has been infused with the power to paint! When Kirby gets turned into a ball by an evil witch, your hand-drawn rainbow paths become the only way he can find power-ups and reach the gates of each world. Draw loops to make him speed up, make ramps to jump danger,...",
+      "added": "2026-11-04",
+      "art": "library/art/kirby-canvas-curse.png",
+      "video": "library/video/kirby-canvas-curse.mp4",
+      "files": [
+        { "name": "Kirby - Canvas Curse (USA).zip", "url": "private:kirby-canvas-curse__Kirby.-.Canvas.Curse.USA.zip", "size": 25705692, "sha256": "56eb61a82f9339c3959c39fd529b3c5ee8b438525cab83925d37d5b8fe3ba8f8" }
+      ]
+    },
+    {
       "id": "kirby-super-star-ultra",
       "title": "Kirby Super Star Ultra",
       "system": "nds",
