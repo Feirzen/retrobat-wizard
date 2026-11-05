@@ -3388,16 +3388,16 @@
       ]
     },
     {
-      "id": "pok-mon-mystery-dungeon-explorers-of-tim",
-      "title": "Pokmon Mystery Dungeon : Explorers Of Time",
+      "id": "pok-mon-ranger-guardian-signs",
+      "title": "Pokmon Ranger : Guardian Signs",
       "system": "nds",
       "players": "1",
-      "description": "In this action-packed adventure, players journey as actual Pokemon through a fantastic land untouched by humans. Before the game starts, players take a test to help them figure out which of 16 Pokemon best represents their personalities. Players then experience their adventure...",
+      "description": "Channel the power of legends!The third installment in the action-packed Pokmon Ranger series lets players take on the role of a Pokmon Ranger tasked with protecting Pokmon, people, and nature in the Oblivia region. As a Pokmon Ranger, players investigate the nefarious...",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-mystery-dungeon-explorers-of-tim.png",
-      "video": "library/video/pok-mon-mystery-dungeon-explorers-of-tim.mp4",
+      "art": "library/art/pok-mon-ranger-guardian-signs.png",
+      "video": "library/video/pok-mon-ranger-guardian-signs.mp4",
       "files": [
-        { "name": "Pokemon Mystery Dungeon - Explorers of Time (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-tim__Pokemon.Mystery.Dungeon.-.Explorers.of.Time.USA.zip", "size": 31813311, "sha256": "b145fc1e6326963f9779f63eab4bfb2d4e5a1c6edbf78fa9efcee5c98df71f77" }
+        { "name": "Pokemon Ranger - Guardian Signs (USA, Australia).zip", "url": "private:pok-mon-ranger-guardian-signs__Pokemon.Ranger.-.Guardian.Signs.USA.Australia.zip", "size": 92381686, "sha256": "4df25d0189194e8b107024dee5a5c72b12a493da02397cca100c3fbc0cbe8e5a" }
       ]
     },
     {
@@ -3475,6 +3475,19 @@
       "video": "library/video/pok-mon-mystery-dungeon-explorers-of-sky.mp4",
       "files": [
         { "name": "Pokemon Mystery Dungeon - Explorers of Sky (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-sky__Pokemon.Mystery.Dungeon.-.Explorers.of.Sky.USA.zip", "size": 46465544, "sha256": "d87541821866f5f1b01abad2df879bb3d1cacdbb7a5a13975eeccd889f1c9f44" }
+      ]
+    },
+    {
+      "id": "pok-mon-mystery-dungeon-explorers-of-tim",
+      "title": "Pokmon Mystery Dungeon : Explorers Of Time",
+      "system": "nds",
+      "players": "1",
+      "description": "In this action-packed adventure, players journey as actual Pokemon through a fantastic land untouched by humans. Before the game starts, players take a test to help them figure out which of 16 Pokemon best represents their personalities. Players then experience their adventure...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-mystery-dungeon-explorers-of-tim.png",
+      "video": "library/video/pok-mon-mystery-dungeon-explorers-of-tim.mp4",
+      "files": [
+        { "name": "Pokemon Mystery Dungeon - Explorers of Time (USA).zip", "url": "private:pok-mon-mystery-dungeon-explorers-of-tim__Pokemon.Mystery.Dungeon.-.Explorers.of.Time.USA.zip", "size": 31813311, "sha256": "b145fc1e6326963f9779f63eab4bfb2d4e5a1c6edbf78fa9efcee5c98df71f77" }
       ]
     },
     {
