@@ -2003,6 +2003,19 @@
       ]
     },
     {
+      "id": "kirby-nightmare-in-dream-land",
+      "title": "Kirby : Nightmare in Dream Land",
+      "system": "gba",
+      "players": "1-4",
+      "description": "Everyone in Dream Land has lost the ability to dream! It seems that King Dedede has stolen the Star Rod, the source of power for the Fountain of Dreams, and given its fragmented pieces to his goons for safekeeping. The world needs a hero... a round pink one. As Kirby embarks on...",
+      "added": "2026-11-04",
+      "art": "library/art/kirby-nightmare-in-dream-land.png",
+      "video": "library/video/kirby-nightmare-in-dream-land.mp4",
+      "files": [
+        { "name": "Kirby - Nightmare in Dream Land (USA).zip", "url": "private:kirby-nightmare-in-dream-land__Kirby.-.Nightmare.in.Dream.Land.USA.zip", "size": 4574643, "sha256": "7d96c771cad0762f5d74eca8fecad68df5bf8e39e6ee412169ba9d48fb429124" }
+      ]
+    },
+    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
