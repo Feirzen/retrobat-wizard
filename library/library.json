@@ -305,6 +305,19 @@
       ]
     },
     {
+      "id": "mario-party-star-rush",
+      "title": "Mario Party - Star Rush",
+      "system": "3ds",
+      "players": "1",
+      "description": "Mario Party: Star Rush is the latest installment on the Nintendo 3DS following the release of the 2014 3DS game Mario Party: Island Tour. The general concept of playing the game is still the same and does not much differ from previous iterations of the Mario Party franchise,...",
+      "added": "2026-11-04",
+      "art": "library/art/mario-party-star-rush.png",
+      "video": "library/video/mario-party-star-rush.mp4",
+      "files": [
+        { "name": "Mario Party - Star Rush (USA) (En,Fr,Es).cci", "url": "private:mario-party-star-rush__Mario.Party.-.Star.Rush.USA.En.Fr.Es.cci", "size": 536870912, "sha256": "b9c7f35d8ef98ee9285cadfd118cb23353cfa47921326324382b4c525915377d" }
+      ]
+    },
+    {
       "id": "mario-party-the-top-100",
       "title": "Mario Party: The Top 100",
       "system": "3ds",
