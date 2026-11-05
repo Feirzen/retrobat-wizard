@@ -2069,19 +2069,6 @@
       ]
     },
     {
-      "id": "pok-mon-ruby-version",
-      "title": "Pokmon Ruby Version",
-      "system": "gba",
-      "players": "1",
-      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
-      "added": "2026-11-04",
-      "art": "library/art/pok-mon-ruby-version.png",
-      "video": "library/video/pok-mon-ruby-version.mp4",
-      "files": [
-        { "name": "Pokemon_ Ruby Version.zip", "url": "private:pok-mon-ruby-version__Pokemon_.Ruby.Version.zip", "size": 4806990, "sha256": "c41356ad1136af3902116aa716c76f7bbfc9d71219a88df8278a22e3d76b08a0" }
-      ]
-    },
-    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
@@ -2134,6 +2121,19 @@
       ]
     },
     {
+      "id": "pok-mon-ruby-version",
+      "title": "Pokmon Ruby Version",
+      "system": "gba",
+      "players": "1",
+      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-ruby-version.png",
+      "video": "library/video/pok-mon-ruby-version.mp4",
+      "files": [
+        { "name": "Pokemon_ Ruby Version.zip", "url": "private:pok-mon-ruby-version__Pokemon_.Ruby.Version.zip", "size": 4806990, "sha256": "c41356ad1136af3902116aa716c76f7bbfc9d71219a88df8278a22e3d76b08a0" }
+      ]
+    },
+    {
       "id": "pok-mon-sapphire-version",
       "title": "Pokmon Sapphire Version",
       "system": "gba",
@@ -2170,6 +2170,19 @@
       "video": "library/video/the-legend-of-zelda-the-minish-cap.mp4",
       "files": [
         { "name": "Legend of Zelda, The - The Minish Cap (U).zip", "url": "private:the-legend-of-zelda-the-minish-cap__Legend.of.Zelda.The.-.The.Minish.Cap.U.zip", "size": 7586161, "sha256": "eaf9e805364fb596c40cfeb04d4cbd80eb378429b6999de64250d70dd0c10638" }
+      ]
+    },
+    {
+      "id": "warioware-inc-mega-microgame",
+      "title": "WarioWare, Inc. : Mega Microgame$!",
+      "system": "gba",
+      "players": "1-4",
+      "description": "Frantic action! Prepare for lightning-quick game play as you blaze through over 200 bizarre microgames designed by a crazy crew of Wario's cronies! There are even two-player contests that can be played on a single Game Boy Advance! Pick up and play! Ultra-simple controls make...",
+      "added": "2026-11-04",
+      "art": "library/art/warioware-inc-mega-microgame.png",
+      "video": "library/video/warioware-inc-mega-microgame.mp4",
+      "files": [
+        { "name": "WarioWare, Inc. - Mega Microgame$! (USA).zip", "url": "private:warioware-inc-mega-microgame__WarioWare.Inc.-.Mega.Microgame.USA.zip", "size": 4838425, "sha256": "17eda0a3f01f52c83e6f2b2a0274f9e5b9f76035351a761ed392bf9e0aa1ed6a" }
       ]
     },
     {
