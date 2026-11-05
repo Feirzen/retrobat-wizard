@@ -1757,6 +1757,19 @@
       ]
     },
     {
+      "id": "metroid-ii-return-of-samus",
+      "title": "Metroid II : Return of Samus",
+      "system": "gb",
+      "players": "1",
+      "description": "This is the sequel to the very popular Metroid for the NES. In Metroid 2, you control Samus Aran in her quest to rid the planet SR388 of the Metroid parasites. After killing the space pirate Mother Brain in the original Metroid, Samus must take on this adventure to prevent the...",
+      "added": "2026-11-04",
+      "art": "library/art/metroid-ii-return-of-samus.png",
+      "video": "library/video/metroid-ii-return-of-samus.mp4",
+      "files": [
+        { "name": "Metroid II - Return of Samus (World).zip", "url": "private:metroid-ii-return-of-samus__Metroid.II.-.Return.of.Samus.World.zip", "size": 105266, "sha256": "4990a8c5a7a9eef82c8594165fff046e5d01d7c55be41f4dcbe1223ca26489a7" }
+      ]
+    },
+    {
       "id": "pok-mon-blue-version",
       "title": "Pokmon : Blue Version",
       "system": "gb",
