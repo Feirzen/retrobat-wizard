@@ -2018,6 +2018,19 @@
       ]
     },
     {
+      "id": "dragon-warrior-monsters",
+      "title": "Dragon Warrior Monsters",
+      "system": "gbc",
+      "players": "1-2",
+      "description": "In Dragon Warrior Monsters, enter Terry's Wonderland, a magical place of kings, monsters and magic spells. Make monsters your allies to fight through the dangers that lie ahead in the long quest. Find your kidnapped sister and become the most powerful monster master in the...",
+      "added": "2026-11-04",
+      "art": "library/art/dragon-warrior-monsters.png",
+      "video": "library/video/dragon-warrior-monsters.mp4",
+      "files": [
+        { "name": "Dragon Warrior Monsters (USA, Europe) (SGB Enhanced) (GB Compatible).zip", "url": "private:dragon-warrior-monsters__Dragon.Warrior.Monsters.USA.Europe.SGB.Enhanced.GB.Compatible.zip", "size": 762663, "sha256": "5a872b7a914c84a4a3da86a023244390e60e8cc923eb81d43736cd329ca07796" }
+      ]
+    },
+    {
       "id": "pok-mon-silver-version",
       "title": "Pokmon : Silver Version",
       "system": "gbc",
