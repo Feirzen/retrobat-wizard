@@ -2079,6 +2079,19 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-link-s-awakening-dx",
+      "title": "The Legend of Zelda : Link's Awakening DX",
+      "system": "gbc",
+      "players": "1",
+      "description": "Link's latest challenge is set on the mysterious Koholint, a place where dreams and reality collide. As a castaway, Link must find a way to escape from the island and return to his beloved homeland of Hyrule. This will not be an easy task.rnrnThe island's inhabitants have no...",
+      "added": "2026-11-04",
+      "art": "library/art/the-legend-of-zelda-link-s-awakening-dx.png",
+      "video": "library/video/the-legend-of-zelda-link-s-awakening-dx.mp4",
+      "files": [
+        { "name": "Legend of Zelda, The - Link's Awakening DX (USA, Europe) (Rev 2) (SGB Enhanced) (GB Compatible).zip", "url": "private:the-legend-of-zelda-link-s-awakening-dx__Legend.of.Zelda.The.-.Link.s.Awakening.DX.USA.Europe.Rev.2.SGB.Enhanced.GB.Compatible.zip", "size": 482935, "sha256": "43e0633f3d690518e2c96a8fcf9cf2d6b70f70d70187d5ced55387afbc0bce1d" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-oracle-of-ages",
       "title": "The Legend of Zelda : Oracle of Ages",
       "system": "gbc",
