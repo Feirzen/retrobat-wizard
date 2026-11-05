@@ -331,6 +331,19 @@
       ]
     },
     {
+      "id": "metroid-samus-returns",
+      "title": "Metroid : Samus Returns",
+      "system": "3ds",
+      "players": "1",
+      "description": "Metroid: Samus Returns is a side-scrolling action-adventure video game developed collaboratively by MercurySteam and Nintendo, with the latter also publishing it for the Nintendo 3DS handheld game console. A part of the science fiction Metroid series, the game is a reimagining...",
+      "added": "2026-11-04",
+      "art": "library/art/metroid-samus-returns.jpg",
+      "video": "library/video/metroid-samus-returns.mp4",
+      "files": [
+        { "name": "Metroid - Samus Returns (USA) (En,Fr,Es).cci", "url": "private:metroid-samus-returns__Metroid.-.Samus.Returns.USA.En.Fr.Es.cci", "size": 1073741824, "sha256": "06486ae520160727b5bdc86e37983766d0b6a2355b1486a81b08571250305e6d" }
+      ]
+    },
+    {
       "id": "monster-hunter-4-ultimate",
       "title": "Monster Hunter 4 Ultimate",
       "system": "3ds",
