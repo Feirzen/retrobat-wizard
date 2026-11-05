@@ -2044,6 +2044,19 @@
       ]
     },
     {
+      "id": "pok-mon-pinball",
+      "title": "Pokmon Pinball",
+      "system": "gbc",
+      "players": "1",
+      "description": "Discover a whole new way to collect Pokemon - by playing pinball! Hit the targets with your Poke Ball to catch and evolve Pokemon. The better you do, the more rare Pokemon you'll find! Every Pokemon you catch is automatically recorded in your Pokedex - see if you catch all 150!...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-pinball.png",
+      "video": "library/video/pok-mon-pinball.mp4",
+      "files": [
+        { "name": "Pokemon Pinball (USA, Australia) (Rumble Version) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-pinball__Pokemon.Pinball.USA.Australia.Rumble.Version.SGB.Enhanced.GB.Compatible.zip", "size": 299082, "sha256": "ecdca602a977980619756e956cb11f03d5621a71f1fd6463b35dd0508b8c1a31" }
+      ]
+    },
+    {
       "id": "pok-mon-silver-version",
       "title": "Pokmon : Silver Version",
       "system": "gbc",
