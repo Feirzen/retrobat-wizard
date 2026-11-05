@@ -620,6 +620,19 @@
       ]
     },
     {
+      "id": "the-legend-of-zelda-tri-force-heroes",
+      "title": "The Legend of Zelda : Tri Force Heroes",
+      "system": "3ds",
+      "players": "1",
+      "description": "In the visual style of the critically-acclaimed The Legend of Zelda: A Link Between Worlds game comes a new adventure. In this journey, three players team up, each as Link, to cooperatively make their way through inventive dungeons and battle bosses. Use the new Totem mechanic...",
+      "added": "2026-11-04",
+      "art": "library/art/the-legend-of-zelda-tri-force-heroes.png",
+      "video": "library/video/the-legend-of-zelda-tri-force-heroes.mp4",
+      "files": [
+        { "name": "Legend of Zelda, The - Tri Force Heroes (USA) (En,Fr,Es).cci", "url": "private:the-legend-of-zelda-tri-force-heroes__Legend.of.Zelda.The.-.Tri.Force.Heroes.USA.En.Fr.Es.cci", "size": 1073741824, "sha256": "584185c0f3951aa018c7c193f461a4be475dc6b91e0366c0cd8ac565b20fa80c" }
+      ]
+    },
+    {
       "id": "the-oregon-trail",
       "title": "The Oregon Trail",
       "system": "3ds",
