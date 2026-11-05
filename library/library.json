@@ -3727,6 +3727,19 @@
       ]
     },
     {
+      "id": "the-world-ends-with-you",
+      "title": "The World Ends With You",
+      "system": "nds",
+      "players": "1-4",
+      "description": "The World Ends With You is an action-RPG that puts players in the role of Neku Sakuraba, a sullen, loner of a teenager who wakes up to find himself in modern day Shibuya, Japan, with no memory of how he got there and a ticking clock in his hand that tells him to complete the...",
+      "added": "2026-11-04",
+      "art": "library/art/the-world-ends-with-you.png",
+      "video": "library/video/the-world-ends-with-you.mp4",
+      "files": [
+        { "name": "World Ends with You, The (USA).zip", "url": "private:the-world-ends-with-you__World.Ends.with.You.The.USA.zip", "size": 75997376, "sha256": "e2363ded8b3b230ee7098262bb2435d63d3a8af34958e33e30e315ffc4bdc1ba" }
+      ]
+    },
+    {
       "id": "warioware-touched",
       "title": "WarioWare : Touched!",
       "system": "nds",
