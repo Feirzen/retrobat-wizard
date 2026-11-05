@@ -2074,8 +2074,9 @@
       "system": "gba",
       "players": "1",
       "description": "Pokmon Emerald is a role-playing game set in the Hoenn region. The player takes on the role of a young Pokmon Trainer who travels across the region, capturing and training Pokmon, battling Gym Leaders, and aiming to become the Champion. The game features turn-based battles,...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/pok-mon-emerald-version.png",
+      "video": "library/video/pok-mon-emerald-version.mp4",
       "files": [
         { "name": "Pokemon - Emerald Version (USA, Europe).zip", "url": "private:pok-mon-emerald-version__Pokemon.-.Emerald.Version.USA.Europe.zip", "size": 6791080, "sha256": "4761d0fe9c543e652c2f0ac387397d6766886fc6a4a4e2a0ded4c5235a19337d" }
       ]
