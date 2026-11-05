@@ -676,8 +676,9 @@
       "system": "3ds",
       "players": "1",
       "description": "The basics of Super Smash Bros. are simple. Use your chosen character's unique attacks and special moves to damage your opponent, then hit 'em with a smash attack to send them flying off the stage! The higher your opponent's damage  represented as a percentage  the farther...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/super-smash-bros-for-nintendo-3ds.png",
+      "video": "library/video/super-smash-bros-for-nintendo-3ds.mp4",
       "files": [
       ],
       "parts": { "name": "Super Smash Bros. for Nintendo 3DS (USA) (En,Fr,Es) (Rev 7).cci", "size": 2147483648, "sha256": "c57c957a0f17fbbe84f5678d84698fcac87ed4a57689e775b9796e8946a9da50", "pieces": [
