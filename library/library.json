@@ -2056,6 +2056,19 @@
       ]
     },
     {
+      "id": "metroid-fusion",
+      "title": "Metroid Fusion",
+      "system": "gba",
+      "players": "1",
+      "description": "While lending mission support on planet SR388, interstellar bounty hunter Samus Aran is attacked by an X parasite, an organism with the ability to mimic the abilities of any creature it infects. Near death, Samus is saved by a vaccine made from the DNA of the last Metroid -- the...",
+      "added": "2026-11-04",
+      "art": "library/art/metroid-fusion.png",
+      "video": "library/video/metroid-fusion.mp4",
+      "files": [
+        { "name": "Metroid Fusion (USA).zip", "url": "private:metroid-fusion__Metroid.Fusion.USA.zip", "size": 4534448, "sha256": "5f5a19c234dfe7818c70b08c70a534a6201b5438c581c0d6c9df71c83344c7a7" }
+      ]
+    },
+    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
