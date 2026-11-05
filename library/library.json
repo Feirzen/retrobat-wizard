@@ -1887,6 +1887,19 @@
       ]
     },
     {
+      "id": "advance-wars-2-black-hole-rising",
+      "title": "Advance Wars 2 : Black Hole Rising",
+      "system": "gba",
+      "players": "1-4",
+      "description": "Just when you thought you'd seen the last of them, the Black Hole Army is storming back in this sequel to the award-winning Game Boy Advance strategy game. With new COs under his command, Sturm is leading a new invasion force, and it'll take advance strategy to stop him!",
+      "added": "2026-11-04",
+      "art": "library/art/advance-wars-2-black-hole-rising.png",
+      "video": "library/video/advance-wars-2-black-hole-rising.mp4",
+      "files": [
+        { "name": "Advance Wars 2 - Black Hole Rising (USA).zip", "url": "private:advance-wars-2-black-hole-rising__Advance.Wars.2.-.Black.Hole.Rising.USA.zip", "size": 4096722, "sha256": "141c7b6b2a376a400e0141e00e94a33e4bb25ce8d6708cd77be789204d14b91e" }
+      ]
+    },
+    {
       "id": "classic-nes-series-the-legend-of-zelda",
       "title": "Classic NES Series : The Legend of Zelda",
       "system": "gba",
