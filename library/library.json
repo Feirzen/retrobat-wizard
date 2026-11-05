@@ -2044,16 +2044,16 @@
       ]
     },
     {
-      "id": "pok-mon-crystal-version",
-      "title": "Pokmon Crystal Version",
+      "id": "pok-mon-gold-version",
+      "title": "Pokmon Gold Version",
       "system": "gbc",
       "players": "1",
-      "description": "Travel back to the world of Johto as the Gold and Silver series continues with brand-new features! Whether you're reading the fresh descriptions in your Pokdex, using the unique sort function to organize your Pokmon in new ways, watching the all-new battle animations, or...",
+      "description": "Enter a whole new world, with new Pokmon to capture, train and battle! Meet Professor Elm and get the all-new Pok Gear, including map, radio, cell phone and clock. Set the clock then watch as day turns to night and events take place in real time - and be sure to keep an eye...",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-crystal-version.png",
-      "video": "library/video/pok-mon-crystal-version.mp4",
+      "art": "library/art/pok-mon-gold-version.png",
+      "video": "library/video/pok-mon-gold-version.mp4",
       "files": [
-        { "name": "Pokemon - Crystal Version (USA, Europe) (Rev 1).zip", "url": "private:pok-mon-crystal-version__Pokemon.-.Crystal.Version.USA.Europe.Rev.1.zip", "size": 999181, "sha256": "ec0f4d75ba268e679a991559845e767f4a6af6502786a7170f2b17171e469d4e" }
+        { "name": "Pokemon - Gold Version (USA, Europe) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-gold-version__Pokemon.-.Gold.Version.USA.Europe.SGB.Enhanced.GB.Compatible.zip", "size": 726756, "sha256": "70d2801dfe900a25c84b6601c8bd7221b99348f609e94bb16d5483a0403ce0db" }
       ]
     },
     {
@@ -2069,15 +2069,16 @@
       ]
     },
     {
-      "id": "pok-mon-gold-version",
-      "title": "Pokmon Gold Version",
+      "id": "pok-mon-crystal-version",
+      "title": "Pokmon Crystal Version",
       "system": "gbc",
-      "players": "1-2",
-      "description": "Enter a whole new world, with new Pokmon to capture, train and battle! Meet Professor Elm and get the all-new Pok Gear, including map, radio, cell phone and clock. Set the clock then watch as day turns to night and events take place in real time - and be sure to keep an eye...",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-gold-version.png",
+      "players": "1",
+      "description": "Travel back to the world of Johto as the Gold and Silver series continues with brand-new features! Whether you're reading the fresh descriptions in your Pokdex, using the unique sort function to organize your Pokmon in new ways, watching the all-new battle animations, or...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-crystal-version.png",
+      "video": "library/video/pok-mon-crystal-version.mp4",
       "files": [
-        { "name": "Pokemon - Gold Version (USA, Europe) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-gold-version__Pokemon.-.Gold.Version.USA.Europe.SGB.Enhanced.GB.Compatible.zip", "size": 726756, "sha256": "70d2801dfe900a25c84b6601c8bd7221b99348f609e94bb16d5483a0403ce0db" }
+        { "name": "Pokemon - Crystal Version (USA, Europe) (Rev 1).zip", "url": "private:pok-mon-crystal-version__Pokemon.-.Crystal.Version.USA.Europe.Rev.1.zip", "size": 999181, "sha256": "ec0f4d75ba268e679a991559845e767f4a6af6502786a7170f2b17171e469d4e" }
       ]
     },
     {
