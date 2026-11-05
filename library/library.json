@@ -3310,6 +3310,19 @@
       ]
     },
     {
+      "id": "peggle-dual-shot",
+      "title": "Peggle : Dual Shot",
+      "system": "nds",
+      "players": "1",
+      "description": "It's the ultimate Peggle... with dual-screen action! Shoot and clear the orange pegs from 120 levels spanning two full adventure modes in this action-packed PopCap hit! Learn 11 Magic Powers, score amazing style shots, and discover the exclusive Bonus Underground filled with...",
+      "added": "2026-11-04",
+      "art": "library/art/peggle-dual-shot.png",
+      "video": "library/video/peggle-dual-shot.mp4",
+      "files": [
+        { "name": "Peggle Dual Shot (USA).zip", "url": "private:peggle-dual-shot__Peggle.Dual.Shot.USA.zip", "size": 32853920, "sha256": "0b8e502baf5470540d9b70183c54dad0c51c9ac22ba3a37fd774a5c000d6270d" }
+      ]
+    },
+    {
       "id": "phoenix-wright-ace-attorney",
       "title": "Phoenix Wright : Ace Attorney",
       "system": "nds",
