@@ -3245,6 +3245,19 @@
       ]
     },
     {
+      "id": "mario-party-ds",
+      "title": "Mario Party DS",
+      "system": "nds",
+      "players": "1-4",
+      "description": "He's captured Mario and his friends in his pursuit of a crystal that the group collected when it fell from the sky, and he doesn't hesitate to shrink them to miniature size to get rid of them and get his hands on the other four crystals. The mini-heroes have to find the crystals...",
+      "added": "2026-11-04",
+      "art": "library/art/mario-party-ds.png",
+      "video": "library/video/mario-party-ds.mp4",
+      "files": [
+        { "name": "Mario Party DS (USA) (Rev 2).zip", "url": "private:mario-party-ds__Mario.Party.DS.USA.Rev.2.zip", "size": 19268073, "sha256": "a7e39b295821e250e9fb183858b44a60e172cdbdea0dc1db43d59fe12f6c0b8a" }
+      ]
+    },
+    {
       "id": "mario-vs-donkey-kong-mini-land-mayhem",
       "title": "Mario vs. Donkey Kong: Mini-Land Mayhem!",
       "system": "nds",
