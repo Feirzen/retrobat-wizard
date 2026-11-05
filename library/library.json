@@ -2043,6 +2043,19 @@
       ]
     },
     {
+      "id": "metroid-zero-mission",
+      "title": "Metroid : Zero Mission",
+      "system": "gba",
+      "players": "1",
+      "description": "She's battled baddies on nearly every Nintendo system, and now, Samus Aran returns to her roots. Metroid: Zero Mission relives the story that started it all--revealing for the first time full details of her meeting with the Metroids. The plotline will be familiar to longtime...",
+      "added": "2026-11-04",
+      "art": "library/art/metroid-zero-mission.png",
+      "video": "library/video/metroid-zero-mission.mp4",
+      "files": [
+        { "name": "Metroid - Zero Mission (USA, Australia).zip", "url": "private:metroid-zero-mission__Metroid.-.Zero.Mission.USA.Australia.zip", "size": 5099199, "sha256": "522de348c8a35b6aee344a1236529f2fb7e73e8f6a03d05a4883e88bccf38717" }
+      ]
+    },
+    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
