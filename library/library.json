@@ -606,6 +606,19 @@
       ] }
     },
     {
+      "id": "rhythm-paradise-megamix",
+      "title": "Rhythm Paradise Megamix",
+      "system": "3ds",
+      "players": "1",
+      "description": "Rhythmic gaming bliss, goats eating turnips, and the funkiest tunes you?ve ever bashed a button to? This must be the Rhythm Heaven? Megamix. With 70+ rhythm games, including new ones, remixed fan-favorites, and US debuts, this fresh mix has it all. Try to reach Heaven World as...",
+      "added": "2026-11-04",
+      "art": "library/art/rhythm-paradise-megamix.png",
+      "video": "library/video/rhythm-paradise-megamix.mp4",
+      "files": [
+        { "name": "Rhythm Paradise Megamix (Europe) (En,Fr,De,Es,It).cci", "url": "private:rhythm-paradise-megamix__Rhythm.Paradise.Megamix.Europe.En.Fr.De.Es.It.cci", "size": 1073741824, "sha256": "e1c95cc68d6897f6c49f93e713ac6dc00a43abca7494471953d54e22fda0adcc" }
+      ]
+    },
+    {
       "id": "scribblenauts-unlimited",
       "title": "Scribblenauts Unlimited",
       "system": "3ds",
