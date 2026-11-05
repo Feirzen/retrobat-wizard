@@ -1939,6 +1939,19 @@
       ]
     },
     {
+      "id": "fire-emblem",
+      "title": "Fire Emblem",
+      "system": "gba",
+      "players": "1-4",
+      "description": "After centuries of peace, smoldering rivalries threaten to set the world aflame in a blaze of battle! The drums of war beat, noble houses plot treason, allies become enemies, and as Lycia stands poised for war, a shadowy figure manipulates empires for his own ends. Now, Lyn,...",
+      "added": "2026-11-04",
+      "art": "library/art/fire-emblem.png",
+      "video": "library/video/fire-emblem.mp4",
+      "files": [
+        { "name": "Fire Emblem (USA, Australia).zip", "url": "private:fire-emblem__Fire.Emblem.USA.Australia.zip", "size": 11097468, "sha256": "a8e901a9dd86e31d806a1016ebc2397175e9dae27a070f12f7d2b1e92d430aa9" }
+      ]
+    },
+    {
       "id": "fire-emblem-the-sacred-stones",
       "title": "Fire Emblem : The Sacred Stones",
       "system": "gba",
