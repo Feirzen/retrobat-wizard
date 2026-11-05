@@ -780,6 +780,19 @@
       ] }
     },
     {
+      "id": "yo-kai-watch",
+      "title": "Yo-kai Watch",
+      "system": "3ds",
+      "players": "1",
+      "description": "The YO-KAI WATCH game is about hundreds of sometimes cute, sometimes spooky, and usually mischievous Yo-kai that inhabit our world. Yo-kai are not ghosts, monsters or creatures. Yo-kai are, quite simply, Yo-kai. They cannot be seen by the human eye, but they are everywhere....",
+      "added": "2026-11-04",
+      "art": "library/art/yo-kai-watch.png",
+      "video": "library/video/yo-kai-watch.mp4",
+      "files": [
+        { "name": "Yo-Kai Watch (USA).cci", "url": "private:yo-kai-watch__Yo-Kai.Watch.USA.cci", "size": 1073741824, "sha256": "933c8b7e1d37b87e69b7c7aa97636296e9cb788972077a189f5dd2dc489465a5" }
+      ]
+    },
+    {
       "id": "yoshi-s-new-island",
       "title": "Yoshi's New Island",
       "system": "3ds",
