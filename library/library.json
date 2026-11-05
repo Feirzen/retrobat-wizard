@@ -1977,6 +1977,19 @@
       ]
     },
     {
+      "id": "golden-sun-the-lost-age",
+      "title": "Golden Sun : The Lost Age",
+      "system": "gba",
+      "players": "1-2",
+      "description": "The story of Golden Sun: The Lost Age picks up right near the end of the first game. Golden Sun veterans will be surprised to learn that The Lost Age is played from the point of view of the party being chased as they try to light the remaining two lighthouses, which will unlock...",
+      "added": "2026-11-04",
+      "art": "library/art/golden-sun-the-lost-age.png",
+      "video": "library/video/golden-sun-the-lost-age.mp4",
+      "files": [
+        { "name": "Golden Sun - The Lost Age (USA, Europe).zip", "url": "private:golden-sun-the-lost-age__Golden.Sun.-.The.Lost.Age.USA.Europe.zip", "size": 12928846, "sha256": "fc4bb99fb55b7cd937353dc10457cdb04c30389272e16c75053c079b09f9f1aa" }
+      ]
+    },
+    {
       "id": "kirby-the-amazing-mirror",
       "title": "Kirby & the Amazing Mirror",
       "system": "gba",
