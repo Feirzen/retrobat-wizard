@@ -107,6 +107,22 @@
       ] }
     },
     {
+      "id": "fire-emblem-echoes-shadows-of-valentia",
+      "title": "Fire Emblem Echoes : Shadows of Valentia",
+      "system": "3ds",
+      "players": "1",
+      "description": "A tale of two armies with one destiny In a continent that was torn asunder by warring gods, guide two armies through brutal tactical battlesas this reimagined RPG epic invades the West! Uncover the intertwining stories of Alm and Celica, engage foes, fend off dragons, and...",
+      "added": "2026-11-04",
+      "art": "library/art/fire-emblem-echoes-shadows-of-valentia.png",
+      "video": "library/video/fire-emblem-echoes-shadows-of-valentia.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Fire Emblem Echoes - Shadows of Valentia (USA) (En,Fr,Es).cci", "size": 2147483648, "sha256": "f3dd319e8aae2393a6c8e964570d21a0fb4aaeef6d54454354f0689615397d5d", "pieces": [
+        { "name": "Fire Emblem Echoes - Shadows of Valentia (USA) (En,Fr,Es).cci.part01", "url": "private:fire-emblem-echoes-shadows-of-valentia__Fire.Emblem.Echoes.-.Shadows.of.Valentia.USA.En.Fr.Es.cci.part01", "size": 1992294400, "sha256": "993dd9f52b4b617a73c7eecd47b0f40feef2b79c54ea9469f06490167b0b522c" },
+        { "name": "Fire Emblem Echoes - Shadows of Valentia (USA) (En,Fr,Es).cci.part02", "url": "private:fire-emblem-echoes-shadows-of-valentia__Fire.Emblem.Echoes.-.Shadows.of.Valentia.USA.En.Fr.Es.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "hyrule-warriors-legends",
       "title": "Hyrule Warriors Legends",
       "system": "3ds",
