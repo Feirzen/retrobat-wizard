@@ -2044,16 +2044,16 @@
       ]
     },
     {
-      "id": "pok-mon-pinball",
-      "title": "Pokmon Pinball",
+      "id": "pok-mon-puzzle-challenge",
+      "title": "Pokmon Puzzle Challenge",
       "system": "gbc",
-      "players": "1",
-      "description": "Discover a whole new way to collect Pokemon - by playing pinball! Hit the targets with your Poke Ball to catch and evolve Pokemon. The better you do, the more rare Pokemon you'll find! Every Pokemon you catch is automatically recorded in your Pokedex - see if you catch all 150!...",
+      "players": "1-2",
+      "description": "Pokmon Puzzle Challenge is based on Panel de Pon (Tetris Attack), only with characters from the Pokmon franchise. The characters in Pokmon Puzzle Challenge are based on those in the Gold and Silver games, while those in Pokmon Puzzle League - its Nintendo 64 equivalent -...",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-pinball.png",
-      "video": "library/video/pok-mon-pinball.mp4",
+      "art": "library/art/pok-mon-puzzle-challenge.png",
+      "video": "library/video/pok-mon-puzzle-challenge.mp4",
       "files": [
-        { "name": "Pokemon Pinball (USA, Australia) (Rumble Version) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-pinball__Pokemon.Pinball.USA.Australia.Rumble.Version.SGB.Enhanced.GB.Compatible.zip", "size": 299082, "sha256": "ecdca602a977980619756e956cb11f03d5621a71f1fd6463b35dd0508b8c1a31" }
+        { "name": "Pokemon Puzzle Challenge (USA, Australia).zip", "url": "private:pok-mon-puzzle-challenge__Pokemon.Puzzle.Challenge.USA.Australia.zip", "size": 660324, "sha256": "7b41f0d3efe9461c35d923601e21c96aa1b592feda147f3a0b2a5415b500b169" }
       ]
     },
     {
@@ -2093,6 +2093,19 @@
       "video": "library/video/pok-mon-gold-version.mp4",
       "files": [
         { "name": "Pokemon - Gold Version (USA, Europe) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-gold-version__Pokemon.-.Gold.Version.USA.Europe.SGB.Enhanced.GB.Compatible.zip", "size": 726756, "sha256": "70d2801dfe900a25c84b6601c8bd7221b99348f609e94bb16d5483a0403ce0db" }
+      ]
+    },
+    {
+      "id": "pok-mon-pinball",
+      "title": "Pokmon Pinball",
+      "system": "gbc",
+      "players": "1",
+      "description": "Discover a whole new way to collect Pokemon - by playing pinball! Hit the targets with your Poke Ball to catch and evolve Pokemon. The better you do, the more rare Pokemon you'll find! Every Pokemon you catch is automatically recorded in your Pokedex - see if you catch all 150!...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-pinball.png",
+      "video": "library/video/pok-mon-pinball.mp4",
+      "files": [
+        { "name": "Pokemon Pinball (USA, Australia) (Rumble Version) (SGB Enhanced) (GB Compatible).zip", "url": "private:pok-mon-pinball__Pokemon.Pinball.USA.Australia.Rumble.Version.SGB.Enhanced.GB.Compatible.zip", "size": 299082, "sha256": "ecdca602a977980619756e956cb11f03d5621a71f1fd6463b35dd0508b8c1a31" }
       ]
     },
     {
