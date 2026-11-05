@@ -2017,6 +2017,19 @@
       ]
     },
     {
+      "id": "mario-golf-advance-tour",
+      "title": "Mario Golf : Advance Tour",
+      "system": "gba",
+      "players": "1-4",
+      "description": "Grab your clubs and start down the road to golfing perfection in this role-playing golf adventure! Chat up the locals at golf clinics, hone your skills in challenges like Club Slots and Go-Go Gates, and try to become the champ of all the country clubs! The Mushroom Kingdom...",
+      "added": "2026-11-04",
+      "art": "library/art/mario-golf-advance-tour.png",
+      "video": "library/video/mario-golf-advance-tour.mp4",
+      "files": [
+        { "name": "Mario Golf - Advance Tour (USA).zip", "url": "private:mario-golf-advance-tour__Mario.Golf.-.Advance.Tour.USA.zip", "size": 11837699, "sha256": "79daca6ecc746c2cb4bdac4439b906266f942b3f5f9b123913f71505fb9f3585" }
+      ]
+    },
+    {
       "id": "pok-mon-emerald-version",
       "title": "Pokmon Emerald Version",
       "system": "gba",
