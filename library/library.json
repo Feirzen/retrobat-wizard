@@ -80,8 +80,9 @@
       "system": "3ds",
       "players": "1",
       "description": "Play traditional 11 versus 11 matches with over 500 officially licensed clubs or free your game on the streets in 5 versus 5 street matches. Complete and earn awards in every game mode. Unlock the most coveted players to form your own dream club of international superstars or...",
-      "added": "2026-10-26",
+      "added": "2026-11-04",
       "art": "library/art/fifa-15-legacy-edition.png",
+      "video": "library/video/fifa-15-legacy-edition.mp4",
       "files": [
       ],
       "parts": { "name": "FIFA 15 - Legacy Edition (USA) (En,Fr,Es).cci", "size": 2147483648, "sha256": "4b1a47ac15592aa7b9f5f5055555485bc9f646ca4490131ad825cf5cc40189b6", "pieces": [
