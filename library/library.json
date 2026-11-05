@@ -3297,6 +3297,19 @@
       ]
     },
     {
+      "id": "nintendogs-best-friends",
+      "title": "Nintendogs - Best Friends",
+      "system": "nds",
+      "players": "1",
+      "description": "Nintendogs lets you take care of virtual pets (dogs, obviously) on your Nintendo DS. You can train your puppies by speaking commands into the microphone, pat the pooch with the stylus, play games like as \"fetch\" with a Frisbee, buy toys, food, and accessories, and take part in...",
+      "added": "2026-11-04",
+      "art": "library/art/nintendogs-best-friends.png",
+      "video": "library/video/nintendogs-best-friends.mp4",
+      "files": [
+        { "name": "Nintendogs - Best Friends (USA).zip", "url": "private:nintendogs-best-friends__Nintendogs.-.Best.Friends.USA.zip", "size": 16383051, "sha256": "be648a1ec8e2d5ce1a2c4dd39c121c54a338549f843d874cd150053e19891251" }
+      ]
+    },
+    {
       "id": "phoenix-wright-ace-attorney",
       "title": "Phoenix Wright : Ace Attorney",
       "system": "nds",
