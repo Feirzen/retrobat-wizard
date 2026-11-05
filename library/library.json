@@ -2010,8 +2010,9 @@
       "system": "gbc",
       "players": "1",
       "description": "Your father, the brave Ortega, is dead. He set off to destroy the Demon Lord Baramos but fell in glorious battle. Unless stopped, Baramos will unleash a torrent of evil that will destroy the world. You must stop Baramos and discover the legend of Dragon Warrior! Your journey...",
-      "added": "2026-10-12",
+      "added": "2026-11-04",
       "art": "library/art/dragon-warrior-iii.png",
+      "video": "library/video/dragon-warrior-iii.mp4",
       "files": [
         { "name": "Dragon Warrior III (USA).zip", "url": "private:dragon-warrior-iii__Dragon.Warrior.III.USA.zip", "size": 1950542, "sha256": "21c4fa8bc77f12a11b7d00fee08a343c39e1c509adf11625d29ef1ea86e91a28" }
       ]
