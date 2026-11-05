@@ -3348,6 +3348,19 @@
       ]
     },
     {
+      "id": "phoenix-wright-ace-attorney-trials-and-t",
+      "title": "Phoenix Wright : Ace Attorney - Trials and Tribulations",
+      "system": "nds",
+      "players": "1",
+      "description": "Phoenix Wright is back as the third game in the popular Ace Attorney hand-held franchise comes to the WiiWare service. As Phoenix Wright, you'll play through five shocking new cases in first-person perspective. The game features two unique modes of play. In Investigations Mode...",
+      "added": "2026-11-04",
+      "art": "library/art/phoenix-wright-ace-attorney-trials-and-t.png",
+      "video": "library/video/phoenix-wright-ace-attorney-trials-and-t.mp4",
+      "files": [
+        { "name": "Phoenix Wright - Ace Attorney - Trials and Tribulations (USA).zip", "url": "private:phoenix-wright-ace-attorney-trials-and-t__Phoenix.Wright.-.Ace.Attorney.-.Trials.and.Tribulations.USA.zip", "size": 13700368, "sha256": "c1c41088495467778a20e79aa1bb02f3dbc33f1f10ce7cf906bd9eddbd869cc4" }
+      ]
+    },
+    {
       "id": "plants-vs-zombies",
       "title": "Plants vs Zombies",
       "system": "nds",
