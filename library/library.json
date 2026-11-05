@@ -1939,6 +1939,19 @@
       ]
     },
     {
+      "id": "fire-emblem-the-sacred-stones",
+      "title": "Fire Emblem : The Sacred Stones",
+      "system": "gba",
+      "players": "1-4",
+      "description": "The kingdom of Renais lies in ruins, shattered by a sudden invasion from a former ally. Guide the loyal heirs, Eirika and Ephraim, on their twin quest to rebuild Renais and discover the dark secret behind the war that has torn their homeland apart.",
+      "added": "2026-11-04",
+      "art": "library/art/fire-emblem-the-sacred-stones.png",
+      "video": "library/video/fire-emblem-the-sacred-stones.mp4",
+      "files": [
+        { "name": "Fire Emblem - The Sacred Stones (USA, Australia).zip", "url": "private:fire-emblem-the-sacred-stones__Fire.Emblem.-.The.Sacred.Stones.USA.Australia.zip", "size": 9647390, "sha256": "f89b6e7b7d0f6a69ece6284cb502e2f980295e5497109f9d9ab4aec195a0f0e6" }
+      ]
+    },
+    {
       "id": "golden-sun",
       "title": "Golden Sun",
       "system": "gba",
