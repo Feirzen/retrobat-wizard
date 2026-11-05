@@ -3388,16 +3388,16 @@
       ]
     },
     {
-      "id": "pok-mon-conquest",
-      "title": "Pokmon Conquest",
+      "id": "pok-mon-mystery-dungeon-blue-rescue-team",
+      "title": "Pokmon Mystery Dungeon : Blue Rescue Team",
       "system": "nds",
       "players": "1",
-      "description": "In Pokemon Conquest, players take on the role of a young Warlord who is linked with a Pokemon. Together, they must set out to recruit Warrior allies to strengthen their growing kingdom. Along their journey, players will encounter a variety of Pokemon, as well as Warriors and...",
+      "description": "And if that's not enough of a dilemma, you've woken up one day to discover that you've mysteriously transformed into a Pokmon yourself!",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-conquest.png",
-      "video": "library/video/pok-mon-conquest.mp4",
+      "art": "library/art/pok-mon-mystery-dungeon-blue-rescue-team.png",
+      "video": "library/video/pok-mon-mystery-dungeon-blue-rescue-team.mp4",
       "files": [
-        { "name": "Pokemon Conquest.zip", "url": "private:pok-mon-conquest__Pokemon.Conquest.zip", "size": 75622865, "sha256": "0ab6153b8ceda04a1c91d56fdc45a9c799d208aaf4d277d394e839c37a7f8c15" }
+        { "name": "Pokemon Mystery Dungeon - Blue Rescue Team (USA, Australia).zip", "url": "private:pok-mon-mystery-dungeon-blue-rescue-team__Pokemon.Mystery.Dungeon.-.Blue.Rescue.Team.USA.Australia.zip", "size": 11771489, "sha256": "dd0fb4dead4a1557b064c14f8e50327e74a71a6fb6ec2f532d1765c8567edb46" }
       ]
     },
     {
@@ -3414,6 +3414,19 @@
       ]
     },
     {
+      "id": "pok-mon-conquest",
+      "title": "Pokmon Conquest",
+      "system": "nds",
+      "players": "1",
+      "description": "In Pokemon Conquest, players take on the role of a young Warlord who is linked with a Pokemon. Together, they must set out to recruit Warrior allies to strengthen their growing kingdom. Along their journey, players will encounter a variety of Pokemon, as well as Warriors and...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-conquest.png",
+      "video": "library/video/pok-mon-conquest.mp4",
+      "files": [
+        { "name": "Pokemon Conquest.zip", "url": "private:pok-mon-conquest__Pokemon.Conquest.zip", "size": 75622865, "sha256": "0ab6153b8ceda04a1c91d56fdc45a9c799d208aaf4d277d394e839c37a7f8c15" }
+      ]
+    },
+    {
       "id": "pok-mon-diamond-version",
       "title": "Pokmon Diamond Version",
       "system": "nds",
@@ -3423,18 +3436,6 @@
       "art": "library/art/pok-mon-diamond-version.png",
       "files": [
         { "name": "Pokemon_ Diamond Version.zip", "url": "private:pok-mon-diamond-version__Pokemon_.Diamond.Version.zip", "size": 27924117, "sha256": "d2479ffeca15a02430bb50006bbe2f969ecfb92ea922da54ca52d157c78adb8d" }
-      ]
-    },
-    {
-      "id": "pok-mon-mystery-dungeon-blue-rescue-team",
-      "title": "Pokmon Mystery Dungeon : Blue Rescue Team",
-      "system": "nds",
-      "players": "1",
-      "description": "And if that's not enough of a dilemma, you've woken up one day to discover that you've mysteriously transformed into a Pokmon yourself!",
-      "added": "2026-10-12",
-      "art": "library/art/pok-mon-mystery-dungeon-blue-rescue-team.png",
-      "files": [
-        { "name": "Pokemon Mystery Dungeon - Blue Rescue Team (USA, Australia).zip", "url": "private:pok-mon-mystery-dungeon-blue-rescue-team__Pokemon.Mystery.Dungeon.-.Blue.Rescue.Team.USA.Australia.zip", "size": 11771489, "sha256": "dd0fb4dead4a1557b064c14f8e50327e74a71a6fb6ec2f532d1765c8567edb46" }
       ]
     },
     {
