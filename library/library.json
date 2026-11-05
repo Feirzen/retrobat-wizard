@@ -3388,16 +3388,16 @@
       ]
     },
     {
-      "id": "pok-mon-diamond-version",
-      "title": "Pokmon Diamond Version",
+      "id": "pok-mon-heartgold-version",
+      "title": "Pokmon HeartGold Version",
       "system": "nds",
       "players": "1",
-      "description": "Welcome to the next generation of Pokmon! As a rookie Pokmon Trainer, you will need to catch, train, and battle Pokmon on your journey to become the Pokmon League Champion. You will face many challenges along the way, as you search for the Pokmon that rules time in Pokmon...",
+      "description": "PREPARE FOR THRILLING NEW ADVENTURES AS LEGENDARY POKMON AWAKEN! Explore the Johto region as you catch, train, and battle with your favorite Pokmon by your side. Reach for the sky--call forth the Legendary Pokmon! Enjoy minigames with your trained Pokmon! Travel with your...",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-diamond-version.png",
-      "video": "library/video/pok-mon-diamond-version.mp4",
+      "art": "library/art/pok-mon-heartgold-version.png",
+      "video": "library/video/pok-mon-heartgold-version.mp4",
       "files": [
-        { "name": "Pokemon_ Diamond Version.zip", "url": "private:pok-mon-diamond-version__Pokemon_.Diamond.Version.zip", "size": 27924117, "sha256": "d2479ffeca15a02430bb50006bbe2f969ecfb92ea922da54ca52d157c78adb8d" }
+        { "name": "Pokemon_ HeartGold Version.zip", "url": "private:pok-mon-heartgold-version__Pokemon_.HeartGold.Version.zip", "size": 60760196, "sha256": "6a63a375505eb79f5d55bb07301784e1188b685d3704eeeeba0dd1696226aa24" }
       ]
     },
     {
@@ -3424,6 +3424,19 @@
       "video": "library/video/pok-mon-conquest.mp4",
       "files": [
         { "name": "Pokemon Conquest.zip", "url": "private:pok-mon-conquest__Pokemon.Conquest.zip", "size": 75622865, "sha256": "0ab6153b8ceda04a1c91d56fdc45a9c799d208aaf4d277d394e839c37a7f8c15" }
+      ]
+    },
+    {
+      "id": "pok-mon-diamond-version",
+      "title": "Pokmon Diamond Version",
+      "system": "nds",
+      "players": "1",
+      "description": "Welcome to the next generation of Pokmon! As a rookie Pokmon Trainer, you will need to catch, train, and battle Pokmon on your journey to become the Pokmon League Champion. You will face many challenges along the way, as you search for the Pokmon that rules time in Pokmon...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-diamond-version.png",
+      "video": "library/video/pok-mon-diamond-version.mp4",
+      "files": [
+        { "name": "Pokemon_ Diamond Version.zip", "url": "private:pok-mon-diamond-version__Pokemon_.Diamond.Version.zip", "size": 27924117, "sha256": "d2479ffeca15a02430bb50006bbe2f969ecfb92ea922da54ca52d157c78adb8d" }
       ]
     },
     {
