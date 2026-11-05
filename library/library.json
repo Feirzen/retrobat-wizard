@@ -2069,16 +2069,16 @@
       ]
     },
     {
-      "id": "pok-mon-sapphire-version",
-      "title": "Pokmon Sapphire Version",
+      "id": "pok-mon-mystery-dungeon-red-rescue-team",
+      "title": "Pokmon Mystery Dungeon : Red Rescue Team",
       "system": "gba",
       "players": "1",
-      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
+      "description": "Introducing the newest Pokemon, YOU! What if you woke up one day, and you were a Pokemon? What if all of the sudden you find yourself in a NEW world, where you can speak and interact with other Pokemon? The adventure begins when you and your partner Pokemon set out on rescue...",
       "added": "2026-11-04",
-      "art": "library/art/pok-mon-sapphire-version.png",
-      "video": "library/video/pok-mon-sapphire-version.mp4",
+      "art": "library/art/pok-mon-mystery-dungeon-red-rescue-team.png",
+      "video": "library/video/pok-mon-mystery-dungeon-red-rescue-team.mp4",
       "files": [
-        { "name": "Pokemon - Sapphire Version (USA, Europe) (Rev 2).zip", "url": "private:pok-mon-sapphire-version__Pokemon.-.Sapphire.Version.USA.Europe.Rev.2.zip", "size": 4807532, "sha256": "c2c48e8057404a242c5d9f5f5c6ae0b01002ff830f79c829e1cf42fd1c6d700f" }
+        { "name": "Pokemon Mystery Dungeon - Red Rescue Team (USA, Australia).zip", "url": "private:pok-mon-mystery-dungeon-red-rescue-team__Pokemon.Mystery.Dungeon.-.Red.Rescue.Team.USA.Australia.zip", "size": 10536135, "sha256": "482893daa776277b07451b6e13e1ad54929c9de28d9fa4ec39ff3072ab85e0cc" }
       ]
     },
     {
@@ -2129,6 +2129,19 @@
       "art": "library/art/pok-mon-ruby-version.png",
       "files": [
         { "name": "Pokemon_ Ruby Version.zip", "url": "private:pok-mon-ruby-version__Pokemon_.Ruby.Version.zip", "size": 4806990, "sha256": "c41356ad1136af3902116aa716c76f7bbfc9d71219a88df8278a22e3d76b08a0" }
+      ]
+    },
+    {
+      "id": "pok-mon-sapphire-version",
+      "title": "Pokmon Sapphire Version",
+      "system": "gba",
+      "players": "1",
+      "description": "Immerse yourself in the beautiful region of Hoenn, a place of masterful heroes and mysterious teams, of friendship and battles. As the new kid in town, you set off on your journey as a Pokmon Trainer. Who knows what wonders and dangers await you? Now it's time to grab your gear...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-sapphire-version.png",
+      "video": "library/video/pok-mon-sapphire-version.mp4",
+      "files": [
+        { "name": "Pokemon - Sapphire Version (USA, Europe) (Rev 2).zip", "url": "private:pok-mon-sapphire-version__Pokemon.-.Sapphire.Version.USA.Europe.Rev.2.zip", "size": 4807532, "sha256": "c2c48e8057404a242c5d9f5f5c6ae0b01002ff830f79c829e1cf42fd1c6d700f" }
       ]
     },
     {
