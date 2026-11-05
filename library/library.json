@@ -374,6 +374,22 @@
       ]
     },
     {
+      "id": "pok-mon-alpha-sapphire",
+      "title": "Pokmon Alpha Sapphire",
+      "system": "3ds",
+      "players": "1",
+      "description": "Prepare for an epic adventure exploring a world filled with Pokmon in Pokmon Alpha Sapphire for the Nintendo 3DS family of systems. Your adventure takes place in Hoenn, a region that consists of a main island that stretches widely from east to west, along with countless small...",
+      "added": "2026-11-04",
+      "art": "library/art/pok-mon-alpha-sapphire.png",
+      "video": "library/video/pok-mon-alpha-sapphire.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "f349613532dbcc124b11373fc03ed7dbf2addb3c4ac7b15c8674a7628ebafab4", "pieces": [
+        { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "d946af351c4d8e2a3c61d0068d62efae8e80730b654deac433ece99d0078c65e" },
+        { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
+      ] }
+    },
+    {
       "id": "pokemon-mystery-dungeon-gates-to-infinit",
       "title": "Pokemon Mystery Dungeon - Gates To Infinity",
       "system": "3ds",
@@ -422,21 +438,6 @@
       "parts": { "name": "Pokemon Super Mystery Dungeon (USA).cci", "size": 2147483648, "sha256": "3bef3705187c17eefaefcaa0782c739f2d3c48a7dc6eb05215ff9cfce229d531", "pieces": [
         { "name": "Pokemon Super Mystery Dungeon (USA).cci.part01", "url": "private:pokemon-super-mystery-dungeon__Pokemon.Super.Mystery.Dungeon.USA.cci.part01", "size": 1992294400, "sha256": "a899359e2a96cfd69b6c039fe7807b1c4bfd815a67ae524163a0e6742d7569d0" },
         { "name": "Pokemon Super Mystery Dungeon (USA).cci.part02", "url": "private:pokemon-super-mystery-dungeon__Pokemon.Super.Mystery.Dungeon.USA.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
-      ] }
-    },
-    {
-      "id": "pok-mon-alpha-sapphire",
-      "title": "Pokmon Alpha Sapphire",
-      "system": "3ds",
-      "players": "1",
-      "description": "Prepare for an epic adventure exploring a world filled with Pokmon in Pokmon Alpha Sapphire for the Nintendo 3DS family of systems. Your adventure takes place in Hoenn, a region that consists of a main island that stretches widely from east to west, along with countless small...",
-      "added": "2026-10-26",
-      "art": "library/art/pok-mon-alpha-sapphire.png",
-      "files": [
-      ],
-      "parts": { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci", "size": 2147483648, "sha256": "f349613532dbcc124b11373fc03ed7dbf2addb3c4ac7b15c8674a7628ebafab4", "pieces": [
-        { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part01", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part01", "size": 1992294400, "sha256": "d946af351c4d8e2a3c61d0068d62efae8e80730b654deac433ece99d0078c65e" },
-        { "name": "Pokemon Alpha Sapphire (USA) (En,Ja,Fr,De,Es,It,Ko) (Rev 2).cci.part02", "url": "private:pok-mon-alpha-sapphire__Pokemon.Alpha.Sapphire.USA.En.Ja.Fr.De.Es.It.Ko.Rev.2.cci.part02", "size": 155189248, "sha256": "cc2f1ebadaf98bcb02cc3c1ba333cd26155857fc79ec38d27076b6cc61e6b237" }
       ] }
     },
     {
