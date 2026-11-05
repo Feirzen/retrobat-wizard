@@ -3687,6 +3687,19 @@
       ]
     },
     {
+      "id": "tetris-ds",
+      "title": "Tetris DS",
+      "system": "nds",
+      "players": "1-10",
+      "description": "At its base, Tetris DS is the same Tetris gameplay that's been around for years: rotate and arrange Tetriminos to create full lines and make them disappear. However, it also has a style very different from earlier Tetris games, new play modes, and online play. Graphically and...",
+      "added": "2026-11-04",
+      "art": "library/art/tetris-ds.png",
+      "video": "library/video/tetris-ds.mp4",
+      "files": [
+        { "name": "Tetris DS (USA, Australia).zip", "url": "private:tetris-ds__Tetris.DS.USA.Australia.zip", "size": 6996606, "sha256": "9bbe16a17240117417768affa46b62daad5cf7bab9dc4308aa344bfdc2081752" }
+      ]
+    },
+    {
       "id": "the-legend-of-zelda-phantom-hourglass",
       "title": "The Legend of Zelda : Phantom Hourglass",
       "system": "nds",
