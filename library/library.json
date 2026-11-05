@@ -3115,6 +3115,19 @@
       ]
     },
     {
+      "id": "apollo-justice-ace-attorney",
+      "title": "Apollo Justice - Ace Attorney",
+      "system": "nds",
+      "players": "1",
+      "description": "This is the fourth game in the series and the first developed specifically for Nintendo DS and sees a change of direction for the story line with the introduction of new defense attorney Apollo Justice and a host of new characters. Players star as rookie defense attorney Apollo...",
+      "added": "2026-11-04",
+      "art": "library/art/apollo-justice-ace-attorney.png",
+      "video": "library/video/apollo-justice-ace-attorney.mp4",
+      "files": [
+        { "name": "Apollo Justice - Ace Attorney (USA).zip", "url": "private:apollo-justice-ace-attorney__Apollo.Justice.-.Ace.Attorney.USA.zip", "size": 46611150, "sha256": "7619695a67197660502a8c2a65e4569fa090473a2c408d1049210943d66c8426" }
+      ]
+    },
+    {
       "id": "chrono-trigger",
       "title": "Chrono Trigger",
       "system": "nds",
