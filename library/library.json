@@ -4795,6 +4795,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "pajama-sam-2-thunder-and-lightning-aren",
+      "title": "Pajama Sam 2: Thunder and Lightning aren't so Frightening",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Sam, it seems, is afraid of thunder and lightning. But not when he's Pajama Sam, superhero! Help PJ Sam as he journeys to World Wide Weather, in an attempt to conquer his fear of thunderstorms. There he accidentally throws things in a tizzy, sending weather all over the world....",
+      "added": "2026-11-10",
+      "art": "library/art/pajama-sam-2-thunder-and-lightning-aren.png",
+      "video": "library/video/pajama-sam-2-thunder-and-lightning-aren.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Pajama Sam 2 Thunder and Lightning Aren't So Frightening", "name": "pajama-sam-2-thunder-and-lightning-aren.zip", "size": 454258347, "sha256": "534a8e0332d3eac00c2619da81875ae0426a42c01933f3c49d7ab01b54b3b011", "url": "private:pajama-sam-2-thunder-and-lightning-aren__pajama-sam-2-thunder-and-lightning-aren.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
