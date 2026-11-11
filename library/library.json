@@ -4823,6 +4823,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "putt-putt-goes-to-the-moon",
+      "title": "Putt-Putt Goes to the Moon",
+      "system": "scummvm",
+      "players": "1",
+      "description": "When Putt-Putt visits the fireworks factory, a slip of Pep's paw sends him rocketing to the moon. Once there, he must gather the pieces of a rocket ship to get himself and Pep back home to Earth.",
+      "added": "2026-11-10",
+      "art": "library/art/putt-putt-goes-to-the-moon.png",
+      "video": "library/video/putt-putt-goes-to-the-moon.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "PUTTMOON", "name": "putt-putt-goes-to-the-moon.zip", "size": 144599200, "sha256": "aa022e5a3bd11cef6a88127a81b49fbd6d0f383441fa2d32410a32ea3cc32dd4", "url": "private:putt-putt-goes-to-the-moon__putt-putt-goes-to-the-moon.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
