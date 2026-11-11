@@ -4725,6 +4725,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "freddi-fish-3-the-case-of-the-stolen-con",
+      "title": "Freddi Fish 3 - The Case Of The Stolen Conch Shell",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Freddi Fish and her pal Luther are back in another installment of this animated edutainment adventure series. The Great Conch Shell used to signal the start of the Founder's Day Festival has been stolen. Freddi and Luther have to find the missing shell, discover the identity of...",
+      "added": "2026-11-10",
+      "art": "library/art/freddi-fish-3-the-case-of-the-stolen-con.png",
+      "video": "library/video/freddi-fish-3-the-case-of-the-stolen-con.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Freddi Fish 3 - The Case of the Stolen Conch Shell", "name": "freddi-fish-3-the-case-of-the-stolen-con.zip", "size": 424031034, "sha256": "e413c303b1450c3e907b57b38aa5042ee266fd947e2b7b715ab411e15da8ba6e", "url": "private:freddi-fish-3-the-case-of-the-stolen-con__freddi-fish-3-the-case-of-the-stolen-con.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
