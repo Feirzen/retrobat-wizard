@@ -4921,6 +4921,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "spy-fox-3-operation-ozone",
+      "title": "Spy Fox 3 - Operation Ozone",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Spy Fox: Operation Ozone is the third game in the children entertainment franchise from Humongous Entertainment. Built on the SCUMM engine that powered Maniac Mansion, Spy Fox is a graphic adventure game delivered in the typical style and writing that made Humongous a successful...",
+      "added": "2026-11-10",
+      "art": "library/art/spy-fox-3-operation-ozone.png",
+      "video": "library/video/spy-fox-3-operation-ozone.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Spy Fox 3 - Operation Ozone", "name": "spy-fox-3-operation-ozone.zip", "size": 382072830, "sha256": "269bc3e18fbe9cb686a2efb98b02de47e1eb410511051500434c860571e060e4", "url": "private:spy-fox-3-operation-ozone__spy-fox-3-operation-ozone.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
