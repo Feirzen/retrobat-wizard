@@ -4739,6 +4739,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "freddi-fish-4-the-case-of-the-hogfish-ru",
+      "title": "Freddi Fish 4 - The Case Of The Hogfish Rustlers Of Briny Gulch",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Set in an underwater version of the Wild West, The Case of The Hogfish Rustlers of Briny Gulch is the fourth installment in the Humongous Entertainment Games Freddi Fish adventure series. It is geared toward children ages 3-8. Like its predecessors FF4 is a colorful animated...",
+      "added": "2026-11-10",
+      "art": "library/art/freddi-fish-4-the-case-of-the-hogfish-ru.png",
+      "video": "library/video/freddi-fish-4-the-case-of-the-hogfish-ru.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Freddi Fish 4 - The Case of the Hogfish Rustlers", "name": "freddi-fish-4-the-case-of-the-hogfish-ru.zip", "size": 475986736, "sha256": "b885403a3655d91e35b19e756fd848254cfd4e02bfda9fa3b224b6080472d900", "url": "private:freddi-fish-4-the-case-of-the-hogfish-ru__freddi-fish-4-the-case-of-the-hogfish-ru.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
