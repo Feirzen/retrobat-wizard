@@ -4809,6 +4809,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "pajama-sam-3-you-are-what-you-eat-from-y",
+      "title": "Pajama Sam 3: You Are What You Eat From Your Head To Your Feet",
+      "system": "scummvm",
+      "players": "1",
+      "description": "The third game in the Pajama Sam Series, part of the Humongous' popular \"Junior Adventure\" titles designed for children ages three to eight. You're playing Sam who once again assumes the role of Pajama Sam at times when he needs facing his fears. This time you suddenly find...",
+      "added": "2026-11-10",
+      "art": "library/art/pajama-sam-3-you-are-what-you-eat-from-y.png",
+      "video": "library/video/pajama-sam-3-you-are-what-you-eat-from-y.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "PJ3", "name": "pajama-sam-3-you-are-what-you-eat-from-y.zip", "size": 349913747, "sha256": "45a1eb0ae138002bfff19feab56197e8a2a83e628f58bb04f82400948bc4dfcc", "url": "private:pajama-sam-3-you-are-what-you-eat-from-y__pajama-sam-3-you-are-what-you-eat-from-y.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
