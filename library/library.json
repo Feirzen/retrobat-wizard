@@ -4865,6 +4865,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "putt-putt-joins-the-parade",
+      "title": "Putt-Putt Joins the Parade",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Putt-Putt, an adorable purple car, wants to join the Cartown Parade. But, first he must earn money for a carwash, find a balloon, and get a pet (Pep, the puppy). Children ages 3 to 8 have a great time delivering groceries and mowing lawns and learn good lessons like waiting for...",
+      "added": "2026-11-10",
+      "art": "library/art/putt-putt-joins-the-parade.png",
+      "video": "library/video/putt-putt-joins-the-parade.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Putt-Putt Joins the Parade", "name": "putt-putt-joins-the-parade.zip", "size": 31741606, "sha256": "2a7cc6b227dfccca5881603f15436664bbea37a43e8b76162061fac2d0da36d0", "url": "private:putt-putt-joins-the-parade__putt-putt-joins-the-parade.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
