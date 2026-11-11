@@ -6465,6 +6465,27 @@
       ]
     },
     {
+      "id": "bayonetta-2",
+      "title": "Bayonetta 2",
+      "system": "wiiu",
+      "players": "1-2",
+      "description": "Bayonetta 2 is the sequel to Bayonetta. You play as Bayonetta, an Umbran Witch who is out to rescue her friend Jeanne from the depths of Inferno. The game is set a few months after the events of the first game. Along the way she has to battle a host of angels and demons who are...",
+      "added": "2026-11-11",
+      "art": "library/art/bayonetta-2.jpg",
+      "video": "library/video/bayonetta-2.mp4",
+      "files": [
+      ],
+      "parts": { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua", "size": 13683863841, "sha256": "", "pieces": [
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part01", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part01", "size": 1992294400, "sha256": "" },
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part02", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part02", "size": 1992294400, "sha256": "" },
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part03", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part03", "size": 1992294400, "sha256": "" },
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part04", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part04", "size": 1992294400, "sha256": "" },
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part05", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part05", "size": 1992294400, "sha256": "" },
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part06", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part06", "size": 1992294400, "sha256": "" },
+        { "name": "Bayonetta 2 (USA) (En,Ja,Fr,De,Es,It).wua.part07", "url": "private:bayonetta-2__Bayonetta.2.USA.En.Ja.Fr.De.Es.It.wua.part07", "size": 1730097441, "sha256": "" }
+      ] }
+    },
+    {
       "id": "call-of-duty-black-ops-ii",
       "title": "Call of Duty : Black Ops II",
       "system": "wiiu",
