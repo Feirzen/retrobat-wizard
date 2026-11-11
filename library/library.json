@@ -6491,11 +6491,12 @@
       "system": "wiiu",
       "players": "1-4",
       "description": "In the not-too-distant future, two superpowers dominate the world. The United States and China have pushed each other to the brink of destruction. When a cyber-terrorism strike unleashes America's drones against its own cities, the situation goes from bad to full-blown...",
-      "added": "2026-10-24",
+      "added": "2026-11-11",
       "art": "library/art/call-of-duty-black-ops-ii.jpg",
+      "video": "library/video/call-of-duty-black-ops-ii.mp4",
       "files": [
       ],
-      "parts": { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux", "size": 20370489344, "sha256": "f4cdf055a008b633feeb20e4bd34e97a93ffa5b81d03974f9601b163b288e957", "pieces": [
+      "parts": { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux", "size": 20370489344, "sha256": "9f5220a0e2cd008d53a565111645b25754b0e4ff0e15a567049855416b0f74a3", "pieces": [
         { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part01", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part01", "size": 1992294400, "sha256": "516eb983e119201ad1577cd10af67a1593117b0dbd88889852dc7c760bff286a" },
         { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part02", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part02", "size": 1992294400, "sha256": "d5b1ec3850f8b2e82d71533baccd1f61fb94d9b48c3ceec9606fb28344a4297a" },
         { "name": "Call of Duty - Black Ops II (USA) (En,Fr).wux.part03", "url": "private:call-of-duty-black-ops-ii__Call.of.Duty.-.Black.Ops.II.USA.En.Fr.wux.part03", "size": 1992294400, "sha256": "5f12a06d865eb639034979c27730a6c1c160eef1f65f86839ef515451c041072" },
