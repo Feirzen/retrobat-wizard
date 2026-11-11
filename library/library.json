@@ -4781,6 +4781,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "pajama-sam-1-no-need-to-hide-when-it-s-d",
+      "title": "Pajama Sam 1 - No Need To Hide When It's Dark Outside",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Sam, a big fan of Pajama Man is to afraid to sleep, with Darkness in his closet. So he turns himself into Pajama Sam! With his Flashlight, his mask and Signature edition Pajama Man Lunchbox. Going into his closet, to The Land of Darkness, His things are stolen by trees, and are...",
+      "added": "2026-11-10",
+      "art": "library/art/pajama-sam-1-no-need-to-hide-when-it-s-d.png",
+      "video": "library/video/pajama-sam-1-no-need-to-hide-when-it-s-d.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Pajama Sam", "name": "pajama-sam-1-no-need-to-hide-when-it-s-d.zip", "size": 351615939, "sha256": "3e01b6de6f05d5a00aa07bc719d465de060462f0645e957ae79617b480589514", "url": "private:pajama-sam-1-no-need-to-hide-when-it-s-d__pajama-sam-1-no-need-to-hide-when-it-s-d.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
