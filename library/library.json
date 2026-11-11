@@ -4739,6 +4739,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "freddi-fish-1-the-case-of-the-missing-ke",
+      "title": "Freddi Fish 1 - The Case Of The Missing Kelp Seeds",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Freddi Fish and her pal Luther must find Grandma Grouper's missing kelp seeds. Without them, all the sea creatures will starve. Freddi and Luther follow clues through underwater caves and canyons and outwit two criminal sharks to recover the kelp seeds.",
+      "added": "2026-11-10",
+      "art": "library/art/freddi-fish-1-the-case-of-the-missing-ke.png",
+      "video": "library/video/freddi-fish-1-the-case-of-the-missing-ke.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "FREDDI", "name": "freddi-fish-1-the-case-of-the-missing-ke.zip", "size": 250303945, "sha256": "c7d43a238e84306d18c3c4ff5b6785c84597db234b7ca1079b4c665c1bfb6c0b", "url": "private:freddi-fish-1-the-case-of-the-missing-ke__freddi-fish-1-the-case-of-the-missing-ke.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "freddi-fish-2-the-case-of-the-haunted-sc",
       "title": "Freddi Fish 2 - The Case Of The Haunted Schoolhouse",
       "system": "scummvm",
