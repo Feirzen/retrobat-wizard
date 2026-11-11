@@ -4935,6 +4935,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "spy-fox-in-dry-cereal",
+      "title": "Spy Fox in Dry Cereal",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Will kids be forced to endure a fate worse than eating dry cereal!? The Plot: William the Kid has nearly completed his dastardly plan to cow-nap all the worlds supply of milk! The Mission: The super-suave agent, SPY Fox, must find Mr. Udderly, rescue all the cows, and stop...",
+      "added": "2026-11-10",
+      "art": "library/art/spy-fox-in-dry-cereal.png",
+      "video": "library/video/spy-fox-in-dry-cereal.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Spy Fox in Dry Cereal", "name": "spy-fox-in-dry-cereal.zip", "size": 397071395, "sha256": "96722b07fdbcde68338704e5aeee2b8646588c3d99acb2a6f4572ab1817f576b", "url": "private:spy-fox-in-dry-cereal__spy-fox-in-dry-cereal.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
