@@ -4823,6 +4823,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "putt-putt-enters-the-race",
+      "title": "Putt-putt Enters The Race",
+      "system": "scummvm",
+      "players": "1",
+      "description": "That lovable little car, Putt-Putt and his dog Pep must gather various items including fuel and a flag before they can enter the Cartown 500. There are plenty of old friends as well as some fun new characters to give Putt-Putt a helping hand.",
+      "added": "2026-11-10",
+      "art": "library/art/putt-putt-enters-the-race.jpg",
+      "video": "library/video/putt-putt-enters-the-race.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Putt-Putt Enters the Race", "name": "putt-putt-enters-the-race.zip", "size": 437579104, "sha256": "c2ae1223d90c2ba13317ba33e9084fe2bf17373a4025c1daf788718e0df998cc", "url": "private:putt-putt-enters-the-race__putt-putt-enters-the-race.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "putt-putt-goes-to-the-moon",
       "title": "Putt-Putt Goes to the Moon",
       "system": "scummvm",
