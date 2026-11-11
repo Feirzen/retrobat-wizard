@@ -4697,6 +4697,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "backyard-baseball",
+      "title": "Backyard Baseball",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Grab your mitt and a bat and head out to a dusty sandlot for a game of old-fashioned pick-up baseball in Humongous Entertainment's Backyard Baseball. Aimed at the five-to-ten-year-old crowd, this game features 30 kids as players to choose from as you asse",
+      "added": "2026-11-10",
+      "art": "library/art/backyard-baseball.png",
+      "video": "library/video/backyard-baseball.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Backyard Baseball", "name": "backyard-baseball.zip", "size": 373631156, "sha256": "185ae500956d9c81c4375fb7fe1e8c8602b628988a0621671b52d44c1fc43a09", "url": "private:backyard-baseball__backyard-baseball.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
