@@ -4851,6 +4851,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "putt-putt-joins-the-circus",
+      "title": "Putt-Putt Joins the Circus",
+      "system": "scummvm",
+      "players": "1",
+      "description": "In this Junior Adventure for kids 3-8, the circus has arrived in Apple Valley and owner Mr. Sweeney has asked Putt-Putt to get his 5 circus acts ready. There's Ivan the Semi-Strong Van, who needs his special energy drink mixed up; there's the leaky pool that Francine the high...",
+      "added": "2026-11-10",
+      "art": "library/art/putt-putt-joins-the-circus.png",
+      "video": "library/video/putt-putt-joins-the-circus.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Putt-Putt Joins the Circus", "name": "putt-putt-joins-the-circus.zip", "size": 405130722, "sha256": "99e3f6599427d292833e9bc0eccd3858d19f00d0ac3705ac138bc4c9b2e86dab", "url": "private:putt-putt-joins-the-circus__putt-putt-joins-the-circus.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
