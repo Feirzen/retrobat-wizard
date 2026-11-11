@@ -4725,6 +4725,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "freddi-fish-2-the-case-of-the-haunted-sc",
+      "title": "Freddi Fish 2 - The Case Of The Haunted Schoolhouse",
+      "system": "scummvm",
+      "players": "1",
+      "description": "The second episode of the educational game series, this time a ghost haunts Luther's schoolhouse and steals children's toys. In addition to the usual blend of education with humor, there is a \"space invaders\" clone mini-game, and a movie theater where you can take a break and...",
+      "added": "2026-11-10",
+      "art": "library/art/freddi-fish-2-the-case-of-the-haunted-sc.png",
+      "video": "library/video/freddi-fish-2-the-case-of-the-haunted-sc.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "freddi-fish-2", "name": "freddi-fish-2-the-case-of-the-haunted-sc.zip", "size": 301499827, "sha256": "f508036c7281509cb7224e690331a420adc11d3d2fab7ea83811075faff913d8", "url": "private:freddi-fish-2-the-case-of-the-haunted-sc__freddi-fish-2-the-case-of-the-haunted-sc.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "freddi-fish-3-the-case-of-the-stolen-con",
       "title": "Freddi Fish 3 - The Case Of The Stolen Conch Shell",
       "system": "scummvm",
