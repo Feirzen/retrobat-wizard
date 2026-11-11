@@ -4753,6 +4753,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "freddi-fish-5-the-case-of-the-creature-o",
+      "title": "Freddi Fish 5 : The Case of the Creature of Coral Cove",
+      "system": "scummvm",
+      "players": "1",
+      "description": "It's time for Freddi Fish to solve another mystery in this fifth installment of the kids edutainment series. She (Freddi is a girl) and her best friend Luthor have to figure out what's going on with Coral Cove. The mayor wants to open it as a tourist attraction, but it seems to...",
+      "added": "2026-11-10",
+      "art": "library/art/freddi-fish-5-the-case-of-the-creature-o.png",
+      "video": "library/video/freddi-fish-5-the-case-of-the-creature-o.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Freddi Fish 5 - The Case of the Creature of Coral Cove", "name": "freddi-fish-5-the-case-of-the-creature-o.zip", "size": 470047818, "sha256": "6fdc4c3de59baa55095cfd5c1722f1317d1416ae0152bc7ca6cc52bb1713771a", "url": "private:freddi-fish-5-the-case-of-the-creature-o__freddi-fish-5-the-case-of-the-creature-o.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
