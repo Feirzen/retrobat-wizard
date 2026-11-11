@@ -4711,6 +4711,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "backyard-soccer-mls-edition",
+      "title": "Backyard Soccer MLS Edition",
+      "system": "scummvm",
+      "players": "1-2",
+      "description": "Backyard Soccer MLS Edition gives you the chance to kick the ball around with America's professional soccer stars from the MLS and star women players from the US Olympic team. Player's create a junior avatar of themselves and draft a team from other backyard kids and kid...",
+      "added": "2026-11-10",
+      "art": "library/art/backyard-soccer-mls-edition.png",
+      "video": "library/video/backyard-soccer-mls-edition.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Backyard Soccer MLS Edition", "name": "backyard-soccer-mls-edition.zip", "size": 546814506, "sha256": "3104c06795e99ccc1a68070abf6ef5e1c1a6b225d0ac3e063a5967ca8246eaeb", "url": "private:backyard-soccer-mls-edition__backyard-soccer-mls-edition.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
