@@ -4879,6 +4879,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "putt-putt-saves-the-zoo",
+      "title": "Putt-Putt Saves the Zoo",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Putt-Putt and his faithful dog Pep have to help Outback Al find six missing baby animals before the new Cartown Zoo can open. Putt-Putt must search through Arctic Land, Jungle Land and Grasslands for the missing little ones. Once he finds them, he must use tools he finds along...",
+      "added": "2026-11-10",
+      "art": "library/art/putt-putt-saves-the-zoo.jpg",
+      "video": "library/video/putt-putt-saves-the-zoo.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Putt-Putt Saves the Zoo", "name": "putt-putt-saves-the-zoo.zip", "size": 344374235, "sha256": "2af5c22fd96ac2e2d9b8b2794f9c73278ec4cef210edabec515b2837e5816db8", "url": "private:putt-putt-saves-the-zoo__putt-putt-saves-the-zoo.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
