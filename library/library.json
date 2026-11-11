@@ -4907,6 +4907,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "spy-fox-2-some-assembly-required",
+      "title": "Spy Fox 2 - Some Assembly Required",
+      "system": "scummvm",
+      "players": "1",
+      "description": "The Plot: Once again, the world relies on Fox - Spy Fox, the suave secret agent who smoothly finesses his way through Spy Corps' toughest assignments. This time, Spy Corps' corrupt counterpart, the Society for Meaningless Evil, Larceny, Lying and Yelling (S.M.E.L.L.Y.) has...",
+      "added": "2026-11-10",
+      "art": "library/art/spy-fox-2-some-assembly-required.png",
+      "video": "library/video/spy-fox-2-some-assembly-required.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "Spy Fox 2 - Some Assembly Required", "name": "spy-fox-2-some-assembly-required.zip", "size": 322319003, "sha256": "2eb4f635c50069f91ad9bc620d2bc08fbc9ba2a94dd70754521d659e392eeaa3", "url": "private:spy-fox-2-some-assembly-required__spy-fox-2-some-assembly-required.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
