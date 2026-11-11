@@ -4893,6 +4893,20 @@
       "min": "3.2.0"
     },
     {
+      "id": "putt-putt-travels-through-time",
+      "title": "Putt-Putt Travels Through Time",
+      "system": "scummvm",
+      "players": "1",
+      "description": "Putt Putt goes to visit his friend Mr. Firebird and show him his new school supplies before Putt Putt goes to school. Putting a nickel into Mr. Firebirds time machine, turns the machine on sucking Pep and Putt Putt's school supplies into four dimensions of the past and the...",
+      "added": "2026-11-10",
+      "art": "library/art/putt-putt-travels-through-time.png",
+      "video": "library/video/putt-putt-travels-through-time.mp4",
+      "files": [
+      ],
+      "bundle": { "folder": "PUTTTIME", "name": "putt-putt-travels-through-time.zip", "size": 490465347, "sha256": "d247246be0023cceb517aab62150b4e0dd13bebab4050e1a59493bd45a7e4305", "url": "private:putt-putt-travels-through-time__putt-putt-travels-through-time.zip" },
+      "min": "3.2.0"
+    },
+    {
       "id": "donkey-kong-country",
       "title": "Donkey Kong Country",
       "system": "snes",
